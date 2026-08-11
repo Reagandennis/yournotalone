@@ -1,0 +1,81 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/home/home_shell.dart';
+import 'package:yournotalone/home/settings_tab.dart';
+
+void main() {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
+    await Supabase.initialize(
+      url: 'https://test.supabase.co',
+      publishableKey: 'test-publishable-key',
+      authOptions: const FlutterAuthClientOptions(
+        localStorage: EmptyLocalStorage(),
+        detectSessionInUri: false,
+      ),
+    );
+  });
+
+  testWidgets('home shell switches between the three tabs', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: buildAppTheme(), home: const HomeShell()),
+    );
+    await tester.pumpAndSettle();
+
+    // Home tab is up first: mood check-in and quick access.
+    expect(find.text('How are you feeling today?'), findsOneWidget);
+    expect(find.text('Quick access'), findsOneWidget);
+
+    await tester.tap(find.text('Explore'));
+    await tester.pumpAndSettle();
+    expect(find.text('Meditations & breathing'), findsOneWidget);
+    expect(find.text('Wellbeing sounds'), findsOneWidget);
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('Free plan'), findsOneWidget);
+
+    final logoutFinder = find.text('Log out');
+    await tester.scrollUntilVisible(
+      logoutFinder,
+      80,
+      scrollable: find
+          .descendant(
+            of: find.byType(SettingsTab),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(logoutFinder, findsOneWidget);
+  });
+
+  testWidgets('mood check-in lights up the selected face', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: buildAppTheme(), home: const HomeShell()),
+    );
+    await tester.pumpAndSettle();
+
+    Icon greatFace() => tester.widget<Icon>(
+          find.byIcon(Icons.sentiment_very_satisfied_rounded),
+        );
+    expect(greatFace().color, isNot(Brand.blue)); // idle grey before tap
+
+    await tester.tap(find.text('Great'));
+    await tester.pumpAndSettle();
+    expect(greatFace().color, Brand.blue);
+
+    // Picking a different mood moves the light.
+    await tester.tap(find.text('Awful'));
+    await tester.pumpAndSettle();
+    expect(greatFace().color, isNot(Brand.blue));
+    final awfulFace = tester.widget<Icon>(
+      find.byIcon(Icons.sentiment_very_dissatisfied_rounded),
+    );
+    expect(awfulFace.color, Brand.red);
+  });
+}

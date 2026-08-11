@@ -1,0 +1,160 @@
+import 'package:flutter/material.dart';
+
+import '../brand.dart';
+import 'onboarding_ui.dart';
+import 'paywall_screen.dart';
+import 'therapy_offer_screen.dart';
+
+class _CheckinOption {
+  const _CheckinOption(this.key, this.icon, this.label, this.detail,
+      {this.needsSupport = false});
+
+  final String key;
+  final IconData icon;
+  final String label;
+  final String detail;
+
+  /// True for answers that should lead to the human-therapy offer.
+  final bool needsSupport;
+}
+
+const _options = [
+  _CheckinOption(
+    'steady',
+    Icons.sentiment_satisfied_alt_rounded,
+    'Doing okay',
+    'I\'m here to keep my balance and build good habits.',
+  ),
+  _CheckinOption(
+    'stressed',
+    Icons.sentiment_neutral_rounded,
+    'Stressed or low lately',
+    'Work, life, or my mood has been weighing on me.',
+  ),
+  _CheckinOption(
+    'struggling',
+    Icons.sentiment_dissatisfied_rounded,
+    'Struggling',
+    'It\'s been heavy for a while and I could use support.',
+    needsSupport: true,
+  ),
+  _CheckinOption(
+    'dark_place',
+    Icons.sentiment_very_dissatisfied_rounded,
+    'In a dark place',
+    'I\'m going through something serious right now.',
+    needsSupport: true,
+  ),
+];
+
+/// Third onboarding step — the wellbeing check-in. The answer decides
+/// whether we lead with human therapy or with the premium offer.
+class CheckinScreen extends StatefulWidget {
+  const CheckinScreen({super.key});
+
+  @override
+  State<CheckinScreen> createState() => _CheckinScreenState();
+}
+
+class _CheckinScreenState extends State<CheckinScreen> {
+  _CheckinOption? _selected;
+
+  void _continue() {
+    final choice = _selected;
+    if (choice == null) return;
+    final next = choice.needsSupport
+        ? TherapyOfferScreen(checkin: choice.key)
+        : PaywallScreen(checkin: choice.key);
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => next));
+  }
+
+  Widget _optionCard(_CheckinOption option) {
+    final selected = option == _selected;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: selected ? const Color(0x0A191919) : Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: selected ? Brand.ink : Brand.border,
+            width: selected ? 1.6 : 1.2,
+          ),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => setState(() => _selected = option),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(
+                  option.icon,
+                  size: 26,
+                  color: selected ? Brand.ink : Brand.textMuted,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        option.label,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Brand.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        option.detail,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Brand.textMuted,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return OnboardingScaffold(
+      step: 2,
+      bottom: ElevatedButton(
+        onPressed: _selected == null ? null : _continue,
+        child: const Text('Continue'),
+      ),
+      children: [
+        const Text(
+          'How are you feeling these days?',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w600,
+            color: Brand.ink,
+            height: 1.2,
+          ),
+        ),
+        const SizedBox(height: 12),
+        const PillarStripe(),
+        const SizedBox(height: 16),
+        const Text(
+          'This helps us point you to the right kind of support first. '
+          'It stays private, and you can change it anytime.',
+          style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
+        ),
+        const SizedBox(height: 26),
+        for (final option in _options) _optionCard(option),
+      ],
+    );
+  }
+}
