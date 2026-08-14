@@ -5,16 +5,33 @@ import '../auth/auth_ui.dart';
 import '../auth/login_screen.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../legal/legal_content.dart';
+import '../legal/legal_screen.dart';
 import '../onboarding/paywall_screen.dart';
+import '../profile/edit_profile_screen.dart';
 import '../reminders/reminders_screen.dart';
+import '../support/faq_screen.dart';
 import 'home_ui.dart';
 
 /// Settings tab: profile, plan, account, support, legal, and log out.
-class SettingsTab extends StatelessWidget {
+class SettingsTab extends StatefulWidget {
   const SettingsTab({super.key});
 
+  @override
+  State<SettingsTab> createState() => _SettingsTabState();
+}
+
+class _SettingsTabState extends State<SettingsTab> {
   Map<String, dynamic>? get _meta =>
       Supabase.instance.client.auth.currentUser?.userMetadata;
+
+  Future<void> _openEditProfile(BuildContext context) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+    );
+    // Name or photo may have changed — re-read the auth metadata.
+    if (mounted) setState(() {});
+  }
 
   bool get _isPremium => isPremiumUser();
 
@@ -122,6 +139,17 @@ class SettingsTab extends StatelessWidget {
     final name = (_meta?['full_name'] as String?)?.trim();
     final displayName = (name == null || name.isEmpty) ? 'Your account' : name;
     final initial = displayName.characters.first.toUpperCase();
+    final avatarUrl = (_meta?['avatar_url'] as String?) ?? '';
+    final initialAvatar = Center(
+      child: Text(
+        initial,
+        style: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Brand.blue,
+        ),
+      ),
+    );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -133,20 +161,18 @@ class SettingsTab extends StatelessWidget {
           Container(
             width: 52,
             height: 52,
+            clipBehavior: Clip.antiAlias,
             decoration: const BoxDecoration(
               color: Color(0x143764CD),
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Text(
-                initial,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Brand.blue,
-                ),
-              ),
-            ),
+            child: avatarUrl.isEmpty
+                ? initialAvatar
+                : Image.network(
+                    avatarUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => initialAvatar,
+                  ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -179,7 +205,7 @@ class SettingsTab extends StatelessWidget {
             ),
           ),
           IconButton(
-            onPressed: () => showComingSoon(context, 'Profile editing'),
+            onPressed: () => _openEditProfile(context),
             icon: const Icon(
               Icons.edit_outlined,
               size: 20,
@@ -330,7 +356,12 @@ class SettingsTab extends StatelessWidget {
         _planCard(context),
         const SizedBox(height: 28),
         _sectionLabel('Account'),
-        _row(context, Icons.person_outline_rounded, 'Edit profile'),
+        _row(
+          context,
+          Icons.person_outline_rounded,
+          'Edit profile',
+          onTap: () => _openEditProfile(context),
+        ),
         _row(
           context,
           Icons.lock_outline_rounded,
@@ -360,11 +391,32 @@ class SettingsTab extends StatelessWidget {
           onTap: () => _showCrisisResources(context),
         ),
         _row(context, Icons.mail_outline_rounded, 'Contact us'),
-        _row(context, Icons.help_outline_rounded, 'FAQ'),
+        _row(
+          context,
+          Icons.help_outline_rounded,
+          'FAQ',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const FaqScreen()),
+          ),
+        ),
         const SizedBox(height: 22),
         _sectionLabel('Legal'),
-        _row(context, Icons.privacy_tip_outlined, 'Privacy policy'),
-        _row(context, Icons.description_outlined, 'Terms of service'),
+        _row(
+          context,
+          Icons.privacy_tip_outlined,
+          'Privacy policy',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => LegalScreen(doc: privacyPolicy)),
+          ),
+        ),
+        _row(
+          context,
+          Icons.description_outlined,
+          'Terms of service',
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => LegalScreen(doc: termsOfService)),
+          ),
+        ),
         const SizedBox(height: 22),
         _sectionLabel('Account actions'),
         _row(

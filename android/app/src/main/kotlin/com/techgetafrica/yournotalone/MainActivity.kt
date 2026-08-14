@@ -1,4 +1,4 @@
-package com.example.yournotalone
+package com.techgetafrica.yournotalone
 
 import io.flutter.embedding.android.FlutterActivity
 

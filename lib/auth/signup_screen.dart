@@ -1,7 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../legal/legal_content.dart';
+import '../legal/legal_screen.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
 
@@ -20,6 +23,23 @@ class _SignupScreenState extends State<SignupScreen> {
   final _confirm = TextEditingController();
   bool _loading = false;
   bool _awaitingConfirm = false;
+  late final TapGestureRecognizer _termsTap;
+  late final TapGestureRecognizer _privacyTap;
+
+  @override
+  void initState() {
+    super.initState();
+    _termsTap = TapGestureRecognizer()
+      ..onTap = () => _openLegal(termsOfService);
+    _privacyTap = TapGestureRecognizer()
+      ..onTap = () => _openLegal(privacyPolicy);
+  }
+
+  void _openLegal(LegalDoc doc) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => LegalScreen(doc: doc)),
+    );
+  }
 
   @override
   void dispose() {
@@ -27,6 +47,8 @@ class _SignupScreenState extends State<SignupScreen> {
     _email.dispose();
     _password.dispose();
     _confirm.dispose();
+    _termsTap.dispose();
+    _privacyTap.dispose();
     super.dispose();
   }
 
@@ -152,11 +174,36 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
         const SizedBox(height: 18),
-        const Text(
-          'By creating an account you agree to our Terms of Service '
-          'and Privacy Policy.',
+        Text.rich(
+          TextSpan(
+            text: 'By creating an account you agree to our ',
+            children: [
+              TextSpan(
+                text: 'Terms of Service',
+                recognizer: _termsTap,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Brand.blue,
+                ),
+              ),
+              const TextSpan(text: ' and '),
+              TextSpan(
+                text: 'Privacy Policy',
+                recognizer: _privacyTap,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Brand.blue,
+                ),
+              ),
+              const TextSpan(text: '.'),
+            ],
+          ),
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
+          style: const TextStyle(
+            fontSize: 12,
+            color: Brand.textMuted,
+            height: 1.5,
+          ),
         ),
         const SizedBox(height: 18),
         Wrap(
