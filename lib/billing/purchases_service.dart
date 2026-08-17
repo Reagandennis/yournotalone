@@ -10,9 +10,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// Must match the entitlement identifier in the RevenueCat dashboard.
 const proEntitlementId = 'Techgetafrica Pro';
 
-/// RevenueCat Test Store key — swap for the real per-platform keys
-/// (appl_… / goog_…) before release.
-const _revenueCatApiKey = 'test_LIOnFYhIcjvbOTTSrOhveSnxroM';
+/// RevenueCat public API key for the Play Store app.
+const _googlePlayApiKey = 'goog_HcusldvsINIxkCHNpcprsTVSNdw';
+
+/// RevenueCat Test Store key — still used on iOS/macOS until the App
+/// Store app is configured (swap in the appl_… key then).
+const _testStoreApiKey = 'test_LIOnFYhIcjvbOTTSrOhveSnxroM';
+
+String get _revenueCatApiKey =>
+    Platform.isAndroid ? _googlePlayApiKey : _testStoreApiKey;
 
 /// App-wide RevenueCat wrapper: configures the SDK, keeps the RevenueCat
 /// identity in step with the Supabase account, and exposes entitlement
@@ -75,7 +81,7 @@ class PurchasesService {
     isPro.value = info.entitlements.active.containsKey(proEntitlementId);
   }
 
-  /// The offering to sell from (packages: monthly / yearly / lifetime),
+  /// The offering to sell from (packages: monthly / yearly),
   /// or null when unavailable.
   Future<Offering?> currentOffering() async {
     if (!_configured) return null;

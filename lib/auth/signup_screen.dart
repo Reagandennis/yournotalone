@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,6 +8,7 @@ import '../brand.dart';
 import '../legal/legal_content.dart';
 import '../legal/legal_screen.dart';
 import 'auth_gate.dart';
+import 'auth_redirect.dart';
 import 'auth_ui.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -25,6 +28,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _awaitingConfirm = false;
   late final TapGestureRecognizer _termsTap;
   late final TapGestureRecognizer _privacyTap;
+  StreamSubscription<AuthState>? _authSub;
 
   @override
   void initState() {
@@ -33,6 +37,17 @@ class _SignupScreenState extends State<SignupScreen> {
       ..onTap = () => _openLegal(termsOfService);
     _privacyTap = TapGestureRecognizer()
       ..onTap = () => _openLegal(privacyPolicy);
+    // When the confirmation link reopens the app on this device, the deep
+    // link signs the user in — skip the "come back and log in" step.
+    _authSub =
+        Supabase.instance.client.auth.onAuthStateChange.listen((state) {
+      if (!mounted || !_awaitingConfirm) return;
+      if (state.event == AuthChangeEvent.signedIn && state.session != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => postAuthDestination()),
+        );
+      }
+    });
   }
 
   void _openLegal(LegalDoc doc) {
@@ -43,6 +58,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   void dispose() {
+    _authSub?.cancel();
     _name.dispose();
     _email.dispose();
     _password.dispose();
@@ -60,6 +76,7 @@ class _SignupScreenState extends State<SignupScreen> {
         email: _email.text.trim(),
         password: _password.text,
         data: {'full_name': _name.text.trim()},
+        emailRedirectTo: authRedirectUrl,
       );
       if (!mounted) return;
       if (res.session != null) {

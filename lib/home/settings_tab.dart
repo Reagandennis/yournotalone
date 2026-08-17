@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../auth/auth_redirect.dart';
 import '../auth/auth_ui.dart';
 import '../auth/login_screen.dart';
 import '../billing/purchases_service.dart';
@@ -72,7 +73,8 @@ class _SettingsTabState extends State<SettingsTab> {
     final email = Supabase.instance.client.auth.currentUser?.email;
     if (email == null) return;
     try {
-      await Supabase.instance.client.auth.resetPasswordForEmail(email);
+      await Supabase.instance.client.auth
+          .resetPasswordForEmail(email, redirectTo: authRedirectUrl);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Password reset link sent to $email')),

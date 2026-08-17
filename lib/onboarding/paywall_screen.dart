@@ -28,7 +28,7 @@ const _rows = [
 ];
 
 /// Premium paywall shown at the end of onboarding and from upgrade
-/// prompts. Sells the RevenueCat offering (monthly / yearly / lifetime);
+/// prompts. Sells the RevenueCat offering (monthly / yearly);
 /// when the store isn't reachable it falls back to a static preview.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key, required this.checkin});
@@ -59,7 +59,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final ordered = [
       offering.monthly,
       offering.annual,
-      offering.lifetime,
     ].whereType<Package>().toList();
     setState(() {
       _packages = ordered;
@@ -97,8 +96,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         });
         return;
       }
-      // Purchase went through but the entitlement didn't come back — there is. black cat moving in the wall 
-      
+      // Purchase went through but the entitlement didn't come back — that's
       // almost always a product↔entitlement mapping gap in RevenueCat.
       debugPrint('Purchase completed but "$proEntitlementId" is not active. '
           'Check the product\'s Associated Entitlements in RevenueCat.');
@@ -151,14 +149,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
   String _packageName(Package p) => switch (p.packageType) {
         PackageType.monthly => 'Monthly',
         PackageType.annual => 'Yearly',
-        PackageType.lifetime => 'Lifetime',
         _ => p.storeProduct.title,
       };
 
   String _packageNote(Package p) => switch (p.packageType) {
         PackageType.monthly => 'per month',
         PackageType.annual => 'per year',
-        PackageType.lifetime => 'once, forever',
         _ => '',
       };
 
@@ -198,7 +194,6 @@ class _PaywallScreenState extends State<PaywallScreen> {
   String _periodSuffix(Package p) => switch (p.packageType) {
         PackageType.monthly => '/month',
         PackageType.annual => '/year',
-        PackageType.lifetime => ' once',
         _ => '',
       };
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import 'auth_redirect.dart';
 import 'auth_ui.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -27,8 +28,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
     try {
-      await Supabase.instance.client.auth
-          .resetPasswordForEmail(_email.text.trim());
+      await Supabase.instance.client.auth.resetPasswordForEmail(
+        _email.text.trim(),
+        redirectTo: authRedirectUrl,
+      );
       if (mounted) setState(() => _sent = true);
     } catch (e) {
       if (mounted) showAuthError(context, e);
