@@ -10,6 +10,7 @@ import '../legal/legal_screen.dart';
 import 'auth_gate.dart';
 import 'auth_redirect.dart';
 import 'auth_ui.dart';
+import 'google_auth.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -25,6 +26,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   bool _loading = false;
+  bool _googleLoading = false;
   bool _awaitingConfirm = false;
   late final TapGestureRecognizer _termsTap;
   late final TapGestureRecognizer _privacyTap;
@@ -91,6 +93,21 @@ class _SignupScreenState extends State<SignupScreen> {
       if (mounted) showAuthError(context, e);
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _google() async {
+    setState(() => _googleLoading = true);
+    try {
+      final signedIn = await signInWithGoogle();
+      if (!signedIn || !mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => postAuthDestination()),
+      );
+    } catch (e) {
+      if (mounted) showAuthError(context, e);
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
     }
   }
 
@@ -185,11 +202,21 @@ class _SignupScreenState extends State<SignupScreen> {
               AuthSubmitButton(
                 label: 'Create account',
                 loading: _loading,
-                onPressed: _submit,
+                onPressed: _googleLoading ? null : _submit,
               ),
             ],
           ),
         ),
+        if (googleSignInAvailable) ...[
+          const SizedBox(height: 22),
+          const AuthOrDivider(),
+          const SizedBox(height: 22),
+          GoogleAuthButton(
+            label: 'Continue with Google',
+            loading: _googleLoading,
+            onPressed: _loading ? null : _google,
+          ),
+        ],
         const SizedBox(height: 18),
         Text.rich(
           TextSpan(

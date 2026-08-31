@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../auth/auth_redirect.dart';
 import '../auth/auth_ui.dart';
+import '../auth/google_auth.dart';
 import '../auth/login_screen.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
@@ -128,6 +129,9 @@ class _SettingsTabState extends State<SettingsTab> {
       ),
     );
     if (confirmed != true || !context.mounted) return;
+    // Clear the cached Google account too, so the next sign-in shows the
+    // picker rather than silently reusing the last one.
+    await signOutFromGoogle();
     await Supabase.instance.client.auth.signOut();
     if (!context.mounted) return;
     Navigator.of(context).pushAndRemoveUntil(

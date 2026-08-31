@@ -32,6 +32,16 @@
 				<string>com.techgetafrica.yournotalone</string>
 			</array>
 		</dict>
+		<dict>
+			<!-- Google Sign-In callback: the iOS OAuth client ID with its
+			     dot-separated parts reversed. -->
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.497109017811-nm4kb8gspio91adb3tudjfbslvinkcjs</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>

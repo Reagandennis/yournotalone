@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
@@ -191,6 +192,94 @@ class AuthSubmitButton extends StatelessWidget {
               ),
             )
           : Text(label),
+    );
+  }
+}
+
+/// A hairline rule either side of a muted "or", separating the email form
+/// from the social buttons.
+class AuthOrDivider extends StatelessWidget {
+  const AuthOrDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const line = Expanded(child: Divider(color: Brand.border, height: 1));
+    return const Row(
+      children: [
+        line,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          child: Text(
+            'or',
+            style: TextStyle(fontSize: 13, color: Brand.textMuted),
+          ),
+        ),
+        line,
+      ],
+    );
+  }
+}
+
+/// Outlined counterpart to [AuthSubmitButton], carrying the Google mark.
+/// Deliberately white rather than filled so it reads as secondary next to
+/// the dark primary action.
+class GoogleAuthButton extends StatelessWidget {
+  const GoogleAuthButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.loading = false,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton(
+      onPressed: loading ? null : onPressed,
+      style: OutlinedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Brand.ink,
+        disabledForegroundColor: Brand.textMuted,
+        minimumSize: const Size.fromHeight(56),
+        side: const BorderSide(color: Brand.border, width: 1.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      child: loading
+          ? const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.4,
+                color: Brand.ink,
+              ),
+            )
+          : Row(
+              // Shrink-wrap and let the label ellipsize so the row survives
+              // narrow screens and large text scale factors.
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/brand/google_g.svg',
+                  width: 20,
+                  height: 20,
+                ),
+                const SizedBox(width: 12),
+                Flexible(
+                  child: Text(label, overflow: TextOverflow.ellipsis),
+                ),
+              ],
+            ),
     );
   }
 }

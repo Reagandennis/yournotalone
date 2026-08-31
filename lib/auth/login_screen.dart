@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../brand.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
+import 'google_auth.dart';
 import 'reset_password_screen.dart';
 import 'signup_screen.dart';
 
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
+  bool _googleLoading = false;
 
   @override
   void dispose() {
@@ -43,6 +45,21 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) showAuthError(context, e);
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _google() async {
+    setState(() => _googleLoading = true);
+    try {
+      final signedIn = await signInWithGoogle();
+      if (!signedIn || !mounted) return;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => postAuthDestination()),
+      );
+    } catch (e) {
+      if (mounted) showAuthError(context, e);
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
     }
   }
 
@@ -91,11 +108,21 @@ class _LoginScreenState extends State<LoginScreen> {
               AuthSubmitButton(
                 label: 'Log in',
                 loading: _loading,
-                onPressed: _submit,
+                onPressed: _googleLoading ? null : _submit,
               ),
             ],
           ),
         ),
+        if (googleSignInAvailable) ...[
+          const SizedBox(height: 22),
+          const AuthOrDivider(),
+          const SizedBox(height: 22),
+          GoogleAuthButton(
+            label: 'Continue with Google',
+            loading: _googleLoading,
+            onPressed: _loading ? null : _google,
+          ),
+        ],
         const SizedBox(height: 26),
         Wrap(
           alignment: WrapAlignment.center,
