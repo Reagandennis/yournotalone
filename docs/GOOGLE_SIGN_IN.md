@@ -71,6 +71,20 @@ keytool -list -v -alias upload -keystore android/app/upload-keystore.jks | grep 
 Miss #3 and Google sign-in works perfectly in every local build and every internal-track
 sideload, then fails for everyone who installs from Play.
 
+Certificate fingerprints are public, so the current ones are recorded here to save the hunt —
+but Play Console stays authoritative, and these change if a key is ever rotated:
+
+| Certificate | SHA-1 | Registered as |
+|---|---|---|
+| Play app signing ("Classical key") | `69:DD:1D:78:72:F0:34:C9:A1:33:11:2F:AB:CE:EB:C1:FA:01:50:E5` | You're Not Alone — Android (Play app signing) |
+| Upload key (current, generated 5 Sep 2026) | `22:05:B7:7E:53:80:14:1D:48:05:21:9D:31:05:42:42:E0:D4:7C:B9` | You're Not Alone — Android (upload key) |
+| ~~Upload key (original, lost — reset via Play 5 Sep 2026)~~ | ~~`71:C4:BD:BE:77:FE:73:EA:5C:D2:CC:B3:F1:B7:77:44:C0:9E:9E:A2`~~ | — |
+| Debug (this machine, created 3 Sep 2026) | `EE:6A:09:F1:CA:B1:AF:FB:0F:9F:4E:17:A5:31:B1:71:26:FA:38:E3` | You're Not Alone — Android |
+
+A debug keystore is regenerated silently by Android Studio whenever it goes missing or
+expires, and the replacement has a different fingerprint — which is exactly how this first
+broke. Re-check the debug row against `keytool` before assuming the code is at fault.
+
 ## iOS
 
 `ios/Runner/Info.plist` already registers the reversed iOS client ID
