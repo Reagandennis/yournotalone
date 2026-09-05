@@ -1,0 +1,8 @@
+# Play Console package name for this app.
+package_name("com.techgetafrica.yournotalone")
+
+# Service-account credentials are read from the environment so nothing
+# secret lives in git. Either works:
+#   SUPPLY_JSON_KEY=play-service-account.json   (path, relative to android/)
+#   SUPPLY_JSON_KEY_DATA='{"type": ...}'        (raw JSON, ideal for CI secrets)
+# Put the local value in android/fastlane/.env (gitignored); see .env.default.

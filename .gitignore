@@ -43,3 +43,19 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# fastlane (android/fastlane) — generated output and local secrets
+android/fastlane/report.xml
+android/fastlane/Preview.html
+android/fastlane/test_output/
+android/fastlane/.env
+android/fastlane/.env.*
+!android/fastlane/.env.default
+android/play-service-account.json
+*service-account*.json
+
+# Ruby / bundler
+/.bundle/
+/vendor/bundle/
+
+# Security scan output lives in build/security (already covered by /build/)

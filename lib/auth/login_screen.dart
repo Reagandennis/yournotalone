@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../brand.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
+import 'google_button.dart';
 import 'reset_password_screen.dart';
 import 'signup_screen.dart';
 
@@ -96,6 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
+        const SizedBox(height: 24),
+        const AuthDivider(),
+        const SizedBox(height: 24),
+        const GoogleAuthButton(),
         const SizedBox(height: 26),
         Wrap(
           alignment: WrapAlignment.center,

@@ -1,0 +1,378 @@
+# fastlane configuration for Δεν είσαι μόνος (Android / Google Play).
+#
+# Run from the android/ directory:
+#   bundle exec fastlane test            # analyze + unit/widget tests
+#   bundle exec fastlane security        # secrets, CVEs, release-APK audit, MobSF
+#   bundle exec fastlane internal        # bump, test, build AAB, upload to Internal testing
+#   bundle exec fastlane beta            # same, to Open testing
+#   bundle exec fastlane production rollout:0.2
+#   bundle exec fastlane promote from:internal to:production rollout:0.1
+#   bundle exec fastlane metadata        # push store listing text + images
+#
+# Full setup guide: docs/RELEASING.md
+
+require "yaml"
+require "shellwords"
+
+opt_out_usage
+default_platform(:android)
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+
+def locate_project_root
+  candidates = [
+    (File.expand_path("../..", __dir__) if __dir__),
+    File.expand_path("..", Dir.pwd),
+    Dir.pwd,
+  ].compact
+  candidates.find { |c| File.exist?(File.join(c, "pubspec.yaml")) } ||
+    UI.user_error!("Could not find pubspec.yaml above #{Dir.pwd}")
+end
+
+PROJECT_ROOT   = locate_project_root
+ANDROID_DIR    = File.join(PROJECT_ROOT, "android")
+FASTLANE_DIR   = File.join(ANDROID_DIR, "fastlane")
+PUBSPEC        = File.join(PROJECT_ROOT, "pubspec.yaml")
+BUILD_DIR      = File.join(PROJECT_ROOT, "build")
+AAB_PATH       = File.join(BUILD_DIR, "app/outputs/bundle/release/app-release.aab")
+APK_PATH       = File.join(BUILD_DIR, "app/outputs/flutter-apk/app-release.apk")
+MAPPING_PATH   = File.join(BUILD_DIR, "app/outputs/mapping/release/mapping.txt")
+SYMBOLS_DIR    = File.join(BUILD_DIR, "symbols")
+SECURITY_DIR   = File.join(BUILD_DIR, "security")
+KEY_PROPERTIES = File.join(ANDROID_DIR, "key.properties")
+SCRIPTS_DIR    = File.join(PROJECT_ROOT, "scripts/security")
+CHANGELOG_DIR  = File.join(FASTLANE_DIR, "metadata/android/en-US/changelogs")
+
+PLAY_TRACKS = %w[internal alpha beta production].freeze
+
+# Android Studio's bundled JDK, used when JAVA_HOME is unset (macOS dev boxes).
+ANDROID_STUDIO_JDK = "/Applications/Android Studio.app/Contents/jbr/Contents/Home".freeze
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def ensure_java
+  return if ENV["JAVA_HOME"] && File.directory?(ENV["JAVA_HOME"])
+  if File.directory?(ANDROID_STUDIO_JDK)
+    ENV["JAVA_HOME"] = ANDROID_STUDIO_JDK
+    ENV["PATH"] = "#{ANDROID_STUDIO_JDK}/bin:#{ENV['PATH']}"
+    UI.message("JAVA_HOME not set; using Android Studio JDK at #{ANDROID_STUDIO_JDK}")
+  else
+    UI.important("JAVA_HOME is not set and no Android Studio JDK found; Gradle may fail.")
+  end
+end
+
+# Run a command from the Flutter project root (fastlane's `sh` defaults to android/fastlane).
+def run_in_root(cmd, env: {})
+  prefix = env.map { |k, v| "#{k}=#{Shellwords.escape(v.to_s)}" }.join(" ")
+  sh("cd #{Shellwords.escape(PROJECT_ROOT)} && #{prefix} #{cmd}".strip)
+end
+
+def flutter(args)
+  run_in_root("flutter #{args}")
+end
+
+def pubspec_version
+  match = File.read(PUBSPEC).match(/^version:[ \t]*(\d+\.\d+\.\d+)\+(\d+)[ \t]*$/)
+  UI.user_error!("pubspec.yaml has no 'version: x.y.z+N' line") unless match
+  { name: match[1], code: match[2].to_i }
+end
+
+def write_pubspec_version(name:, code:)
+  content = File.read(PUBSPEC)
+  updated = content.sub(/^version:[ \t]*\d+\.\d+\.\d+\+\d+[ \t]*$/, "version: #{name}+#{code}")
+  File.write(PUBSPEC, updated)
+  UI.success("pubspec.yaml version -> #{name}+#{code}")
+end
+
+def play_key_configured?
+  !(ENV["SUPPLY_JSON_KEY"].to_s.empty? && ENV["SUPPLY_JSON_KEY_DATA"].to_s.empty?)
+end
+
+# Highest versionCode currently on any Play track, or nil when the key is missing.
+def highest_play_version_code
+  return nil unless play_key_configured?
+  codes = PLAY_TRACKS.flat_map do |track|
+    google_play_track_version_codes(track: track)
+  rescue StandardError => e
+    UI.verbose("track #{track}: #{e.message}")
+    []
+  end
+  codes.max
+end
+
+def next_version_code
+  local = pubspec_version[:code]
+  remote = highest_play_version_code
+  if remote
+    UI.message("Highest versionCode on Play: #{remote} (pubspec has #{local})")
+    [remote, local].max + 1
+  else
+    UI.important("No Play credentials; using pubspec versionCode #{local} + 1")
+    local + 1
+  end
+end
+
+def ensure_release_signing!
+  return if File.exist?(KEY_PROPERTIES)
+  UI.user_error!(
+    "android/key.properties not found. Release builds would silently fall back to the " \
+    "DEBUG keystore and Play would reject them. See docs/RELEASING.md (Upload keystore)."
+  )
+end
+
+def write_changelog(version_code, text)
+  return if text.to_s.strip.empty?
+  UI.user_error!("Release notes must be <= 500 characters (Play limit)") if text.length > 500
+  FileUtils.mkdir_p(CHANGELOG_DIR)
+  path = File.join(CHANGELOG_DIR, "#{version_code}.txt")
+  File.write(path, text.strip + "\n")
+  UI.success("Wrote release notes to #{path}")
+end
+
+def upload_bundle(track:, rollout: nil, status: nil, version_code: nil)
+  UI.user_error!("AAB not found at #{AAB_PATH}; run the build lane first") unless File.exist?(AAB_PATH)
+  status ||= rollout ? "inProgress" : "completed"
+  params = {
+    track: track,
+    aab: AAB_PATH,
+    release_status: status,
+    skip_upload_metadata: true,
+    skip_upload_images: true,
+    skip_upload_screenshots: true,
+    skip_upload_changelogs: false,
+    skip_upload_apk: true,
+  }
+  params[:rollout] = rollout.to_s if rollout
+  params[:version_code] = version_code if version_code
+  params[:mapping] = MAPPING_PATH if File.exist?(MAPPING_PATH)
+  upload_to_play_store(params)
+end
+
+def run_security_step(name, script, args: [], env: {}, optional: false)
+  UI.header("security: #{name}")
+  cmd = ([File.join(SCRIPTS_DIR, script)] + args).map { |a| Shellwords.escape(a) }.join(" ")
+  run_in_root(cmd, env: env)
+  true
+rescue StandardError => e
+  if optional
+    UI.important("#{name} failed (non-blocking): #{e.message.lines.first}")
+    false
+  else
+    raise
+  end
+end
+
+# ---------------------------------------------------------------------------
+# Lanes
+# ---------------------------------------------------------------------------
+
+platform :android do
+  before_all do
+    ensure_java
+    FileUtils.mkdir_p(SECURITY_DIR)
+  end
+
+  desc "Static analysis and unit/widget tests (flutter analyze + flutter test)"
+  lane :test do
+    flutter("pub get")
+    flutter("analyze --no-fatal-infos")
+    flutter("test")
+  end
+
+  desc "Set the version in pubspec.yaml. Options: version_name:1.2.0 build_number:12 (build_number defaults to Play's highest + 1)"
+  lane :bump do |options|
+    current = pubspec_version
+    name = options[:version_name] || current[:name]
+    code = (options[:build_number] || next_version_code).to_i
+    UI.user_error!("build_number #{code} must be greater than pubspec's #{current[:code]}") if code <= current[:code] && !options[:force]
+    write_pubspec_version(name: name, code: code)
+    lane_context[:VERSION_NAME] = name
+    lane_context[:VERSION_CODE] = code
+  end
+
+  desc "Build a release App Bundle (obfuscated, with split debug info). Option: build_number:N"
+  lane :build do |options|
+    ensure_release_signing! unless options[:allow_debug_signing]
+    v = pubspec_version
+    code = (options[:build_number] || v[:code]).to_i
+    flutter(
+      "build appbundle --release --obfuscate --split-debug-info=#{Shellwords.escape(SYMBOLS_DIR)} " \
+      "--build-name=#{v[:name]} --build-number=#{code}"
+    )
+    UI.user_error!("Build finished but #{AAB_PATH} is missing") unless File.exist?(AAB_PATH)
+    lane_context[:VERSION_NAME] = v[:name]
+    lane_context[:VERSION_CODE] = code
+    UI.success("Built #{AAB_PATH} (#{v[:name]}+#{code})")
+  end
+
+  desc "Build a release APK (used by the security lane; obfuscated). Option: allow_debug_signing:true"
+  lane :apk do |options|
+    ensure_release_signing! unless options[:allow_debug_signing]
+    v = pubspec_version
+    flutter(
+      "build apk --release --obfuscate --split-debug-info=#{Shellwords.escape(SYMBOLS_DIR)} " \
+      "--build-name=#{v[:name]} --build-number=#{v[:code]}"
+    )
+    UI.user_error!("Build finished but #{APK_PATH} is missing") unless File.exist?(APK_PATH)
+  end
+
+  # Shared release flow: bump -> test -> build -> upload.
+  private_lane :release_to do |options|
+    track = options[:track]
+    unless options[:skip_bump]
+      bump(version_name: options[:version_name], build_number: options[:build_number])
+    end
+    test unless options[:skip_tests]
+    build(build_number: options[:build_number] || pubspec_version[:code])
+    code = lane_context[:VERSION_CODE]
+    write_changelog(code, options[:changelog])
+    upload_bundle(track: track, rollout: options[:rollout], status: options[:status], version_code: code)
+    UI.success("Uploaded #{lane_context[:VERSION_NAME]}+#{code} to the #{track} track")
+    UI.important("Remember to commit the pubspec.yaml version bump.") unless options[:skip_bump]
+  end
+
+  desc "Release to Internal testing. Options: changelog:'...' version_name:x.y.z build_number:N skip_tests:true skip_bump:true status:draft"
+  lane :internal do |options|
+    release_to(options.merge(track: "internal"))
+  end
+
+  desc "Release to Closed testing (alpha track). Same options as internal"
+  lane :alpha do |options|
+    release_to(options.merge(track: "alpha"))
+  end
+
+  desc "Release to Open testing (beta track). Same options as internal"
+  lane :beta do |options|
+    release_to(options.merge(track: "beta"))
+  end
+
+  desc "Release to Production with a staged rollout. Options: rollout:0.1 (default PLAY_DEFAULT_ROLLOUT) plus the internal lane options"
+  lane :production do |options|
+    rollout = (options[:rollout] || ENV.fetch("PLAY_DEFAULT_ROLLOUT", "0.1")).to_f
+    UI.user_error!("rollout must be between 0 and 1") unless rollout > 0 && rollout <= 1.0
+    release_to(options.merge(track: "production", rollout: (rollout < 1.0 ? rollout : nil)))
+  end
+
+  desc "Promote an existing release between tracks without rebuilding. Options: from:internal to:production rollout:0.1 version_code:N"
+  lane :promote do |options|
+    from = options[:from] || "internal"
+    to   = options[:to]   || "production"
+    UI.user_error!("unknown track") unless PLAY_TRACKS.include?(from) && PLAY_TRACKS.include?(to)
+    rollout = options[:rollout]&.to_f
+    params = {
+      track: from,
+      track_promote_to: to,
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+    }
+    params[:version_code] = options[:version_code].to_i if options[:version_code]
+    if rollout && rollout < 1.0
+      params[:rollout] = rollout.to_s
+      params[:track_promote_release_status] = "inProgress"
+    else
+      params[:track_promote_release_status] = "completed"
+    end
+    upload_to_play_store(params)
+    UI.success("Promoted #{from} -> #{to}")
+  end
+
+  desc "Increase the staged rollout of the current production release. Option: rollout:0.5 (1.0 = complete)"
+  lane :rollout do |options|
+    fraction = (options[:rollout] || UI.input("Rollout fraction (0-1):")).to_f
+    UI.user_error!("rollout must be between 0 and 1") unless fraction > 0 && fraction <= 1.0
+    params = {
+      track: "production",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      skip_upload_changelogs: true,
+    }
+    if fraction >= 1.0
+      params[:release_status] = "completed"
+    else
+      params[:release_status] = "inProgress"
+      params[:rollout] = fraction.to_s
+    end
+    upload_to_play_store(params)
+  end
+
+  desc "Upload the store listing (title, descriptions, icon, feature graphic, screenshots) from fastlane/metadata"
+  lane :metadata do
+    upload_to_play_store(
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_changelogs: true,
+      skip_upload_metadata: false,
+      skip_upload_images: false,
+      skip_upload_screenshots: false,
+      sync_image_upload: true,
+    )
+  end
+
+  desc "Pull the current store listing from Play into fastlane/metadata (overwrites local files)"
+  lane :download_metadata do
+    Dir.chdir(ANDROID_DIR) { sh("bundle exec fastlane supply init 2>/dev/null || fastlane supply init") }
+  end
+
+  desc "Check the Play service-account key works"
+  lane :validate_key do
+    UI.user_error!("Set SUPPLY_JSON_KEY (path) or SUPPLY_JSON_KEY_DATA in android/fastlane/.env") unless play_key_configured?
+    validate_play_store_json_key
+    codes = PLAY_TRACKS.map { |t| [t, (google_play_track_version_codes(track: t) rescue [])] }
+    codes.each { |t, c| UI.message("#{t.ljust(10)} versionCodes: #{c.empty? ? '-' : c.join(', ')}") }
+    UI.success("Play credentials OK for #{CredentialsManager::AppfileConfig.try_fetch_value(:package_name)}")
+  end
+
+  desc "Security test-suite: secrets scan, dependency CVEs, static analysis, release-APK manifest/signing audit, MobSF. Options: mobsf:false skip_build:true allow_debug_signing:true"
+  lane :security do |options|
+    results = {}
+    results[:analyze] = run_security_step("flutter analyze", "static_analysis.sh", optional: options[:strict] ? false : true)
+    results[:secrets] = run_security_step("secrets scan (gitleaks)", "secrets_scan.sh")
+    results[:deps]    = run_security_step("dependency vulnerabilities (osv-scanner)", "deps_audit.sh")
+
+    unless options[:skip_build]
+      apk(allow_debug_signing: options[:allow_debug_signing])
+    end
+    expect_release = File.exist?(KEY_PROPERTIES) && !options[:allow_debug_signing]
+    results[:apk] = run_security_step(
+      "release APK audit (manifest, signing, permissions, obfuscation)",
+      "apk_audit.sh",
+      args: [APK_PATH],
+      env: { "EXPECT_RELEASE_SIGNING" => (expect_release ? "1" : "0") }
+    )
+
+    want_mobsf = options[:mobsf].nil? ? true : options[:mobsf].to_s != "false"
+    if want_mobsf
+      results[:mobsf] = run_security_step("MobSF static scan (docker)", "mobsf_scan.sh", args: [APK_PATH], optional: true)
+    end
+
+    UI.header("Security summary")
+    results.each { |k, ok| UI.message("#{k.to_s.ljust(10)} #{ok ? '✅ pass' : '⚠️  see report'}") }
+    UI.message("Reports: #{SECURITY_DIR}")
+  end
+
+  desc "Everything a release needs, without uploading: test + security + build"
+  lane :preflight do |options|
+    test
+    security(options.merge(skip_build: false))
+    build(options)
+  end
+
+  after_all do |lane|
+    UI.success("Lane '#{lane}' finished")
+  end
+
+  error do |lane, exception|
+    UI.error("Lane '#{lane}' failed: #{exception.message.lines.first}")
+  end
+end

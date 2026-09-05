@@ -32,6 +32,16 @@
 				<string>com.techgetafrica.yournotalone</string>
 			</array>
 		</dict>
+		<!-- Reversed iOS OAuth client ID: how Google Sign-In hands the result
+		     back to the app. Must mirror _iosClientId in lib/auth/google_auth.dart. -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.497109017811-nm4kb8gspio91adb3tudjfbslvinkcjs</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>

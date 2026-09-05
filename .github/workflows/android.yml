@@ -1,0 +1,175 @@
+# CI for Δεν είσαι μόνος (Android).
+#
+#  - Every push / PR:       analyze + tests + security scans (secrets, CVEs, release-APK audit)
+#  - Tag  v*  (e.g. v1.0.3): everything above, then build a signed AAB and upload to Play "internal"
+#  - Manual dispatch:        choose the track (internal / alpha / beta / production) and rollout
+#
+# Required repository secrets for the release job (see docs/RELEASING.md):
+#   ANDROID_KEYSTORE_BASE64     base64 of the upload keystore (.jks)
+#   ANDROID_KEYSTORE_PASSWORD   storePassword
+#   ANDROID_KEY_ALIAS           keyAlias
+#   ANDROID_KEY_PASSWORD        keyPassword
+#   PLAY_SERVICE_ACCOUNT_JSON   the Google Play service-account JSON (raw contents)
+
+name: Android
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "Play track"
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+      rollout:
+        description: "Staged rollout fraction for production (0-1)"
+        default: "0.1"
+      changelog:
+        description: "Release notes (<= 500 chars)"
+        default: ""
+
+env:
+  FLUTTER_VERSION: "3.47.2"
+  JAVA_VERSION: "17"
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  check:
+    name: Analyze, test, security scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # gitleaks scans history
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Install security scanners
+        run: |
+          go install github.com/google/osv-scanner/v2/cmd/osv-scanner@latest
+          go install github.com/zricethezav/gitleaks/v8@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: Static analysis
+        run: scripts/security/static_analysis.sh
+
+      - name: Tests
+        run: flutter test
+
+      - name: Secrets scan
+        run: scripts/security/secrets_scan.sh
+
+      - name: Dependency vulnerabilities
+        run: scripts/security/deps_audit.sh
+
+      - name: Build release APK (debug-signed, for auditing only)
+        run: flutter build apk --release --obfuscate --split-debug-info=build/symbols
+
+      - name: Release APK audit
+        env:
+          EXPECT_RELEASE_SIGNING: "0"
+        run: scripts/security/apk_audit.sh build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: build/security/
+          if-no-files-found: ignore
+
+  release:
+    name: Release to Google Play
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: play-store
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Restore upload keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          test -n "$KEYSTORE_BASE64" || { echo "ANDROID_KEYSTORE_BASE64 secret is missing"; exit 1; }
+          echo "$KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          cat > android/key.properties <<PROPS
+          storeFile=upload-keystore.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          PROPS
+
+      - name: Upload to Google Play
+        working-directory: android
+        env:
+          SUPPLY_JSON_KEY_DATA: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          TRACK: ${{ github.event.inputs.track || 'internal' }}
+          ROLLOUT: ${{ github.event.inputs.rollout || '0.1' }}
+          CHANGELOG: ${{ github.event.inputs.changelog }}
+        run: |
+          test -n "$SUPPLY_JSON_KEY_DATA" || { echo "PLAY_SERVICE_ACCOUNT_JSON secret is missing"; exit 1; }
+          # The check job already ran analyze/tests, so skip them here. The versionCode is
+          # derived from Play (highest on any track + 1) so it is always unique; the version
+          # NAME comes from pubspec.yaml, so bump that before tagging (see docs/RELEASING.md).
+          if [ "$TRACK" = "production" ]; then
+            bundle exec fastlane android production rollout:"$ROLLOUT" skip_tests:true changelog:"$CHANGELOG"
+          else
+            bundle exec fastlane android "$TRACK" skip_tests:true changelog:"$CHANGELOG"
+          fi
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-bundle
+          path: |
+            build/app/outputs/bundle/release/*.aab
+            build/app/outputs/mapping/release/mapping.txt
+            build/symbols/
+          if-no-files-found: ignore
+
+      - name: Scrub signing material
+        if: always()
+        run: rm -f android/app/upload-keystore.jks android/key.properties

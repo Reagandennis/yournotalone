@@ -1,0 +1,22 @@
+# gitleaks configuration (used by scripts/security/secrets_scan.sh and CI).
+# Extends the default ruleset; only add allowlist entries for keys that are DESIGNED to be public.
+title = "yournotalone"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Public client-side keys and generated files"
+regexes = [
+  # Supabase publishable (anon-equivalent) keys are meant to ship in clients; RLS protects data.
+  '''sb_publishable_[A-Za-z0-9_-]+''',
+  # RevenueCat public SDK keys (Play / Test Store). Secret keys start with sk_ and are NOT allowed.
+  '''(goog|appl|test|amzn)_[A-Za-z0-9]{20,}''',
+]
+paths = [
+  '''pubspec\.lock''',
+  '''\.dart_tool/''',
+  '''^build/''',
+  '''android/fastlane/metadata/''',
+  '''docs/store/''',
+]

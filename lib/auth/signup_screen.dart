@@ -10,6 +10,7 @@ import '../legal/legal_screen.dart';
 import 'auth_gate.dart';
 import 'auth_redirect.dart';
 import 'auth_ui.dart';
+import 'google_button.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -190,6 +191,12 @@ class _SignupScreenState extends State<SignupScreen> {
             ],
           ),
         ),
+        const SizedBox(height: 24),
+        const AuthDivider(),
+        const SizedBox(height: 24),
+        // Placed above the legal notice on purpose: signing up through
+        // Google is still creating an account, so the same terms apply.
+        const GoogleAuthButton(),
         const SizedBox(height: 18),
         Text.rich(
           TextSpan(

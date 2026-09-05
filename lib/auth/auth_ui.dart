@@ -195,6 +195,36 @@ class AuthSubmitButton extends StatelessWidget {
   }
 }
 
+/// Hairline rule with a word set into it, separating the email form from the
+/// Google button.
+class AuthDivider extends StatelessWidget {
+  const AuthDivider({super.key, this.label = 'or'});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    const line = Expanded(child: Divider(color: Brand.border, height: 1));
+    return Row(
+      children: [
+        line,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Brand.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        line,
+      ],
+    );
+  }
+}
+
 /// Shows an auth failure as a snackbar, in plain words.
 void showAuthError(BuildContext context, Object error) {
   final message = error is AuthException

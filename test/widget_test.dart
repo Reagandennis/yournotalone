@@ -35,19 +35,32 @@ void main() {
     expect(find.text('Log in'), findsWidgets);
   });
 
-  Future<void> scrollToAndTap(WidgetTester tester, String text) async {
+  final authList = find
+      .descendant(
+        of: find.byType(ListView),
+        matching: find.byType(Scrollable),
+      )
+      .first;
+
+  /// Brings [text] into view in the current auth screen's list and returns
+  /// its finder. [delta] is how far to scroll per step — negative to search
+  /// back up the list.
+  Future<Finder> scrollTo(
+    WidgetTester tester,
+    String text, {
+    double delta = 80,
+  }) async {
     final finder = find.text(text);
-    await tester.scrollUntilVisible(
-      finder,
-      80,
-      scrollable: find
-          .descendant(
-            of: find.byType(ListView),
-            matching: find.byType(Scrollable),
-          )
-          .first,
-    );
-    await tester.tap(finder);
+    await tester.scrollUntilVisible(finder, delta, scrollable: authList);
+    // scrollUntilVisible stops once the target is built, which inside a
+    // ListView's cache extent can still be past the edge of the viewport.
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    return finder;
+  }
+
+  Future<void> scrollToAndTap(WidgetTester tester, String text) async {
+    await tester.tap(await scrollTo(tester, text));
     await tester.pumpAndSettle();
   }
 
@@ -58,9 +71,20 @@ void main() {
     expect(find.text('Create your account'), findsOneWidget);
 
     await scrollToAndTap(tester, 'Log in'); // "Already have an account?"
-    expect(find.text('Welcome back'), findsOneWidget);
+    // Login kept the scroll offset it had when signup was pushed, so its
+    // heading has to be scrolled back up to.
+    expect(await scrollTo(tester, 'Welcome back', delta: -80), findsOneWidget);
 
     await scrollToAndTap(tester, 'Forgot password?');
     expect(find.text('Reset password'), findsOneWidget);
+  });
+
+  testWidgets('Google is offered on both login and signup', (tester) async {
+    await pumpPastSplash(tester);
+
+    expect(await scrollTo(tester, 'Continue with Google'), findsOneWidget);
+
+    await scrollToAndTap(tester, 'Create an account');
+    expect(await scrollTo(tester, 'Continue with Google'), findsOneWidget);
   });
 }
