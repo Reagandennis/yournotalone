@@ -10,6 +10,7 @@ import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
 import 'brand.dart';
 import 'onboarding/onboarding_ui.dart';
+import 'sounds/sound_player.dart';
 import 'splash_screen.dart';
 
 Future<void> main() async {
@@ -20,11 +21,21 @@ Future<void> main() async {
   );
   // Enables the media notification and lock-screen controls, so a sleep
   // sound keeps playing when the screen goes off.
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.techgetafrica.yournotalone.audio',
-    androidNotificationChannelName: 'Wellbeing sounds',
-    androidNotificationOngoing: true,
-  );
+  //
+  // Never fatal: a hot restart after adding the plugin, or a platform with
+  // no implementation, throws MissingPluginException here — and the app
+  // failing to launch over a media session would be far worse than losing
+  // background playback.
+  try {
+    await JustAudioBackground.init(
+      androidNotificationChannelId: 'com.techgetafrica.yournotalone.audio',
+      androidNotificationChannelName: 'Wellbeing sounds',
+      androidNotificationOngoing: true,
+    );
+    backgroundAudioReady = true;
+  } catch (error) {
+    debugPrint('Background audio unavailable, playing in foreground: $error');
+  }
   await PurchasesService.instance.init();
   await initOnboardingFlags();
   runApp(const MyApp());

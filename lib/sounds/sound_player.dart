@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart' as sfx;
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -14,6 +15,14 @@ import 'sounds_catalog.dart';
 /// The [AudioPlayer] is created lazily on first play, and in widget tests
 /// (FLUTTER_TEST) the service runs silently so state stays testable
 /// without platform channels.
+/// Whether [JustAudioBackground.init] succeeded at startup.
+///
+/// It can fail — a hot restart after the plugin was added, a platform with
+/// no implementation — and when it does, the media notification and
+/// lock-screen controls are unavailable. Playback still works; it just
+/// stops when the app is backgrounded.
+bool backgroundAudioReady = false;
+
 class SoundPlayer {
   SoundPlayer._();
 
@@ -22,7 +31,11 @@ class SoundPlayer {
   static final bool _silent = Platform.environment.containsKey('FLUTTER_TEST');
 
   AudioPlayer? _player;
-  AudioPlayer? _oneShot;
+
+  /// Chimes run on a different engine on purpose: just_audio_background
+  /// allows exactly one just_audio player, and that one has to be the
+  /// ambient loop that keeps going with the screen off.
+  sfx.AudioPlayer? _oneShot;
   double _volume = 1.0;
 
   /// When the current sound started playing, so a real listen can be told
@@ -115,19 +128,25 @@ class SoundPlayer {
     try {
       final player = _player ??= AudioPlayer();
       await player.stop();
-      final matches = soundsCatalog.where((s) => s.asset == asset);
-      final title = matches.isEmpty ? 'Wellbeing sound' : matches.first.title;
-      await player.setAudioSource(
-        AudioSource.asset(
-          asset,
-          // What the lock screen and notification show while it plays.
-          tag: MediaItem(
-            id: asset,
-            title: title,
-            artist: 'Δεν είσαι μόνος',
+      if (backgroundAudioReady) {
+        final matches = soundsCatalog.where((s) => s.asset == asset);
+        final title =
+            matches.isEmpty ? 'Wellbeing sound' : matches.first.title;
+        await player.setAudioSource(
+          AudioSource.asset(
+            asset,
+            // What the lock screen and notification show while it plays.
+            tag: MediaItem(
+              id: asset,
+              title: title,
+              artist: 'Δεν είσαι μόνος',
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        // No media session available — a MediaItem tag would throw here.
+        await player.setAsset(asset);
+      }
       await player.setLoopMode(LoopMode.one);
       await player.setVolume(_volume);
       unawaited(player.play());
@@ -183,11 +202,11 @@ class SoundPlayer {
   Future<void> playOnce(String asset) async {
     if (_silent) return;
     try {
-      final player = _oneShot ??= AudioPlayer();
+      final player = _oneShot ??= sfx.AudioPlayer();
       await player.stop();
-      await player.setAsset(asset);
       await player.setVolume(_volume);
-      unawaited(player.play());
+      // audioplayers resolves asset paths relative to assets/.
+      await player.play(sfx.AssetSource(asset.replaceFirst('assets/', '')));
     } catch (e) {
       debugPrint('One-shot playback failed for $asset: $e');
     }

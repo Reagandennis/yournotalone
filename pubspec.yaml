@@ -38,6 +38,9 @@ dependencies:
   image_picker: ^1.2.0
   just_audio: ^0.9.46
   just_audio_background: ^0.0.1-beta.17
+  # Chimes go through a separate engine: just_audio_background allows only
+  # one just_audio player, and that one is the ambient loop.
+  audioplayers: ^6.1.0
   purchases_flutter: ^10.6.0
   purchases_ui_flutter: ^10.6.0
   flutter_local_notifications: ^22.2.0
