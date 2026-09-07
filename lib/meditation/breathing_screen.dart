@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../sounds/sound_player.dart';
+import '../practice/practice_repository.dart';
+import '../practice/session_close_out.dart';
 import 'meditation_catalog.dart';
 
 enum _Phase { inhale, holdIn, exhale, holdOut }
@@ -20,9 +22,12 @@ extension on _Phase {
 /// Guided breathing: a circle that grows and shrinks with the pattern's
 /// rhythm. Pick a length, breathe along, finish with a chime.
 class BreathingScreen extends StatefulWidget {
-  const BreathingScreen({super.key, required this.pattern});
+  const BreathingScreen({super.key, required this.pattern, this.practice});
 
   final BreathPattern pattern;
+
+  /// Injectable so the logging can be verified without a backend.
+  final PracticeRepository? practice;
 
   @override
   State<BreathingScreen> createState() => _BreathingScreenState();
@@ -53,6 +58,13 @@ class _BreathingScreenState extends State<BreathingScreen>
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         SoundPlayer.instance.playOnce(chimeAsset);
+        // Keep the session, so it can add up to something.
+        (widget.practice ?? PracticeRepository()).logSession(
+          kind: PracticeKind.breathing,
+          slug: pattern.title,
+          title: pattern.title,
+          minutes: _minutes.toDouble(),
+        );
         setState(() => _done = true);
       }
     });
@@ -264,19 +276,32 @@ class _BreathingScreenState extends State<BreathingScreen>
             height: 1.6,
           ),
         ),
+        const SizedBox(height: 8),
+        Text(
+          'Added to your practice history.',
+          style: TextStyle(fontSize: 12.5, color: pattern.accent),
+        ),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 12),
-          child: ElevatedButton(
+          child: OutlinedButton(
             onPressed: _start,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Brand.ink,
+              minimumSize: const Size.fromHeight(52),
+              side: const BorderSide(color: Brand.border, width: 1.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
             child: const Text('Go again'),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(bottom: 20),
-          child: TextButton(
-            onPressed: () => Navigator.of(context).maybePop(),
-            child: const Text('Done'),
+          padding: const EdgeInsets.fromLTRB(28, 0, 28, 20),
+          child: SessionCloseOut(
+            title: pattern.title,
+            accent: pattern.accent,
           ),
         ),
       ],

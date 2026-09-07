@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ counterpart to android:allowBackup="false".
+
+  This app holds health data (moods, journal entries, recovery history), so
+  none of it should ride along in a Google cloud backup or a device-to-device
+  transfer. Everything that matters lives in Supabase and comes back on
+  sign-in; the only local state is reminder settings, which are cheap to set
+  again.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+        <exclude domain="file" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+        <exclude domain="file" />
+    </device-transfer>
+</data-extraction-rules>

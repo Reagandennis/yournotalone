@@ -4,14 +4,30 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../home/mood_history_screen.dart';
-import 'journal_editor_screen.dart';
 import 'journal_prompts.dart';
+import 'journal_repository.dart';
+import 'new_entry.dart';
 import 'journal_screen.dart';
 
 /// Hub for the journal & mood section: the entry list and a blank page up
 /// top, then guided prompts to pick from.
 class JournalHubScreen extends StatelessWidget {
-  const JournalHubScreen({super.key});
+  const JournalHubScreen({super.key, this.journal});
+
+  /// Injectable so the free-entry cap can be tested without a backend.
+  final JournalRepository? journal;
+
+  Future<void> _openEditor(
+    BuildContext context, {
+    String? title,
+    String? content,
+  }) =>
+      openNewJournalEntry(
+        context,
+        title: title,
+        content: content,
+        journal: journal,
+      );
 
   bool _guardPremium(BuildContext context, String title, String message) {
     if (isPremiumUser()) return true;
@@ -114,7 +130,14 @@ class JournalHubScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PremiumBuilder(
+        builder: (context, _) => _buildContent(context),
+      );
+
+  /// Wrapped by [PremiumBuilder] above, so this repaints the moment the
+  /// entitlement changes — buying from inside the app used to leave the
+  /// screen you bought from still locked.
+  Widget _buildContent(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -170,11 +193,7 @@ class JournalHubScreen extends StatelessWidget {
                   title: 'Free write',
                   detail: 'A blank page, no prompt, no rules.',
                   tinted: true,
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const JournalEditorScreen(),
-                    ),
-                  ),
+                  onTap: () => _openEditor(context),
                 ),
                 for (final group in promptGroups) ...[
                   const SizedBox(height: 14),
@@ -191,13 +210,10 @@ class JournalHubScreen extends StatelessWidget {
                         locked: prompt.premium && !isPremiumUser(),
                         onTap: () {
                           if (!_guardPrompt(context, prompt.premium)) return;
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => JournalEditorScreen(
-                                initialTitle: prompt.title,
-                                initialContent: prompt.seed,
-                              ),
-                            ),
+                          _openEditor(
+                            context,
+                            title: prompt.title,
+                            content: prompt.seed,
                           );
                         },
                       ),

@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../practice/practice_repository.dart';
+import '../practice/session_close_out.dart';
 import '../sounds/sound_player.dart';
 import '../sounds/sounds_catalog.dart';
 import 'meditation_catalog.dart';
@@ -12,7 +14,14 @@ import 'meditation_catalog.dart';
 /// A timed meditation: progress ring, gentle prompts that change as the
 /// session unfolds, optional ambient sound underneath, chime at both ends.
 class MeditationScreen extends StatefulWidget {
-  const MeditationScreen({super.key, required this.meditation});
+  const MeditationScreen({
+    super.key,
+    required this.meditation,
+    this.practice,
+  });
+
+  /// Injectable so the logging can be verified without a backend.
+  final PracticeRepository? practice;
 
   final Meditation meditation;
 
@@ -54,6 +63,13 @@ class _MeditationScreenState extends State<MeditationScreen>
   Future<void> _finish() async {
     await SoundPlayer.instance.stop();
     await SoundPlayer.instance.playOnce(chimeAsset);
+    // Keep the session, so it can add up to something.
+    await (widget.practice ?? PracticeRepository()).logSession(
+      kind: PracticeKind.meditation,
+      slug: meditation.title,
+      title: meditation.title,
+      minutes: meditation.minutes.toDouble(),
+    );
     if (mounted) setState(() => _done = true);
   }
 
@@ -178,12 +194,17 @@ class _MeditationScreenState extends State<MeditationScreen>
             height: 1.6,
           ),
         ),
+        const SizedBox(height: 8),
+        Text(
+          'Added to your practice history.',
+          style: TextStyle(fontSize: 12.5, color: meditation.accent),
+        ),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 20),
-          child: ElevatedButton(
-            onPressed: () => Navigator.of(context).maybePop(),
-            child: const Text('Done'),
+          child: SessionCloseOut(
+            title: meditation.title,
+            accent: meditation.accent,
           ),
         ),
       ],
@@ -314,10 +335,10 @@ class _MeditationScreenState extends State<MeditationScreen>
                   child: Row(
                     children: [
                       const BackChip(),
-                      const Spacer(),
-                      // Flexible, or a long title runs off a narrow
-                      // screen (or one with big system text).
-                      Flexible(
+                      // Expanded rather than Spacer-Flexible-Spacer: with
+                      // three flexible children the title only got a third
+                      // of the row and ellipsised with space to spare.
+                      Expanded(
                         child: Text(
                           meditation.title,
                           maxLines: 1,
@@ -330,7 +351,7 @@ class _MeditationScreenState extends State<MeditationScreen>
                           ),
                         ),
                       ),
-                      const Spacer(),
+                      // Balances the back chip so the title sits centred.
                       const SizedBox(width: 42),
                     ],
                   ),

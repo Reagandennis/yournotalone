@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../home/home_shell.dart';
+import '../onboarding/onboarding_ui.dart';
 import '../onboarding/welcome_screen.dart';
 import 'login_screen.dart';
 
@@ -10,7 +11,11 @@ import 'login_screen.dart';
 Widget postAuthDestination() {
   final user = Supabase.instance.client.auth.currentUser;
   if (user == null) return const LoginScreen();
-  final done = user.userMetadata?['onboarding_complete'] == true;
+  // Either source counts: the metadata write can fail, and re-running
+  // onboarding (and the paywall) for someone who already finished is worse
+  // than trusting a local flag.
+  final done = user.userMetadata?['onboarding_complete'] == true ||
+      onboardingDoneLocally(user.id);
   if (done) return const HomeShell();
   return const WelcomeScreen();
 }

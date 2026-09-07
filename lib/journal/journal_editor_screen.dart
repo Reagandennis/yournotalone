@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../home/home_ui.dart';
 import 'journal_repository.dart';
 
 /// Write or edit a single journal entry. Pops with `true` when the list
@@ -64,12 +65,12 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
         );
       }
       if (mounted) Navigator.of(context).pop(true);
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couldn\'t save your entry — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save your entry — check your connection.')),
           ),
         );
       }
@@ -99,12 +100,11 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     try {
       await _repo.delete(widget.entry!.id);
       if (mounted) Navigator.of(context).pop(true);
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Couldn\'t delete the entry — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t delete the entry — check your connection.')),
           ),
         );
       }

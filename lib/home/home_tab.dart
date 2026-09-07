@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 import '../journal/journal_screen.dart';
 import '../meditation/meditations_screen.dart';
+import '../practice/practice_repository.dart';
+import '../practice/practice_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../sounds/sounds_screen.dart';
+import '../support/crisis_screen.dart';
 import '../therapy/therapy_screen.dart';
 import 'home_ui.dart';
 import 'mood_repository.dart';
@@ -57,7 +60,10 @@ const _quickItems = [
 /// Home tab: greeting, a one-tap mood check-in, quick access to the most
 /// used tools, and the therapy banner.
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key});
+  const HomeTab({super.key, this.practice});
+
+  /// Injectable so the practice strip can be driven with known sessions.
+  final PracticeRepository? practice;
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -65,7 +71,9 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   final _moodRepo = MoodRepository();
+  late final _practiceRepo = widget.practice ?? PracticeRepository();
   int? _mood;
+  PracticeSummary? _practice;
 
   @override
   void initState() {
@@ -74,6 +82,11 @@ class _HomeTabState extends State<HomeTab> {
     _moodRepo.fetchTodayMoodIndex().then((index) {
       if (mounted && index != null) setState(() => _mood = index);
     }).catchError((_) {});
+    _practiceRepo.fetchSummary().then((summary) {
+      if (mounted) setState(() => _practice = summary);
+    }).catchError((_) {
+      // The strip just stays hidden; it's not worth an error here.
+    });
   }
 
   Future<void> _selectMood(int index) async {
@@ -81,17 +94,34 @@ class _HomeTabState extends State<HomeTab> {
     setState(() => _mood = index);
     try {
       await _moodRepo.saveMood(index);
-      if (firstTime && mounted) {
+      if (!mounted) return;
+      // An "Awful" day is the one moment the app knows someone is
+      // struggling. Offer the door without forcing them through it.
+      if (index == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 8),
+            content: const Text('That sounds like a heavy day. You can talk '
+                'to someone right now.'),
+            action: SnackBarAction(
+              label: 'Get help',
+              textColor: Colors.white,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CrisisScreen()),
+              ),
+            ),
+          ),
+        );
+      } else if (firstTime) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Thanks for checking in.')),
         );
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Couldn\'t save your mood — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save your mood — check your connection.')),
           ),
         );
       }
@@ -103,6 +133,89 @@ class _HomeTabState extends State<HomeTab> {
     if (hour < 12) return 'Good morning,';
     if (hour < 18) return 'Good afternoon,';
     return 'Good evening,';
+  }
+
+  /// What the app remembers about you. Hidden until there is something to
+  /// show, so a first-time user isn't greeted by a row of zeroes.
+  Widget _practiceCard() {
+    final summary = _practice;
+    if (summary == null || summary.isEmpty) return const SizedBox.shrink();
+    final last = summary.last!;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 28),
+      child: Material(
+        color: const Color(0x0F3764CD),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const PracticeScreen()),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        summary.dayStreak > 1
+                            ? '${summary.dayStreak} days in a row'
+                            : 'Your practice',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Brand.ink,
+                        ),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_forward_ios_rounded,
+                        size: 14, color: Brand.blue),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${summary.minutesThisWeek.round()} minutes this week · '
+                  '${summary.sessions} sessions in all',
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    color: Brand.textMuted,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(last.kind.icon,
+                          size: 17, color: last.kind.color),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Last time: ${last.title}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Brand.ink,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _moodCard() {
@@ -285,6 +398,7 @@ class _HomeTabState extends State<HomeTab> {
         const SizedBox(height: 24),
         _moodCard(),
         const SizedBox(height: 28),
+        _practiceCard(),
         const SectionHeader(title: 'Quick access'),
         const SizedBox(height: 12),
         GridView.count(

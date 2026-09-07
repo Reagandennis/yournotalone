@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
+import '../billing/purchases_service.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
+import '../support/crisis_screen.dart';
 import 'halt_screen.dart';
 import 'insights_screen.dart';
 import 'milestones_screen.dart';
@@ -65,6 +67,25 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   void initState() {
     super.initState();
     if (_premium) _load();
+    // Upgrading from inside this screen used to leave it spinning forever:
+    // the data is only fetched for premium users, and nothing re-ran the
+    // fetch when the entitlement arrived.
+    PurchasesService.instance.isPro.addListener(_onEntitlementChanged);
+  }
+
+  @override
+  void dispose() {
+    PurchasesService.instance.isPro.removeListener(_onEntitlementChanged);
+    super.dispose();
+  }
+
+  void _onEntitlementChanged() {
+    if (!mounted) return;
+    if (_premium && _habits == null) {
+      _load();
+    } else {
+      setState(() {});
+    }
   }
 
   Future<void> _load() async {
@@ -78,7 +99,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           _cravings = cravings;
         });
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) setState(() => _error = true);
     }
   }
@@ -182,12 +203,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   try {
                     await _repo.addHabit(name, dayOne);
                     _load();
-                  } catch (_) {
+                  } catch (e) {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'Couldn\'t save — check your connection.'),
+                        SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
                         ),
                       );
                     }
@@ -213,11 +233,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           ),
         );
       }
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couldn\'t save — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
           ),
         );
       }
@@ -252,11 +272,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     try {
       await _repo.resetDayOne(habit);
       _load();
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couldn\'t save — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
           ),
         );
       }
@@ -286,11 +306,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     try {
       await _repo.deleteHabit(habit.id);
       _load();
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couldn\'t delete — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t delete — check your connection.')),
           ),
         );
       }
@@ -539,12 +559,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                           ),
                         );
                       }
-                    } catch (_) {
+                    } catch (e) {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Couldn\'t save — check your connection.'),
+                          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
                           ),
                         );
                       }
@@ -998,15 +1017,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   open: (_) => const TriggerInsightsScreen(),
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'If you\'re in crisis or immediate danger, call your local '
-                  'emergency number. Recovery is easier with backup — a '
-                  'licensed therapist here is never far away.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Brand.textMuted,
-                    height: 1.5,
-                  ),
+                const CrisisFooter(
+                  textAlign: TextAlign.left,
+                  trailing: ' Recovery is easier with backup — a licensed '
+                      'therapist here is never far away.',
                 ),
               ],
             ),

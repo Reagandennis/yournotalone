@@ -24,6 +24,9 @@ class JournalEntry {
       );
 }
 
+/// How many entries the free plan includes.
+const freeJournalEntryLimit = 5;
+
 /// CRUD for the user's journal, backed by the `journal_entries` table
 /// (row-level security keeps every user inside their own rows).
 class JournalRepository {
@@ -42,6 +45,17 @@ class JournalRepository {
         .eq('user_id', _userId)
         .order('created_at', ascending: false);
     return [for (final row in rows) JournalEntry.fromMap(row)];
+  }
+
+  /// How many entries exist. Cheap enough to call before opening the
+  /// editor, and the only way the cap can be enforced from screens that
+  /// don't already hold the list.
+  Future<int> countEntries() async {
+    final rows = await _client
+        .from('journal_entries')
+        .select('id')
+        .eq('user_id', _userId);
+    return rows.length;
   }
 
   Future<void> create({String? title, required String content}) =>

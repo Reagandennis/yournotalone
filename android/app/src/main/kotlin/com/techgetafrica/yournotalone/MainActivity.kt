@@ -1,5 +1,9 @@
 package com.techgetafrica.yournotalone
 
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 
-class MainActivity : FlutterActivity()
+// Extends AudioServiceActivity so a sound keeps playing with the screen
+// locked, and the lock-screen controls work. Keeping our own class (rather
+// than naming the plugin's activity directly in the manifest) leaves room
+// for platform channels later.
+class MainActivity : AudioServiceActivity()

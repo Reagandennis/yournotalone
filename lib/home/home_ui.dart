@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../journal/journal_repository.dart';
 import '../onboarding/paywall_screen.dart';
 
 /// First name of the signed-in user, from the signup metadata.
@@ -13,12 +14,37 @@ String firstNameOf() {
   return fullName.split(RegExp(r'\s+')).first;
 }
 
-/// Whether the user has premium. The RevenueCat entitlement is the
-/// source of truth; the metadata flag covers pre-billing test accounts.
+/// Whether the user has premium.
+///
+/// RevenueCat is the source of truth whenever it is configured — the
+/// `plan_choice` metadata flag is written once at purchase and never
+/// cleared, so trusting it there would keep premium alive through a
+/// cancellation, a refund and an expiry. It stays as the fallback for
+/// pre-billing test accounts and platforms where the SDK isn't set up.
 bool isPremiumUser() {
-  if (PurchasesService.instance.isPro.value) return true;
+  final purchases = PurchasesService.instance;
+  if (purchases.isConfigured) return purchases.isPro.value;
   final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
   return (meta?['plan_choice'] as String?)?.startsWith('premium') ?? false;
+}
+
+/// Rebuilds [builder] whenever the entitlement changes.
+///
+/// Without this, buying Premium from inside a screen left that screen
+/// locked until it happened to rebuild: `isPro` is a ValueNotifier and
+/// nothing was listening to it.
+class PremiumBuilder extends StatelessWidget {
+  const PremiumBuilder({super.key, required this.builder});
+
+  final Widget Function(BuildContext context, bool premium) builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: PurchasesService.instance.isPro,
+      builder: (context, _, _) => builder(context, isPremiumUser()),
+    );
+  }
 }
 
 /// Bottom sheet nudging free users toward Premium, leading to the paywall.
@@ -90,6 +116,34 @@ void showUpgradeSheet(
       ),
     ),
   );
+}
+
+/// What to tell the user about a caught error.
+///
+/// Most failures here really are the network, but a lost session throws
+/// `StateError('Not signed in')` from the repositories — and telling
+/// someone to check their connection when the fix is to log in again sends
+/// them somewhere they can't get out of.
+String errorMessage(Object error, String ifOffline) => error is StateError
+    ? 'You\'ve been signed out. Please log in again.'
+    : ifOffline;
+
+/// Whether a free user still has room for another journal entry, showing
+/// the upgrade sheet when they don't.
+///
+/// Every route into the editor has to pass through here — the cap used to
+/// live inside the journal list alone, so the hub's "Free write" and its
+/// prompts handed out unlimited entries.
+bool journalCapAllows(BuildContext context, int entryCount) {
+  if (isPremiumUser() || entryCount < freeJournalEntryLimit) return true;
+  showUpgradeSheet(
+    context,
+    title: 'You\'ve filled your free pages',
+    message: 'The free plan includes $freeJournalEntryLimit journal entries. '
+        'Premium unlocks unlimited journaling — and your first month is '
+        '80% off.',
+  );
+  return false;
 }
 
 /// Standard placeholder for features that aren't built yet.

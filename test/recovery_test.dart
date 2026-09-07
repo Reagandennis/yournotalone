@@ -34,6 +34,12 @@ void main() {
 
   testWidgets('recovery hub shows SOS free and locks the rest for free users',
       (tester) async {
+    // Tall enough for the upgrade sheet to fit — on the default 800x600
+    // surface its buttons land off-screen and taps silently miss, which
+    // made this test assert against a sheet that never closed.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 1400);
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(wrap(const RecoveryScreen()));
     await tester.pumpAndSettle();
 
@@ -48,6 +54,7 @@ void main() {
         find.text('Recovery tracking is part of Premium'), findsOneWidget);
     await tester.tap(find.text('Not now'));
     await tester.pumpAndSettle();
+    expect(find.text('Recovery tracking is part of Premium'), findsNothing);
 
     for (final tool in [
       'Play the tape forward',

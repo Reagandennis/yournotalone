@@ -1,0 +1,80 @@
+# Publishes docs/legal/ to GitHub Pages.
+#
+# Google Play needs three publicly reachable URLs, none of which existed
+# before this workflow:
+#
+#   Privacy policy   https://<user>.github.io/<repo>/privacy-policy.html
+#   Terms            https://<user>.github.io/<repo>/terms-of-service.html
+#   Account deletion https://<user>.github.io/<repo>/delete-account.html
+#
+# One-time setup: repository Settings → Pages → Source = "GitHub Actions".
+
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/legal/**"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Landing page, so the bare Pages URL isn't a 404 for a reviewer.
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp docs/legal/*.html _site/
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Δεν είσαι μόνος</title>
+          <style>
+            body { margin:0; padding:48px 24px; color:#191919; background:#fff;
+                   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+                   line-height:1.65; }
+            main { max-width:720px; margin:0 auto; }
+            .stripe { display:flex; gap:5px; width:132px; height:5px; margin:14px 0 24px; }
+            .stripe span { flex:1; border-radius:3px; }
+            a { color:#3764CD; display:block; margin:10px 0; font-size:1.05rem; }
+          </style>
+          </head>
+          <body><main>
+            <h1>Δεν είσαι μόνος</h1>
+            <div class="stripe" aria-hidden="true">
+              <span style="background:#E12D23"></span><span style="background:#3764CD"></span>
+              <span style="background:#191919"></span><span style="background:#FAB414"></span>
+            </div>
+            <a href="privacy-policy.html">Privacy Policy</a>
+            <a href="terms-of-service.html">Terms of Service</a>
+            <a href="delete-account.html">Delete your account</a>
+          </main></body>
+          </html>
+          HTML
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

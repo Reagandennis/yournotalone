@@ -16,8 +16,6 @@ class JournalScreen extends StatefulWidget {
 }
 
 class _JournalScreenState extends State<JournalScreen> {
-  static const _freeLimit = 5;
-
   final _repo = JournalRepository();
   List<JournalEntry>? _entries;
   bool _error = false;
@@ -61,18 +59,10 @@ class _JournalScreenState extends State<JournalScreen> {
   }
 
   void _newEntry() {
-    final count = _entries?.length ?? 0;
-    if (!_isPremium && count >= _freeLimit) {
-      showUpgradeSheet(
-        context,
-        title: 'You\'ve filled your free pages',
-        message: 'The free plan includes 5 journal entries. Premium unlocks '
-            'unlimited journaling — and your first month is 80% off.',
-      );
-      return;
-    }
+    if (!journalCapAllows(context, _entries?.length ?? 0)) return;
     _openEditor();
   }
+
 
   String _dateLabel(DateTime d) {
     final now = DateTime.now();
@@ -246,7 +236,7 @@ class _JournalScreenState extends State<JournalScreen> {
                   _isPremium
                       ? 'A private place for whatever\'s on your mind.'
                       : 'A private place for whatever\'s on your mind · '
-                          '$count/$_freeLimit free entries used.',
+                          '$count/$freeJournalEntryLimit free entries used.',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Brand.textMuted,

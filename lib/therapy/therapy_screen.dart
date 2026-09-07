@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../support/crisis_screen.dart';
 import 'therapy_repository.dart';
 
 const _topics = [
@@ -72,7 +73,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     try {
       final requests = await _repo.fetchRequests();
       if (mounted) setState(() => _requests = requests);
-    } catch (_) {
+    } catch (e) {
       if (mounted) setState(() => _failed = true);
     }
   }
@@ -100,12 +101,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
         ),
       );
       await _load();
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Couldn\'t send your request — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t send your request — check your connection.')),
           ),
         );
       }
@@ -140,11 +140,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
     try {
       await _repo.cancelRequest(request.id);
       await _load();
-    } catch (_) {
+    } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couldn\'t cancel — check your connection.'),
+          SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t cancel — check your connection.')),
           ),
         );
       }
@@ -531,12 +531,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
           for (final request in past) _pastRow(request),
         ],
         const SizedBox(height: 24),
-        const Text(
-          'If you\'re in crisis or immediate danger, please call your '
-          'local emergency number right away. This app can\'t replace '
-          'emergency care.',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
+        const CrisisFooter(
+          trailing: ' This app can\'t replace emergency care.',
         ),
       ],
     );

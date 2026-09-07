@@ -18,23 +18,43 @@ class _PlanRow {
   static const included = '✓';
 }
 
+// Keep this honest: every row here is checked against what the app
+// actually gates. Reminders and urge surfing are free, so they are not
+// sold as Premium.
 const _rows = [
   _PlanRow('Daily mood check-ins', _PlanRow.included, _PlanRow.included),
-  _PlanRow('Journaling', 'Limited', 'Unlimited'),
-  _PlanRow('Guided meditations & breathing', null, _PlanRow.included),
-  _PlanRow('Wellbeing sounds — focus, sleep, calm', null, _PlanRow.included),
-  _PlanRow('Progress insights & reminders', null, _PlanRow.included),
-  _PlanRow('Addiction recovery tools', null, _PlanRow.included),
+  _PlanRow('Daily reminders', _PlanRow.included, _PlanRow.included),
+  _PlanRow('Urge surfing, any time', _PlanRow.included, _PlanRow.included),
+  _PlanRow('Journaling', '5 entries', 'Unlimited'),
+  _PlanRow('Guided meditations & breathing', '2 free', 'All 20'),
+  _PlanRow('Wellbeing sounds — focus, sleep, calm', '1 free', 'All 13'),
+  _PlanRow('Journal prompts', '1 free', 'All 19'),
+  _PlanRow('Mood history & progress', null, _PlanRow.included),
+  _PlanRow('Recovery tracking & insights', null, _PlanRow.included),
 ];
 
 /// Premium paywall shown at the end of onboarding and from upgrade
 /// prompts. Sells the RevenueCat offering (monthly / yearly);
 /// when the store isn't reachable it falls back to a static preview.
 class PaywallScreen extends StatefulWidget {
-  const PaywallScreen({super.key, required this.checkin});
+  const PaywallScreen({
+    super.key,
+    required this.checkin,
+    this.fromOnboarding = false,
+    this.extraData = const {},
+  });
 
   /// The wellbeing check-in answer, saved when onboarding completes.
   final String checkin;
+
+  /// True only on the last step of onboarding. When false — an upgrade from
+  /// Settings or an upgrade sheet — finishing pops back to where the user
+  /// was instead of resetting them to a fresh Home tab.
+  final bool fromOnboarding;
+
+  /// Answers gathered earlier in onboarding that still need saving with the
+  /// rest (the therapy offer collects some before this screen).
+  final Map<String, dynamic> extraData;
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -66,12 +86,32 @@ class _PaywallScreenState extends State<PaywallScreen> {
     });
   }
 
+  /// Saves the choice and leaves. During onboarding that means handing over
+  /// to Home; afterwards it means going back to whatever the user was doing
+  /// when they decided to upgrade.
+  Future<void> _finish(String planChoice) async {
+    final data = {
+      ...widget.extraData,
+      'wellbeing_checkin': widget.checkin,
+      'plan_choice': planChoice,
+    };
+    if (widget.fromOnboarding) {
+      await completeOnboarding(context, data);
+    } else {
+      await saveOnboardingAnswers(data);
+      if (mounted) Navigator.of(context).pop();
+    }
+  }
+
   Future<void> _finishFree() async {
     setState(() => _loading = true);
-    await completeOnboarding(context, {
-      'wellbeing_checkin': widget.checkin,
-      'plan_choice': 'free',
-    });
+    // Outside onboarding "maybe later" is just a dismissal — it must not
+    // record a downgrade for someone who already pays.
+    if (!widget.fromOnboarding) {
+      if (mounted) Navigator.of(context).pop();
+      return;
+    }
+    await _finish('free');
     if (mounted) setState(() => _loading = false);
   }
 
@@ -90,10 +130,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       final pro = await PurchasesService.instance.purchase(package);
       if (pro && mounted) {
-        await completeOnboarding(context, {
-          'wellbeing_checkin': widget.checkin,
-          'plan_choice': 'premium',
-        });
+        await _finish('premium');
         return;
       }
       // Purchase went through but the entitlement didn't come back — that's
@@ -124,10 +161,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       final pro = await PurchasesService.instance.restore();
       if (pro && mounted) {
-        await completeOnboarding(context, {
-          'wellbeing_checkin': widget.checkin,
-          'plan_choice': 'premium',
-        });
+        await _finish('premium');
         return;
       }
       if (mounted) {
@@ -314,6 +348,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final hasStore = _selected != null;
     final trial = hasStore ? _trialLabel(_selected!) : null;
     return OnboardingScaffold(
+      dismissible: !widget.fromOnboarding,
       bottom: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -342,7 +377,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
             children: [
               TextButton(
                 onPressed: _loading ? null : _finishFree,
-                child: const Text('Continue with Free'),
+                child: Text(widget.fromOnboarding
+                    ? 'Continue with Free'
+                    : 'Maybe later'),
               ),
               const Text(
                 '·',

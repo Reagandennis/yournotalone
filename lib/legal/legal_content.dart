@@ -10,7 +10,7 @@ const legalEntityAddress = '179 Runda Drive, Nairobi, Kenya';
 const legalContactEmail = 'reaganprezzo@gmail.com';
 const legalGoverningCountry = 'Kenya';
 
-const legalLastUpdated = '13 August 2026';
+const legalLastUpdated = '7 September 2026';
 
 class LegalDoc {
   const LegalDoc({
@@ -58,7 +58,8 @@ final privacyPolicy = LegalDoc(
           'photo if you choose to add one.\n\n'
           'Wellbeing data — data you choose to record in the app: mood '
           'check-ins, journal entries, recovery tracking, your onboarding '
-          'wellbeing check-in, and meditation or breathing activity. This '
+          'wellbeing check-in, and your practice history — the meditation, '
+          'breathing and listening sessions you complete. This '
           'is health-related data and is treated as special-category data '
           'under Article 9 GDPR (see the next section).\n\n'
           'Therapy requests — if you request a therapy session: the topic '
@@ -137,8 +138,9 @@ final privacyPolicy = LegalDoc(
       'How long we keep your data',
       'Your account data and everything you record stay until you delete '
           'them or delete your account. When you delete your account, your '
-          'profile, photo, journal entries, moods, recovery data, and '
-          'therapy requests are permanently removed from our systems, with '
+          'profile, photo, journal entries, moods, practice history, recovery '
+          'data, and therapy requests are permanently removed from our '
+          'systems, with '
           'residual copies purged from backups within 30 days.\n\n'
           'Purchase records are kept as long as tax and accounting law '
           'requires. Server logs are kept briefly for security and then '

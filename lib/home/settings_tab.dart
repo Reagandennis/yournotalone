@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../account/account_repository.dart';
 import '../auth/auth_redirect.dart';
 import '../auth/auth_ui.dart';
 import '../auth/google_auth.dart';
@@ -12,6 +16,7 @@ import '../legal/legal_screen.dart';
 import '../onboarding/paywall_screen.dart';
 import '../profile/edit_profile_screen.dart';
 import '../reminders/reminders_screen.dart';
+import '../support/crisis_screen.dart';
 import '../support/faq_screen.dart';
 import 'home_ui.dart';
 
@@ -86,25 +91,28 @@ class _SettingsTabState extends State<SettingsTab> {
     }
   }
 
-  void _showCrisisResources(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Crisis resources'),
-        content: const Text(
-          'If you\'re in crisis or immediate danger, call your local '
-          'emergency number right away.\n\nThis app can\'t replace emergency '
-          'care — but a licensed therapist here is never far away, and your '
-          'first session is free.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-        ],
-      ),
+  Future<void> _contactSupport(BuildContext context) async {
+    final uri = Uri(
+      scheme: 'mailto',
+      path: legalContactEmail,
+      queryParameters: {'subject': 'Δεν είσαι μόνος — support'},
     );
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (launched || !context.mounted) return;
+      throw Exception('no mail app');
+    } catch (_) {
+      if (!context.mounted) return;
+      // No mail app configured — hand over the address instead of failing.
+      await Clipboard.setData(const ClipboardData(text: legalContactEmail));
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email address copied: $legalContactEmail'),
+        ),
+      );
+    }
   }
 
   Future<void> _confirmLogout(BuildContext context) async {
@@ -134,6 +142,69 @@ class _SettingsTabState extends State<SettingsTab> {
     await GoogleAuth.signOut();
     await Supabase.instance.client.auth.signOut();
     if (!context.mounted) return;
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
+  }
+
+  /// Deleting the account: name what goes, make the user type DELETE, then
+  /// carry it out and drop them back at the login screen. The privacy
+  /// policy, the terms and the FAQ all promise this works — so it has to
+  /// either finish or say plainly that it didn't.
+  Future<void> _confirmDelete(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => const _DeleteAccountDialog(),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const AlertDialog(
+        content: Row(
+          children: [
+            SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2.4),
+            ),
+            SizedBox(width: 16),
+            Expanded(child: Text('Deleting your account…')),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      await AccountRepository().deleteAccount();
+    } on Object catch (_) {
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // the progress dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Couldn\'t finish deleting your account. Your request is on '
+            'file and we\'ll complete it — or try again.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    // The account is gone. Signing out now talks to a user that no longer
+    // exists, so a failure here is expected and must not be reported as a
+    // failed deletion.
+    try {
+      await GoogleAuth.signOut();
+      await Supabase.instance.client.auth.signOut();
+    } catch (_) {
+      // Nothing to do — the session is dead either way.
+    }
+
+    if (!context.mounted) return;
+    Navigator.of(context).pop(); // the progress dialog
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
@@ -341,7 +412,14 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PremiumBuilder(
+        builder: (context, _) => _buildContent(context),
+      );
+
+  /// Wrapped by [PremiumBuilder] above, so this repaints the moment the
+  /// entitlement changes — buying from inside the app used to leave the
+  /// screen you bought from still locked.
+  Widget _buildContent(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       children: [
@@ -394,9 +472,16 @@ class _SettingsTabState extends State<SettingsTab> {
           context,
           Icons.health_and_safety_outlined,
           'Crisis resources',
-          onTap: () => _showCrisisResources(context),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const CrisisScreen()),
+          ),
         ),
-        _row(context, Icons.mail_outline_rounded, 'Contact us'),
+        _row(
+          context,
+          Icons.mail_outline_rounded,
+          'Contact us',
+          onTap: () => _contactSupport(context),
+        ),
         _row(
           context,
           Icons.help_outline_rounded,
@@ -437,15 +522,84 @@ class _SettingsTabState extends State<SettingsTab> {
           Icons.delete_outline_rounded,
           'Delete account',
           color: Brand.red,
+          onTap: () => _confirmDelete(context),
         ),
         const SizedBox(height: 30),
         const Center(child: PillarStripe(width: 90, height: 4)),
         const SizedBox(height: 10),
-        const Center(
-          child: Text(
-            'Δεν είσαι μόνος · v1.0.0',
-            style: TextStyle(fontSize: 12, color: Brand.textMuted),
+        Center(
+          child: FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              final info = snapshot.data;
+              final version = info == null
+                  ? ''
+                  : ' · v${info.version} (${info.buildNumber})';
+              return Text(
+                'Δεν είσαι μόνος$version',
+                style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+              );
+            },
           ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Confirmation for deleting an account. It's a widget rather than an
+/// inline builder so the text controller is disposed with the route — a
+/// controller disposed while the dismiss animation is still running throws.
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final armed = _controller.text.trim().toUpperCase() == 'DELETE';
+    return AlertDialog(
+      title: const Text('Delete your account?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'This removes your profile, journal entries, mood check-ins, '
+            'recovery streaks, craving logs, therapy requests and photo. '
+            'It happens straight away and it can\'t be undone.',
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _controller,
+            autocorrect: false,
+            decoration: const InputDecoration(
+              labelText: 'Type DELETE to confirm',
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Keep my account'),
+        ),
+        TextButton(
+          onPressed: armed ? () => Navigator.of(context).pop(true) : null,
+          style: TextButton.styleFrom(foregroundColor: Brand.red),
+          child: const Text('Delete for good'),
         ),
       ],
     );

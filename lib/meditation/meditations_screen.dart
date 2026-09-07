@@ -189,7 +189,14 @@ class MeditationsScreen extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PremiumBuilder(
+        builder: (context, _) => _buildContent(context),
+      );
+
+  /// Wrapped by [PremiumBuilder] above, so this repaints the moment the
+  /// entitlement changes — buying from inside the app used to leave the
+  /// screen you bought from still locked.
+  Widget _buildContent(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Center(

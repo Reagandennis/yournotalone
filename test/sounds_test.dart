@@ -88,6 +88,10 @@ void main() {
 
   testWidgets('free sound opens the player, autoplays, and can pause',
       (tester) async {
+    // A real phone, not the 800x600 default: the player fills the screen.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 900);
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(wrap(const SoundsScreen()));
     await tester.pumpAndSettle();
 

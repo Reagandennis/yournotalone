@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'auth/auth_gate.dart';
+import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
 import 'brand.dart';
+import 'onboarding/onboarding_ui.dart';
 import 'splash_screen.dart';
 
 Future<void> main() async {
@@ -15,7 +18,15 @@ Future<void> main() async {
     url: 'https://zpcfavemnvfhqaxqhmri.supabase.co',
     publishableKey: 'sb_publishable_yKBVrkk13Sm5hMZtrerdiw_uTrhlNd9',
   );
+  // Enables the media notification and lock-screen controls, so a sleep
+  // sound keeps playing when the screen goes off.
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.techgetafrica.yournotalone.audio',
+    androidNotificationChannelName: 'Wellbeing sounds',
+    androidNotificationOngoing: true,
+  );
   await PurchasesService.instance.init();
+  await initOnboardingFlags();
   runApp(const MyApp());
 }
 
@@ -33,16 +44,33 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // A password-recovery email deep-links back into the app and signs the
-    // user in; from there they still need to choose the new password.
     _authSub =
         Supabase.instance.client.auth.onAuthStateChange.listen((state) {
-      if (state.event == AuthChangeEvent.passwordRecovery) {
-        _navigatorKey.currentState?.push(
-          MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
-        );
+      switch (state.event) {
+        // A password-recovery email deep-links back into the app and signs
+        // the user in; from there they still need to choose the new password.
+        case AuthChangeEvent.passwordRecovery:
+          _navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
+          );
+        // Without this, an expired or revoked session leaves the app sitting
+        // in HomeShell with no user: every repository throws "Not signed in",
+        // every screen reports it as a connection problem, and "Try again"
+        // can never succeed. Send them somewhere they can actually recover.
+        case AuthChangeEvent.signedOut:
+          _toLogin();
+        default:
+          break;
       }
-    });
+      // A failed token refresh arrives as a stream error, not an event.
+    }, onError: (_) => _toLogin());
+  }
+
+  void _toLogin() {
+    _navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      (route) => false,
+    );
   }
 
   @override

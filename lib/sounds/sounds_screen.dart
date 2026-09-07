@@ -185,7 +185,14 @@ class _SoundsScreenState extends State<SoundsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PremiumBuilder(
+        builder: (context, _) => _buildContent(context),
+      );
+
+  /// Wrapped by [PremiumBuilder] above, so this repaints the moment the
+  /// entitlement changes — buying from inside the app used to leave the
+  /// screen you bought from still locked.
+  Widget _buildContent(BuildContext context) {
     final visible = _filter == null
         ? soundsCatalog
         : [for (final s in soundsCatalog) if (s.category == _filter) s];
@@ -227,12 +234,17 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     ),
                   ),
                   const SizedBox(height: 22),
-                  Row(
-                    children: [
-                      _chip('All', null),
-                      for (final c in SoundCategory.values)
-                        _chip(c.label, c),
-                    ],
+                  // Scrollable: four chips overflow a 390px-wide phone, and
+                  // more so with larger system text.
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _chip('All', null),
+                        for (final c in SoundCategory.values)
+                          _chip(c.label, c),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 20),
                   for (final sound in visible)

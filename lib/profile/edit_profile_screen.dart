@@ -145,7 +145,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     FocusScope.of(context).unfocus();
     setState(() => _saving = true);
     try {
-      final uid = _client.auth.currentUser!.id;
+      final uid = _client.auth.currentUser?.id;
+      if (uid == null) throw StateError('Not signed in');
       final path = '$uid/avatar.jpg';
       String? avatarUrl = _removePhoto ? null : _currentAvatarUrl;
 

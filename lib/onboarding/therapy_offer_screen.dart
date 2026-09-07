@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../therapy/therapy_repository.dart';
+import '../support/crisis_screen.dart';
 import 'onboarding_ui.dart';
+import 'paywall_screen.dart';
 
 /// Shown when the check-in suggests the user needs real support: the app
 /// offers sessions with licensed therapists, and their first one is free.
@@ -35,18 +37,23 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
       }
     }
     if (!mounted) return;
-    await completeOnboarding(context, {
-      'wellbeing_checkin': widget.checkin,
-      'therapy_free_session': wantsFreeSession,
-    });
+    // Onboarding finishes on the paywall, for everyone. Sending this branch
+    // straight to Home meant the users who said they were struggling — half
+    // of all answers — never saw what Premium was.
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PaywallScreen(
+          checkin: widget.checkin,
+          fromOnboarding: true,
+          extraData: {'therapy_free_session': wantsFreeSession},
+        ),
+      ),
+    );
     if (mounted) setState(() => _loading = false);
   }
 
-  static const _crisisNote = Text(
-    'If you\'re in crisis or immediate danger, please call your local '
-    'emergency number right away. This app can\'t replace emergency care.',
-    textAlign: TextAlign.center,
-    style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
+  static const _crisisNote = CrisisFooter(
+    trailing: ' This app can\'t replace emergency care.',
   );
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
 
 class _Step {
@@ -97,12 +98,12 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
         const SnackBar(content: Text('Saved to your journal.')),
       );
       Navigator.of(context).pop();
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Couldn\'t save — check your connection.'),
+        SnackBar(
+            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
         ),
       );
     }

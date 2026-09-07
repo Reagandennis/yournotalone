@@ -72,6 +72,66 @@ class _PlayerScreenState extends State<PlayerScreen>
     super.dispose();
   }
 
+  /// Sleep timer. Five of the sounds are made for falling asleep to, and
+  /// without this they play until the battery dies.
+  Widget _sleepTimerRow(Color accent) {
+    const options = [15, 30, 60];
+    return ValueListenableBuilder<Duration?>(
+      valueListenable: SoundPlayer.instance.sleepTimer,
+      builder: (context, left, _) {
+        if (left != null) {
+          final minutes = left.inMinutes;
+          final seconds = left.inSeconds % 60;
+          return TextButton.icon(
+            onPressed: () => SoundPlayer.instance.setSleepTimer(null),
+            icon: const Icon(Icons.bedtime_rounded, size: 17),
+            label: Text(
+              'Stops in ${minutes.toString().padLeft(2, '0')}:'
+              '${seconds.toString().padLeft(2, '0')} · cancel',
+            ),
+            style: TextButton.styleFrom(foregroundColor: accent),
+          );
+        }
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.bedtime_outlined,
+                size: 16, color: Brand.textMuted),
+            const SizedBox(width: 2),
+            for (final minutes in options)
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Material(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: const BorderSide(color: Brand.border, width: 1.2),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => SoundPlayer.instance
+                        .setSleepTimer(Duration(minutes: minutes)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      child: Text(
+                        '${minutes}m',
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          color: Brand.ink,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final accent = sound.category.accent;
@@ -285,7 +345,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                         ],
                       ),
                     ),
-                    const SizedBox(height: 26),
+                    const SizedBox(height: 14),
+                    _sleepTimerRow(accent),
+                    const SizedBox(height: 18),
                   ],
                 );
               },
