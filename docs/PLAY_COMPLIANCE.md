@@ -31,9 +31,11 @@ Notes:    Sign in with the credentials above. Onboarding runs once; tap
           with a "Premium" badge and open an upgrade sheet.
 ```
 
-Create that account against production Supabase and mark `plan_choice` as
-`premium_monthly` in its user metadata if you want reviewers to see the paid
-surfaces without buying.
+Create that account against production Supabase. To let reviewers see the paid
+surfaces without buying, set `premium_comp` on it — see section 4 of
+`supabase/account_ops.sql`. (`plan_choice` no longer grants premium while
+RevenueCat is live: it is written once at purchase and never cleared, so it
+would keep premium alive through a cancellation.)
 
 ## Data safety form
 

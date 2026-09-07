@@ -14,17 +14,27 @@ String firstNameOf() {
   return fullName.split(RegExp(r'\s+')).first;
 }
 
+/// Metadata flag that grants premium regardless of billing — for your own
+/// account, testers, the Play reviewer, and support goodwill. Set it by
+/// hand; nothing in the app ever writes it. See supabase/account_ops.sql.
+const compPremiumKey = 'premium_comp';
+
 /// Whether the user has premium.
 ///
-/// RevenueCat is the source of truth whenever it is configured — the
-/// `plan_choice` metadata flag is written once at purchase and never
-/// cleared, so trusting it there would keep premium alive through a
-/// cancellation, a refund and an expiry. It stays as the fallback for
-/// pre-billing test accounts and platforms where the SDK isn't set up.
+/// Three sources, in order:
+///
+/// 1. A live RevenueCat entitlement — a real, current subscription.
+/// 2. A comp grant we set by hand ([compPremiumKey]).
+/// 3. `plan_choice` metadata, but **only** when RevenueCat can't answer at
+///    all (an unsupported platform, or configure failed). It is written
+///    once at purchase and never cleared, so trusting it while billing is
+///    live would keep premium alive through a cancellation or a refund.
 bool isPremiumUser() {
   final purchases = PurchasesService.instance;
-  if (purchases.isConfigured) return purchases.isPro.value;
+  if (purchases.isPro.value) return true;
   final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
+  if (meta?[compPremiumKey] == true) return true;
+  if (purchases.isConfigured) return false;
   return (meta?['plan_choice'] as String?)?.startsWith('premium') ?? false;
 }
 

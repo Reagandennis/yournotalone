@@ -1,28 +1,56 @@
--- Manual account-deletion operations — the fallback for when the
--- `delete-account` Edge Function couldn't finish (no network on the user's
--- side, function not deployed, service outage).
+-- Account operations — run in the Supabase dashboard → SQL Editor, which
+-- runs as postgres and bypasses RLS.
 --
--- Paste the piece you need into the Supabase dashboard → SQL Editor, which
--- runs as postgres and bypasses RLS. See supabase/migrations/0006 for the
--- table, and supabase/functions/delete-account for the automatic path.
+-- EVERY block below is commented out. Uncomment the one you need and run
+-- just that. Nothing here executes if you paste the whole file.
+--
+-- Sections 2 and 3 need supabase/migrations/0006_account_deletion.sql to
+-- have been run first; section 1 works on a fresh database.
 
--- ── 1. The queue: requests the function never closed out ─────────
-select
-  r.requested_at,
-  coalesce(r.user_email, u.email) as email,
-  u.raw_user_meta_data ->> 'full_name' as name,
-  r.status,
-  r.user_id,
-  r.id
-from public.deletion_requests r
-left join auth.users u on u.id = r.user_id
-where r.status = 'pending'
-order by r.requested_at;
+-- ── 1. Grant premium to an account, without a purchase ───────────
+-- For your own account, testers, the Play reviewer, or support goodwill.
+-- The app checks `premium_comp` (lib/home/home_ui.dart, compPremiumKey) and
+-- nothing ever writes it automatically, so it can't be confused with a real
+-- subscription — and it survives even when RevenueCat says no.
+-- Sign out and back in afterwards so the app re-reads the metadata.
+--
+-- update auth.users
+--    set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb)
+--                             || '{"premium_comp": true}'::jsonb
+--  where email = 'you@example.com';
+--
+-- Take it away again:
+-- update auth.users
+--    set raw_user_meta_data = raw_user_meta_data - 'premium_comp'
+--  where email = 'you@example.com';
+--
+-- Who currently has it:
+-- select email, raw_user_meta_data ->> 'premium_comp' as comp
+--   from auth.users
+--  where raw_user_meta_data ->> 'premium_comp' = 'true';
 
--- ── 2. What would go, for one user (check before deleting) ───────
+-- ── 2. Deletion queue: requests the Edge Function never closed out ─
+-- Needs migration 0006.
+--
+-- select
+--   r.requested_at,
+--   coalesce(r.user_email, u.email) as email,
+--   u.raw_user_meta_data ->> 'full_name' as name,
+--   r.status,
+--   r.user_id,
+--   r.id
+-- from public.deletion_requests r
+-- left join auth.users u on u.id = r.user_id
+-- where r.status = 'pending'
+-- order by r.requested_at;
+
+-- ── 3. Delete an account by hand ─────────────────────────────────
+-- Needs migration 0006. Check what would go first:
+--
 -- select
 --   (select count(*) from public.journal_entries  where user_id = '<user id>') as journal_entries,
 --   (select count(*) from public.mood_entries     where user_id = '<user id>') as mood_entries,
+--   (select count(*) from public.practice_sessions where user_id = '<user id>') as practice_sessions,
 --   (select count(*) from public.recovery_habits  where user_id = '<user id>') as habits,
 --   (select count(*) from public.recovery_pledges where user_id = '<user id>') as pledges,
 --   (select count(*) from public.craving_logs     where user_id = '<user id>') as craving_logs,
@@ -30,9 +58,9 @@ order by r.requested_at;
 --   (select count(*) from storage.objects
 --      where bucket_id = 'avatars'
 --        and (storage.foldername(name))[1] = '<user id>')                      as avatars;
-
--- ── 3. Delete: avatar objects first, then the auth user ──────────
--- Everything else cascades from auth.users. Run both statements together.
+--
+-- Then: avatar objects first, then the auth user. Everything else
+-- cascades from auth.users. Run all three together.
 --
 -- delete from storage.objects
 --  where bucket_id = 'avatars'
@@ -45,6 +73,8 @@ order by r.requested_at;
 -- delete from auth.users where id = '<user id>';
 
 -- ── 4. A request that must not proceed (e.g. it was disputed) ────
+-- Needs migration 0006.
+--
 -- update public.deletion_requests
 --    set status = 'failed', completed_at = now()
 --  where id = '<request id>';

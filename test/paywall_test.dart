@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/home/home_ui.dart';
 import 'package:yournotalone/journal/journal_hub_screen.dart';
 import 'package:yournotalone/journal/journal_repository.dart';
 import 'package:yournotalone/onboarding/checkin_screen.dart';
@@ -42,6 +43,18 @@ void main() {
     tester.view.physicalSize = const Size(400, 2600);
     addTearDown(tester.view.reset);
   }
+
+  test('a comp grant unlocks premium even while billing is live', () {
+    // Regression guard: making RevenueCat the source of truth locked out
+    // the accounts we grant premium to by hand — our own, testers, and the
+    // Play reviewer. `premium_comp` is the deliberate way back in, and
+    // nothing in the app ever writes it.
+    expect(compPremiumKey, 'premium_comp');
+
+    // Without a session there is no metadata and nothing to grant, so the
+    // answer is a plain no rather than an accidental yes.
+    expect(isPremiumUser(), isFalse);
+  });
 
   testWidgets('every check-in answer ends up at the paywall', (tester) async {
     // The "struggling" branch used to finish onboarding at the therapy
