@@ -76,7 +76,8 @@ void main() {
 
     // Recovery is the last card, above the therapy banner.
     expect(await scrollTo(tester, find.text('Urge surfing')), findsOneWidget);
-    expect(find.text('1 free · 3 Premium'), findsOneWidget);
+    expect(find.text('1 free · 6 Premium'), findsOneWidget);
+    expect(find.text('+ 4 more inside'), findsOneWidget);
   });
 
   testWidgets('opening a card shows the full list to pick from',

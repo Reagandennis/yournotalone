@@ -5,7 +5,11 @@ import '../brand.dart';
 import '../home/home_ui.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
+import 'halt_screen.dart';
+import 'insights_screen.dart';
+import 'milestones_screen.dart';
 import 'recovery_repository.dart';
+import 'tape_forward_screen.dart';
 
 /// The urge-surfing session: free for everyone — it's the tool for the
 /// hardest minutes, so it stays outside the paywall.
@@ -628,6 +632,83 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   // ── Shared pieces ──────────────────────────────────────────────
 
+  /// Entry point to one of the tools, gated for free users.
+  Widget _toolCard({
+    required IconData icon,
+    required Color accent,
+    required String title,
+    required String detail,
+    required WidgetBuilder open,
+  }) {
+    final locked = !_premium;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: locked ? const Color(0x0A191919) : accent.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: locked
+              ? _showLockedSheet
+              : () => Navigator.of(context)
+                  .push(MaterialPageRoute(builder: open)),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon,
+                      size: 21, color: locked ? Brand.textMuted : accent),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Brand.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        detail,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: Brand.textMuted,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                if (locked)
+                  const PremiumChip()
+                else
+                  Icon(Icons.arrow_forward_ios_rounded,
+                      size: 14, color: accent),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _lockedCard(String text) {
     return Material(
       color: const Color(0x0A191919),
@@ -763,6 +844,25 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   ),
                 ),
                 const SizedBox(height: 26),
+                const SectionHeader(title: 'In the moment'),
+                const SizedBox(height: 10),
+                _toolCard(
+                  icon: Icons.psychology_alt_rounded,
+                  accent: Brand.yellow,
+                  title: 'HALT check',
+                  detail: 'Hungry, angry, lonely, tired — find out what the '
+                      'craving is standing in for.',
+                  open: (_) => const HaltScreen(),
+                ),
+                _toolCard(
+                  icon: Icons.movie_filter_rounded,
+                  accent: Brand.red,
+                  title: 'Play the tape forward',
+                  detail: 'Watch the rest of the film before you decide, '
+                      'then keep it in your journal.',
+                  open: (_) => const TapeForwardScreen(),
+                ),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     const Expanded(
@@ -818,7 +918,16 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   )
                 else
                   for (final habit in habits) _habitCard(habit),
-                const SizedBox(height: 20),
+                const SizedBox(height: 4),
+                _toolCard(
+                  icon: Icons.emoji_events_rounded,
+                  accent: Brand.blue,
+                  title: 'Milestones',
+                  detail: 'Every marker, reached and ahead, for each '
+                      'commitment.',
+                  open: (_) => const MilestonesScreen(),
+                ),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     const Expanded(
@@ -879,7 +988,16 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   else
                     for (final log in cravings) _cravingRow(log),
                 ],
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
+                _toolCard(
+                  icon: Icons.query_stats_rounded,
+                  accent: Brand.ink,
+                  title: 'Trigger insights',
+                  detail: 'What sets them off, when they land, and how hard '
+                      '— over the last 90 days.',
+                  open: (_) => const TriggerInsightsScreen(),
+                ),
+                const SizedBox(height: 16),
                 const Text(
                   'If you\'re in crisis or immediate danger, call your local '
                   'emergency number. Recovery is easier with backup — a '

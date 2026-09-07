@@ -315,12 +315,19 @@ class _MeditationScreenState extends State<MeditationScreen>
                     children: [
                       const BackChip(),
                       const Spacer(),
-                      Text(
-                        meditation.title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                      // Flexible, or a long title runs off a narrow
+                      // screen (or one with big system text).
+                      Flexible(
+                        child: Text(
+                          meditation.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Brand.ink,
+                          ),
                         ),
                       ),
                       const Spacer(),

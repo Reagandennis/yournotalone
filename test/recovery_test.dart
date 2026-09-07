@@ -24,19 +24,42 @@ void main() {
   Widget wrap(Widget screen) =>
       MaterialApp(theme: buildAppTheme(), home: screen);
 
-  testWidgets('recovery hub shows SOS free and locks tracking for free users',
+  Future<Finder> scrollTo(WidgetTester tester, Finder finder) async {
+    await tester.scrollUntilVisible(finder, 120,
+        scrollable: find.byType(Scrollable).first);
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    return finder;
+  }
+
+  testWidgets('recovery hub shows SOS free and locks the rest for free users',
       (tester) async {
     await tester.pumpWidget(wrap(const RecoveryScreen()));
     await tester.pumpAndSettle();
 
+    // Urge surfing stays outside the paywall, at the top.
     expect(find.text('Craving right now?'), findsOneWidget);
-    expect(find.text('My commitments'), findsOneWidget);
-    expect(find.text('Trigger tracker'), findsOneWidget);
-    // Free users see the two locked cards with Premium chips.
-    expect(find.text('Premium'), findsNWidgets(2));
 
-    await tester.tap(find.text(
-        'Count every day, pledge each morning, and celebrate milestones.'));
+    // Walk down the page: every tool below the SOS card is gated, and
+    // tapping one sends a free user to the upgrade sheet.
+    await tester.tap(await scrollTo(tester, find.text('HALT check')));
+    await tester.pumpAndSettle();
+    expect(
+        find.text('Recovery tracking is part of Premium'), findsOneWidget);
+    await tester.tap(find.text('Not now'));
+    await tester.pumpAndSettle();
+
+    for (final tool in [
+      'Play the tape forward',
+      'My commitments',
+      'Milestones',
+      'Trigger tracker',
+      'Trigger insights',
+    ]) {
+      expect(await scrollTo(tester, find.text(tool)), findsOneWidget);
+    }
+
+    await tester.tap(await scrollTo(tester, find.text('Trigger insights')));
     await tester.pumpAndSettle();
     expect(
         find.text('Recovery tracking is part of Premium'), findsOneWidget);

@@ -73,6 +73,23 @@ class CravingLog {
   final String trigger;
   final String? note;
   final DateTime createdAt;
+
+  factory CravingLog.fromMap(Map<String, dynamic> map) => CravingLog(
+        id: map['id'] as String,
+        intensity: map['intensity'] as int,
+        trigger: map['trigger_kind'] as String,
+        note: map['note'] as String?,
+        createdAt: DateTime.parse(map['created_at'] as String).toLocal(),
+      );
+
+  /// Rough part of the day, for spotting when cravings tend to land.
+  String get partOfDay {
+    final hour = createdAt.hour;
+    if (hour < 6) return 'Night';
+    if (hour < 12) return 'Morning';
+    if (hour < 18) return 'Afternoon';
+    return 'Evening';
+  }
 }
 
 /// Supabase-backed storage for commitments, pledges, and craving logs.
@@ -150,16 +167,20 @@ class RecoveryRepository {
         .eq('user_id', _userId)
         .order('created_at', ascending: false)
         .limit(limit);
-    return [
-      for (final row in rows)
-        CravingLog(
-          id: row['id'] as String,
-          intensity: row['intensity'] as int,
-          trigger: row['trigger_kind'] as String,
-          note: row['note'] as String?,
-          createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
-        ),
-    ];
+    return [for (final row in rows) CravingLog.fromMap(row)];
+  }
+
+  /// Everything logged in the last [days] days — the pool the insights
+  /// screen reads patterns from.
+  Future<List<CravingLog>> fetchCravings({int days = 90}) async {
+    final since = DateTime.now().subtract(Duration(days: days));
+    final rows = await _client
+        .from('craving_logs')
+        .select()
+        .eq('user_id', _userId)
+        .gte('created_at', since.toUtc().toIso8601String())
+        .order('created_at', ascending: false);
+    return [for (final row in rows) CravingLog.fromMap(row)];
   }
 
   Future<void> logCraving({
