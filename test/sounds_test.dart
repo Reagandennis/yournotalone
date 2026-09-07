@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/sounds/sound_player.dart';
+import 'package:yournotalone/sounds/sounds_catalog.dart';
 import 'package:yournotalone/sounds/sounds_screen.dart';
 
 void main() {
@@ -25,6 +29,20 @@ void main() {
 
   Widget wrap(Widget screen) =>
       MaterialApp(theme: buildAppTheme(), home: screen);
+
+  test('every catalogued sound ships as a real asset', () {
+    for (final sound in [...soundsCatalog.map((s) => s.asset), chimeAsset]) {
+      final file = File(sound);
+      expect(file.existsSync(), isTrue, reason: 'missing asset: $sound');
+      expect(file.lengthSync(), greaterThan(10 * 1024), reason: 'stub: $sound');
+    }
+  });
+
+  test('one sound is free to try, the rest are Premium', () {
+    final free = soundsCatalog.where((s) => !s.premium).toList();
+    expect(free.map((s) => s.title), ['Deep focus']);
+    expect(soundsCatalog.length, 13);
+  });
 
   testWidgets('sounds screen lists the library with category filters',
       (tester) async {

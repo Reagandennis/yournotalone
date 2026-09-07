@@ -1,180 +1,272 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
-import '../journal/journal_editor_screen.dart';
-import '../journal/journal_screen.dart';
+import '../journal/journal_hub_screen.dart';
+import '../journal/journal_prompts.dart';
+import '../meditation/meditation_catalog.dart';
 import '../meditation/meditations_screen.dart';
 import '../recovery/recovery_screen.dart';
+import '../sounds/sounds_catalog.dart';
 import '../sounds/sounds_screen.dart';
 import '../therapy/therapy_screen.dart';
 import 'home_ui.dart';
 
-enum _Action {
-  comingSoon,
-  journal,
-  freeWrite,
-  gratitude,
-  sounds,
-  meditate,
-  recovery,
-}
-
-class _ExploreItem {
-  const _ExploreItem(this.title, this.sub,
-      {this.premium = true, this.action = _Action.comingSoon});
+/// One line of the preview shown on a category card — the same items the
+/// user meets at the top of the list once the card is opened.
+class _PreviewItem {
+  const _PreviewItem(this.title, this.meta, this.icon, {this.premium = true});
 
   final String title;
-  final String sub;
+  final String meta;
+  final IconData icon;
   final bool premium;
-  final _Action action;
 }
 
-class _ExploreSection {
-  const _ExploreSection(this.title, this.icon, this.accent, this.items);
+class _ExploreCategory {
+  const _ExploreCategory({
+    required this.title,
+    required this.blurb,
+    required this.icon,
+    required this.accent,
+    required this.items,
+    required this.open,
+  });
 
   final String title;
+  final String blurb;
   final IconData icon;
   final Color accent;
-  final List<_ExploreItem> items;
+
+  /// Everything inside, in the order the destination screen lists it.
+  final List<_PreviewItem> items;
+  final WidgetBuilder open;
 }
 
-const _sections = [
-  _ExploreSection(
-    'Meditations & breathing',
-    Icons.self_improvement_rounded,
-    Brand.blue,
-    [
-      _ExploreItem('Box breathing', 'Free taste',
-          premium: false, action: _Action.meditate),
-      _ExploreItem('Morning grounding', '5 min',
-          premium: false, action: _Action.meditate),
-      _ExploreItem('Anxiety relief', '8 min', action: _Action.meditate),
-      _ExploreItem('Body scan', '12 min', action: _Action.meditate),
-      _ExploreItem('Sleep wind-down', '10 min', action: _Action.meditate),
-      _ExploreItem('Loving kindness', '6 min', action: _Action.meditate),
+/// Built from the real catalogues so the previews can never drift from
+/// what the destination screens actually offer.
+final _categories = <_ExploreCategory>[
+  _ExploreCategory(
+    title: 'Meditations & breathing',
+    blurb: 'Breathe along with the circle, or settle into a guided session.',
+    icon: Icons.self_improvement_rounded,
+    accent: Brand.blue,
+    items: [
+      for (final p in breathPatterns)
+        _PreviewItem(p.title, p.rhythmLabel, Icons.air_rounded,
+            premium: p.premium),
+      for (final m in meditations)
+        _PreviewItem(m.title, '${m.minutes} min', m.icon, premium: m.premium),
     ],
+    open: (_) => const MeditationsScreen(),
   ),
-  _ExploreSection(
-    'Wellbeing sounds',
-    Icons.graphic_eq_rounded,
-    Brand.yellow,
-    [
-      _ExploreItem('Deep focus', 'Focus',
-          premium: false, action: _Action.sounds),
-      _ExploreItem('Rainfall', 'Sleep', action: _Action.sounds),
-      _ExploreItem('Ocean waves', 'Calm', action: _Action.sounds),
-      _ExploreItem('White noise', 'Focus', action: _Action.sounds),
-      _ExploreItem('Crickets at night', 'Sleep', action: _Action.sounds),
+  _ExploreCategory(
+    title: 'Wellbeing sounds',
+    blurb: 'Loops that keep running while you focus, drift off, or settle.',
+    icon: Icons.graphic_eq_rounded,
+    accent: Brand.yellow,
+    items: [
+      for (final s in soundsCatalog)
+        _PreviewItem(s.title, s.category.label, s.icon, premium: s.premium),
     ],
+    open: (_) => const SoundsScreen(),
   ),
-  _ExploreSection(
-    'Journal & mood',
-    Icons.edit_note_rounded,
-    Brand.red,
-    [
-      _ExploreItem('My journal', 'All entries',
-          premium: false, action: _Action.journal),
-      _ExploreItem('Free write', 'New entry',
-          premium: false, action: _Action.freeWrite),
-      _ExploreItem('Gratitude prompt', '3 min',
-          premium: false, action: _Action.gratitude),
-      _ExploreItem('Mood history', 'Insights'),
+  _ExploreCategory(
+    title: 'Journal & mood',
+    blurb: 'A blank page when you need one, a prompt when you don\'t.',
+    icon: Icons.edit_note_rounded,
+    accent: Brand.red,
+    items: [
+      const _PreviewItem('My journal', 'All entries', Icons.menu_book_rounded,
+          premium: false),
+      const _PreviewItem('Free write', 'New entry', Icons.edit_note_rounded,
+          premium: false),
+      for (final p in journalPrompts)
+        _PreviewItem(p.title, 'Prompt', p.icon, premium: p.premium),
+      const _PreviewItem('Mood history', 'Insights', Icons.insights_rounded),
     ],
+    open: (_) => const JournalHubScreen(),
   ),
-  _ExploreSection(
-    'Recovery tools',
-    Icons.healing_rounded,
-    Brand.ink,
-    [
-      _ExploreItem('Urge surfing guide', '8 min',
-          premium: false, action: _Action.recovery),
-      _ExploreItem('Daily pledge', '1 min', action: _Action.recovery),
-      _ExploreItem('Trigger tracker', 'Log & learn',
-          action: _Action.recovery),
-      _ExploreItem('Milestones', 'Celebrate wins', action: _Action.recovery),
+  _ExploreCategory(
+    title: 'Recovery tools',
+    blurb: 'One day at a time — with tools for the hard minutes.',
+    icon: Icons.healing_rounded,
+    accent: Brand.ink,
+    items: const [
+      _PreviewItem('Urge surfing', '8 min', Icons.surfing_rounded,
+          premium: false),
+      _PreviewItem('My commitments', 'Daily streaks', Icons.verified_rounded),
+      _PreviewItem('Trigger tracker', 'Log & learn', Icons.bolt_rounded),
+      _PreviewItem('Milestones', 'Celebrate wins', Icons.emoji_events_rounded),
     ],
+    open: (_) => const RecoveryScreen(),
   ),
 ];
 
-/// Explore tab: the full catalogue of everything the app offers.
+/// How many items each card previews before falling back to "+N more".
+const _previewCount = 3;
+
+/// Explore tab: one card per pillar, each previewing what's inside and
+/// opening the full, scrollable list to pick from.
 class ExploreTab extends StatelessWidget {
   const ExploreTab({super.key});
 
-  Widget _itemCard(BuildContext context, _ExploreSection section,
-      _ExploreItem item) {
-    return SizedBox(
-      width: 150,
+  Widget _previewRow(_PreviewItem item, Color accent, bool premium) {
+    final locked = item.premium && !premium;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Container(
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(item.icon, size: 14, color: accent),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              item.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Brand.ink,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          // The badge earns the space the detail would have taken: what
+          // matters in a preview is which items are behind Premium.
+          if (locked)
+            const PremiumChip()
+          else
+            Text(
+              item.meta,
+              maxLines: 1,
+              style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _categoryCard(BuildContext context, _ExploreCategory category) {
+    final premium = isPremiumUser();
+    final shown = category.items.take(_previewCount);
+    final more = category.items.length - shown.length;
+    final free = category.items.where((i) => !i.premium).length;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
       child: Material(
-        color: section.accent.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: const BorderSide(color: Brand.border, width: 1.2),
+        ),
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () => switch (item.action) {
-            _Action.journal => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const JournalScreen()),
-              ),
-            _Action.freeWrite => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const JournalEditorScreen()),
-              ),
-            _Action.gratitude => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const JournalEditorScreen(
-                    initialTitle: 'Gratitude',
-                    initialContent: 'Today, I\'m grateful for ',
-                  ),
-                ),
-              ),
-            _Action.sounds => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SoundsScreen()),
-              ),
-            _Action.meditate => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const MeditationsScreen()),
-              ),
-            _Action.recovery => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const RecoveryScreen()),
-              ),
-            _Action.comingSoon => showComingSoon(context, item.title),
-          },
+          borderRadius: BorderRadius.circular(20),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(builder: category.open),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(section.icon, size: 18, color: section.accent),
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: category.accent.withValues(alpha: 0.10),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(category.icon,
+                          size: 21, color: category.accent),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            category.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 15.5,
+                              fontWeight: FontWeight.w600,
+                              color: Brand.ink,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            premium
+                                ? '${category.items.length} to pick from'
+                                : '$free free · ${category.items.length - free}'
+                                    ' Premium',
+                            maxLines: 1,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Brand.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: category.accent,
+                    ),
+                  ],
                 ),
-                const Spacer(),
+                const SizedBox(height: 10),
                 Text(
-                  item.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  category.blurb,
                   style: const TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: Brand.ink,
-                    height: 1.25,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  item.sub,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 11.5,
                     color: Brand.textMuted,
+                    height: 1.45,
                   ),
                 ),
-                if (item.premium) ...[
-                  const SizedBox(height: 6),
-                  const PremiumChip(),
-                ],
+                const SizedBox(height: 12),
+                Container(
+                  decoration: BoxDecoration(
+                    color: category.accent.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  child: Column(
+                    children: [
+                      for (final item in shown)
+                        _previewRow(item, category.accent, premium),
+                      if (more > 0) ...[
+                        const SizedBox(height: 4),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '+ $more more inside',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: category.accent,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -186,116 +278,88 @@ class ExploreTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.fromLTRB(28, 24, 0, 28),
+      padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       children: [
-        const Padding(
-          padding: EdgeInsets.only(right: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Explore',
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w600,
-                  color: Brand.ink,
-                  height: 1.2,
-                ),
-              ),
-              SizedBox(height: 12),
-              PillarStripe(),
-              SizedBox(height: 16),
-              Text(
-                'Everything in one place — pick whatever today calls for.',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Brand.textMuted,
-                  height: 1.55,
-                ),
-              ),
-            ],
+        const Text(
+          'Explore',
+          style: TextStyle(
+            fontSize: 26,
+            fontWeight: FontWeight.w600,
+            color: Brand.ink,
+            height: 1.2,
           ),
         ),
-        const SizedBox(height: 10),
-        for (final section in _sections) ...[
-          const SizedBox(height: 18),
-          Padding(
-            padding: const EdgeInsets.only(right: 28),
-            child: SectionHeader(title: section.title),
+        const SizedBox(height: 12),
+        const PillarStripe(),
+        const SizedBox(height: 16),
+        const Text(
+          'Everything in one place — open a card to see the full list and '
+          'pick whatever today calls for.',
+          style: TextStyle(
+            fontSize: 14,
+            color: Brand.textMuted,
+            height: 1.55,
           ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 165,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: 28),
-              itemCount: section.items.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 12),
-              itemBuilder: (context, i) =>
-                  _itemCard(context, section, section.items[i]),
-            ),
-          ),
-        ],
-        const SizedBox(height: 26),
-        Padding(
-          padding: const EdgeInsets.only(right: 28),
-          child: Material(
-            color: const Color(0x0F3764CD),
+        ),
+        const SizedBox(height: 24),
+        for (final category in _categories) _categoryCard(context, category),
+        const SizedBox(height: 12),
+        Material(
+          color: const Color(0x0F3764CD),
+          borderRadius: BorderRadius.circular(18),
+          child: InkWell(
             borderRadius: BorderRadius.circular(18),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(18),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const TherapyScreen()),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.support_agent_rounded,
-                        size: 22,
-                        color: Brand.blue,
-                      ),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const TherapyScreen()),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 14),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Real human therapy',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: Brand.ink,
-                            ),
+                    child: const Icon(
+                      Icons.support_agent_rounded,
+                      size: 22,
+                      color: Brand.blue,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Real human therapy',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Brand.ink,
                           ),
-                          SizedBox(height: 3),
-                          Text(
-                            'Book a private session — your first one is free.',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Brand.textMuted,
-                              height: 1.4,
-                            ),
+                        ),
+                        SizedBox(height: 3),
+                        Text(
+                          'Book a private session — your first one is free.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Brand.textMuted,
+                            height: 1.4,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 15,
-                      color: Brand.textMuted,
-                    ),
-                  ],
-                ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 15,
+                    color: Brand.textMuted,
+                  ),
+                ],
               ),
             ),
           ),

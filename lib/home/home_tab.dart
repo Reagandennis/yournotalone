@@ -8,6 +8,7 @@ import '../sounds/sounds_screen.dart';
 import '../therapy/therapy_screen.dart';
 import 'home_ui.dart';
 import 'mood_repository.dart';
+import 'mood_scale.dart';
 
 enum _QuickAction { comingSoon, journal, sounds, meditate, recovery }
 
@@ -52,18 +53,6 @@ const _quickItems = [
     action: _QuickAction.recovery,
   ),
 ];
-
-// Each mood lights up in its own colour: warm for the hard days,
-// cool blues for the good ones — all drawn from the pillar palette.
-const _moods = [
-  (Icons.sentiment_very_dissatisfied_rounded, 'Awful', Brand.red),
-  (Icons.sentiment_dissatisfied_rounded, 'Low', Color(0xFFEF7418)),
-  (Icons.sentiment_neutral_rounded, 'Okay', Brand.yellow),
-  (Icons.sentiment_satisfied_alt_rounded, 'Good', Color(0xFF5E8BDD)),
-  (Icons.sentiment_very_satisfied_rounded, 'Great', Brand.blue),
-];
-
-const _moodIdle = Color(0xFFBEBEC6);
 
 /// Home tab: greeting, a one-tap mood check-in, quick access to the most
 /// used tools, and the therapy banner.
@@ -138,7 +127,7 @@ class _HomeTabState extends State<HomeTab> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              for (final (i, mood) in _moods.indexed)
+              for (final (i, mood) in moodLevels.indexed)
                 InkWell(
                   borderRadius: BorderRadius.circular(14),
                   onTap: () => _selectMood(i),
@@ -159,26 +148,26 @@ class _HomeTabState extends State<HomeTab> {
                             height: 44,
                             decoration: BoxDecoration(
                               color: _mood == i
-                                  ? mood.$3.withValues(alpha: 0.14)
+                                  ? mood.color.withValues(alpha: 0.14)
                                   : Colors.transparent,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              mood.$1,
+                              mood.icon,
                               size: 30,
-                              color: _mood == i ? mood.$3 : _moodIdle,
+                              color: _mood == i ? mood.color : moodIdle,
                             ),
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          mood.$2,
+                          mood.label,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: _mood == i
                                 ? FontWeight.w600
                                 : FontWeight.w400,
-                            color: _mood == i ? mood.$3 : Brand.textMuted,
+                            color: _mood == i ? mood.color : Brand.textMuted,
                           ),
                         ),
                       ],

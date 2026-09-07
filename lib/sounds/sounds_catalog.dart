@@ -43,6 +43,7 @@ class Sound {
 }
 
 const soundsCatalog = [
+  // Focus
   Sound(
     'Deep focus',
     'Low, steady noise that softens distraction.',
@@ -65,6 +66,27 @@ const soundsCatalog = [
     waveHeight: 0.3,
   ),
   Sound(
+    'Brown noise',
+    'Deeper than white — a low rumble that buries a noisy room.',
+    Icons.surround_sound_rounded,
+    SoundCategory.focus,
+    'assets/sounds/brown_noise.m4a',
+    waveFreq: 2,
+    waveSpeed: 1,
+    waveHeight: 0.6,
+  ),
+  Sound(
+    'Stream',
+    'Water over rocks — busy enough to work through.',
+    Icons.water_rounded,
+    SoundCategory.focus,
+    'assets/sounds/mountain_stream.m4a',
+    waveFreq: 6,
+    waveSpeed: 3,
+    waveHeight: 0.45,
+  ),
+  // Sleep
+  Sound(
     'Rainfall',
     'Steady rain on a quiet evening.',
     Icons.water_drop_outlined,
@@ -86,6 +108,39 @@ const soundsCatalog = [
     pulse: true,
   ),
   Sound(
+    'Pink noise',
+    'Softer and warmer than white noise — easy to sleep through.',
+    Icons.grain_rounded,
+    SoundCategory.sleep,
+    'assets/sounds/pink_noise.m4a',
+    waveFreq: 7,
+    waveSpeed: 3,
+    waveHeight: 0.35,
+  ),
+  Sound(
+    'Distant storm',
+    'Rain that keeps going, with thunder rolling far off.',
+    Icons.thunderstorm_rounded,
+    SoundCategory.sleep,
+    'assets/sounds/distant_storm.m4a',
+    waveFreq: 3.5,
+    waveSpeed: 2,
+    waveHeight: 0.6,
+    pulse: true,
+  ),
+  Sound(
+    'Fireside',
+    'A low roar and the crackle of a fire nearby.',
+    Icons.local_fire_department_rounded,
+    SoundCategory.sleep,
+    'assets/sounds/fireside.m4a',
+    waveFreq: 4,
+    waveSpeed: 2,
+    waveHeight: 0.5,
+    pulse: true,
+  ),
+  // Calm
+  Sound(
     'Ocean waves',
     'Slow swells rolling in and out.',
     Icons.waves_rounded,
@@ -94,5 +149,36 @@ const soundsCatalog = [
     waveFreq: 1.6,
     waveSpeed: 1,
     waveHeight: 0.75,
+  ),
+  Sound(
+    'Singing bowl',
+    'A struck bowl and its long, slow fade.',
+    Icons.track_changes_rounded,
+    SoundCategory.calm,
+    'assets/sounds/singing_bowl.m4a',
+    waveFreq: 1.4,
+    waveSpeed: 1,
+    waveHeight: 0.7,
+  ),
+  Sound(
+    'Heartbeat',
+    'Sixty beats a minute — the pace a settled body finds.',
+    Icons.monitor_heart_rounded,
+    SoundCategory.calm,
+    'assets/sounds/resting_heartbeat.m4a',
+    waveFreq: 1.6,
+    waveSpeed: 1,
+    waveHeight: 0.5,
+    pulse: true,
+  ),
+  Sound(
+    'Breathe',
+    'Six breaths a minute — follow the swell and yours slows to meet it.',
+    Icons.air_rounded,
+    SoundCategory.calm,
+    'assets/sounds/breathe_with_me.m4a',
+    waveFreq: 1,
+    waveSpeed: 1,
+    waveHeight: 0.8,
   ),
 ];

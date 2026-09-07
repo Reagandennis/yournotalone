@@ -28,6 +28,8 @@ class PillarStripe extends StatelessWidget {
       width: width,
       height: height,
       child: Row(
+        // Stretch, or the bars take their child-less height of zero.
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           for (final (i, color) in Brand.pillarColors.indexed) ...[
             if (i != 0) SizedBox(width: height * 0.8),
