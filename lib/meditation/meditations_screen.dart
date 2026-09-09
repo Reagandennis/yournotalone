@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
@@ -18,7 +19,7 @@ class MeditationsScreen extends StatelessWidget {
         context,
         title: 'This session is part of Premium',
         message: 'Free includes a taste of each practice. Premium unlocks '
-            'every session — and your first month is 80% off.',
+            'every session — and $introOffer.',
       );
       return false;
     }

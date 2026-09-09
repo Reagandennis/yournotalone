@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../billing/purchases_service.dart';
@@ -151,7 +152,7 @@ bool journalCapAllows(BuildContext context, int entryCount) {
     title: 'You\'ve filled your free pages',
     message: 'The free plan includes $freeJournalEntryLimit journal entries. '
         'Premium unlocks unlimited journaling — and your first month is '
-        '80% off.',
+        '$introOffer.',
   );
   return false;
 }

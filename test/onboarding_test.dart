@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/pricing_copy.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/onboarding/checkin_screen.dart';
 import 'package:yournotalone/onboarding/welcome_screen.dart';
@@ -85,9 +86,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Go further with Premium'), findsOneWidget);
-    expect(
-      await scrollTo(tester, '80% off your first month'),
-      findsOneWidget,
-    );
+    expect(await scrollTo(tester, introOfferSentence), findsOneWidget);
   });
 }

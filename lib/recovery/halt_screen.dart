@@ -33,11 +33,24 @@ class _Need {
   final void Function(BuildContext) open;
 }
 
-Meditation _meditation(String title) =>
-    meditations.firstWhere((m) => m.title == title);
+// These link HALT to catalogue entries by title. `firstWhere` throws if a
+// title is ever edited, which would crash the screen at the worst possible
+// moment — so fall back to the first entry, and let a test catch the
+// broken link instead of a user.
+Meditation _meditation(String title) => meditations.firstWhere(
+      (m) => m.title == title,
+      orElse: () => meditations.first,
+    );
 
-Sound _sound(String title) =>
-    soundsCatalog.firstWhere((s) => s.title == title);
+Sound _sound(String title) => soundsCatalog.firstWhere(
+      (s) => s.title == title,
+      orElse: () => soundsCatalog.first,
+    );
+
+/// The catalogue entries HALT sends people to. Checked by a test, so
+/// renaming one of them fails the build rather than the app.
+const haltMeditationTitles = ['Midday reset', 'Letting go of anger'];
+const haltSoundTitles = ['Pink noise'];
 
 final _needs = <_Need>[
   _Need(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../auth/auth_ui.dart';
@@ -357,7 +358,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ? (trial != null
                     ? 'Try free for $trial'
                     : 'Start Premium — ${_selected!.storeProduct.priceString}')
-                : 'Start Premium — \$2.59 first month',
+                : 'Start Premium — $introPrice first month',
             loading: _loading,
             onPressed: _buy,
           ),
@@ -367,7 +368,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ? '${trial != null ? 'then ' : ''}'
                     '${_selected!.storeProduct.priceString}'
                     '${_periodSuffix(_selected!)} · cancel anytime'
-                : 'then \$12.99/month · cancel anytime',
+                : 'then $monthlyPrice/month · cancel anytime',
             style: const TextStyle(fontSize: 12, color: Brand.textMuted),
           ),
           const SizedBox(height: 2),
@@ -408,7 +409,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         const SizedBox(height: 16),
         const Text(
           'Free gets you started. Premium opens every room in the house — '
-          'and your first month is 80% off.',
+          'and $introOffer.',
           style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
         ),
         const SizedBox(height: 24),
@@ -441,7 +442,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     Text(
                       _packages.any((p) => _trialLabel(p) != null)
                           ? 'Try it free first'
-                          : '80% off your first month',
+                          : introOfferSentence,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -454,8 +455,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           ? 'Every plan starts with a free trial'
                               '${_savingsPercent != null ? ' — and yearly saves you $_savingsPercent% vs paying monthly' : ''}. '
                               'Cancel anytime.'
-                          : 'Start for \$2.59 instead of \$12.99 — a whole '
-                              'month to try everything.',
+                          : 'Start for $introPrice instead of $monthlyPrice '
+                              '— a whole month to try everything.',
                       style: const TextStyle(
                         fontSize: 13,
                         color: Brand.textMuted,

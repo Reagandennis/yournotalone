@@ -65,7 +65,10 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Box breathing'));
-    await tester.pumpAndSettle();
+    // Not pumpAndSettle: the session backdrop animates continuously, so
+    // there is no settled state to wait for. Pump the route transition.
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     // Setup view: rhythm, duration chips, begin.
     expect(find.text('4 · 4 · 4 · 4'), findsOneWidget);

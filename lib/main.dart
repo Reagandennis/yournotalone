@@ -15,6 +15,14 @@ import 'splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // A widget that throws while building shows a plain grey rectangle in
+  // release — no explanation, no way out. Give people something they can
+  // act on instead, and keep the error in the log for a bug report.
+  ErrorWidget.builder = (details) {
+    debugPrint('Widget build failed: ${details.exception}');
+    return const _SomethingWentWrong();
+  };
   await Supabase.initialize(
     url: 'https://zpcfavemnvfhqaxqhmri.supabase.co',
     publishableKey: 'sb_publishable_yKBVrkk13Sm5hMZtrerdiw_uTrhlNd9',
@@ -98,6 +106,50 @@ class _MyAppState extends State<MyApp> {
       title: 'Δεν είσαι μόνος',
       theme: buildAppTheme(),
       home: const SplashScreen(next: AuthGate()),
+    );
+  }
+}
+
+/// Shown in place of a widget that failed to build.
+class _SomethingWentWrong extends StatelessWidget {
+  const _SomethingWentWrong();
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.sentiment_dissatisfied_rounded,
+                  size: 40, color: Brand.textMuted),
+              const SizedBox(height: 14),
+              const Text(
+                'Something went wrong here.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: Brand.ink,
+                ),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Go back and try again — nothing you saved is affected.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Brand.textMuted,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

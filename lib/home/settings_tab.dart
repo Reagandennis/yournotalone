@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -335,7 +336,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 Text(
                   premium
                       ? 'Every room in the house is open.'
-                      : '80% off your first month is waiting.',
+                      : introOfferSentence,
                   style: const TextStyle(
                     fontSize: 12.5,
                     color: Brand.textMuted,

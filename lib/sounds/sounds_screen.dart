@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
@@ -25,7 +26,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
         context,
         title: 'This sound is part of Premium',
         message: 'Free includes one sound to try. Premium unlocks the whole '
-            'library — and your first month is 80% off.',
+            'library — and $introOffer.',
       );
       return false;
     }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import 'sound_player.dart';
 import 'sounds_catalog.dart';
 
@@ -145,7 +146,7 @@ class _PlayerScreenState extends State<PlayerScreen>
               animation: Listenable.merge([player.nowPlaying, player.paused]),
               builder: (context, _) {
                 final active = player.isActive(sound.asset);
-                return Column(
+                return FlexibleColumn(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(

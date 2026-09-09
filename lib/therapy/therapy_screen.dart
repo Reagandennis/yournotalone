@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../support/crisis_screen.dart';
+import 'therapy_art.dart';
 import 'therapy_repository.dart';
 
 const _topics = [
@@ -37,14 +38,17 @@ String _formatDateTime(DateTime t) =>
 /// Talk to a real therapist: request a private session, follow the
 /// request as it's matched and confirmed, and see past sessions.
 class TherapyScreen extends StatefulWidget {
-  const TherapyScreen({super.key});
+  const TherapyScreen({super.key, this.repository});
+
+  /// Injectable so the booking flow can be exercised without a backend.
+  final TherapyRepository? repository;
 
   @override
   State<TherapyScreen> createState() => _TherapyScreenState();
 }
 
 class _TherapyScreenState extends State<TherapyScreen> {
-  final _repo = TherapyRepository();
+  late final _repo = widget.repository ?? TherapyRepository();
   final _noteController = TextEditingController();
 
   List<TherapyRequest>? _requests;
@@ -176,6 +180,141 @@ class _TherapyScreenState extends State<TherapyScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Three steps, so nobody has to guess what happens after they tap.
+  Widget _howItWorks() {
+    const steps = [
+      (
+        Icons.tune_rounded,
+        'Tell us what you need',
+        'A topic and the times that suit you. Two taps.',
+      ),
+      (
+        Icons.mark_email_read_rounded,
+        'We match you',
+        'A licensed therapist, by email, usually within a day.',
+      ),
+      (
+        Icons.videocam_rounded,
+        'You talk',
+        'A private session, at a time you agreed together.',
+      ),
+    ];
+    return Column(
+      children: [
+        for (final (index, (icon, title, detail)) in steps.indexed)
+          Padding(
+            padding: EdgeInsets.only(bottom: index == steps.length - 1 ? 0 : 14),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 34,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Brand.blue.withValues(alpha: 0.10),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(icon, size: 15, color: Brand.blue),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${index + 1}. $title',
+                        style: const TextStyle(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.w600,
+                          color: Brand.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        detail,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: Brand.textMuted,
+                          height: 1.45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// The questions people actually have before they ask for help.
+  Widget _reassurance() {
+    const points = [
+      (Icons.verified_user_rounded, 'Licensed therapists',
+          'Qualified practitioners, not volunteers or chatbots.'),
+      (Icons.lock_rounded, 'Private',
+          'What you say in a session stays between you and them.'),
+      (Icons.event_available_rounded, 'No commitment',
+          'Book one session. There is nothing to cancel afterwards.'),
+    ];
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0x0A191919),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          for (final (index, (icon, title, detail)) in points.indexed)
+            Padding(
+              padding:
+                  EdgeInsets.only(bottom: index == points.length - 1 ? 0 : 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(icon, size: 18, color: Brand.ink),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Brand.ink,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          detail,
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: Brand.textMuted,
+                            height: 1.45,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -343,24 +482,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Center(child: TherapyBookedArt(size: 84)),
+          const SizedBox(height: 14),
           Row(
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  confirmed
-                      ? Icons.event_available_rounded
-                      : Icons.hourglass_top_rounded,
-                  size: 22,
-                  color: Brand.blue,
-                ),
-              ),
-              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,7 +592,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
   Widget build(BuildContext context) {
     final requests = _requests;
     return Scaffold(
-      appBar: AppBar(title: const Text('Talk to a therapist')),
+      appBar: AppBar(
+        title: const Text('Talk to a therapist'),
+        // The hero art carries the screen; a heavy bar above it competes.
+        backgroundColor: Colors.transparent,
+      ),
       body: SafeArea(
         child: _failed
             ? Center(
@@ -499,8 +628,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 12, 28, 28),
       children: [
+        const TherapyArt(height: 156),
+        const SizedBox(height: 18),
         const Text(
           'You don\'t have to do this alone',
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -509,21 +641,30 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        const PillarStripe(),
+        const Center(child: PillarStripe()),
         const SizedBox(height: 16),
         const Text(
           'Private one-on-one sessions with licensed therapists, right '
           'from here. Tell us a little about what you need and we\'ll '
           'match you with the right person.',
+          textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
         ),
-        const SizedBox(height: 26),
+        const SizedBox(height: 24),
+        if (active == null) ...[
+          _howItWorks(),
+          const SizedBox(height: 24),
+        ],
         if (active != null)
           _activeCard(active)
         else
           _bookingForm(
             freeSession: _repo.isFreeSessionAvailable(requests),
           ),
+        if (active == null) ...[
+          const SizedBox(height: 24),
+          _reassurance(),
+        ],
         if (past.isNotEmpty) ...[
           const SizedBox(height: 28),
           const SectionHeader(title: 'Past requests'),

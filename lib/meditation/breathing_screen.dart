@@ -3,20 +3,22 @@ import 'package:flutter/services.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../sounds/sound_player.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
 import 'meditation_catalog.dart';
+import 'pillar_backdrop.dart';
 
 enum _Phase { inhale, holdIn, exhale, holdOut }
 
 extension on _Phase {
   String get label => switch (this) {
-        _Phase.inhale => 'Breathe in',
-        _Phase.holdIn => 'Hold',
-        _Phase.exhale => 'Breathe out',
-        _Phase.holdOut => 'Hold',
-      };
+    _Phase.inhale => 'Breathe in',
+    _Phase.holdIn => 'Hold',
+    _Phase.exhale => 'Breathe out',
+    _Phase.holdOut => 'Hold',
+  };
 }
 
 /// Guided breathing: a circle that grows and shrinks with the pattern's
@@ -101,6 +103,16 @@ class _BreathingScreenState extends State<BreathingScreen>
       _lastPhase = phase;
       HapticFeedback.lightImpact();
     }
+  }
+
+  /// The breath scale at a point in the session, 0 (smallest) to 1
+  /// (fullest) — the same curve the circle uses, so the backdrop can
+  /// breathe in step with it.
+  double _swellAt(double sessionValue) {
+    final elapsed = sessionValue * (_session?.duration?.inSeconds ?? 0);
+    final (phase, progress) = _phaseAt(elapsed);
+    const small = 0.55;
+    return (_scaleFor(phase, progress) - small) / (1 - small);
   }
 
   double _scaleFor(_Phase phase, double progress) {
@@ -189,7 +201,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _setupView() {
-    return Column(
+    return FlexibleColumn(
       children: [
         const Spacer(),
         _circle(
@@ -220,23 +232,26 @@ class _BreathingScreenState extends State<BreathingScreen>
           ),
         ),
         const SizedBox(height: 26),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _durationChip(1),
-            const SizedBox(width: 10),
-            _durationChip(3),
-            const SizedBox(width: 10),
-            _durationChip(5),
-          ],
+        // Wrap, not Row: at larger text sizes three chips no longer fit
+        // a narrow phone, and they drop to a second line instead of
+        // running off the edge.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              _durationChip(1),
+              _durationChip(3),
+              _durationChip(5),
+            ],
+          ),
         ),
         const Spacer(),
         Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 26),
-          child: ElevatedButton(
-            onPressed: _start,
-            child: const Text('Begin'),
-          ),
+          child: ElevatedButton(onPressed: _start, child: const Text('Begin')),
         ),
       ],
     );
@@ -244,7 +259,7 @@ class _BreathingScreenState extends State<BreathingScreen>
 
   Widget _doneView() {
     final cycles = (_minutes * 60 / pattern.cycleSeconds).floor();
-    return Column(
+    return FlexibleColumn(
       children: [
         const Spacer(),
         Container(
@@ -299,10 +314,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 20),
-          child: SessionCloseOut(
-            title: pattern.title,
-            accent: pattern.accent,
-          ),
+          child: SessionCloseOut(title: pattern.title, accent: pattern.accent),
         ),
       ],
     );
@@ -317,7 +329,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         final total = session.duration!.inSeconds.toDouble();
         final (phase, progress) = _phaseAt(elapsed);
         final scale = _scaleFor(phase, progress);
-        return Column(
+        return FlexibleColumn(
           children: [
             const Spacer(),
             _circle(
@@ -421,36 +433,56 @@ class _BreathingScreenState extends State<BreathingScreen>
       body = _setupView();
     }
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 12, 28, 0),
-                  child: Row(
-                    children: [
-                      const BackChip(),
-                      const Spacer(),
-                      Text(
-                        pattern.title,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Brand.ink,
-                        ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(width: 42),
-                    ],
-                  ),
-                ),
-                Expanded(child: body),
-              ],
+      body: Stack(
+        children: [
+          // The logo pillars behind the session — and while one is running
+          // they swell with the same animation as the circle, so the whole
+          // screen breathes rather than just the middle of it.
+          Positioned.fill(
+            child: PillarBackdrop(
+              accent: pattern.accent,
+              intensity: _session == null ? 0.7 : 1,
+              breathing: _session,
+              swellFrom: _swellAt,
             ),
           ),
-        ),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 440),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(28, 12, 28, 0),
+                      child: Row(
+                        children: [
+                          const BackChip(),
+                          // Expanded rather than two Spacers: with three
+                          // flexible children a long title ellipsised early.
+                          Expanded(
+                            child: Text(
+                              pattern.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Brand.ink,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 42),
+                        ],
+                      ),
+                    ),
+                    Expanded(child: body),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

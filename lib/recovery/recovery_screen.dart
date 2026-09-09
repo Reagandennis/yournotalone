@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../billing/purchases_service.dart';
@@ -110,7 +111,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
       title: 'Recovery tracking is part of Premium',
       message: 'Urge surfing is free for everyone, always. Premium adds '
           'commitment streaks, daily pledges, and the trigger tracker — '
-          'and your first month is 80% off.',
+          'and $introOffer.',
     );
   }
 

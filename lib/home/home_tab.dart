@@ -16,8 +16,13 @@ import 'mood_scale.dart';
 enum _QuickAction { comingSoon, journal, sounds, meditate, recovery }
 
 class _QuickItem {
-  const _QuickItem(this.icon, this.accent, this.title, this.sub,
-      {this.action = _QuickAction.comingSoon});
+  const _QuickItem(
+    this.icon,
+    this.accent,
+    this.title,
+    this.sub, {
+    this.action = _QuickAction.comingSoon,
+  });
 
   final IconData icon;
   final Color accent;
@@ -79,14 +84,20 @@ class _HomeTabState extends State<HomeTab> {
   void initState() {
     super.initState();
     // Re-light today's mood if one was already saved.
-    _moodRepo.fetchTodayMoodIndex().then((index) {
-      if (mounted && index != null) setState(() => _mood = index);
-    }).catchError((_) {});
-    _practiceRepo.fetchSummary().then((summary) {
-      if (mounted) setState(() => _practice = summary);
-    }).catchError((_) {
-      // The strip just stays hidden; it's not worth an error here.
-    });
+    _moodRepo
+        .fetchTodayMoodIndex()
+        .then((index) {
+          if (mounted && index != null) setState(() => _mood = index);
+        })
+        .catchError((_) {});
+    _practiceRepo
+        .fetchSummary()
+        .then((summary) {
+          if (mounted) setState(() => _practice = summary);
+        })
+        .catchError((_) {
+          // The strip just stays hidden; it's not worth an error here.
+        });
   }
 
   Future<void> _selectMood(int index) async {
@@ -101,14 +112,16 @@ class _HomeTabState extends State<HomeTab> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             duration: const Duration(seconds: 8),
-            content: const Text('That sounds like a heavy day. You can talk '
-                'to someone right now.'),
+            content: const Text(
+              'That sounds like a heavy day. You can talk '
+              'to someone right now.',
+            ),
             action: SnackBarAction(
               label: 'Get help',
               textColor: Colors.white,
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CrisisScreen()),
-              ),
+              onPressed: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const CrisisScreen())),
             ),
           ),
         );
@@ -121,7 +134,12 @@ class _HomeTabState extends State<HomeTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save your mood — check your connection.')),
+            content: Text(
+              errorMessage(
+                e,
+                'Couldn\'t save your mood — check your connection.',
+              ),
+            ),
           ),
         );
       }
@@ -148,9 +166,9 @@ class _HomeTabState extends State<HomeTab> {
         borderRadius: BorderRadius.circular(18),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const PracticeScreen()),
-          ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const PracticeScreen())),
           child: Padding(
             padding: const EdgeInsets.all(18),
             child: Column(
@@ -170,8 +188,11 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                       ),
                     ),
-                    const Icon(Icons.arrow_forward_ios_rounded,
-                        size: 14, color: Brand.blue),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 14,
+                      color: Brand.blue,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -193,8 +214,11 @@ class _HomeTabState extends State<HomeTab> {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(last.kind.icon,
-                          size: 17, color: last.kind.color),
+                      child: Icon(
+                        last.kind.icon,
+                        size: 17,
+                        color: last.kind.color,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -202,10 +226,7 @@ class _HomeTabState extends State<HomeTab> {
                         'Last time: ${last.title}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Brand.ink,
-                        ),
+                        style: const TextStyle(fontSize: 13, color: Brand.ink),
                       ),
                     ),
                   ],
@@ -219,6 +240,10 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _moodCard() {
+    // Five faces have to fit the width, whatever the phone: work out the
+    // per-face budget and cap it at the size the design wants.
+    final width = MediaQuery.sizeOf(context).width;
+    final faceSize = ((width - 56 - 36) / 5).clamp(28.0, 44.0);
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
       decoration: BoxDecoration(
@@ -241,49 +266,56 @@ class _HomeTabState extends State<HomeTab> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               for (final (i, mood) in moodLevels.indexed)
-                InkWell(
-                  borderRadius: BorderRadius.circular(14),
-                  onTap: () => _selectMood(i),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 2,
-                      vertical: 4,
-                    ),
-                    child: Column(
-                      children: [
-                        AnimatedScale(
-                          scale: _mood == i ? 1.12 : 1.0,
-                          duration: const Duration(milliseconds: 260),
-                          curve: Curves.easeOutBack,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: _mood == i
-                                  ? mood.color.withValues(alpha: 0.14)
-                                  : Colors.transparent,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              mood.icon,
-                              size: 30,
-                              color: _mood == i ? mood.color : moodIdle,
+                // Expanded, because five fixed-width faces run off a
+                // 320px screen — and wider ones once system text is
+                // scaled up.
+                Expanded(
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () => _selectMood(i),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 1,
+                        vertical: 4,
+                      ),
+                      child: Column(
+                        children: [
+                          AnimatedScale(
+                            scale: _mood == i ? 1.12 : 1.0,
+                            duration: const Duration(milliseconds: 260),
+                            curve: Curves.easeOutBack,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              width: faceSize,
+                              height: faceSize,
+                              decoration: BoxDecoration(
+                                color: _mood == i
+                                    ? mood.color.withValues(alpha: 0.14)
+                                    : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                mood.icon,
+                                size: faceSize * 0.68,
+                                color: _mood == i ? mood.color : moodIdle,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          mood.label,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: _mood == i
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                            color: _mood == i ? mood.color : Brand.textMuted,
+                          const SizedBox(height: 4),
+                          Text(
+                            mood.label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: _mood == i
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                              color: _mood == i ? mood.color : Brand.textMuted,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -301,18 +333,18 @@ class _HomeTabState extends State<HomeTab> {
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
         onTap: () => switch (item.action) {
-          _QuickAction.journal => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const JournalScreen()),
-            ),
-          _QuickAction.sounds => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SoundsScreen()),
-            ),
-          _QuickAction.meditate => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const MeditationsScreen()),
-            ),
-          _QuickAction.recovery => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const RecoveryScreen()),
-            ),
+          _QuickAction.journal => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const JournalScreen())),
+          _QuickAction.sounds => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const SoundsScreen())),
+          _QuickAction.meditate => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const MeditationsScreen())),
+          _QuickAction.recovery => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const RecoveryScreen())),
           _QuickAction.comingSoon => showComingSoon(context, item.title),
         },
         child: Padding(
@@ -345,10 +377,7 @@ class _HomeTabState extends State<HomeTab> {
                 item.sub,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Brand.textMuted,
-                ),
+                style: const TextStyle(fontSize: 12, color: Brand.textMuted),
               ),
             ],
           ),
@@ -401,13 +430,19 @@ class _HomeTabState extends State<HomeTab> {
         _practiceCard(),
         const SectionHeader(title: 'Quick access'),
         const SizedBox(height: 12),
-        GridView.count(
-          crossAxisCount: 2,
+        // A fixed aspect ratio ties tile height to screen width, so the
+        // contents overflowed on narrow phones and clipped at larger text
+        // sizes. An absolute extent that tracks the text scale doesn't.
+        GridView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.45,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            mainAxisExtent:
+                80 + 38 * MediaQuery.textScalerOf(context).scale(1),
+          ),
           children: [for (final item in _quickItems) _quickCard(item)],
         ),
         const SizedBox(height: 24),
@@ -416,9 +451,9 @@ class _HomeTabState extends State<HomeTab> {
           borderRadius: BorderRadius.circular(18),
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const TherapyScreen()),
-            ),
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const TherapyScreen())),
             child: Padding(
               padding: const EdgeInsets.all(18),
               child: Row(

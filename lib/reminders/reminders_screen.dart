@@ -150,12 +150,16 @@ class _RemindersScreenState extends State<RemindersScreen> {
                           color: on ? kind.accent : Brand.textMuted,
                         ),
                         const SizedBox(width: 5),
-                        Text(
-                          time.format(context),
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                            color: on ? kind.accent : Brand.textMuted,
+                        Flexible(
+                          child: Text(
+                            time.format(context),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                              color: on ? kind.accent : Brand.textMuted,
+                            ),
                           ),
                         ),
                       ],

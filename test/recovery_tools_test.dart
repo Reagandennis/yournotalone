@@ -5,7 +5,9 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/journal/journal_repository.dart';
+import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/recovery/halt_screen.dart';
+import 'package:yournotalone/sounds/sounds_catalog.dart';
 import 'package:yournotalone/recovery/insights_screen.dart';
 import 'package:yournotalone/recovery/milestones_screen.dart';
 import 'package:yournotalone/recovery/recovery_repository.dart';
@@ -71,6 +73,17 @@ void main() {
 
   // ── HALT ────────────────────────────────────────────────────────
 
+  test('HALT still points at real catalogue entries', () {
+    // The screen looks these up by title. A rename used to throw on open;
+    // now it falls back silently, so this is what catches the break.
+    for (final title in haltMeditationTitles) {
+      expect(meditations.map((m) => m.title), contains(title));
+    }
+    for (final title in haltSoundTitles) {
+      expect(soundsCatalog.map((s) => s.title), contains(title));
+    }
+  });
+
   testWidgets('HALT answers back only for what you tick', (tester) async {
     tallScreen(tester);
     await tester.pumpWidget(wrap(const HaltScreen()));
@@ -107,7 +120,9 @@ void main() {
     await tester.tap(find.text('Is something still sitting unsaid?'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Letting go of anger · 9 min'));
-    await tester.pumpAndSettle();
+    // The meditation backdrop never stops animating, so settle by hand.
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
     expect(find.text('Letting go of anger'), findsWidgets);
   });
 

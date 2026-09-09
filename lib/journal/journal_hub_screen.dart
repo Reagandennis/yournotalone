@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
@@ -41,7 +42,7 @@ class JournalHubScreen extends StatelessWidget {
         context,
         'This prompt is part of Premium',
         'Free includes a prompt to try. Premium unlocks all '
-            '${journalPrompts.length} — and your first month is 80% off.',
+            '${journalPrompts.length} — and $introOffer.',
       );
 
   Widget _card(
@@ -234,7 +235,7 @@ class JournalHubScreen extends StatelessWidget {
                       'Mood history is part of Premium',
                       'Checking in is always free. Premium keeps the record '
                           'and shows you the pattern — and your first month '
-                          'is 80% off.',
+                          '$introOffer.',
                     )) {
                       return;
                     }

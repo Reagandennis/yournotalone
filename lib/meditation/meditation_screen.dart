@@ -1,24 +1,23 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
 import '../sounds/sound_player.dart';
 import '../sounds/sounds_catalog.dart';
 import 'meditation_catalog.dart';
+import 'pillar_backdrop.dart';
 
 /// A timed meditation: progress ring, gentle prompts that change as the
 /// session unfolds, optional ambient sound underneath, chime at both ends.
 class MeditationScreen extends StatefulWidget {
-  const MeditationScreen({
-    super.key,
-    required this.meditation,
-    this.practice,
-  });
+  const MeditationScreen({super.key, required this.meditation, this.practice});
 
   /// Injectable so the logging can be verified without a backend.
   final PracticeRepository? practice;
@@ -99,8 +98,9 @@ class _MeditationScreenState extends State<MeditationScreen>
       showUpgradeSheet(
         context,
         title: 'This sound is part of Premium',
-        message: 'Free includes one sound to try. Premium unlocks the whole '
-            'library — and your first month is 80% off.',
+        message:
+            'Free includes one sound to try. Premium unlocks the whole '
+            'library — and $introOffer.',
       );
       return;
     }
@@ -140,8 +140,11 @@ class _MeditationScreenState extends State<MeditationScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (locked) ...[
-                  const Icon(Icons.lock_rounded,
-                      size: 11, color: Brand.textMuted),
+                  const Icon(
+                    Icons.lock_rounded,
+                    size: 11,
+                    color: Brand.textMuted,
+                  ),
                   const SizedBox(width: 4),
                 ],
                 Text(
@@ -161,7 +164,7 @@ class _MeditationScreenState extends State<MeditationScreen>
   }
 
   Widget _doneView() {
-    return Column(
+    return FlexibleColumn(
       children: [
         const Spacer(),
         Container(
@@ -171,8 +174,7 @@ class _MeditationScreenState extends State<MeditationScreen>
             color: meditation.accent.withValues(alpha: 0.12),
             shape: BoxShape.circle,
           ),
-          child:
-              Icon(Icons.check_rounded, size: 42, color: meditation.accent),
+          child: Icon(Icons.check_rounded, size: 42, color: meditation.accent),
         ),
         const SizedBox(height: 24),
         const Text(
@@ -211,156 +213,188 @@ class _MeditationScreenState extends State<MeditationScreen>
     );
   }
 
-  Widget _runningView() {
+  /// The ring and countdown, repainting with the session clock.
+  Widget _progressRing() {
     return AnimatedBuilder(
       animation: _session,
       builder: (context, _) {
         final total = _session.duration!.inSeconds.toDouble();
         final remaining = total * (1 - _session.value);
-        return Column(
-          children: [
-            const Spacer(),
-            SizedBox(
-              width: 240,
-              height: 240,
-              child: Stack(
-                alignment: Alignment.center,
+        return SizedBox(
+          width: 240,
+          height: 240,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CustomPaint(
+                size: const Size(240, 240),
+                painter: _RingPainter(
+                  progress: _session.value,
+                  accent: meditation.accent,
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomPaint(
-                    size: const Size(240, 240),
-                    painter: _RingPainter(
-                      progress: _session.value,
-                      accent: meditation.accent,
+                  Icon(meditation.icon, size: 30, color: meditation.accent),
+                  const SizedBox(height: 10),
+                  Text(
+                    _clock(remaining),
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w600,
+                      color: Brand.ink,
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(meditation.icon,
-                          size: 30, color: meditation.accent),
-                      const SizedBox(height: 10),
-                      Text(
-                        _clock(remaining),
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w600,
-                          color: Brand.ink,
-                        ),
-                      ),
-                      const Text(
-                        'remaining',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Brand.textMuted,
-                        ),
-                      ),
-                    ],
+                  const Text(
+                    'remaining',
+                    style: TextStyle(fontSize: 12, color: Brand.textMuted),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 34),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 44),
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 700),
-                child: Text(
-                  _prompt,
-                  key: ValueKey(_prompt),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Brand.ink,
-                    height: 1.6,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 28),
-              child: Row(
-                children: [
-                  _ambientChip('No sound', null),
-                  for (final s in _ambientChoices) _ambientChip(s.title, s),
-                ],
-              ),
-            ),
-            const SizedBox(height: 22),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 26),
-              child: Material(
-                color: meditation.accent,
-                shape: const CircleBorder(),
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () => setState(() {
-                    _session.isAnimating
-                        ? _session.stop()
-                        : _session.forward();
-                  }),
-                  child: SizedBox(
-                    width: 68,
-                    height: 68,
-                    child: Icon(
-                      _session.isAnimating
-                          ? Icons.pause_rounded
-                          : Icons.play_arrow_rounded,
-                      size: 36,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
+    );
+  }
+
+  Widget _runningView() {
+    return FlexibleColumn(
+      children: [
+        const Spacer(),
+        // Only the ring and the clock redraw with the session; everything
+        // below was being rebuilt sixty times a second for fifteen
+        // minutes, which is a lot of work to display a still image.
+        _progressRing(),
+        const SizedBox(height: 34),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 44),
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 900),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            // Each instruction rises into place and the last one sinks
+            // away, so guidance arrives at the pace of the session
+            // rather than blinking between lines.
+            transitionBuilder: (child, animation) => FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0, 0.28),
+                  end: Offset.zero,
+                ).animate(animation),
+                child: child,
+              ),
+            ),
+            layoutBuilder: (current, previous) => Stack(
+              alignment: Alignment.center,
+              children: [...previous, ?current],
+            ),
+            child: Text(
+              _prompt,
+              key: ValueKey(_prompt),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 17,
+                color: Brand.ink,
+                height: 1.6,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+        const Spacer(),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Row(
+            children: [
+              _ambientChip('No sound', null),
+              for (final s in _ambientChoices) _ambientChip(s.title, s),
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 26),
+          child: Material(
+            color: meditation.accent,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () => setState(() {
+                _session.isAnimating ? _session.stop() : _session.forward();
+              }),
+              child: SizedBox(
+                width: 68,
+                height: 68,
+                child: Icon(
+                  _session.isAnimating
+                      ? Icons.pause_rounded
+                      : Icons.play_arrow_rounded,
+                  size: 36,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 12, 28, 0),
-                  child: Row(
-                    children: [
-                      const BackChip(),
-                      // Expanded rather than Spacer-Flexible-Spacer: with
-                      // three flexible children the title only got a third
-                      // of the row and ellipsised with space to spare.
-                      Expanded(
-                        child: Text(
-                          meditation.title,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Brand.ink,
-                          ),
-                        ),
-                      ),
-                      // Balances the back chip so the title sits centred.
-                      const SizedBox(width: 42),
-                    ],
-                  ),
-                ),
-                Expanded(child: _done ? _doneView() : _runningView()),
-              ],
+      body: Stack(
+        children: [
+          // The four logo pillars, drifting behind the session.
+          Positioned.fill(
+            child: PillarBackdrop(
+              accent: meditation.accent,
+              intensity: _done ? 0.7 : 1,
             ),
           ),
-        ),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 440),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(28, 12, 28, 0),
+                      child: Row(
+                        children: [
+                          const BackChip(),
+                          // Expanded rather than Spacer-Flexible-Spacer: with
+                          // three flexible children the title only got a third
+                          // of the row and ellipsised with space to spare.
+                          Expanded(
+                            child: Text(
+                              meditation.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Brand.ink,
+                              ),
+                            ),
+                          ),
+                          // Balances the back chip so the title sits centred.
+                          const SizedBox(width: 42),
+                        ],
+                      ),
+                    ),
+                    Expanded(child: _done ? _doneView() : _runningView()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
