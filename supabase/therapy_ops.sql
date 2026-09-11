@@ -41,8 +41,10 @@ order by r.created_at;
 -- where id = '<request id>';
 
 -- ── 5. Check the automatic notification emails went out ──────────
--- Each new request triggers an email via Brevo (migration 0004).
--- pg_net records the API responses here; status 201 = accepted.
+-- Each new request sends two emails via Resend (migration 0008): the
+-- request to the care team and a confirmation to the user. pg_net
+-- records the API responses here; status 200 = accepted. A 403 on the
+-- user's confirmation means no sending domain is verified in Resend yet.
 select id, status_code, content, created
 from net._http_response
 order by created desc

@@ -3,7 +3,7 @@
 -- Until now the app kept moods, journal entries and recovery data, but
 -- nothing recorded that anyone had actually *done* anything: a finished
 -- meditation, a breathing session or an hour of sounds left no trace. So
--- there was no streak, no minutes practised, and nothing to come back to.
+-- there was no streak, no minute s practised, and nothing to come back to.
 --
 -- One row per completed session. Deliberately small — the catalogue lives
 -- in the app, and only the slug is stored, so renaming a session's copy
