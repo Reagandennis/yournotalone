@@ -151,8 +151,7 @@ bool journalCapAllows(BuildContext context, int entryCount) {
     context,
     title: 'You\'ve filled your free pages',
     message: 'The free plan includes $freeJournalEntryLimit journal entries. '
-        'Premium unlocks unlimited journaling — and your first month is '
-        '$introOffer.',
+        'Premium unlocks unlimited journaling — and $introOffer.',
   );
   return false;
 }

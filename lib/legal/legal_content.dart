@@ -10,7 +10,7 @@ const legalEntityAddress = '179 Runda Drive, Nairobi, Kenya';
 const legalContactEmail = 'reaganprezzo@gmail.com';
 const legalGoverningCountry = 'Kenya';
 
-const legalLastUpdated = '7 September 2026';
+const legalLastUpdated = '14 September 2026';
 
 class LegalDoc {
   const LegalDoc({
@@ -248,9 +248,9 @@ final termsOfService = LegalDoc(
           'unless you cancel at least 24 hours before renewal.\n'
           '•  Cancel anytime in your App Store or Google Play subscription '
           'settings; you keep access until the end of the paid period.\n'
-          '•  Introductory offers (like a discounted first month) apply '
-          'once per account, and the subscription renews at the standard '
-          'price afterwards.\n'
+          '•  Introductory offers (like a free trial) apply once per '
+          'account. When the offer ends, the subscription continues at the '
+          'standard price unless you cancel before then.\n'
           '•  Refunds are handled by Apple or Google under their policies. '
           'EU consumers: by starting the subscription immediately, you '
           'consent to immediate performance and acknowledge that the '

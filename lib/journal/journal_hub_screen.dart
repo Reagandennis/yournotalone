@@ -234,8 +234,7 @@ class JournalHubScreen extends StatelessWidget {
                       context,
                       'Mood history is part of Premium',
                       'Checking in is always free. Premium keeps the record '
-                          'and shows you the pattern — and your first month '
-                          '$introOffer.',
+                          'and shows you the pattern — and $introOffer.',
                     )) {
                       return;
                     }

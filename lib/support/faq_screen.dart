@@ -48,9 +48,8 @@ const _sections = [
       'What do I get with Premium?',
       'Every room in the house: the full meditation library, all calming '
           'sounds and breathing exercises, unlimited journaling, and the '
-          'complete recovery toolkit. Your first month usually comes with '
-          'an introductory discount — the price is always shown before you '
-          'subscribe.',
+          'complete recovery toolkit. Plans usually start with a free trial '
+          '— the price is always shown before you subscribe.',
     ),
     _FaqItem(
       'How do I cancel my subscription?',

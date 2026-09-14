@@ -358,7 +358,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ? (trial != null
                     ? 'Try free for $trial'
                     : 'Start Premium — ${_selected!.storeProduct.priceString}')
-                : 'Start Premium — $introPrice first month',
+                : 'Start Premium',
             loading: _loading,
             onPressed: _buy,
           ),
@@ -368,7 +368,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ? '${trial != null ? 'then ' : ''}'
                     '${_selected!.storeProduct.priceString}'
                     '${_periodSuffix(_selected!)} · cancel anytime'
-                : 'then $monthlyPrice/month · cancel anytime',
+                : 'Cancel anytime',
             style: const TextStyle(fontSize: 12, color: Brand.textMuted),
           ),
           const SizedBox(height: 2),
@@ -455,8 +455,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           ? 'Every plan starts with a free trial'
                               '${_savingsPercent != null ? ' — and yearly saves you $_savingsPercent% vs paying monthly' : ''}. '
                               'Cancel anytime.'
-                          : 'Start for $introPrice instead of $monthlyPrice '
-                              '— a whole month to try everything.',
+                          : 'Try everything before you pay.',
                       style: const TextStyle(
                         fontSize: 13,
                         color: Brand.textMuted,
