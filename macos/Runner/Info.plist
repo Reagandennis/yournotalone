@@ -28,5 +28,9 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Let your therapist see you during video sessions.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Talk with your therapist during video sessions.</string>
 </dict>
 </plist>

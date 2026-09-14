@@ -1,6 +1,64 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// A request for a private session with a licensed therapist.
+import 'session_format.dart';
+
+/// What a session costs after someone's free first one. The database holds
+/// the real price (`therapy_session_price_cents()` in migration 0009) and
+/// stamps it on each request; this is only for copy shown before a request
+/// exists.
+const therapySessionPriceCents = 2000;
+
+/// How early a call opens, and how long past its scheduled end it stays
+/// open. The session-token Edge Function enforces the same window.
+const sessionEarlyJoin = Duration(minutes: 10);
+const sessionLateGrace = Duration(minutes: 30);
+
+/// What someone can ask for help with. Therapists' specialties use the same
+/// names, so the care team can see who fits a request.
+const therapyTopics = [
+  'Anxiety & stress',
+  'Low mood',
+  'Relationships',
+  'Grief & loss',
+  'Addiction & recovery',
+  'Not sure yet',
+];
+
+/// "$20"; cents only when there are some.
+String formatPrice(int cents, [String currency = 'USD']) {
+  final symbol = currency == 'USD' ? '\$' : '$currency ';
+  final amount = cents % 100 == 0
+      ? '${cents ~/ 100}'
+      : (cents / 100).toStringAsFixed(2);
+  return '$symbol$amount';
+}
+
+/// Where a session's call stands at a given moment.
+enum JoinState { notScheduled, tooEarly, open, over }
+
+JoinState sessionJoinState(
+  DateTime now, {
+  required DateTime? scheduledAt,
+  required int durationMinutes,
+}) {
+  if (scheduledAt == null) return JoinState.notScheduled;
+  final opens = scheduledAt.subtract(sessionEarlyJoin);
+  final closes = scheduledAt
+      .add(Duration(minutes: durationMinutes))
+      .add(sessionLateGrace);
+  if (now.isBefore(opens)) return JoinState.tooEarly;
+  if (now.isAfter(closes)) return JoinState.over;
+  return JoinState.open;
+}
+
+DateTime? _time(Object? value) =>
+    value == null ? null : DateTime.parse(value as String).toLocal();
+
+List<String> _strings(Object? value) =>
+    [...(value as List? ?? const []).cast<String>()];
+
+/// A request for a private session with a licensed therapist, and — once
+/// the care team matches it — the session itself.
 class TherapyRequest {
   const TherapyRequest({
     required this.id,
@@ -11,7 +69,32 @@ class TherapyRequest {
     required this.isFreeSession,
     required this.scheduledAt,
     required this.createdAt,
+    this.therapistId,
+    this.durationMinutes = 50,
+    this.priceCents = 0,
+    this.currency = 'USD',
+    this.paymentStatus = 'not_required',
+    this.clientSummary,
+    this.completedAt,
   });
+
+  factory TherapyRequest.fromRow(Map<String, dynamic> row) => TherapyRequest(
+        id: row['id'] as String,
+        topic: row['topic'] as String,
+        availability: _strings(row['availability']),
+        note: row['note'] as String?,
+        status: row['status'] as String,
+        isFreeSession: row['is_free_session'] as bool,
+        scheduledAt: _time(row['scheduled_at']),
+        createdAt: _time(row['created_at'])!,
+        therapistId: row['therapist_id'] as String?,
+        durationMinutes: (row['duration_minutes'] as num?)?.toInt() ?? 50,
+        priceCents: (row['price_cents'] as num?)?.toInt() ?? 0,
+        currency: row['currency'] as String? ?? 'USD',
+        paymentStatus: row['payment_status'] as String? ?? 'not_required',
+        clientSummary: row['client_summary'] as String?,
+        completedAt: _time(row['completed_at']),
+      );
 
   final String id;
   final String topic;
@@ -22,18 +105,147 @@ class TherapyRequest {
   final String status;
   final bool isFreeSession;
 
-  /// Set by the care team once a time is agreed.
+  /// Set by the care team when they match the request with a therapist.
   final DateTime? scheduledAt;
   final DateTime createdAt;
+  final String? therapistId;
+  final int durationMinutes;
+  final int priceCents;
+  final String currency;
+
+  /// One of: not_required (the free session), unpaid, paid, waived.
+  final String paymentStatus;
+
+  /// The therapist's note for the client, written when the session ends.
+  final String? clientSummary;
+  final DateTime? completedAt;
 
   bool get isPending => status == 'pending';
   bool get isConfirmed => status == 'confirmed';
+  bool get isCompleted => status == 'completed';
 
   /// Still moving forward — shown as the current session up top.
   bool get isActive => isPending || isConfirmed;
+
+  bool get needsPayment => paymentStatus == 'unpaid';
+
+  /// A paid session goes through the care team, who can refund it.
+  bool get canCancelInApp => isActive && paymentStatus != 'paid';
+
+  String get priceLabel => formatPrice(priceCents, currency);
+
+  JoinState joinStateAt(DateTime now) => isConfirmed
+      ? sessionJoinState(now,
+          scheduledAt: scheduledAt, durationMinutes: durationMinutes)
+      : JoinState.notScheduled;
 }
 
-/// Supabase-backed storage for therapy session requests.
+/// What a client sees about the therapist they've been matched with.
+class TherapistProfile {
+  const TherapistProfile({
+    required this.id,
+    required this.fullName,
+    this.title,
+    this.credentials,
+    this.bio,
+    this.specialties = const [],
+    this.languages = const [],
+    this.yearsExperience,
+    this.photoUrl,
+    this.active = true,
+    this.ratingAverage,
+    this.ratingCount = 0,
+  });
+
+  factory TherapistProfile.fromRow(
+    Map<String, dynamic> row, {
+    double? ratingAverage,
+    int ratingCount = 0,
+  }) =>
+      TherapistProfile(
+        id: row['id'] as String,
+        fullName: row['full_name'] as String,
+        title: row['title'] as String?,
+        credentials: row['credentials'] as String?,
+        bio: row['bio'] as String?,
+        specialties: _strings(row['specialties']),
+        languages: _strings(row['languages']),
+        yearsExperience: (row['years_experience'] as num?)?.toInt(),
+        photoUrl: row['photo_url'] as String?,
+        active: row['active'] as bool? ?? true,
+        ratingAverage: ratingAverage,
+        ratingCount: ratingCount,
+      );
+
+  final String id;
+  final String fullName;
+  final String? title;
+  final String? credentials;
+  final String? bio;
+  final List<String> specialties;
+  final List<String> languages;
+  final int? yearsExperience;
+  final String? photoUrl;
+  final bool active;
+
+  /// Only present once there are enough ratings to show one.
+  final double? ratingAverage;
+  final int ratingCount;
+
+  String get firstName => fullName.trim().split(RegExp(r'\s+')).first;
+}
+
+/// Everything needed to join a session's video call.
+class SessionCredentials {
+  const SessionCredentials({
+    required this.url,
+    required this.token,
+    required this.role,
+    required this.endsAt,
+  });
+
+  final String url;
+  final String token;
+
+  /// client or therapist.
+  final String role;
+  final DateTime endsAt;
+}
+
+/// Why joining a call or confirming a payment was refused, from the Edge
+/// Function's error code.
+class SessionAccessException implements Exception {
+  const SessionAccessException(this.code, {this.opensAt});
+
+  final String code;
+  final DateTime? opensAt;
+
+  String get message => switch (code) {
+        'too_early' => opensAt == null
+            ? 'The session isn\'t open yet.'
+            : 'You can join from ${formatTime(opensAt!)} — 10 minutes '
+                'before the start.',
+        'session_over' => 'This session\'s time has passed.',
+        'payment_required' =>
+          'This session needs to be paid for before you can join.',
+        'not_confirmed' => 'This session isn\'t confirmed yet.',
+        'not_found' => 'We couldn\'t find that session.',
+        'no_payment_found' =>
+          'We couldn\'t find your payment yet. If you were charged, try '
+              'again in a minute.',
+        'not_configured' =>
+          'This isn\'t switched on yet. Please contact us.',
+        'invalid_token' ||
+        'missing_token' =>
+          'You\'ve been signed out. Please log in again.',
+        _ => 'Something went wrong — check your connection and try again.',
+      };
+
+  @override
+  String toString() => 'SessionAccessException($code)';
+}
+
+/// Supabase-backed storage for a client's therapy sessions.
 class TherapyRepository {
   final _client = Supabase.instance.client;
 
@@ -49,25 +261,12 @@ class TherapyRepository {
         .select()
         .eq('user_id', _userId)
         .order('created_at', ascending: false);
-    return [
-      for (final row in rows)
-        TherapyRequest(
-          id: row['id'] as String,
-          topic: row['topic'] as String,
-          availability: [...(row['availability'] as List? ?? []).cast<String>()],
-          note: row['note'] as String?,
-          status: row['status'] as String,
-          isFreeSession: row['is_free_session'] as bool,
-          scheduledAt: row['scheduled_at'] == null
-              ? null
-              : DateTime.parse(row['scheduled_at'] as String).toLocal(),
-          createdAt: DateTime.parse(row['created_at'] as String).toLocal(),
-        ),
-    ];
+    return [for (final row in rows) TherapyRequest.fromRow(row)];
   }
 
   /// The first session someone actually books is on us; a cancelled
-  /// request doesn't use up the offer.
+  /// request doesn't use up the offer. The database makes the same call
+  /// when the request is saved — this is only for the copy.
   bool isFreeSessionAvailable(List<TherapyRequest> requests) =>
       requests.every((r) => r.status == 'cancelled');
 
@@ -76,17 +275,110 @@ class TherapyRepository {
     List<String> availability = const [],
     String? note,
   }) async {
-    final free = isFreeSessionAvailable(await fetchRequests());
     await _client.from('therapy_requests').insert({
       'user_id': _userId,
       'topic': topic,
       'availability': availability,
       if (note != null && note.isNotEmpty) 'note': note,
-      'is_free_session': free,
     });
   }
 
   Future<void> cancelRequest(String id) => _client
       .from('therapy_requests')
       .update({'status': 'cancelled'}).eq('id', id);
+
+  /// Profiles for these therapists, with an average rating where there are
+  /// enough ratings to show one.
+  Future<Map<String, TherapistProfile>> fetchTherapists(
+      Iterable<String> ids) async {
+    final unique = ids.toSet().toList();
+    if (unique.isEmpty) return const {};
+    final rows =
+        await _client.from('therapists').select().inFilter('id', unique);
+    final summaries =
+        await _client.rpc('therapist_rating_summaries') as List<dynamic>;
+    final ratings = {
+      for (final s in summaries) s['therapist_id'] as String: s as Map,
+    };
+    return {
+      for (final row in rows)
+        row['id'] as String: TherapistProfile.fromRow(
+          row,
+          ratingAverage:
+              (ratings[row['id']]?['rating_average'] as num?)?.toDouble(),
+          ratingCount:
+              (ratings[row['id']]?['rating_count'] as num?)?.toInt() ?? 0,
+        ),
+    };
+  }
+
+  /// The star ratings this person has given, by session id.
+  Future<Map<String, int>> fetchMyRatings() async {
+    final rows = await _client
+        .from('therapy_ratings')
+        .select('request_id, rating')
+        .eq('author_id', _userId)
+        .eq('author_role', 'client');
+    return {
+      for (final row in rows)
+        row['request_id'] as String: (row['rating'] as num).toInt(),
+    };
+  }
+
+  Future<void> rateSession(
+    String requestId, {
+    required int rating,
+    String? comment,
+  }) async {
+    await _client.rpc('rate_therapy_session', params: {
+      'p_request_id': requestId,
+      'p_rating': rating,
+      'p_comment': comment,
+    });
+  }
+
+  Future<SessionCredentials> joinSession(String requestId) =>
+      fetchSessionCredentials(_client, requestId);
+
+  /// Asks the server to find the in-app purchase for this session.
+  Future<void> confirmPayment(String requestId) async {
+    await invokeSessionFunction(_client, 'confirm-session-payment', requestId);
+  }
+}
+
+/// Shared by clients and therapists: the server checks which one is asking.
+Future<SessionCredentials> fetchSessionCredentials(
+  SupabaseClient client,
+  String requestId,
+) async {
+  final data =
+      await invokeSessionFunction(client, 'session-token', requestId);
+  return SessionCredentials(
+    url: data['url'] as String,
+    token: data['token'] as String,
+    role: data['role'] as String,
+    endsAt: DateTime.parse(data['ends_at'] as String).toLocal(),
+  );
+}
+
+/// Calls one of the session Edge Functions, turning its error codes into
+/// [SessionAccessException]s.
+Future<Map<String, dynamic>> invokeSessionFunction(
+  SupabaseClient client,
+  String function,
+  String requestId,
+) async {
+  if (client.auth.currentUser == null) throw StateError('Not signed in');
+  try {
+    final response = await client.functions
+        .invoke(function, body: {'request_id': requestId});
+    return Map<String, dynamic>.from(response.data as Map);
+  } on FunctionException catch (e) {
+    final details = e.details;
+    final code = details is Map ? details['error'] as String? : null;
+    final opensAt = details is Map && details['opens_at'] is String
+        ? DateTime.parse(details['opens_at'] as String).toLocal()
+        : null;
+    throw SessionAccessException(code ?? 'unavailable', opensAt: opensAt);
+  }
 }

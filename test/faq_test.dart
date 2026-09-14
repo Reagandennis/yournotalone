@@ -51,6 +51,10 @@ void main() {
 
     final card = find.text('Still need help?');
     await tester.scrollUntilVisible(card, 400);
+    // Scrolling in steps can stop with the card half off screen, where a tap
+    // at its centre misses.
+    await tester.ensureVisible(card);
+    await tester.pumpAndSettle();
     await tester.tap(card);
     await tester.pumpAndSettle();
 

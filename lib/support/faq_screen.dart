@@ -76,27 +76,48 @@ const _sections = [
   _FaqSection('Therapy sessions', [
     _FaqItem(
       'How do I book a therapy session?',
-      'Open the Therapy section, tell us what you\'d like to talk about '
-          'and when suits you, and send the request. Our care team reviews '
-          'it and contacts you personally to confirm a time with the right '
-          'professional — no back-and-forth scheduling apps.',
+      'Open Talk to a therapist, tell us what you\'d like to talk about '
+          'and when suits you, and send the request. Our care team matches '
+          'you with a licensed therapist and a time — usually within a day '
+          '— and you\'ll see who and when in the app and by email.',
     ),
     _FaqItem(
       'Is my first session really free?',
-      'Yes. Your first confirmed session is on us — no card details '
-          'needed in the app. It\'s the easiest way to find out whether '
-          'talking to someone helps.',
+      'Yes. Your first session is on us — no payment needed. It\'s the '
+          'easiest way to find out whether talking to someone helps. Each '
+          'session after that is \$20, paid in the app once you\'re matched.',
     ),
     _FaqItem(
-      'Can I cancel a session request?',
-      'Yes — while a request is still pending you can cancel it from the '
-          'same Therapy screen, no questions asked.',
+      'How do sessions work?',
+      'They\'re private video calls, right in the app. The Join button '
+          'appears 10 minutes before the start, and you\'ll need your camera '
+          'and microphone. Calls aren\'t recorded.',
+    ),
+    _FaqItem(
+      'Will I be reminded?',
+      'Yes. You\'ll get an email and a phone notification when you\'re '
+          'matched, if anything changes, and 10 minutes before your session. '
+          'Phone notifications can arrive a little later than the emails.',
+    ),
+    _FaqItem(
+      'Can I cancel a session?',
+      'Yes. You can cancel a request, or a matched session you haven\'t '
+          'paid for, from the same screen. To cancel a paid session, contact '
+          'us before it starts and we\'ll refund you.',
     ),
     _FaqItem(
       'Who are the therapists?',
       'Licensed mental-health professionals. Our care team matches you '
           'based on what you share in your request, so you don\'t have to '
-          'scroll through directories while you\'re struggling.',
+          'scroll through directories while you\'re struggling. Once you\'re '
+          'matched, you can see their profile — credentials, experience and '
+          'what they specialise in.',
+    ),
+    _FaqItem(
+      'Can I rate my session?',
+      'Yes — after a session, tap it under Past sessions. Your therapist '
+          'never sees your rating on its own, only an average across '
+          'several people.',
     ),
   ]),
   _FaqSection('Privacy & your data', [
@@ -115,7 +136,7 @@ const _sections = [
     _FaqItem(
       'How do I delete my account and data?',
       'Settings → Delete account removes your profile, journal, moods, '
-          'recovery data, and therapy requests permanently. You can also '
+          'recovery data, and therapy sessions permanently. You can also '
           'email us from your registered address and we\'ll do it for '
           'you. Deletion can\'t be undone.',
     ),

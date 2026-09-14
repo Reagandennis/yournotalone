@@ -104,9 +104,10 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
           const Center(child: PillarStripe()),
           const SizedBox(height: 18),
           const Text(
-            'We\'ll email you within a day to match you with a licensed '
-            'therapist and find a time that works for you. There\'s no '
-            'charge and no card needed.',
+            'We\'ll match you with a licensed therapist and a time, usually '
+            'within a day, and email you the details. The session is a '
+            'private video call right in the app — no charge and no card '
+            'needed.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
           ),

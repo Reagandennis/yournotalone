@@ -1,17 +1,24 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:workmanager/workmanager.dart';
 
+import 'app_navigation.dart';
 import 'auth/auth_gate.dart';
 import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
 import 'brand.dart';
+import 'home/home_shell.dart';
+import 'notifications/local_notifications.dart';
+import 'notifications/session_notifications.dart';
 import 'onboarding/onboarding_ui.dart';
 import 'sounds/sound_player.dart';
 import 'splash_screen.dart';
+import 'supabase_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +31,8 @@ Future<void> main() async {
     return const _SomethingWentWrong();
   };
   await Supabase.initialize(
-    url: 'https://zpcfavemnvfhqaxqhmri.supabase.co',
-    publishableKey: 'sb_publishable_yKBVrkk13Sm5hMZtrerdiw_uTrhlNd9',
+    url: supabaseUrl,
+    publishableKey: supabasePublishableKey,
   );
   // Enables the media notification and lock-screen controls, so a sleep
   // sound keeps playing when the screen goes off.
@@ -46,7 +53,22 @@ Future<void> main() async {
   }
   await PurchasesService.instance.init();
   await initOnboardingFlags();
+  await _initSessionNotifications();
   runApp(const MyApp());
+}
+
+/// Notification taps open the session they're about, and on Android a
+/// background task checks for session news. Never fatal.
+Future<void> _initSessionNotifications() async {
+  try {
+    await LocalNotifications.ensureInitialized();
+    LocalNotifications.onOpen = openSessionScreen;
+    if (Platform.isAndroid) {
+      await Workmanager().initialize(sessionNotificationsCallback);
+    }
+  } catch (error) {
+    debugPrint('Session notifications unavailable: $error');
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -57,7 +79,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final _navigatorKey = GlobalKey<NavigatorState>();
   StreamSubscription<AuthState>? _authSub;
 
   @override
@@ -69,7 +90,7 @@ class _MyAppState extends State<MyApp> {
         // A password-recovery email deep-links back into the app and signs
         // the user in; from there they still need to choose the new password.
         case AuthChangeEvent.passwordRecovery:
-          _navigatorKey.currentState?.push(
+          appNavigatorKey.currentState?.push(
             MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
           );
         // Without this, an expired or revoked session leaves the app sitting
@@ -77,6 +98,7 @@ class _MyAppState extends State<MyApp> {
         // every screen reports it as a connection problem, and "Try again"
         // can never succeed. Send them somewhere they can actually recover.
         case AuthChangeEvent.signedOut:
+          unawaited(SessionNotifications.instance.stop());
           _toLogin();
         default:
           break;
@@ -86,7 +108,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _toLogin() {
-    _navigatorKey.currentState?.pushAndRemoveUntil(
+    appNavigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const LoginScreen()),
       (route) => false,
     );
@@ -101,7 +123,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      navigatorKey: _navigatorKey,
+      navigatorKey: appNavigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Δεν είσαι μόνος',
       theme: buildAppTheme(),

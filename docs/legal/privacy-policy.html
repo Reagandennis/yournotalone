@@ -33,7 +33,7 @@
     <span style="background:#E12D23"></span><span style="background:#3764CD"></span>
     <span style="background:#191919"></span><span style="background:#FAB414"></span>
   </div>
-  <p class="updated">Δεν είσαι μόνος ("You're not alone") · Last updated: 7 September 2026</p>
+  <p class="updated">Δεν είσαι μόνος ("You're not alone") · Last updated: 14 September 2026</p>
 
   <p>Δεν είσαι μόνος is a mental-wellness app. The nature of what you share with us —
   moods, journal entries, recovery progress — is deeply personal, and we treat it that
@@ -59,21 +59,28 @@
   your practice history — the meditation, breathing and listening sessions you
   complete. This is health-related data and is treated as
   special-category data under Article 9 GDPR (see the next section).</p>
-  <p><strong>Therapy requests</strong> — if you request a therapy session: the topic you
-  select, your preferred times, and any note you write.</p>
-  <p><strong>Purchase data</strong> — if you subscribe to Premium, our subscription
-  provider processes an anonymous app user ID, your subscription status, and store
-  receipt data. We never see or store your card or payment details; payment is handled
-  entirely by Apple or Google.</p>
+  <p><strong>Therapy sessions</strong> — if you request a therapy session: the topic you
+  select, your preferred times, and any note you write. Once you're matched: your
+  therapist, the session time, and whether it has been paid for. Afterwards: the note
+  your therapist writes for you, and any rating or comment you give. Your therapist can
+  also rate the session and flag concerns for our care team — such as a missed session
+  or a worry about your safety.</p>
+  <p><strong>Video calls</strong> — therapy sessions are live audio and video between you
+  and your therapist. They are not recorded, and no audio or video is stored.</p>
+  <p><strong>Purchase data</strong> — if you subscribe to Premium or pay for a therapy
+  session, our payments provider processes an anonymous app user ID, your purchases, and
+  store receipt data. We never see or store your card or payment details; payment is
+  handled entirely by Apple or Google.</p>
   <p><strong>Technical data</strong> — the minimum needed to run a secure service, such
-  as authentication tokens and server logs.</p>
+  as authentication tokens and server logs, and a random key for this installation that
+  lets it collect notifications about your therapy sessions.</p>
   <p><strong>What we do NOT collect:</strong> we run no advertising, no third-party
   analytics, and no tracking across other apps or websites. We do not collect your
   precise location, contacts, or browsing history, and we never sell personal data.</p>
 
   <h2>3. Your wellbeing data and explicit consent</h2>
-  <p>Moods, journal entries, recovery progress, and therapy topics are health-related
-  data. Under Article 9(2)(a) GDPR we process this data only with your explicit consent,
+  <p>Moods, journal entries, recovery progress, and your therapy requests, session notes
+  and ratings are health-related data. Under Article 9(2)(a) GDPR we process this data only with your explicit consent,
   which you give by choosing to record it in the app.</p>
   <p>You can withdraw that consent at any time by deleting individual entries or your
   whole account, or by emailing reaganprezzo@gmail.com. Withdrawing consent doesn't
@@ -89,8 +96,12 @@
     (Art. 6(1)(b) GDPR).</li>
     <li><strong>To record your wellbeing data</strong> — legal basis: your explicit
     consent (Art. 6(1)(a) and 9(2)(a) GDPR).</li>
-    <li><strong>To arrange therapy sessions you request</strong> — legal basis:
-    performance of a contract and your explicit consent.</li>
+    <li><strong>To arrange and run the therapy sessions you request</strong> — matching
+    you with a therapist, scheduling, the video call, payment, and feedback afterwards.
+    Legal basis: performance of a contract and your explicit consent.</li>
+    <li><strong>To act on a safety concern a therapist raises</strong> — legal basis: your
+    explicit consent and, where someone's life may be at risk, the protection of vital
+    interests (Art. 6(1)(d) GDPR).</li>
     <li><strong>To manage subscriptions and entitlements</strong> — legal basis:
     performance of a contract.</li>
     <li><strong>To keep the service secure and prevent abuse</strong> — legal basis: our
@@ -106,15 +117,19 @@
   <ul>
     <li><strong>Supabase</strong> — hosts our database, authentication, and file storage
     (your account, entries, and profile photo).</li>
-    <li><strong>RevenueCat</strong> — manages subscription status. Receives an app user
-    ID and store receipt data; never your name or journal.</li>
+    <li><strong>RevenueCat</strong> — manages subscriptions and in-app purchases.
+    Receives an app user ID and store receipt data; never your name or journal.</li>
     <li><strong>Apple App Store / Google Play</strong> — process payments under their
     own terms and privacy policies.</li>
-    <li><strong>Brevo</strong> — delivers the email notifying our care team when you
-    request a therapy session.</li>
+    <li><strong>LiveKit</strong> — carries the audio and video of therapy sessions in real
+    time. Nothing is recorded or stored.</li>
+    <li><strong>Resend</strong> — delivers the emails about your therapy requests and
+    sessions, to you, your therapist and our care team.</li>
   </ul>
-  <p>If you book a therapy session, the details of your request are shared with our care
-  team so a licensed professional can contact you.</p>
+  <p>If you request a therapy session, our care team sees your request, name and email
+  address so they can match you. The therapist you're matched with sees your first
+  name, the topic, your note and the session time — not your email address — and meets
+  you in the video call.</p>
   <p>We never sell personal data and never share it with advertisers or data brokers. We
   would disclose data to authorities only where the law requires it.</p>
 
@@ -127,8 +142,8 @@
   <h2>7. How long we keep your data</h2>
   <p>Your account data and everything you record stay until you delete them or delete
   your account. When you delete your account, your profile, photo, journal entries,
-  moods, practice history, recovery data, and therapy requests are permanently removed
-  from our systems, with residual copies purged from backups within 30 days.</p>
+  moods, practice history, recovery data, and therapy sessions, notes and ratings are
+  permanently removed from our systems, with residual copies purged from backups within 30 days.</p>
   <p>Purchase records are kept as long as tax and accounting law requires. Server logs
   are kept briefly for security and then deleted.</p>
 

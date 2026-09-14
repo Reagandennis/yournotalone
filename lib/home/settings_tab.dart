@@ -12,7 +12,11 @@ import '../auth/google_auth.dart';
 import '../auth/login_screen.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../care/care_dashboard_screen.dart';
+import '../care/care_repository.dart';
+import '../care/therapist_sessions_screen.dart';
 import '../legal/legal_content.dart';
+import '../notifications/session_notifications.dart';
 import '../legal/legal_screen.dart';
 import '../onboarding/paywall_screen.dart';
 import '../profile/edit_profile_screen.dart';
@@ -42,6 +46,8 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   bool get _isPremium => isPremiumUser();
+
+  final _careRoles = CareRepository().fetchRoles();
 
   Future<void> _manageSubscription(BuildContext context) async {
     if (!PurchasesService.instance.isConfigured) {
@@ -138,6 +144,8 @@ class _SettingsTabState extends State<SettingsTab> {
       ),
     );
     if (confirmed != true || !context.mounted) return;
+    // While still signed in, so the server forgets this phone too.
+    await SessionNotifications.instance.stop();
     // Drop the remembered Google account too, so the next sign-in offers the
     // picker instead of jumping straight back into the account just left.
     await GoogleAuth.signOut();
@@ -364,6 +372,47 @@ class _SettingsTabState extends State<SettingsTab> {
     );
   }
 
+  /// For the care team and therapists only. Roles come from the server, so
+  /// for everyone else this section never appears.
+  Widget _careSection(BuildContext context) {
+    return FutureBuilder<CareRoles>(
+      future: _careRoles,
+      builder: (context, snapshot) {
+        final roles = snapshot.data ?? CareRoles.none;
+        if (!roles.isAdmin && !roles.isTherapist) {
+          return const SizedBox.shrink();
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 28),
+            _sectionLabel('Care team'),
+            if (roles.isAdmin)
+              _row(
+                context,
+                Icons.space_dashboard_outlined,
+                'Care team dashboard',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const CareDashboardScreen()),
+                ),
+              ),
+            if (roles.isTherapist)
+              _row(
+                context,
+                Icons.video_call_outlined,
+                'My therapy sessions',
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const TherapistSessionsScreen()),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _row(
     BuildContext context,
     IconData icon,
@@ -439,6 +488,7 @@ class _SettingsTabState extends State<SettingsTab> {
         _profileCard(context),
         const SizedBox(height: 14),
         _planCard(context),
+        _careSection(context),
         const SizedBox(height: 28),
         _sectionLabel('Account'),
         _row(

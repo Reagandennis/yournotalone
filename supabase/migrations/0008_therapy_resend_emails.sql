@@ -231,7 +231,8 @@ begin
       || public.email_row('Focus', public.email_escape(new.topic))
       || public.email_row('Availability', public.email_escape(availability))
       || public.email_row('Free session',
-           case when new.is_free_session then 'Yes — their first' else 'No' end)
+           case when new.is_free_session then 'Yes — their first'
+             else 'No — $' || (new.price_cents / 100) || ', paid in the app once matched' end)
       || case when nullif(trim(new.note), '') is null then ''
            else public.email_row('Note',
              replace(public.email_escape(new.note), E'\n', '<br>')) end
@@ -243,9 +244,10 @@ begin
     || '<div style="height:12px;font-size:0;line-height:0;">&nbsp;</div>'
     || public.email_box('#F6F6F6', 'Next step',
       '<div style="font-size:12.5px;line-height:1.55;color:#6E6E73;">'
-      || 'Reply to this email to reach them directly. Once you’ve agreed a '
-      || 'time, confirm it with query 2 in supabase/therapy_ops.sql — their '
-      || 'app then shows “Session confirmed” with the time.</div>'),
+      || 'Open <strong style="font-weight:600;color:#191919;">Settings → Care team</strong> '
+      || 'in the app to match them with a therapist and a time. They’re emailed '
+      || 'the details and join the video call from the app. Reply to this email '
+      || 'to reach them directly.</div>'),
     'Sent automatically when someone asks for a therapist in the Δεν είσαι μόνος app.'
   );
 
@@ -256,15 +258,16 @@ begin
     || 'Would like help with: ' || new.topic || E'\n'
     || 'Availability: ' || availability || E'\n'
     || 'Free first session: '
-    || case when new.is_free_session then 'Yes' else 'No' end
+    || case when new.is_free_session then 'Yes'
+         else 'No ($' || (new.price_cents / 100) || ')' end
     || coalesce(E'\n' || 'Note: ' || nullif(trim(new.note), ''), '')
     || E'\n' || 'Requested: ' || requested_at
     || E'\n\n'
     || 'They’ve been told we’ll connect them within 24 hours — by '
     || reply_by || '.'
     || E'\n\n'
-    || 'Reply to this email to reach them directly. Confirm the session '
-    || 'with supabase/therapy_ops.sql query 2 (request id ' || new.id || ').';
+    || 'Match them with a therapist from Settings → Care team in the app. '
+    || 'Reply to this email to reach them directly (request id ' || new.id || ').';
 
   perform net.http_post(
     url := 'https://api.resend.com/emails',
@@ -304,22 +307,24 @@ begin
         || case when new.is_free_session
              then public.email_row('First session',
                '<span style="color:#E12D23;">&#9829;</span>&nbsp;Free, on us')
-             else '' end
+             else public.email_row('Price',
+               '$' || (new.price_cents / 100) || ' — you pay in the app once you’re matched')
+             end
         || '</table>')
       || $html$
 <div style="padding:30px 0 14px;font-size:16px;font-weight:600;color:#191919;">What happens next</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
 <td width="44" valign="top" style="width:44px;padding-bottom:16px;"><div style="width:30px;height:30px;border-radius:15px;background:#EBF0FA;color:#3764CD;font-size:13px;font-weight:600;line-height:30px;text-align:center;">1</div></td>
-<td valign="top" style="padding-bottom:16px;"><div style="font-size:14.5px;line-height:1.4;font-weight:600;color:#191919;">We match you</div><div style="padding-top:2px;font-size:13px;line-height:1.5;color:#6E6E73;">Our care team finds a licensed therapist for what you shared and emails you within 24 hours.</div></td>
+<td valign="top" style="padding-bottom:16px;"><div style="font-size:14.5px;line-height:1.4;font-weight:600;color:#191919;">We match you</div><div style="padding-top:2px;font-size:13px;line-height:1.5;color:#6E6E73;">Our care team finds a licensed therapist for what you shared, usually within 24 hours.</div></td>
 </tr>
 <tr>
 <td width="44" valign="top" style="width:44px;padding-bottom:16px;"><div style="width:30px;height:30px;border-radius:15px;background:#EBF0FA;color:#3764CD;font-size:13px;font-weight:600;line-height:30px;text-align:center;">2</div></td>
-<td valign="top" style="padding-bottom:16px;"><div style="font-size:14.5px;line-height:1.4;font-weight:600;color:#191919;">You pick a time</div><div style="padding-top:2px;font-size:13px;line-height:1.5;color:#6E6E73;">Reply with what suits you. Once it’s confirmed, you’ll see it in the app too.</div></td>
+<td valign="top" style="padding-bottom:16px;"><div style="font-size:14.5px;line-height:1.4;font-weight:600;color:#191919;">You see your booking</div><div style="padding-top:2px;font-size:13px;line-height:1.5;color:#6E6E73;">Your therapist and session time appear in the app, and we email them to you. Can’t make it? Just reply.</div></td>
 </tr>
 <tr>
 <td width="44" valign="top" style="width:44px;padding-bottom:16px;"><div style="width:30px;height:30px;border-radius:15px;background:#EBF0FA;color:#3764CD;font-size:13px;font-weight:600;line-height:30px;text-align:center;">3</div></td>
-<td valign="top" style="padding-bottom:16px;"><div style="font-size:14.5px;line-height:1.4;font-weight:600;color:#191919;">You talk</div><div style="padding-top:2px;font-size:13px;line-height:1.5;color:#6E6E73;">A private, one-on-one session. What you say stays between you and them.</div></td>
+<td valign="top" style="padding-bottom:16px;"><div style="font-size:14.5px;line-height:1.4;font-weight:600;color:#191919;">You talk</div><div style="padding-top:2px;font-size:13px;line-height:1.5;color:#6E6E73;">A private video call, right in the app. What you say stays between you and them.</div></td>
 </tr>
 </table>
 <div style="height:8px;font-size:0;line-height:0;">&nbsp;</div>
@@ -345,14 +350,15 @@ $html$
       || 'Focus: ' || new.topic || E'\n'
       || 'Availability: ' || availability
       || case when new.is_free_session
-           then E'\n' || 'First session: Free, on us' else '' end
+           then E'\n' || 'First session: Free, on us'
+           else E'\n' || 'Price: $' || (new.price_cents / 100) || ', paid in the app once you’re matched' end
       || E'\n\n'
       || 'What happens next' || E'\n'
       || '1. We match you — our care team finds a licensed therapist for '
-      || 'what you shared and emails you within 24 hours.' || E'\n'
-      || '2. You pick a time — reply with what suits you. Once it’s '
-      || 'confirmed, you’ll see it in the app too.' || E'\n'
-      || '3. You talk — a private, one-on-one session.'
+      || 'what you shared, usually within 24 hours.' || E'\n'
+      || '2. You see your booking — your therapist and session time appear '
+      || 'in the app, and we email them to you.' || E'\n'
+      || '3. You talk — a private video call, right in the app.'
       || E'\n\n'
       || 'In crisis or immediate danger? Please don’t wait for us. Call '
       || 'your local emergency number (112 in Greece and across the EU, 999 '

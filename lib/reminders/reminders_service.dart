@@ -2,12 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 import '../brand.dart';
+import '../notifications/local_notifications.dart';
 
 /// The four daily nudges the app can send.
 enum ReminderKind {
@@ -82,35 +81,9 @@ class RemindersService {
 
   static final bool _silent = Platform.environment.containsKey('FLUTTER_TEST');
 
-  final _plugin = FlutterLocalNotificationsPlugin();
-  bool _initialized = false;
+  FlutterLocalNotificationsPlugin get _plugin => LocalNotifications.plugin;
 
-  Future<void> _init() async {
-    if (_silent || _initialized) return;
-    tz.initializeTimeZones();
-    try {
-      final info = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(info.identifier));
-    } catch (e) {
-      debugPrint('Timezone lookup failed, using UTC: $e');
-    }
-    await _plugin.initialize(
-      settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-        iOS: DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-        ),
-        macOS: DarwinInitializationSettings(
-          requestAlertPermission: false,
-          requestBadgePermission: false,
-          requestSoundPermission: false,
-        ),
-      ),
-    );
-    _initialized = true;
-  }
+  Future<void> _init() => LocalNotifications.ensureInitialized();
 
   /// Asks the OS for notification permission; true when granted.
   Future<bool> requestPermission() async {
