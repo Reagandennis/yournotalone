@@ -66,13 +66,11 @@ abstract final class GoogleAuth {
         scopeHint: const ['email', 'profile'],
       );
     } on GoogleSignInException catch (e) {
-      // Logged before anything is decided, because Android's Credential
-      // Manager reports a real configuration failure — a signing-key SHA-1
-      // that isn't registered, say — as a plain cancellation, indistinguishable
-      // from the user dismissing the sheet. Staying quiet is right for a
-      // dismissal, so this line is the only place the true reason surfaces.
+      // Logged first, whatever happens next: Google Play Services writes its
+      // own reason (UNREGISTERED_ON_API_CONSOLE and friends) to logcat only,
+      // and this line is what sits next to it.
       debugPrint('Google sign-in ended (${e.code.name}): ${e.description}');
-      if (e.code == GoogleSignInExceptionCode.canceled) return false;
+      if (_isDismissal(e)) return false;
       throw AuthException(_messageFor(e));
     }
 
@@ -119,14 +117,43 @@ abstract final class GoogleAuth {
     }
   }
 
-  /// Turns a plugin failure into something a user can act on. The raw
-  /// [GoogleSignInException.description] is developer-facing text about client
-  /// configuration, so the caller logs it rather than showing it.
+  /// Whether the user simply backed out of the account sheet.
+  ///
+  /// Android's Credential Manager reports two very different things as
+  /// [GoogleSignInExceptionCode.canceled]: the user dismissing the sheet, and
+  /// Google Play Services giving up *after* an account was picked — because
+  /// this build's signing-key SHA-1 isn't on an Android OAuth client, say.
+  /// Only the first deserves silence. The second is exactly the "tap the
+  /// account, the sheet flickers away, nothing happens" bug, and swallowing
+  /// it leaves nobody any the wiser. The description tells them apart,
+  /// verified on the emulator (September 2026):
+  ///
+  ///  * a real dismissal arrives as `[16] Cancelled by user.`;
+  ///  * an unregistered signing key logs `UNREGISTERED_ON_API_CONSOLE` in
+  ///    GMS and arrives as `[16] Account reauth failed.`.
+  ///
+  /// iOS phrases its dismissal as "The user canceled the sign-in flow", so
+  /// the test is whether the description mentions cancelling at all. An
+  /// empty description gives nothing to go on and gets the benefit of the
+  /// doubt.
+  static bool _isDismissal(GoogleSignInException e) {
+    if (e.code != GoogleSignInExceptionCode.canceled) return false;
+    final description = e.description?.toLowerCase() ?? '';
+    return description.isEmpty || description.contains('cancel');
+  }
+
+  /// Turns a plugin failure into something a user can act on.
+  ///
+  /// The raw [GoogleSignInException.description] is developer-facing text
+  /// about client configuration — but it is also the only clue a tester can
+  /// pass back when sign-in fails on a phone nobody can plug into adb, so it
+  /// rides along in brackets after the friendly sentence.
   static String _messageFor(GoogleSignInException e) {
-    return switch (e.code) {
+    final message = switch (e.code) {
       GoogleSignInExceptionCode.canceled ||
       GoogleSignInExceptionCode.interrupted =>
-        'Google sign-in didn\'t finish. Please try again.',
+        'Google couldn\'t finish signing you in. Please try again, or use '
+            'your email instead.',
       GoogleSignInExceptionCode.clientConfigurationError ||
       GoogleSignInExceptionCode.providerConfigurationError =>
         'Google sign-in isn\'t set up correctly for this app.',
@@ -137,5 +164,9 @@ abstract final class GoogleAuth {
       GoogleSignInExceptionCode.unknownError =>
         'Couldn\'t sign in with Google. Please try again.',
     };
+    var detail = e.description?.trim() ?? '';
+    if (detail.isEmpty) return message;
+    if (detail.length > 140) detail = '${detail.substring(0, 140)}…';
+    return '$message ($detail)';
   }
 }

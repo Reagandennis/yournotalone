@@ -51,12 +51,16 @@ analytics SDK in the build (verified: no Firebase/Crashlytics/Sentry/PostHog in
 | Photos | Profile photo | Yes | Optional | App functionality (avatar) |
 | Health & fitness | **Health info** — mood check-ins, journal entries, recovery streaks, craving logs, therapy requests, the therapist's session note, session ratings and flags | Yes | Optional | App functionality |
 | Financial info | Purchase history — subscriptions and paid therapy sessions | Yes | Optional | App functionality (entitlement, session payment) — held by RevenueCat + the store |
-| Messages | Other in-app messages — rating comments on therapy sessions | Yes | Optional | App functionality |
+| App activity | Other user-generated content — session rating comments, the therapist's note to the client | Yes | Optional | App functionality |
+| Audio | Voice or sound recordings — therapy calls | Yes, **processed ephemerally** | Optional | App functionality |
+| Photos and videos | Videos — therapy calls | Yes, **processed ephemerally** | Optional | App functionality |
+| Device or other IDs | The random install key for session notifications | Yes | Required | App functionality |
 
-Not declared, on purpose: **audio and video from therapy calls**. They stream
-live between the two participants through LiveKit and are never recorded or
-stored, which is Play's ephemeral-processing case. If recording is ever added,
-declare Audio and Photos/videos.
+Therapy calls stream live through LiveKit and are never recorded or stored.
+Play still counts anything sent off the device as collected, so declare call
+audio and video and answer **yes** to "processed ephemerally". LiveKit, Resend,
+RevenueCat and Supabase are service providers, which the form doesn't count as
+sharing.
 | App activity | Practice history (meditations, breathing, sounds) | Yes | Optional | App functionality |
 
 Security practices to declare:
@@ -79,6 +83,12 @@ Security practices to declare:
 The camera is declared `required="false"`, so phones without one can still
 install the app and join a call on audio.
 
+The only foreground service type is `mediaPlayback` (sleep sounds keep playing
+with the screen off); declare it under **App content → Foreground service
+permissions**. WorkManager's own foreground service and its
+`FOREGROUND_SERVICE_SHORT_SERVICE` permission are removed in the manifest,
+because the background session check never runs in the foreground.
+
 ## Notifications and background work
 
 There is no Firebase or other push SDK in the build. On Android, WorkManager
@@ -89,8 +99,8 @@ notifications. Session reminders are scheduled on the phone with
 `inexactAllowWhileIdle`, so no exact-alarm permission is requested.
 
 Data safety: the install key is an app-generated identifier used only for app
-functionality. It is deleted on sign-out and with the account. If the form asks,
-declare it under Device or other IDs.
+functionality, declared under Device or other IDs (see the table). It is deleted
+on sign-out and with the account.
 
 ## Health apps declaration
 
@@ -111,8 +121,16 @@ The app is a **mental-wellness / self-care** app, not a medical device.
   (`lib/support/crisis_resources.dart`) — required in practice for this
   category, and reachable from Settings, from a low mood check-in, and from the
   recovery and therapy screens.
+- In the declaration, select the options for mental health and for remote
+  consultations with licensed professionals, not only self-care.
 - Target age is 16+ (Privacy Policy §"Children"). Set the content rating
   questionnaire accordingly.
+
+## Content rating
+
+In the questionnaire, answer that **users can interact**: clients and therapists
+talk in live video calls. Calls are one-to-one, with a therapist the care team
+assigned; there is no open chat and no way to find other users.
 
 ## Subscriptions
 
@@ -138,4 +156,10 @@ from Settings → Care team and use **Waive fee**.
 - [ ] A real changelog written for the build (not the
       "Bug fixes and performance improvements" placeholder)
 - [ ] `version:` bumped in `pubspec.yaml`
-- [ ] Data safety re-checked if any new field is stored
+- [ ] App content forms match the build: Data safety, Health apps, Foreground
+      service permissions, Content rating
+- [ ] Hosted legal pages published (push `docs/`) — Play links to them
+- [ ] In-app product `therapy` active and priced
+- [ ] Play App Signing SHA-1 registered for Google sign-in
+      ([GOOGLE_SIGN_IN.md](GOOGLE_SIGN_IN.md))
+- [ ] `build/symbols/` kept for this release (readable crash stack traces)

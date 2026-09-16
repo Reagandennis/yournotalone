@@ -65,8 +65,19 @@ keytool -list -v -alias upload -keystore android/app/upload-keystore.jks | grep 
 
 3. **Play App Signing key** — the one that matters in production. Google re-signs every
    build it distributes, so what users install is signed with *Google's* key, not the
-   upload key. Copy it from **Play Console → your app → Test and release → Setup → App
-   integrity → App signing key certificate → SHA-1**.
+   upload key. Find it under **Play Console → your app → Protected with Play → App
+   signing** (older navigation: Test and release → Setup → App integrity).
+
+   **Read that page carefully.** This app's signing key was upgraded to a "quantum-ready"
+   key on 13 Aug 2026, so the page shows *three* certificates: the upgraded key's
+   "Classical key" and "Post-quantum cryptography key", plus one row under *Previous app
+   signing keys*. Play still ships builds signed with the **previous** key — verified on
+   16 Sep 2026 by installing 1.1.0+3 from the internal-testing track on the emulator,
+   pulling `base.apk` and running `apksigner verify --print-certs` on it (a single v3
+   signer, SHA-1 `A7:71:…:99:E4`). Only the "Classical key" had been registered, which is
+   why every Play install failed with the silent "[16] Account reauth failed." while every
+   sideloaded upload-key build worked. All three are registered now (16 Sep 2026), each as
+   its own Android client, and sign-in on a Play-installed build was verified afterwards.
 
 Miss #3 and Google sign-in works perfectly in every local build and every internal-track
 sideload, then fails for everyone who installs from Play.
@@ -76,10 +87,21 @@ but Play Console stays authoritative, and these change if a key is ever rotated:
 
 | Certificate | SHA-1 | Registered as |
 |---|---|---|
-| Play app signing ("Classical key") | `69:DD:1D:78:72:F0:34:C9:A1:33:11:2F:AB:CE:EB:C1:FA:01:50:E5` | You're Not Alone — Android (Play app signing) |
+| Play app signing — **previous key, the one Play actually ships** (first used 13 Aug 2026) | `A7:71:97:37:58:3B:C8:90:C6:1E:C7:9D:05:A1:96:3B:42:1F:99:E4` | Android client 4 (created 16 Sep 2026) |
+| Play app signing — upgraded "Classical key" | `69:DD:1D:78:72:F0:34:C9:A1:33:11:2F:AB:CE:EB:C1:FA:01:50:E5` | You're Not Alone — Android (Play app signing) |
+| Play app signing — "Post-quantum cryptography key" | `D6:20:12:F3:56:4E:1D:6D:D5:60:9C:B2:92:F8:69:09:F7:88:75:F9` | Android client 5 (created 16 Sep 2026) |
 | Upload key (current, generated 5 Sep 2026) | `22:05:B7:7E:53:80:14:1D:48:05:21:9D:31:05:42:42:E0:D4:7C:B9` | You're Not Alone — Android (upload key) |
 | ~~Upload key (original, lost — reset via Play 5 Sep 2026)~~ | ~~`71:C4:BD:BE:77:FE:73:EA:5C:D2:CC:B3:F1:B7:77:44:C0:9E:9E:A2`~~ | — |
 | Debug (this machine, created 3 Sep 2026) | `EE:6A:09:F1:CA:B1:AF:FB:0F:9F:4E:17:A5:31:B1:71:26:FA:38:E3` | You're Not Alone — Android |
+
+To learn what Play really ships, don't trust the console — check an installed copy. Install
+from Play on the emulator (its Google account is an internal tester), then:
+
+```bash
+adb shell pm path com.techgetafrica.yournotalone
+adb pull /data/app/…/base.apk /tmp/play-base.apk
+$ANDROID_HOME/build-tools/36.0.0/apksigner verify --print-certs /tmp/play-base.apk
+```
 
 A debug keystore is regenerated silently by Android Studio whenever it goes missing or
 expires, and the replacement has a different fingerprint — which is exactly how this first
@@ -112,13 +134,24 @@ it revert to their Google picture next time they sign in. Moving profile fields 
 ## Troubleshooting
 
 **Android reports a botched configuration as a cancellation.** The account sheet opens, you
-pick an account, the sheet closes, and the app just sits there with no error — identical to
-having dismissed the sheet yourself. Credential Manager throws
-`GetCredentialCancellationException` for both, so the app cannot tell them apart and stays
-quiet (showing an error every time someone backs out of the sheet would be worse).
+pick an account, the sheet closes, and the app is back on the form — from the outside,
+identical to having dismissed the sheet yourself. Credential Manager throws
+`GetCredentialCancellationException` for both. They differ only in the exception's
+description, which `GoogleAuth._isDismissal` checks: a description that mentions cancelling
+is a real dismissal and stays quiet; anything else is shown on screen as "Google couldn't
+finish signing you in…" with the raw description in brackets, so a tester on a phone nobody
+can plug into adb can read the reason back to you.
 
-**So when Google sign-in "does nothing", read the log.** `GoogleAuth` logs every outcome,
-and GMS logs the underlying reason:
+Verified on the emulator on 16 Sep 2026 by re-signing the release APK with a throwaway
+keystore whose SHA-1 is registered nowhere:
+
+| What the app receives | What GMS logs (`Auth.Api.Credentials`) | Meaning |
+|---|---|---|
+| `canceled`: `[16] Cancelled by user.` | `GoogleSignIn_flowRunner Flow failed`, nothing else | The user really did back out. Working as intended; nothing shown. |
+| `canceled`: `[16] Account reauth failed.` | `[8] Unknown error [status=UNREGISTERED_ON_API_CONSOLE]` | **The usual one.** This build's signing SHA-1 is not on any Android OAuth client. Add it (see above). Shown on screen. |
+
+**With adb, read the log.** `GoogleAuth` logs every outcome, and GMS logs the underlying
+reason:
 
 ```bash
 adb logcat | grep -E "Google sign-in ended|Auth.Api.Credentials"
@@ -126,13 +159,29 @@ adb logcat | grep -E "Google sign-in ended|Auth.Api.Credentials"
 
 | Log line | Cause |
 |----------|-------|
-| `Unknown error [status=UNREGISTERED_ON_API_CONSOLE]` | **The usual one.** This build's signing SHA-1 is not on the Android OAuth client. Add it (see above). |
-| `Google sign-in ended (canceled)` and nothing from GMS | The user really did dismiss the sheet. Working as intended. |
+| `Unknown error [status=UNREGISTERED_ON_API_CONSOLE]` | SHA-1 not registered, as above. |
 | `…(clientConfigurationError)` / `…(providerConfigurationError)` | Client ID or Play Services problem; the description says which. |
 | Supabase returns "Unacceptable audience in id_token" | The platform's client ID is missing from the Supabase provider's Client IDs list. |
 | Nonce-related error from Supabase | Something started passing a `nonce` to `initialize()`; either stop, or enable "Skip nonce checks". |
 
+**Works on the emulator, fails on other people's phones.** Two things differ: the signing
+key (a Play install is signed with Google's app-signing key, not the upload key) and the
+Google account. If the OAuth consent screen is still in *Testing*, only the listed test
+users can sign in and everyone else fails at the same silent point — publish it (the basic
+scopes used here need no review) or add the tester's address under test users.
+
+**To reproduce a broken key locally**, sign a copy of the release APK with a fresh keystore
+and install that on the emulator:
+
+```bash
+keytool -genkeypair -keystore /tmp/bogus.jks -alias bogus -keyalg RSA \
+  -storepass bogus123 -keypass bogus123 -dname "CN=Unregistered"
+cp build/app/outputs/flutter-apk/app-release.apk /tmp/app-bogus.apk
+$ANDROID_HOME/build-tools/36.0.0/apksigner sign --ks /tmp/bogus.jks \
+  --ks-key-alias bogus --ks-pass pass:bogus123 /tmp/app-bogus.apk
+```
+
 The trap this sets: sign-in works all through development, then the Play build reaches real
 users signed with Google's app-signing key, that SHA-1 was never registered, and every one
-of them taps the button and sees *nothing at all*. Register the Play App Signing SHA-1
-before the first release and check logcat once on a Play-installed build.
+of them taps the button and gets a one-line error. Register the Play App Signing SHA-1
+before the first release and check once on a Play-installed build.
