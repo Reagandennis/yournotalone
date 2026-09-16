@@ -7,11 +7,6 @@ import '../brand.dart';
 import 'session_format.dart';
 import 'therapy_repository.dart';
 
-/// A therapy session's video call, for the client and the therapist alike.
-///
-/// [connect] fetches credentials from the session-token Edge Function, which
-/// decides whether this person may join right now. Nothing is recorded:
-/// audio and video pass through LiveKit and aren't stored.
 class CallScreen extends StatefulWidget {
   const CallScreen({
     super.key,
