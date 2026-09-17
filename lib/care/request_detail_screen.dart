@@ -175,9 +175,13 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
     if (request.isFreeSession) return 'Free first session';
     final paidOn =
         _item.paidAt == null ? '' : ' on ${formatDate(_item.paidAt!)}';
+    final refunded = _item.refundedAt;
     return switch (request.paymentStatus) {
       'paid' => '${request.priceLabel} · paid$paidOn',
       'waived' => '${request.priceLabel} · waived',
+      _ when refunded != null =>
+        '${request.priceLabel} · refunded by Google Play on '
+            '${formatDate(refunded)}, not paid',
       _ => '${request.priceLabel} · not paid yet',
     };
   }

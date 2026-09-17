@@ -28,6 +28,7 @@ class AdminTherapyRequest {
     this.clientEmail,
     this.therapistName,
     this.paidAt,
+    this.refundedAt,
     this.clientRating,
     this.clientComment,
     this.therapistRating,
@@ -45,6 +46,9 @@ class AdminTherapyRequest {
         paidAt: row['paid_at'] == null
             ? null
             : DateTime.parse(row['paid_at'] as String).toLocal(),
+        refundedAt: row['refunded_at'] == null
+            ? null
+            : DateTime.parse(row['refunded_at'] as String).toLocal(),
         clientRating: (row['client_rating'] as num?)?.toInt(),
         clientComment: row['client_comment'] as String?,
         therapistRating: (row['therapist_rating'] as num?)?.toInt(),
@@ -59,6 +63,10 @@ class AdminTherapyRequest {
   final String? clientEmail;
   final String? therapistName;
   final DateTime? paidAt;
+
+  /// When Google Play refunded an in-app payment for this session. The
+  /// session is unpaid again from then, unless the care team changed it.
+  final DateTime? refundedAt;
   final int? clientRating;
   final String? clientComment;
   final int? therapistRating;

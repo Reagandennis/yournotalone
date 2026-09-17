@@ -23,6 +23,7 @@ Functions must be deployed:
 supabase functions deploy delete-account           # in-app account deletion
 supabase functions deploy session-token            # joining a therapy call
 supabase functions deploy confirm-session-payment  # paid therapy sessions
+supabase functions deploy revenuecat-webhook --no-verify-jwt  # refunds
 ```
 
 ## Therapy sessions
@@ -50,6 +51,12 @@ who can see and do what.
   checks purchases with RevenueCat API v2 and needs `REVENUECAT_SECRET_KEY` (a
   v2 secret key) and `REVENUECAT_PROJECT_ID`. The care team can also mark a
   session paid or waive the fee from the dashboard.
+- **Refunds** (migration 0012) come in through `revenuecat-webhook`, which
+  needs `REVENUECAT_WEBHOOK_SECRET` and is registered in RevenueCat →
+  Integrations → Webhooks with the Authorization header value
+  `Bearer <that secret>`. A refunded session goes back to unpaid, so it can't
+  be joined, and the care team and client are emailed. A refund Google later
+  reverses (migration 0013) makes the session paid again.
 - **Emails** go through Resend (migrations 0008 and 0009), using the Vault
   secrets `resend_api_key` and `resend_from`.
 - **Limits** on requests (migration 0011): topic and note sizes are checked

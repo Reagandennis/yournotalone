@@ -304,7 +304,7 @@ class _RequestTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    paymentBadge(request),
+                    paymentBadge(request, refunded: item.refundedAt != null),
                     if (request.isCompleted && item.clientRating != null) ...[
                       const SizedBox(height: 6),
                       StarRow(rating: item.clientRating!.toDouble(), size: 12),

@@ -59,9 +59,10 @@ class StatusBadge extends StatelessWidget {
   }
 }
 
-StatusBadge paymentBadge(TherapyRequest request) {
+StatusBadge paymentBadge(TherapyRequest request, {bool refunded = false}) {
   if (request.isFreeSession) return const StatusBadge('Free', color: Brand.blue);
   return switch (request.paymentStatus) {
+    'unpaid' when refunded => const StatusBadge('Refunded', color: Brand.red),
     'unpaid' => const StatusBadge('Unpaid', color: Brand.red),
     'paid' => const StatusBadge('Paid', color: Brand.ink),
     'waived' => const StatusBadge('Waived'),
