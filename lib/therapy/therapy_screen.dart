@@ -200,7 +200,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
       await _repo.cancelRequest(request.id);
       await _load();
     } catch (e) {
-      if (mounted) {
+      if (!mounted) return;
+      if (e is PostgrestException && e.code == 'P0001' && e.message.isNotEmpty) {
+        // The session started while this screen was open, so the database
+        // said no in plain words.
+        _say(e.message);
+        await _load(quiet: true);
+      } else {
         _say(errorMessage(e, 'Couldn\'t cancel — check your connection.'));
       }
     }
@@ -808,7 +814,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
             const SizedBox(height: 16),
             _joinSection(request),
           ],
-          if (request.canCancelInApp) ...[
+          if (request.canCancelAt(_now())) ...[
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,

@@ -204,12 +204,27 @@ void main() {
       });
       expect(request.paymentStatus, 'not_required');
       expect(request.durationMinutes, 50);
-      expect(request.canCancelInApp, isTrue);
+      expect(request.canCancelAt(_now), isTrue);
     });
 
     test('a paid session is cancelled through the care team', () {
-      expect(_request(payment: 'paid').canCancelInApp, isFalse);
-      expect(_request(payment: 'unpaid').canCancelInApp, isTrue);
+      expect(_request(payment: 'paid').canCancelAt(_now), isFalse);
+      expect(_request(payment: 'unpaid').canCancelAt(_now), isTrue);
+    });
+
+    test('a session is locked to the app once its call opens', () {
+      final session = _request(free: true);
+      final opens = _start.subtract(const Duration(minutes: 10));
+      expect(session.canCancelAt(opens.subtract(const Duration(seconds: 1))),
+          isTrue);
+      expect(session.canCancelAt(opens), isFalse);
+      expect(session.canCancelAt(_start.add(const Duration(hours: 1))),
+          isFalse);
+      // A request that hasn't been matched has no start to pass.
+      expect(
+          _request(status: 'pending', free: true)
+              .canCancelAt(_start.add(const Duration(days: 30))),
+          isTrue);
     });
 
     test('too early says when the call opens', () {
@@ -238,7 +253,8 @@ void main() {
       expect(_enabled(tester, 'Join session'), isFalse);
       expect(find.text('The call opens once your session is paid for.'),
           findsOneWidget);
-      expect(find.text('Cancel session'), findsOneWidget);
+      // The call has opened, so cancelling is the care team's call now.
+      expect(find.text('Cancel session'), findsNothing);
     });
 
     testWidgets('a paid session opens the call ten minutes before the start',
@@ -283,6 +299,34 @@ void main() {
       expect(find.text('First session — free'), findsOneWidget);
       expect(find.text('Cancel request'), findsOneWidget);
       expect(find.text('Join session'), findsNothing);
+    });
+
+    testWidgets('a session that has started can no longer be cancelled',
+        (tester) async {
+      // Cancelling after attending, before the therapist tapped Finish,
+      // handed the free first session back — forever.
+      final started = _start.add(const Duration(minutes: 5));
+      await _show(
+        tester,
+        TherapyScreen(
+          repository: _FakeTherapy([_request(free: true)]),
+          clock: () => started,
+        ),
+      );
+      expect(find.text('Join session'), findsOneWidget);
+      expect(find.text('Cancel session'), findsNothing);
+    });
+
+    testWidgets('a session that has not opened yet can still be cancelled',
+        (tester) async {
+      await _show(
+        tester,
+        TherapyScreen(
+          repository: _FakeTherapy([_request(free: true)]),
+          clock: () => _now,
+        ),
+      );
+      expect(find.text('Cancel session'), findsOneWidget);
     });
 
     testWidgets('after the free session, booking shows the price',

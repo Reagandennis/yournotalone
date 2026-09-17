@@ -130,8 +130,15 @@ class TherapyRequest {
 
   bool get needsPayment => paymentStatus == 'unpaid';
 
-  /// A paid session goes through the care team, who can refund it.
-  bool get canCancelInApp => isActive && paymentStatus != 'paid';
+  /// A paid session goes through the care team, who can refund it. So does
+  /// a session whose call has opened: cancelling after attending used to
+  /// hand the free first session back, so the database refuses it now and
+  /// the button goes away at the same moment.
+  bool canCancelAt(DateTime now) {
+    if (!isActive || paymentStatus == 'paid') return false;
+    if (!isConfirmed || scheduledAt == null) return true;
+    return now.isBefore(scheduledAt!.subtract(sessionEarlyJoin));
+  }
 
   String get priceLabel => formatPrice(priceCents, currency);
 
