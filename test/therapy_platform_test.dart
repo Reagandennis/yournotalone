@@ -73,6 +73,21 @@ class _FakeTherapy extends TherapyRepository {
       rated.add((requestId, rating, comment));
 }
 
+/// A booking the database turns down, the way 0011's caps do.
+class _RefusingTherapy extends _FakeTherapy {
+  _RefusingTherapy(super.requests, this.error);
+
+  final Object error;
+
+  @override
+  Future<void> requestSession({
+    required String topic,
+    List<String> availability = const [],
+    String? note,
+  }) async =>
+      throw error;
+}
+
 class _FakeCare extends CareRepository {
   _FakeCare({
     this.requests = const [],
@@ -282,6 +297,34 @@ void main() {
       );
       expect(find.text('Sessions are \$20'), findsOneWidget);
       expect(find.text('Request a session'), findsOneWidget);
+    });
+
+    testWidgets('a refused booking shows the database\'s reason',
+        (tester) async {
+      await _show(
+        tester,
+        TherapyScreen(
+          repository: _RefusingTherapy(
+            const [],
+            const PostgrestException(
+              message: 'You already have a session on the way. Cancel it '
+                  'first if you need to change something.',
+              code: 'P0001',
+            ),
+          ),
+          clock: () => _now,
+        ),
+      );
+      await tester.tap(find.text('Anxiety & stress'));
+      await tester.pump();
+      await tester.tap(find.text('Request my free session'));
+      await _settle(tester);
+      expect(
+        find.text('You already have a session on the way. Cancel it first '
+            'if you need to change something.'),
+        findsOneWidget,
+      );
+      expect(find.text('Request my free session'), findsOneWidget);
     });
 
     testWidgets('a finished session shows the note and takes a rating',

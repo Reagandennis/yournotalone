@@ -52,6 +52,10 @@ who can see and do what.
   session paid or waive the fee from the dashboard.
 - **Emails** go through Resend (migrations 0008 and 0009), using the Vault
   secrets `resend_api_key` and `resend_from`.
+- **Limits** on requests (migration 0011): topic and note sizes are checked
+  in the database, a person can have one open request at a time and at most
+  5 a day, and the app is refused above 60 requests an hour overall. Each
+  refusal carries a message the app shows as is.
 - **Phone notifications** use no Firebase or push service (migration 0010).
   Session news — booked, changed, cancelled, reminders — is queued in
   `app_notifications`. The app collects it on launch and, on Android, about

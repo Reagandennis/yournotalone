@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../billing/purchases_service.dart';
 import '../billing/session_payments.dart';
@@ -143,7 +144,20 @@ class _TherapyScreenState extends State<TherapyScreen> {
       unawaited(SessionNotifications.instance.start(askPermission: true));
       await _load();
     } catch (e) {
-      if (mounted) {
+      if (!mounted) return;
+      if (e is PostgrestException && e.code == '23514') {
+        // A size check: the form caps the note itself, so this is a
+        // stale build or something that isn't the app.
+        _say('That note is too long — please keep it under 1000 characters.');
+      } else if (e is PostgrestException &&
+          e.code == 'P0001' &&
+          e.message.isNotEmpty) {
+        // The database refused with a reason written for people — a
+        // request already open, or too many in a day.
+        _say(e.message);
+        // If it's an open request we hadn't seen, show it instead of the form.
+        await _load(quiet: true);
+      } else {
         _say(errorMessage(
             e, 'Couldn\'t send your request — check your connection.'));
       }
