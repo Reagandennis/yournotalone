@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
@@ -79,6 +80,7 @@ class _SignupScreenState extends State<SignupScreen> {
         data: {'full_name': _name.text.trim()},
         emailRedirectTo: authRedirectUrl,
       );
+      Sentry.metrics.count('auth.sign_up.email', 1);
       if (!mounted) return;
       if (res.session != null) {
         Navigator.of(context).pushReplacement(

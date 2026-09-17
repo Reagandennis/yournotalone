@@ -220,6 +220,25 @@ platform :android do
     UI.user_error!("Build finished but #{APK_PATH} is missing") unless File.exist?(APK_PATH)
   end
 
+  # Every release build is obfuscated, so without this Sentry shows crash
+  # stack traces as hashes. Runs after the Play upload and never fails the
+  # release: a Sentry hiccup is not a reason to withhold a build.
+  desc "Upload the last build's obfuscation symbols (build/symbols) to Sentry"
+  private_lane :upload_symbols_to_sentry do
+    has_token = !ENV["SENTRY_AUTH_TOKEN"].to_s.empty? ||
+                File.exist?(File.join(PROJECT_ROOT, "sentry.properties"))
+    unless has_token
+      UI.important("Skipping Sentry symbol upload: set SENTRY_AUTH_TOKEN or add sentry.properties (crash traces for this build will be obfuscated).")
+      next
+    end
+    begin
+      run_in_root("dart run sentry_dart_plugin")
+      UI.success("Uploaded obfuscation symbols to Sentry")
+    rescue => e
+      UI.important("Sentry symbol upload failed (release is unaffected): #{e.message}")
+    end
+  end
+
   # Shared release flow: bump -> test -> build -> upload.
   private_lane :release_to do |options|
     track = options[:track]
@@ -232,6 +251,7 @@ platform :android do
     write_changelog(code, options[:changelog])
     upload_bundle(track: track, rollout: options[:rollout], status: options[:status], version_code: code)
     UI.success("Uploaded #{lane_context[:VERSION_NAME]}+#{code} to the #{track} track")
+    upload_symbols_to_sentry
     UI.important("Remember to commit the pubspec.yaml version bump.") unless options[:skip_bump]
   end
 

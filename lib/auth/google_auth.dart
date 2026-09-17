@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// OAuth client IDs from the app's Google Cloud project (497109017811).
@@ -100,6 +101,7 @@ abstract final class GoogleAuth {
       idToken: idToken,
       accessToken: accessToken,
     );
+    Sentry.metrics.count('auth.sign_in.google', 1);
     return true;
   }
 

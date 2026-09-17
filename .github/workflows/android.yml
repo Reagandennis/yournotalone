@@ -145,6 +145,7 @@ jobs:
         working-directory: android
         env:
           SUPPLY_JSON_KEY_DATA: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           TRACK: ${{ github.event.inputs.track || 'internal' }}
           ROLLOUT: ${{ github.event.inputs.rollout || '0.1' }}
           CHANGELOG: ${{ github.event.inputs.changelog }}

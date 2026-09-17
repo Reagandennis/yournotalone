@@ -104,6 +104,42 @@ Every release lane builds with `--obfuscate --split-debug-info=build/symbols`. K
 `build/symbols/` directory for each release if you want readable crash stack traces
 (they are also attached as a CI artifact).
 
+## Crash reporting (Sentry)
+
+Crashes and unhandled errors go to Sentry project **techgetafrica-e6 / flutter**
+(`lib/main.dart` wraps start-up in `SentryFlutter.init`). Events carry the stack trace,
+device, OS and app version and nothing else: `sendDefaultPii` is off and screenshots are
+never attached, because a screenshot of this app can show a journal entry or a therapist's
+name. Debug builds report with `environment=development`, release builds with `production`;
+filter by environment in Sentry to ignore local noise.
+
+What is switched on, all configured in `_configureSentry` in `lib/main.dart`:
+
+| Feature | Setting | Why |
+|---|---|---|
+| Errors | always | The reason Sentry is here. Start-up is wrapped, so a crash before the first frame is reported too. |
+| Logs | `enableLogs`; release builds forward every `debugPrint` line as a `warn` log | The app's `debugPrint` calls are all failure descriptions, most inside catch blocks that otherwise swallow the error. Never user content. |
+| Metrics | counters at the funnel points: `auth.sign_in.email` / `auth.sign_in.google` / `auth.sign_up.email`, `mood.logged`, `journal.entry_created`, `practice.completed.<kind>`, `therapy.payment_confirmed`, `therapy.call_joined` | Counts only, no attributes, no identifiers. |
+| Session Replay | production: `sessionSampleRate 0`, `onErrorSampleRate 1.0`; development: every session. All text and images masked (`options.privacy`). | A replay of this app is a recording of someone's journal and therapy. Only a session that hit an error is kept, and even that is masked. |
+| Tracing | `tracesSampleRate` 0.2 in production, 1.0 in development, `SentryNavigatorObserver` on `MaterialApp` | Only the app-start transaction exists today: the app pushes unnamed `MaterialPageRoute`s, and the observer needs a `RouteSettings(name: …)` to time a screen. Name the routes to get per-screen traces. |
+
+Release builds are obfuscated, so Sentry needs the `--split-debug-info` output to show
+readable Dart stack traces. Every release lane (`internal`, `alpha`, `beta`, `production`)
+uploads `build/symbols/` after the Play upload by running `dart run sentry_dart_plugin`
+(configured in the `sentry:` block of `pubspec.yaml`). It never fails a release: without a
+token it prints a warning and the build's crashes will simply be unreadable.
+
+Where the token comes from:
+
+- **Locally**: `sentry.properties` in the project root, created by `sentry-wizard` and
+  git-ignored. Re-create it with `auth_token=<token>` if it goes missing (Sentry →
+  Settings → Auth Tokens, scopes `project:releases` and `org:read`).
+- **CI**: the `SENTRY_AUTH_TOKEN` secret in the `play-store` environment, passed to the
+  release lane by `.github/workflows/android.yml`. Add it once in the repository settings.
+
+To upload symbols for a build made outside the lanes, run `dart run sentry_dart_plugin`
+from the project root after `flutter build … --obfuscate --split-debug-info=build/symbols`.
+
 ## The security suite in detail
 
 Each step is a standalone script in `scripts/security/` so you can run one on its own:

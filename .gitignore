@@ -59,3 +59,5 @@ android/play-service-account.json
 /vendor/bundle/
 
 # Security scan output lives in build/security (already covered by /build/)
+
+sentry.properties

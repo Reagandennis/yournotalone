@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../brand.dart';
 import 'session_format.dart';
@@ -117,6 +118,7 @@ class _CallScreenState extends State<CallScreen> {
       _clock = Timer.periodic(const Duration(seconds: 30), (_) => _refresh());
       if (!mounted) return;
       setState(() => _phase = _Phase.live);
+      Sentry.metrics.count('therapy.call_joined', 1);
       if (missing.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

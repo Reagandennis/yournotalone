@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
@@ -115,6 +116,7 @@ class PracticeRepository {
         'title': title,
         'minutes': minutes,
       });
+      Sentry.metrics.count('practice.completed.${kind.key}', 1);
     } catch (error) {
       debugPrint('Could not record practice session: $error');
     }

@@ -1,3 +1,4 @@
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'session_format.dart';
@@ -343,6 +344,7 @@ class TherapyRepository {
   /// Asks the server to find the in-app purchase for this session.
   Future<void> confirmPayment(String requestId) async {
     await invokeSessionFunction(_client, 'confirm-session-payment', requestId);
+    Sentry.metrics.count('therapy.payment_confirmed', 1);
   }
 }
 

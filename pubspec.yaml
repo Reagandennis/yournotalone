@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  sentry_flutter: ^9.30.0
   flutter:
     sdk: flutter
 
@@ -54,6 +55,7 @@ dependencies:
   workmanager: ^0.10.10
 
 dev_dependencies:
+  sentry_dart_plugin: ^3.4.0
   flutter_test:
     sdk: flutter
 
@@ -140,3 +142,14 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Crash reporting (see docs/RELEASING.md, "Crash reporting"). `dart run
+# sentry_dart_plugin` uploads the obfuscation symbols of the last release
+# build so Sentry can show readable stack traces. The auth token comes from
+# sentry.properties (git-ignored) locally, or SENTRY_AUTH_TOKEN in CI.
+sentry:
+  upload_debug_symbols: true
+  upload_source_maps: false
+  symbols_path: build/symbols
+  project: flutter
+  org: techgetafrica-e6

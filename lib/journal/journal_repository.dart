@@ -1,3 +1,4 @@
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class JournalEntry {
@@ -58,12 +59,14 @@ class JournalRepository {
     return rows.length;
   }
 
-  Future<void> create({String? title, required String content}) =>
-      _client.from('journal_entries').insert({
-        'user_id': _userId,
-        'title': title,
-        'content': content,
-      });
+  Future<void> create({String? title, required String content}) async {
+    await _client.from('journal_entries').insert({
+      'user_id': _userId,
+      'title': title,
+      'content': content,
+    });
+    Sentry.metrics.count('journal.entry_created', 1);
+  }
 
   Future<void> update(String id, {String? title, required String content}) =>
       _client

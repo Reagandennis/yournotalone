@@ -1,3 +1,4 @@
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// One saved check-in: which day, and how it went.
@@ -75,5 +76,6 @@ class MoodRepository {
       },
       onConflict: 'user_id,entry_date',
     );
+    Sentry.metrics.count('mood.logged', 1);
   }
 }
