@@ -56,6 +56,36 @@ void main() {
     expect(isPremiumUser(), isFalse);
   });
 
+  test('only app metadata can grant premium', () {
+    User account({
+      Map<String, dynamic> app = const {},
+      Map<String, dynamic> user = const {},
+    }) =>
+        User(
+          id: 'u1',
+          appMetadata: app,
+          userMetadata: user,
+          aud: 'authenticated',
+          createdAt: '2026-09-17T00:00:00Z',
+        );
+
+    // A grant we set by SQL lives in app metadata, which only the service
+    // role can write.
+    expect(isPremiumUser(account(app: {compPremiumKey: true})), isTrue);
+
+    // The same key in user metadata is worthless: any signed-in user can
+    // put it there through the public auth API, which is how premium used
+    // to be self-grantable.
+    expect(isPremiumUser(account(user: {compPremiumKey: true})), isFalse);
+
+    // Picking a plan at the paywall isn't paying for it, on any platform.
+    expect(
+      isPremiumUser(account(user: {'plan_choice': 'premium_monthly'})),
+      isFalse,
+    );
+    expect(isPremiumUser(account()), isFalse);
+  });
+
   testWidgets('every check-in answer ends up at the paywall', (tester) async {
     // The "struggling" branch used to finish onboarding at the therapy
     // offer, so half of all new users never saw pricing at all.

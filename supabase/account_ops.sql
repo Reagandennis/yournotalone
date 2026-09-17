@@ -9,25 +9,28 @@
 
 -- ── 1. Grant premium to an account, without a purchase ───────────
 -- For your own account, testers, the Play reviewer, or support goodwill.
--- The app checks `premium_comp` (lib/home/home_ui.dart, compPremiumKey) and
--- nothing ever writes it automatically, so it can't be confused with a real
--- subscription — and it survives even when RevenueCat says no.
+-- The app checks `premium_comp` in app metadata (lib/home/home_ui.dart,
+-- compPremiumKey). App metadata can only be written here or with the
+-- service role — never by the app or its user — so it can't be confused
+-- with a real subscription, and it survives even when RevenueCat says no.
+-- (Don't put it in raw_user_meta_data: any signed-in user can write that
+-- through the auth API. Migration 0014 moved the old grants across.)
 -- Sign out and back in afterwards so the app re-reads the metadata.
 --
 -- update auth.users
---    set raw_user_meta_data = coalesce(raw_user_meta_data, '{}'::jsonb)
---                             || '{"premium_comp": true}'::jsonb
+--    set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb)
+--                            || '{"premium_comp": true}'::jsonb
 --  where email = 'you@example.com';
 --
 -- Take it away again:
 -- update auth.users
---    set raw_user_meta_data = raw_user_meta_data - 'premium_comp'
+--    set raw_app_meta_data = raw_app_meta_data - 'premium_comp'
 --  where email = 'you@example.com';
 --
 -- Who currently has it:
--- select email, raw_user_meta_data ->> 'premium_comp' as comp
+-- select email, raw_app_meta_data ->> 'premium_comp' as comp
 --   from auth.users
---  where raw_user_meta_data ->> 'premium_comp' = 'true';
+--  where raw_app_meta_data ->> 'premium_comp' = 'true';
 
 -- ── 2. Deletion queue: requests the Edge Function never closed out ─
 -- Needs migration 0006.

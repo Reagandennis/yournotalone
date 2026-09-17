@@ -15,28 +15,33 @@ String firstNameOf() {
   return fullName.split(RegExp(r'\s+')).first;
 }
 
-/// Metadata flag that grants premium regardless of billing — for your own
-/// account, testers, the Play reviewer, and support goodwill. Set it by
-/// hand; nothing in the app ever writes it. See supabase/account_ops.sql.
+/// App-metadata flag that grants premium regardless of billing — for your
+/// own account, testers, the Play reviewer, and support goodwill. Set it by
+/// hand in SQL; nothing in the app ever writes it. See
+/// supabase/account_ops.sql.
+///
+/// It lives in `app_metadata`, which only the service role can write. It
+/// used to be in `user_metadata`, which any signed-in user can set through
+/// the public auth API — so anyone could grant themselves premium.
 const compPremiumKey = 'premium_comp';
 
 /// Whether the user has premium.
 ///
-/// Three sources, in order:
+/// Two sources, in order:
 ///
 /// 1. A live RevenueCat entitlement — a real, current subscription.
 /// 2. A comp grant we set by hand ([compPremiumKey]).
-/// 3. `plan_choice` metadata, but **only** when RevenueCat can't answer at
-///    all (an unsupported platform, or configure failed). It is written
-///    once at purchase and never cleared, so trusting it while billing is
-///    live would keep premium alive through a cancellation or a refund.
-bool isPremiumUser() {
-  final purchases = PurchasesService.instance;
-  if (purchases.isPro.value) return true;
-  final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
-  if (meta?[compPremiumKey] == true) return true;
-  if (purchases.isConfigured) return false;
-  return (meta?['plan_choice'] as String?)?.startsWith('premium') ?? false;
+///
+/// `plan_choice` is deliberately not one: the app writes it at the paywall,
+/// so it says what someone picked, not what they paid for, and being in
+/// user metadata anyone can set it. It used to stand in when RevenueCat
+/// couldn't answer, which on such a platform was a self-grant.
+///
+/// [user] is only for tests; the app always checks the signed-in user.
+bool isPremiumUser([User? user]) {
+  if (PurchasesService.instance.isPro.value) return true;
+  final account = user ?? Supabase.instance.client.auth.currentUser;
+  return account?.appMetadata[compPremiumKey] == true;
 }
 
 /// Rebuilds [builder] whenever the entitlement changes.
