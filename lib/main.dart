@@ -157,9 +157,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // A password-recovery email deep-links back into the app and signs
         // the user in; from there they still need to choose the new password.
         case AuthChangeEvent.passwordRecovery:
-          appNavigatorKey.currentState?.push(
-            MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
-          );
+          if (!NewPasswordScreen.isShowing) {
+            appNavigatorKey.currentState?.push(
+              MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
+            );
+          }
         // Without this, an expired or revoked session leaves the app sitting
         // in HomeShell with no user: every repository throws "Not signed in",
         // every screen reports it as a connection problem, and "Try again"

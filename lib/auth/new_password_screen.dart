@@ -9,18 +9,31 @@ import 'auth_ui.dart';
 class NewPasswordScreen extends StatefulWidget {
   const NewPasswordScreen({super.key});
 
+  /// Whether one is on screen, so a second recovery event (the same link
+  /// delivered twice) doesn't stack another on top.
+  static bool get isShowing => _NewPasswordScreenState._open > 0;
+
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
 }
 
 class _NewPasswordScreenState extends State<NewPasswordScreen> {
+  static int _open = 0;
+
   final _formKey = GlobalKey<FormState>();
   final _password = TextEditingController();
   final _confirm = TextEditingController();
   bool _loading = false;
 
   @override
+  void initState() {
+    super.initState();
+    _open++;
+  }
+
+  @override
   void dispose() {
+    _open--;
     _password.dispose();
     _confirm.dispose();
     super.dispose();

@@ -38,14 +38,23 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _goToNext() {
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 450),
-        pageBuilder: (_, _, _) => widget.next,
-        transitionsBuilder: (_, animation, _, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+    final navigator = Navigator.of(context);
+    final own = ModalRoute.of(context)!;
+    final next = PageRouteBuilder<void>(
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (_, _, _) => widget.next,
+      transitionsBuilder: (_, animation, _, child) =>
+          FadeTransition(opacity: animation, child: child),
     );
+    if (own.isCurrent) {
+      navigator.pushReplacement(next);
+    } else {
+      // Something was pushed over the splash while it played — a
+      // password-reset link opening the app does this. pushReplacement
+      // would replace *that* screen, dropping the person into Home with
+      // their old password. Swap out the splash underneath instead.
+      navigator.replace(oldRoute: own, newRoute: next);
+    }
   }
 
   @override
