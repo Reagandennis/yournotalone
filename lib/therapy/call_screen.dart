@@ -5,6 +5,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../brand.dart';
+import 'call_keep_alive.dart';
 import 'session_format.dart';
 import 'therapy_repository.dart';
 
@@ -13,11 +14,15 @@ class CallScreen extends StatefulWidget {
     super.key,
     required this.counterpartName,
     required this.connect,
+    this.keepAlive,
   });
 
   /// Who they're meeting — the therapist's name, or the client's first name.
   final String counterpartName;
   final Future<SessionCredentials> Function() connect;
+
+  /// What holds the call together off-screen; injectable for tests.
+  final CallKeepAlive? keepAlive;
 
   @override
   State<CallScreen> createState() => _CallScreenState();
@@ -25,7 +30,10 @@ class CallScreen extends StatefulWidget {
 
 enum _Phase { connecting, live, ended, failed }
 
-class _CallScreenState extends State<CallScreen> {
+class _CallScreenState extends State<CallScreen>
+    with WidgetsBindingObserver {
+  late final CallKeepAlive _keepAlive =
+      widget.keepAlive ?? DeviceCallKeepAlive();
   Room? _room;
   EventsListener<RoomEvent>? _listener;
   Timer? _clock;
@@ -37,17 +45,62 @@ class _CallScreenState extends State<CallScreen> {
   CameraPosition _cameraPosition = CameraPosition.front;
   bool _leaving = false;
 
+  /// The camera was on when the app went to the background, so it comes
+  /// back on when the app does.
+  bool _cameraPausedInBackground = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _start();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _clock?.cancel();
     unawaited(_teardown());
     super.dispose();
+  }
+
+  /// The camera can't be used from the background on either platform, and
+  /// a track left running there fails rather than resuming. Release it on
+  /// the way out and bring it back on the way in; the microphone stays on,
+  /// which the foreground service (Android) and the audio background mode
+  /// (iOS) allow.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (_phase != _Phase.live) return;
+    final participant = _room?.localParticipant;
+    if (participant == null) return;
+    switch (state) {
+      case AppLifecycleState.paused when _cameraOn:
+        _cameraPausedInBackground = true;
+        unawaited(_setCamera(participant, false, onError: (e) {
+          debugPrint('Camera release failed: $e');
+        }));
+      case AppLifecycleState.resumed when _cameraPausedInBackground:
+        _cameraPausedInBackground = false;
+        unawaited(_setCamera(participant, true, onError: (e) {
+          debugPrint('Camera resume failed: $e');
+          if (mounted) setState(() => _cameraOn = false);
+        }));
+      default:
+        break;
+    }
+  }
+
+  Future<void> _setCamera(
+    LocalParticipant participant,
+    bool on, {
+    required void Function(Object error) onError,
+  }) async {
+    try {
+      await participant.setCameraEnabled(on);
+    } catch (e) {
+      onError(e);
+    }
   }
 
   Future<void> _teardown() async {
@@ -55,6 +108,8 @@ class _CallScreenState extends State<CallScreen> {
     final room = _room;
     _listener = null;
     _room = null;
+    _cameraPausedInBackground = false;
+    await _keepAlive.stop();
     await listener?.dispose();
     await room?.disconnect();
     await room?.dispose();
@@ -113,6 +168,10 @@ class _CallScreenState extends State<CallScreen> {
         _cameraOn = false;
         missing.add('camera');
       }
+
+      // After the microphone and camera are on: Android 14 only lets the
+      // service claim the types whose permissions are already granted.
+      await _keepAlive.start(counterpartName: widget.counterpartName);
 
       _clock?.cancel();
       _clock = Timer.periodic(const Duration(seconds: 30), (_) => _refresh());

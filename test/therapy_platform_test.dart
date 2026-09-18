@@ -7,6 +7,7 @@ import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/care/care_dashboard_screen.dart';
 import 'package:yournotalone/care/care_repository.dart';
 import 'package:yournotalone/care/therapist_sessions_screen.dart';
+import 'package:yournotalone/therapy/call_keep_alive.dart';
 import 'package:yournotalone/therapy/call_screen.dart';
 import 'package:yournotalone/therapy/therapy_repository.dart';
 import 'package:yournotalone/therapy/therapy_screen.dart';
@@ -124,6 +125,18 @@ class _FakeCare extends CareRepository {
     List<String> flags = const [],
   }) async =>
       ratedClients.add((requestId, rating, flags));
+}
+
+class _FakeKeepAlive implements CallKeepAlive {
+  final started = <String>[];
+  var stops = 0;
+
+  @override
+  Future<void> start({required String counterpartName}) async =>
+      started.add(counterpartName);
+
+  @override
+  Future<void> stop() async => stops++;
 }
 
 Finder _button(String label) => find.ancestor(
@@ -406,12 +419,14 @@ void main() {
   });
 
   testWidgets('a refused call says why instead of connecting', (tester) async {
+    final keepAlive = _FakeKeepAlive();
     await _show(
       tester,
       CallScreen(
         counterpartName: 'Tess Mwangi',
         connect: () async =>
             throw const SessionAccessException('payment_required'),
+        keepAlive: keepAlive,
       ),
     );
     expect(find.text('Couldn\'t join'), findsOneWidget);
@@ -419,6 +434,37 @@ void main() {
       find.text('This session needs to be paid for before you can join.'),
       findsOneWidget,
     );
+    // Nothing to keep alive: no wakelock or service for a call that never
+    // connected, and whatever was held is released on the way out.
+    expect(keepAlive.started, isEmpty);
+    expect(keepAlive.stops, greaterThan(0));
+
+    // Backgrounding a screen that isn't in a call is a no-op. Delivered to
+    // the screen's observer directly: the binding would also wake Supabase's
+    // token refresh, which is not what's under test.
+    final observer =
+        tester.state(find.byType(CallScreen)) as WidgetsBindingObserver;
+    observer.didChangeAppLifecycleState(AppLifecycleState.paused);
+    observer.didChangeAppLifecycleState(AppLifecycleState.resumed);
+    await tester.pump();
+    expect(find.text('Couldn\'t join'), findsOneWidget);
+  });
+
+  testWidgets('leaving the call screen releases what kept it alive',
+      (tester) async {
+    final keepAlive = _FakeKeepAlive();
+    await _show(
+      tester,
+      CallScreen(
+        counterpartName: 'Tess Mwangi',
+        connect: () async => throw StateError('signed out'),
+        keepAlive: keepAlive,
+      ),
+    );
+    final stopsBefore = keepAlive.stops;
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+    expect(keepAlive.stops, greaterThan(stopsBefore));
   });
 
   group('care team', () {

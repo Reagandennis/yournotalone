@@ -16,6 +16,11 @@
     <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- A therapy call keeps its microphone and camera when the screen
+         locks or the person switches apps only through a foreground service
+         typed for them (Android 11+ cuts both for a backgrounded app). -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -103,6 +108,19 @@
         </receiver>
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
+            tools:node="remove" />
+        <!-- The therapy call's service (flutter_foreground_task; the name
+             must stay as is). Started when a call goes live, stopped when
+             it ends, and gone with the app if the task is swiped away. -->
+        <service
+            android:name="com.pravera.flutter_foreground_task.service.ForegroundService"
+            android:foregroundServiceType="microphone|camera"
+            android:exported="false"
+            android:stopWithTask="true" />
+        <!-- The plugin can restart its service after a reboot; a call never
+             should, so its boot receiver goes. -->
+        <receiver
+            android:name="com.pravera.flutter_foreground_task.service.RebootReceiver"
             tools:node="remove" />
     </application>
     <!-- Required to query activities that can process text, see:
