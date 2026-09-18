@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/main.dart';
+import 'package:yournotalone/splash_screen.dart';
 
 void main() {
   setUpAll(() async {
@@ -33,6 +34,41 @@ void main() {
 
     expect(find.text('Welcome back'), findsOneWidget);
     expect(find.text('Log in'), findsWidgets);
+  });
+
+  testWidgets('a failed token refresh on a bad connection does not log '
+      'anyone out', (tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.byType(SplashScreen), findsOneWidget);
+
+    // What gotrue puts on the auth stream when the refresh request itself
+    // fails (offline, timeout): an error, with the session left in place.
+    // ignore: invalid_use_of_internal_member
+    Supabase.instance.client.auth.notifyException(
+      AuthRetryableFetchException(message: 'Connection failed'),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // Still where we were, and no login screen was forced in.
+    expect(find.byType(SplashScreen), findsOneWidget);
+    expect(find.text('Welcome back'), findsNothing);
+  });
+
+  testWidgets('a session the server has ended does go to login',
+      (tester) async {
+    await tester.pumpWidget(const MyApp());
+    await tester.pump(const Duration(seconds: 1));
+
+    // ignore: invalid_use_of_internal_member
+    Supabase.instance.client.auth.notifyAllSubscribers(
+      AuthChangeEvent.signedOut,
+      signOutReason: SignOutReason.sessionExpired,
+    );
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(find.text('Welcome back'), findsOneWidget);
   });
 
   final authList = find

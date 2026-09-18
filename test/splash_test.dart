@@ -48,4 +48,26 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('NEXT'), findsOneWidget);
   });
+
+  testWidgets('a splash taken off the stack early stays quiet',
+      (tester) async {
+    // An expired session sends the app to login while the intro plays.
+    await tester.pumpWidget(const MaterialApp(
+      home: SplashScreen(next: Scaffold(body: Text('NEXT'))),
+    ));
+    await tester.pump(const Duration(seconds: 1));
+    Navigator.of(tester.element(find.byType(SplashScreen))).pushAndRemoveUntil(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(body: Text('LOGIN')),
+      ),
+      (_) => false,
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    await letSplashFinish(tester);
+    expect(find.text('LOGIN'), findsOneWidget);
+    expect(find.text('NEXT'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
 }

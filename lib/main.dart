@@ -172,8 +172,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         default:
           break;
       }
-      // A failed token refresh arrives as a stream error, not an event.
-    }, onError: (_) => _toLogin());
+    }, onError: (Object error) {
+      // A refresh that failed for network reasons arrives here with the
+      // session intact, and the client retries it on its next tick. Only a
+      // refresh token the server rejects ends the session, and that comes
+      // through as a signedOut event above. Treating every stream error as
+      // a sign-out used to log people out on an hourly refresh over bad
+      // Wi-Fi. Nothing to do here but note it.
+      debugPrint('Auth stream error (session kept): $error');
+    });
   }
 
   void _toLogin() {

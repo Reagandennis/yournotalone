@@ -40,6 +40,9 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     final navigator = Navigator.of(context);
     final own = ModalRoute.of(context)!;
+    // Already taken off the stack (an expired session sent the app to
+    // login while the intro played): nothing left to hand over to.
+    if (!own.isActive) return;
     final next = PageRouteBuilder<void>(
       transitionDuration: const Duration(milliseconds: 450),
       pageBuilder: (_, _, _) => widget.next,
