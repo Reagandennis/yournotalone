@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,9 +8,26 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/meditation/meditation_catalog.dart';
+import 'package:yournotalone/practice/practice_repository.dart';
 import 'package:yournotalone/sounds/sound_player.dart';
 import 'package:yournotalone/sounds/sounds_catalog.dart';
 import 'package:yournotalone/sounds/sounds_screen.dart';
+
+/// A repository whose writes never come back — a dead connection.
+class _StuckPractice extends PracticeRepository {
+  final logged = <(String, double)>[];
+
+  @override
+  Future<void> logSession({
+    required PracticeKind kind,
+    required String slug,
+    required String title,
+    required double minutes,
+  }) async {
+    logged.add((title, minutes));
+    await Completer<void>().future;
+  }
+}
 
 void main() {
   setUpAll(() async {
@@ -25,7 +43,37 @@ void main() {
     );
   });
 
-  setUp(() => SoundPlayer.instance.stop());
+  setUp(() {
+    SoundPlayer.instance
+      ..clock = DateTime.now
+      ..practice = PracticeRepository();
+    return SoundPlayer.instance.stop();
+  });
+
+  test('pausing and stopping never wait on the practice write', () async {
+    final practice = _StuckPractice();
+    var now = DateTime(2026, 9, 18, 21);
+    final player = SoundPlayer.instance
+      ..practice = practice
+      ..clock = () => now;
+
+    final sound = soundsCatalog.first;
+    await player.play(sound.asset);
+    now = now.add(const Duration(minutes: 5));
+
+    // The write hangs forever; pause must not.
+    await player.pause().timeout(const Duration(seconds: 1));
+    expect(player.paused.value, isTrue);
+    expect(practice.logged, [(sound.title, 5.0)]);
+
+    // Resume, listen on, and stop: same again.
+    await player.resume();
+    now = now.add(const Duration(minutes: 4));
+    await player.stop().timeout(const Duration(seconds: 1));
+    expect(player.nowPlaying.value, isNull);
+    expect(practice.logged, hasLength(2));
+    expect(practice.logged.last.$2, 4.0);
+  });
 
   Widget wrap(Widget screen) =>
       MaterialApp(theme: buildAppTheme(), home: screen);

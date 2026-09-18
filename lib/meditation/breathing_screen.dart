@@ -37,47 +37,75 @@ class BreathingScreen extends StatefulWidget {
 
 class _BreathingScreenState extends State<BreathingScreen>
     with SingleTickerProviderStateMixin {
-  AnimationController? _session;
+  /// One controller for the life of the screen, re-timed and reset for
+  /// each run. A SingleTickerProviderStateMixin hands out exactly one
+  /// ticker, so building a new controller per run asserted on the second
+  /// Begin (and, after a finished run, leaked the previous controller).
+  late final AnimationController _session = AnimationController(
+    vsync: this,
+    duration: Duration(minutes: _minutes),
+  );
   int _minutes = 3;
+
+  /// A session is on screen (running or paused), as opposed to the setup
+  /// or the well-done view.
+  bool _running = false;
   bool _done = false;
   _Phase? _lastPhase;
 
   BreathPattern get pattern => widget.pattern;
 
   @override
+  void initState() {
+    super.initState();
+    _session
+      ..addListener(_onTick)
+      ..addStatusListener(_onStatus);
+  }
+
+  @override
   void dispose() {
-    _session?.dispose();
+    _session.dispose();
     super.dispose();
   }
 
   void _start() {
     SoundPlayer.instance.playOnce(chimeAsset);
-    final controller = AnimationController(
-      vsync: this,
-      duration: Duration(minutes: _minutes),
-    );
-    controller.addListener(_onTick);
-    controller.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        SoundPlayer.instance.playOnce(chimeAsset);
-        // Keep the session, so it can add up to something.
-        (widget.practice ?? PracticeRepository()).logSession(
-          kind: PracticeKind.breathing,
-          slug: pattern.title,
-          title: pattern.title,
-          minutes: _minutes.toDouble(),
-        );
-        setState(() => _done = true);
-      }
-    });
+    _lastPhase = null;
+    _session
+      ..duration = Duration(minutes: _minutes)
+      ..reset();
     setState(() {
       _done = false;
-      _session = controller..forward();
+      _running = true;
+    });
+    _session.forward();
+  }
+
+  void _end() {
+    _session
+      ..stop()
+      ..reset();
+    setState(() => _running = false);
+  }
+
+  void _onStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) return;
+    SoundPlayer.instance.playOnce(chimeAsset);
+    // Keep the session, so it can add up to something.
+    (widget.practice ?? PracticeRepository()).logSession(
+      kind: PracticeKind.breathing,
+      slug: pattern.title,
+      title: pattern.title,
+      minutes: _minutes.toDouble(),
+    );
+    setState(() {
+      _done = true;
+      _running = false;
     });
   }
 
-  double get _elapsed =>
-      (_session?.value ?? 0) * (_session?.duration?.inSeconds ?? 0);
+  double get _elapsed => _session.value * (_session.duration?.inSeconds ?? 0);
 
   /// (phase, progress within phase 0..1)
   (_Phase, double) _phaseAt(double elapsed) {
@@ -109,7 +137,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   /// (fullest) — the same curve the circle uses, so the backdrop can
   /// breathe in step with it.
   double _swellAt(double sessionValue) {
-    final elapsed = sessionValue * (_session?.duration?.inSeconds ?? 0);
+    final elapsed = sessionValue * (_session.duration?.inSeconds ?? 0);
     final (phase, progress) = _phaseAt(elapsed);
     const small = 0.55;
     return (_scaleFor(phase, progress) - small) / (1 - small);
@@ -321,7 +349,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _runningView() {
-    final session = _session!;
+    final session = _session;
     return AnimatedBuilder(
       animation: session,
       builder: (context, _) {
@@ -374,13 +402,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                 children: [
                   IconButton(
                     tooltip: 'End session',
-                    onPressed: () {
-                      session.stop();
-                      setState(() {
-                        _session!.dispose();
-                        _session = null;
-                      });
-                    },
+                    onPressed: _end,
                     icon: const Icon(
                       Icons.stop_rounded,
                       size: 30,
@@ -427,7 +449,7 @@ class _BreathingScreenState extends State<BreathingScreen>
     final Widget body;
     if (_done) {
       body = _doneView();
-    } else if (_session != null) {
+    } else if (_running) {
       body = _runningView();
     } else {
       body = _setupView();
@@ -441,8 +463,8 @@ class _BreathingScreenState extends State<BreathingScreen>
           Positioned.fill(
             child: PillarBackdrop(
               accent: pattern.accent,
-              intensity: _session == null ? 0.7 : 1,
-              breathing: _session,
+              intensity: _running ? 1 : 0.7,
+              breathing: _running ? _session : null,
               swellFrom: _swellAt,
             ),
           ),

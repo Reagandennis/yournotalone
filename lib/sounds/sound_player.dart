@@ -48,6 +48,10 @@ class SoundPlayer {
   /// Overridable for tests.
   PracticeRepository practice = PracticeRepository();
 
+  /// Overridable for tests, so a listen can be made long enough to count.
+  @visibleForTesting
+  DateTime Function() clock = DateTime.now;
+
   /// Counts down to stopping the sound, or null when nothing is set.
   final ValueNotifier<Duration?> sleepTimer = ValueNotifier(null);
   Timer? _sleepTimerHandle;
@@ -89,23 +93,27 @@ class SoundPlayer {
 
   /// Records the listen that just ended, if it lasted long enough to mean
   /// anything. Called on stop, on pause, and when switching sounds.
-  Future<void> _logElapsed() async {
+  ///
+  /// The write is not awaited: the button that called this is waiting on
+  /// the audio, and a network write on a poor connection used to hold the
+  /// pause or stop for as long as the request took. The repository swallows
+  /// and times out its own failures.
+  void _logElapsed() {
     final started = _startedAt;
     final asset = nowPlaying.value;
     _startedAt = null;
     if (started == null || asset == null) return;
-    final minutes =
-        DateTime.now().difference(started).inSeconds / 60;
+    final minutes = clock().difference(started).inSeconds / 60;
     if (minutes < _minLoggedMinutes) return;
     final matches = soundsCatalog.where((s) => s.asset == asset);
     if (matches.isEmpty) return;
     final sound = matches.first;
-    await practice.logSession(
+    unawaited(practice.logSession(
       kind: PracticeKind.sound,
       slug: sound.title,
       title: sound.title,
       minutes: minutes,
-    );
+    ));
   }
 
   /// Asset path of the sound currently loaded (playing or paused).
@@ -120,10 +128,10 @@ class SoundPlayer {
 
   /// Starts [asset] looping from the beginning.
   Future<void> play(String asset) async {
-    await _logElapsed(); // whatever was playing before
+    _logElapsed(); // whatever was playing before
     nowPlaying.value = asset;
     paused.value = false;
-    _startedAt = DateTime.now();
+    _startedAt = clock();
     if (_silent) return;
     try {
       final player = _player ??= AudioPlayer();
@@ -171,19 +179,19 @@ class SoundPlayer {
   }
 
   Future<void> pause() async {
-    await _logElapsed();
+    _logElapsed();
     paused.value = true;
     if (!_silent) await _player?.pause();
   }
 
   Future<void> resume() async {
     paused.value = false;
-    _startedAt = DateTime.now();
+    _startedAt = clock();
     if (!_silent) unawaited(_player?.play() ?? Future.value());
   }
 
   Future<void> stop() async {
-    await _logElapsed();
+    _logElapsed();
     _sleepTimerHandle?.cancel();
     _sleepAt = null;
     sleepTimer.value = null;

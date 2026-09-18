@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +9,7 @@ import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/home_tab.dart';
 import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/meditation/meditation_screen.dart';
+import 'package:yournotalone/practice/pending_practice.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
 import 'package:yournotalone/practice/practice_screen.dart';
 
@@ -15,6 +18,9 @@ class _FakePractice extends PracticeRepository {
 
   final List<PracticeSession> sessions;
   final List<PracticeSession> logged = [];
+
+  /// When set, every write hangs on it — a dead connection.
+  Completer<void>? stuck;
 
   @override
   Future<void> logSession({
@@ -30,6 +36,7 @@ class _FakePractice extends PracticeRepository {
       minutes: minutes,
       completedAt: DateTime.now(),
     ));
+    await stuck?.future;
   }
 
   @override
@@ -121,6 +128,124 @@ void main() {
     // And the session ends somewhere, rather than on a bare "Done".
     expect(find.text('How do you feel now?'), findsOneWidget);
     expect(find.text('Write about it'), findsOneWidget);
+  });
+
+  testWidgets('a finished meditation doesn\'t wait on the network',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 1400);
+    addTearDown(tester.view.reset);
+
+    final practice = _FakePractice()..stuck = Completer<void>();
+    final meditation = meditations.firstWhere((m) => m.minutes == 5);
+    await tester.pumpWidget(wrap(
+      MeditationScreen(meditation: meditation, practice: practice),
+    ));
+    await tester.pump();
+    await tester.pump(Duration(minutes: meditation.minutes));
+    await tester.pump(const Duration(seconds: 1));
+
+    // The write is still hanging, yet the session has moved on and the
+    // minutes were handed over.
+    expect(find.text('Session complete'), findsOneWidget);
+    expect(practice.logged, hasLength(1));
+    practice.stuck!.complete();
+  });
+
+  // ── Offline queue ───────────────────────────────────────────────
+
+  group('offline queue', () {
+    setUp(() => SharedPreferences.setMockInitialValues({}));
+
+    PracticeRepository repo({
+      required Future<void> Function(Map<String, dynamic>) insert,
+      String user = 'u1',
+    }) =>
+        PracticeRepository(
+          currentUserId: () => user,
+          insert: insert,
+          fetchRows: (_, _) async => const [],
+        );
+
+    Future<void> offline(Map<String, dynamic> _) async =>
+        throw Exception('no route to host');
+
+    test('a session that can\'t be sent is kept, shown, and sent later',
+        () async {
+      await repo(insert: offline).logSession(
+        kind: PracticeKind.breathing,
+        slug: 'Box breathing',
+        title: 'Box breathing',
+        minutes: 3,
+      );
+      expect(await PendingPracticeStore().all(), hasLength(1));
+
+      // History already includes it, so the person sees their practice.
+      final shown = await repo(insert: offline).fetchRecent();
+      expect(shown.single.title, 'Box breathing');
+      expect(shown.single.kind, PracticeKind.breathing);
+
+      // Back online: the same row goes up, with its own id and time.
+      final sent = <Map<String, dynamic>>[];
+      final online = repo(insert: (row) async => sent.add(row));
+      expect(await online.flushPending(), 1);
+      expect(await PendingPracticeStore().all(), isEmpty);
+      expect(sent.single['user_id'], 'u1');
+      expect(sent.single['minutes'], 3.0);
+      expect(sent.single['id'], matches(RegExp(r'^[0-9a-f-]{36}$')));
+      expect(sent.single['completed_at'], isA<String>());
+    });
+
+    test('a row the server already has counts as sent', () async {
+      await repo(insert: offline).logSession(
+        kind: PracticeKind.sound,
+        slug: 'Rainfall',
+        title: 'Rainfall',
+        minutes: 4,
+      );
+      final dup = repo(
+        insert: (_) async => throw const PostgrestException(
+            message: 'duplicate key', code: '23505'),
+      );
+      expect(await dup.flushPending(), 1);
+      expect(await PendingPracticeStore().all(), isEmpty);
+    });
+
+    test('the queue stops at the first failure and keeps everything',
+        () async {
+      final r = repo(insert: offline);
+      for (var i = 0; i < 2; i++) {
+        await r.logSession(
+          kind: PracticeKind.meditation,
+          slug: 'm\$i',
+          title: 'm\$i',
+          minutes: 5,
+        );
+      }
+      var attempts = 0;
+      final still = repo(insert: (_) async {
+        attempts++;
+        throw Exception('still offline');
+      });
+      expect(await still.flushPending(), 0);
+      expect(attempts, 1);
+      expect(await PendingPracticeStore().all(), hasLength(2));
+    });
+
+    test('only the signed-in person\'s sessions are sent', () async {
+      await repo(insert: offline, user: 'someone-else').logSession(
+        kind: PracticeKind.meditation,
+        slug: 'x',
+        title: 'x',
+        minutes: 5,
+      );
+      final sent = <Map<String, dynamic>>[];
+      final mine = repo(insert: (row) async => sent.add(row));
+      expect(await mine.flushPending(), 0);
+      expect(sent, isEmpty);
+      expect(await mine.fetchRecent(), isEmpty);
+      expect(await PendingPracticeStore().all(), hasLength(1));
+    });
   });
 
   // ── The screens ─────────────────────────────────────────────────

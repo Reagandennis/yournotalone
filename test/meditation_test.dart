@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/meditation/breathing_screen.dart';
+import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/meditation/meditations_screen.dart';
 
 void main() {
@@ -90,6 +92,43 @@ void main() {
     expect(find.text('Well done'), findsOneWidget);
   });
 
+  testWidgets('a breathing exercise can be run again, after ending it and '
+      'after finishing it', (tester) async {
+    await tester.pumpWidget(wrap(BreathingScreen(pattern: breathPatterns.first)));
+    await tester.pump();
+    await tester.tap(find.text('1 min'));
+    await tester.pump();
+
+    // Run, end early, run again.
+    await tester.tap(find.text('Begin'));
+    await tester.pump();
+    expect(find.text('Breathe in'), findsOneWidget);
+    await tester.tap(find.byTooltip('End session'));
+    await tester.pump();
+    expect(find.text('Begin'), findsOneWidget);
+    await tester.tap(find.text('Begin'));
+    await tester.pump();
+    expect(find.text('Breathe in'), findsOneWidget);
+    // The second run starts from the top, not where the first stopped.
+    await tester.pump(const Duration(seconds: 5));
+    expect(find.text('Hold'), findsOneWidget);
+
+    // Finish, then go again.
+    await tester.pump(const Duration(seconds: 60));
+    await tester.pump();
+    expect(find.text('Well done'), findsOneWidget);
+    await tester.tap(find.text('Go again'));
+    await tester.pump();
+    expect(find.text('Breathe in'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    expect(find.text('Hold'), findsOneWidget);
+
+    // And it still completes a second time.
+    await tester.pump(const Duration(seconds: 60));
+    await tester.pump();
+    expect(find.text('Well done'), findsOneWidget);
+  });
+
   testWidgets('free meditation opens and shows guidance', (tester) async {
     await tester.pumpWidget(wrap(const MeditationsScreen()));
     await tester.pumpAndSettle();
@@ -102,6 +141,24 @@ void main() {
     expect(find.text('remaining'), findsOneWidget);
     expect(
       find.text('Find a comfortable seat and let your eyes soften or close.'),
+      findsOneWidget,
+    );
+
+    // The guidance moves on with the clock, without anyone touching the
+    // screen: 18% of five minutes is 54 s, 32% is 96 s. The extra second
+    // lets the previous line finish sliding away.
+    await tester.pump(const Duration(seconds: 60));
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text('Feel the weight of your body — held and supported.'),
+        findsOneWidget);
+    expect(
+      find.text('Find a comfortable seat and let your eyes soften or close.'),
+      findsNothing,
+    );
+    await tester.pump(const Duration(seconds: 60));
+    await tester.pump(const Duration(seconds: 1));
+    expect(
+      find.text('Notice your breath moving on its own. No need to change it.'),
       findsOneWidget,
     );
 

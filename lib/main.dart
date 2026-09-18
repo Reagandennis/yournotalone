@@ -18,6 +18,7 @@ import 'home/home_shell.dart';
 import 'notifications/local_notifications.dart';
 import 'notifications/session_notifications.dart';
 import 'onboarding/onboarding_ui.dart';
+import 'practice/practice_repository.dart';
 import 'sounds/sound_player.dart';
 import 'splash_screen.dart';
 import 'supabase_config.dart';
@@ -139,15 +140,20 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   StreamSubscription<AuthState>? _authSub;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _authSub =
         Supabase.instance.client.auth.onAuthStateChange.listen((state) {
       switch (state.event) {
+        // Practice finished offline, or as the app was killed, is written
+        // once there's a signed-in user to write it for.
+        case AuthChangeEvent.initialSession || AuthChangeEvent.signedIn:
+          unawaited(PracticeRepository().flushPending());
         // A password-recovery email deep-links back into the app and signs
         // the user in; from there they still need to choose the new password.
         case AuthChangeEvent.passwordRecovery:
@@ -175,8 +181,17 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  /// Coming back to the app is the other natural moment to catch up.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(PracticeRepository().flushPending());
+    }
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _authSub?.cancel();
     super.dispose();
   }

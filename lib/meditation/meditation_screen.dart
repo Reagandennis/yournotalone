@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -52,6 +53,13 @@ class _MeditationScreenState extends State<MeditationScreen>
     _session.addStatusListener((status) {
       if (status == AnimationStatus.completed) _finish();
     });
+    // The guidance follows the clock, but only the line that's showing
+    // needs to know: this notifies when the prompt changes, not on every
+    // frame, so the text isn't rebuilt sixty times a second either.
+    _session.addListener(() {
+      final next = _prompt;
+      if (next != _promptShown.value) _promptShown.value = next;
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       SoundPlayer.instance.playOnce(chimeAsset);
@@ -59,25 +67,40 @@ class _MeditationScreenState extends State<MeditationScreen>
     });
   }
 
-  Future<void> _finish() async {
-    await SoundPlayer.instance.stop();
-    await SoundPlayer.instance.playOnce(chimeAsset);
+  void _finish() {
+    // The screen moves on at once; the write and the audio follow. Waiting
+    // on the network here froze the timer at 0:00 on a poor connection.
+    if (mounted) setState(() => _done = true);
     // Keep the session, so it can add up to something.
-    await (widget.practice ?? PracticeRepository()).logSession(
+    unawaited((widget.practice ?? PracticeRepository()).logSession(
       kind: PracticeKind.meditation,
       slug: meditation.title,
       title: meditation.title,
       minutes: meditation.minutes.toDouble(),
-    );
-    if (mounted) setState(() => _done = true);
+    ));
+    unawaited(_closeOutAudio());
+  }
+
+  Future<void> _closeOutAudio() async {
+    try {
+      await SoundPlayer.instance.stop();
+      await SoundPlayer.instance.playOnce(chimeAsset);
+    } catch (e) {
+      debugPrint('Meditation close-out audio failed: $e');
+    }
   }
 
   @override
   void dispose() {
+    _promptShown.dispose();
     _session.dispose();
     if (_ambient != null) SoundPlayer.instance.stop();
     super.dispose();
   }
+
+  /// The instruction on screen right now; see the listener in initState.
+  late final ValueNotifier<String> _promptShown =
+      ValueNotifier(meditation.prompts.first.$2);
 
   String get _prompt {
     final progress = _session.value;
@@ -291,15 +314,18 @@ class _MeditationScreenState extends State<MeditationScreen>
               alignment: Alignment.center,
               children: [...previous, ?current],
             ),
-            child: Text(
-              _prompt,
-              key: ValueKey(_prompt),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 17,
-                color: Brand.ink,
-                height: 1.6,
-                fontWeight: FontWeight.w500,
+            child: ValueListenableBuilder<String>(
+              valueListenable: _promptShown,
+              builder: (context, prompt, _) => Text(
+                prompt,
+                key: ValueKey(prompt),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 17,
+                  color: Brand.ink,
+                  height: 1.6,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
