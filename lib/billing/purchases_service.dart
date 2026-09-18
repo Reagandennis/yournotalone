@@ -52,11 +52,30 @@ class PurchasesService {
       await Purchases.configure(configuration);
       _configured = true;
       Purchases.addCustomerInfoUpdateListener(_onCustomerInfo);
-      _onCustomerInfo(await Purchases.getCustomerInfo());
+      // Attach the identity listener before anything that needs the network:
+      // with no cached customer info and no connection, getCustomerInfo
+      // throws, and a listener attached after it would never be attached.
       _syncIdentityWithAuth();
     } catch (e) {
       debugPrint('RevenueCat configure failed: $e');
+      return;
     }
+    try {
+      _onCustomerInfo(await Purchases.getCustomerInfo());
+    } catch (e) {
+      // Offline with nothing cached; the update listener fills this in
+      // once RevenueCat is reachable.
+      debugPrint('RevenueCat customer info unavailable: $e');
+    }
+  }
+
+  /// Makes RevenueCat's current customer the signed-in Supabase user
+  /// [userId], so a purchase is recorded against the customer the server
+  /// looks up. Throws when RevenueCat can't switch (typically offline).
+  Future<void> ensureIdentity(String userId) async {
+    if (await Purchases.appUserID == userId) return;
+    final result = await Purchases.logIn(userId);
+    _onCustomerInfo(result.customerInfo);
   }
 
   /// Log in/out of RevenueCat whenever the Supabase session changes.

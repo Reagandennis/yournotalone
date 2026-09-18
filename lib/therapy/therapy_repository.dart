@@ -77,6 +77,7 @@ class TherapyRequest {
     this.paymentStatus = 'not_required',
     this.clientSummary,
     this.completedAt,
+    this.closeReason,
   });
 
   factory TherapyRequest.fromRow(Map<String, dynamic> row) => TherapyRequest(
@@ -95,6 +96,7 @@ class TherapyRequest {
         paymentStatus: row['payment_status'] as String? ?? 'not_required',
         clientSummary: row['client_summary'] as String?,
         completedAt: _time(row['completed_at']),
+        closeReason: row['close_reason'] as String?,
       );
 
   final String id;
@@ -121,6 +123,11 @@ class TherapyRequest {
   final String? clientSummary;
   final DateTime? completedAt;
 
+  /// Why the server closed this session itself (migration 0016), or null
+  /// when a person did. One of: auto_completed, client_no_show,
+  /// therapist_no_show, nobody_joined, unpaid.
+  final String? closeReason;
+
   bool get isPending => status == 'pending';
   bool get isConfirmed => status == 'confirmed';
   bool get isCompleted => status == 'completed';
@@ -129,6 +136,19 @@ class TherapyRequest {
   bool get isActive => isPending || isConfirmed;
 
   bool get needsPayment => paymentStatus == 'unpaid';
+
+  /// Completed without the client ever joining the call.
+  bool get wasMissed => isCompleted && closeReason == 'client_no_show';
+
+  /// Closed because the call never happened (nobody, or only the client,
+  /// turned up). The free first session came back, if it was one.
+  bool get didNotHappen => status == 'cancelled' &&
+      (closeReason == 'nobody_joined' || closeReason == 'therapist_no_show');
+
+  /// The call window has closed and it's now up to the therapist or the
+  /// server (within a couple of hours) to close it out.
+  bool hasElapsedAt(DateTime now) =>
+      isConfirmed && joinStateAt(now) == JoinState.over;
 
   /// A paid session goes through the care team, who can refund it. So does
   /// a session whose call has opened: cancelling after attending used to
@@ -252,6 +272,15 @@ class SessionAccessException implements Exception {
   @override
   String toString() => 'SessionAccessException($code)';
 }
+
+/// How a finished session reads in a list, for clients and staff alike.
+String sessionOutcomeLabel(TherapyRequest request) => switch (request.status) {
+      'completed' when request.wasMissed => 'Missed',
+      'completed' => 'Completed',
+      'cancelled' when request.didNotHappen => 'Didn\'t happen',
+      'cancelled' when request.closeReason == 'unpaid' => 'Not paid',
+      _ => 'Cancelled',
+    };
 
 /// Supabase-backed storage for a client's therapy sessions.
 class TherapyRepository {

@@ -59,6 +59,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
   bool _submitting = false;
   bool _paying = false;
 
+  /// Sessions whose store payment went through but the server hasn't seen
+  /// yet. Their card offers "Check payment" instead of "Pay", so a slow
+  /// RevenueCat record can't be paid for twice.
+  final _awaitingVerification = <String>{};
+
   /// Moves the Join button along as the start time comes and goes.
   Timer? _ticker;
 
@@ -222,8 +227,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
           _say('Payment received — your session is confirmed.');
           await _load(quiet: true);
         case SessionPaymentOutcome.pendingVerification:
+          _awaitingVerification.add(request.id);
           _say('Your payment is going through. If the Join button doesn\'t '
-              'unlock soon, tap "Already paid?".');
+              'unlock soon, tap "Check payment".');
           await _load(quiet: true);
         case SessionPaymentOutcome.unavailable:
           _say('Paying in the app isn\'t available yet — we\'ll email you '
@@ -247,9 +253,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
     try {
       await _repo.confirmPayment(request.id);
       if (!mounted) return;
+      _awaitingVerification.remove(request.id);
       _say('Payment found — you\'re all set.');
       await _load(quiet: true);
     } on SessionAccessException catch (e) {
+      // The server has looked and there's nothing to attach, so paying is
+      // back on the table.
+      if (e.code == 'no_payment_found') _awaitingVerification.remove(request.id);
       if (mounted) _say(e.message);
     } catch (e) {
       if (mounted) {
@@ -806,7 +816,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 : Icons.payments_outlined,
             _priceLine(request),
           ),
-          if (confirmed && request.needsPayment) ...[
+          // Once the call window has closed there's nothing left to pay for:
+          // the server cancels an unpaid session within a couple of hours.
+          if (confirmed && request.needsPayment && !request.hasElapsedAt(_now())) ...[
             const SizedBox(height: 16),
             _paymentBox(request),
           ],
@@ -838,6 +850,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _paymentBox(TherapyRequest request) {
+    final awaiting = _awaitingVerification.contains(request.id);
+    final spinner = const SizedBox(
+      width: 22,
+      height: 22,
+      child: CircularProgressIndicator(strokeWidth: 2.4, color: Colors.white),
+    );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -849,7 +867,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '${request.priceLabel} to confirm your session',
+            awaiting
+                ? 'Your payment is being verified'
+                : '${request.priceLabel} to confirm your session',
             style: const TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
@@ -857,30 +877,35 @@ class _TherapyScreenState extends State<TherapyScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          const Text(
-            'Pay securely in the app. The Join button unlocks as soon as '
-            'it\'s paid.',
-            style: TextStyle(fontSize: 12.5, color: Brand.textMuted, height: 1.45),
+          Text(
+            awaiting
+                ? 'The store has your payment. Don\'t pay again — the Join '
+                    'button unlocks as soon as it\'s found.'
+                : 'Pay securely in the app. The Join button unlocks as soon '
+                    'as it\'s paid.',
+            style: const TextStyle(
+              fontSize: 12.5,
+              color: Brand.textMuted,
+              height: 1.45,
+            ),
           ),
           const SizedBox(height: 14),
-          ElevatedButton(
-            onPressed: _paying ? null : () => _pay(request),
-            child: _paying
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2.4,
-                      color: Colors.white,
-                    ),
-                  )
-                : Text('Pay ${request.priceLabel}'),
-          ),
-          const SizedBox(height: 4),
-          TextButton(
-            onPressed: _paying ? null : () => _checkPayment(request),
-            child: const Text('Already paid? Check again'),
-          ),
+          if (awaiting)
+            ElevatedButton(
+              onPressed: _paying ? null : () => _checkPayment(request),
+              child: _paying ? spinner : const Text('Check payment'),
+            )
+          else ...[
+            ElevatedButton(
+              onPressed: _paying ? null : () => _pay(request),
+              child: _paying ? spinner : Text('Pay ${request.priceLabel}'),
+            ),
+            const SizedBox(height: 4),
+            TextButton(
+              onPressed: _paying ? null : () => _checkPayment(request),
+              child: const Text('Already paid? Check again'),
+            ),
+          ],
         ],
       ),
     );
@@ -892,8 +917,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
     final hint = switch (state) {
       JoinState.tooEarly =>
         'The call opens 10 minutes before the start.',
+      JoinState.over when request.needsPayment =>
+        'This session\'s time has passed without payment. It\'ll be '
+            'cancelled shortly, and you can book again after that.',
       JoinState.over =>
-        'This session\'s time has passed. If it didn\'t happen, contact us.',
+        'This session\'s time has passed. It closes out on its own within '
+            'a couple of hours: if it went ahead, any note from your '
+            'therapist appears under Past sessions; if it didn\'t happen, '
+            'you\'ll be able to book again.',
       _ when request.needsPayment =>
         'The call opens once your session is paid for.',
       _ => 'Find a quiet, private spot — you\'ll need your camera and '
@@ -918,7 +949,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _pastRow(TherapyRequest request) {
-    final completed = request.isCompleted;
+    // A missed session has no note to read and nothing fair to rate.
+    final completed = request.isCompleted && !request.wasMissed;
     final therapist = _therapists[request.therapistId];
     final rating = _myRatings[request.id];
     final when = request.scheduledAt ?? request.createdAt;
@@ -964,9 +996,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 ),
                 const SizedBox(width: 10),
                 if (!completed)
-                  const Text(
-                    'Cancelled',
-                    style: TextStyle(
+                  Text(
+                    sessionOutcomeLabel(request),
+                    style: const TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                       color: Brand.textMuted,

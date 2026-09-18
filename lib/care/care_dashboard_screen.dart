@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
+import '../therapy/therapy_repository.dart';
 import 'care_repository.dart';
 import 'care_widgets.dart';
 import 'request_detail_screen.dart';
@@ -244,10 +245,14 @@ class _RequestTile extends StatelessWidget {
       // Clients are told to expect a match within a day.
       if (hours >= 20) lineColor = Brand.red;
     } else if (request.isConfirmed && request.scheduledAt != null) {
+      final ended = request.hasElapsedAt(now);
       line = '${item.therapistName ?? 'Therapist'} · '
-          '${formatDateTime(request.scheduledAt!)}';
+          '${formatDateTime(request.scheduledAt!)}'
+          '${ended ? ' · Not finished' : ''}';
+      // Someone should tap Finish before the server closes it out.
+      if (ended) lineColor = Brand.red;
     } else {
-      line = '${request.isCompleted ? 'Completed' : 'Cancelled'} · '
+      line = '${sessionOutcomeLabel(request)} · '
           '${formatDate(request.scheduledAt ?? request.createdAt)}';
     }
 

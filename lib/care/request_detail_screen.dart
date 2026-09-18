@@ -163,9 +163,17 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
       'pending' => 'Waiting to be matched',
       'confirmed' when request.needsPayment => 'Matched — waiting for payment',
       'confirmed' => 'Booked',
+      'completed' when request.wasMissed => 'Completed — the client '
+          'didn\'t join, so the session counts as used',
       'completed' => request.completedAt == null
           ? 'Completed'
           : 'Completed ${formatDate(request.completedAt!)}',
+      'cancelled' when request.closeReason == 'therapist_no_show' =>
+        'Cancelled — the therapist didn\'t join the call',
+      'cancelled' when request.closeReason == 'nobody_joined' =>
+        'Cancelled — nobody joined the call',
+      'cancelled' when request.closeReason == 'unpaid' =>
+        'Cancelled — never paid',
       _ => 'Cancelled',
     };
   }

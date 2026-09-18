@@ -29,6 +29,8 @@ class AdminTherapyRequest {
     this.therapistName,
     this.paidAt,
     this.refundedAt,
+    this.clientJoinedAt,
+    this.therapistJoinedAt,
     this.clientRating,
     this.clientComment,
     this.therapistRating,
@@ -49,6 +51,12 @@ class AdminTherapyRequest {
         refundedAt: row['refunded_at'] == null
             ? null
             : DateTime.parse(row['refunded_at'] as String).toLocal(),
+        clientJoinedAt: row['client_joined_at'] == null
+            ? null
+            : DateTime.parse(row['client_joined_at'] as String).toLocal(),
+        therapistJoinedAt: row['therapist_joined_at'] == null
+            ? null
+            : DateTime.parse(row['therapist_joined_at'] as String).toLocal(),
         clientRating: (row['client_rating'] as num?)?.toInt(),
         clientComment: row['client_comment'] as String?,
         therapistRating: (row['therapist_rating'] as num?)?.toInt(),
@@ -67,6 +75,10 @@ class AdminTherapyRequest {
   /// When Google Play refunded an in-app payment for this session. The
   /// session is unpaid again from then, unless the care team changed it.
   final DateTime? refundedAt;
+
+  /// When each side first asked to join the call, if they did.
+  final DateTime? clientJoinedAt;
+  final DateTime? therapistJoinedAt;
   final int? clientRating;
   final String? clientComment;
   final int? therapistRating;
@@ -134,6 +146,8 @@ class TherapistSession {
     this.clientFirstName,
     this.clientSummary,
     this.completedAt,
+    this.closeReason,
+    this.clientJoinedAt,
     this.myRating,
     this.myComment,
     this.myFlags = const [],
@@ -158,6 +172,10 @@ class TherapistSession {
         completedAt: row['completed_at'] == null
             ? null
             : DateTime.parse(row['completed_at'] as String).toLocal(),
+        closeReason: row['close_reason'] as String?,
+        clientJoinedAt: row['client_joined_at'] == null
+            ? null
+            : DateTime.parse(row['client_joined_at'] as String).toLocal(),
         myRating: (row['my_rating'] as num?)?.toInt(),
         myComment: row['my_comment'] as String?,
         myFlags: [...(row['my_flags'] as List? ?? const []).cast<String>()],
@@ -175,6 +193,10 @@ class TherapistSession {
   final String? clientFirstName;
   final String? clientSummary;
   final DateTime? completedAt;
+
+  /// Set when the server closed the session (see TherapyRequest.closeReason).
+  final String? closeReason;
+  final DateTime? clientJoinedAt;
   final int? myRating;
   final String? myComment;
   final List<String> myFlags;
@@ -184,6 +206,11 @@ class TherapistSession {
   bool get isCompleted => status == 'completed';
   bool get isCancelled => status == 'cancelled';
   bool get paymentSettled => paymentStatus != 'unpaid';
+  bool get clientMissed => isCompleted && closeReason == 'client_no_show';
+
+  /// Cancelled by the server because the call never happened.
+  bool get didNotHappen => isCancelled &&
+      (closeReason == 'nobody_joined' || closeReason == 'therapist_no_show');
 
   JoinState joinStateAt(DateTime now) => isConfirmed
       ? sessionJoinState(now,

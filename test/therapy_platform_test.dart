@@ -20,6 +20,7 @@ TherapyRequest _request({
   bool free = false,
   String payment = 'unpaid',
   String? summary,
+  String? closeReason,
 }) {
   final matched = status != 'pending';
   return TherapyRequest(
@@ -35,6 +36,7 @@ TherapyRequest _request({
     priceCents: free ? 0 : 2000,
     paymentStatus: free ? 'not_required' : payment,
     clientSummary: summary,
+    closeReason: closeReason,
   );
 }
 
@@ -545,6 +547,157 @@ void main() {
         find.text('The client hasn\'t paid yet — the call opens once they do.'),
         findsOneWidget,
       );
+    });
+  });
+
+  group('sessions nobody finished', () {
+    // Two hours after a 50-minute session ended: the server's sweep is due.
+    final later = _start.add(const Duration(hours: 3));
+
+    test('a session the server closed reads by what happened', () {
+      expect(sessionOutcomeLabel(_request(status: 'completed')), 'Completed');
+      expect(
+        sessionOutcomeLabel(
+            _request(status: 'completed', closeReason: 'client_no_show')),
+        'Missed',
+      );
+      expect(
+        sessionOutcomeLabel(
+            _request(status: 'cancelled', closeReason: 'nobody_joined')),
+        'Didn\'t happen',
+      );
+      expect(
+        sessionOutcomeLabel(
+            _request(status: 'cancelled', closeReason: 'therapist_no_show')),
+        'Didn\'t happen',
+      );
+      expect(
+        sessionOutcomeLabel(_request(status: 'cancelled', closeReason: 'unpaid')),
+        'Not paid',
+      );
+      expect(sessionOutcomeLabel(_request(status: 'cancelled')), 'Cancelled');
+    });
+
+    test('a confirmed session has elapsed once its call window closes', () {
+      final session = _request(payment: 'paid');
+      expect(session.hasElapsedAt(_start), isFalse);
+      expect(session.hasElapsedAt(_start.add(const Duration(minutes: 80))),
+          isFalse);
+      expect(session.hasElapsedAt(_start.add(const Duration(minutes: 81))),
+          isTrue);
+      expect(_request(status: 'pending').hasElapsedAt(later), isFalse);
+    });
+
+    testWidgets('an unpaid session whose time has passed can no longer be '
+        'paid for, and says it will be cancelled', (tester) async {
+      await _show(
+        tester,
+        TherapyScreen(
+          repository: _FakeTherapy([_request()]),
+          clock: () => later,
+        ),
+      );
+      expect(_button('Pay \$20'), findsNothing);
+      expect(find.text('Already paid? Check again'), findsNothing);
+      expect(find.textContaining('cancelled shortly'), findsOneWidget);
+      expect(find.textContaining('contact us'), findsNothing);
+    });
+
+    testWidgets('a paid session whose time has passed says it closes on its '
+        'own', (tester) async {
+      await _show(
+        tester,
+        TherapyScreen(
+          repository: _FakeTherapy([_request(payment: 'paid')]),
+          clock: () => later,
+        ),
+      );
+      expect(find.textContaining('closes out on its own'), findsOneWidget);
+      expect(find.textContaining('contact us'), findsNothing);
+      expect(_enabled(tester, 'Join session'), isFalse);
+    });
+
+    testWidgets('a missed session is listed as such, with nothing to rate',
+        (tester) async {
+      await _show(
+        tester,
+        TherapyScreen(
+          repository: _FakeTherapy([
+            _request(id: 'm1', status: 'completed', closeReason: 'client_no_show'),
+            _request(id: 'n1', status: 'cancelled', closeReason: 'nobody_joined'),
+          ]),
+          clock: () => later,
+        ),
+      );
+      expect(find.text('Missed'), findsOneWidget);
+      expect(find.text('Didn\'t happen'), findsOneWidget);
+      expect(find.text('Rate'), findsNothing);
+      // Both are over, so booking is open again.
+      expect(find.text('Cancelled'), findsNothing);
+      expect(_button('Request a session'), findsOneWidget);
+    });
+
+    testWidgets('the care dashboard flags a session nobody finished',
+        (tester) async {
+      await _show(
+        tester,
+        CareDashboardScreen(
+          clock: () => later,
+          repository: _FakeCare(
+            requests: [
+              AdminTherapyRequest(
+                request: _request(payment: 'paid'),
+                clientId: 'c1',
+                clientName: 'Anna K',
+                therapistName: 'Tess Mwangi',
+              ),
+              AdminTherapyRequest(
+                request: _request(
+                    id: 'u1', status: 'cancelled', closeReason: 'unpaid'),
+                clientId: 'c2',
+                clientName: 'Ben O',
+                therapistName: 'Tess Mwangi',
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.tap(find.text('Upcoming · 1'));
+      await tester.pump();
+      expect(find.textContaining('Not finished'), findsOneWidget);
+      await tester.tap(find.text('Past · 1'));
+      await tester.pump();
+      expect(find.textContaining('Not paid'), findsOneWidget);
+    });
+
+    testWidgets('a therapist sees who turned up to a closed session',
+        (tester) async {
+      TherapistSession session(String id, String status, String reason) =>
+          TherapistSession(
+            id: id,
+            status: status,
+            topic: 'Anxiety & stress',
+            availability: const [],
+            scheduledAt: _start,
+            durationMinutes: 50,
+            paymentStatus: 'paid',
+            isFreeSession: false,
+            clientFirstName: 'Anna',
+            closeReason: reason,
+          );
+      await _show(
+        tester,
+        TherapistSessionsScreen(
+          repository: _FakeCare(sessions: [
+            session('s1', 'completed', 'client_no_show'),
+            session('s2', 'cancelled', 'nobody_joined'),
+          ]),
+          clock: () => later,
+        ),
+      );
+      expect(find.text('The client didn\'t join the call.'), findsOneWidget);
+      expect(find.text('Didn\'t happen'), findsOneWidget);
+      expect(find.text('Cancelled'), findsNothing);
     });
   });
 }

@@ -169,7 +169,8 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
     final hint = switch (state) {
       JoinState.tooEarly => 'The call opens 10 minutes before the start.',
       JoinState.over =>
-        'The call has closed. Finish the session to close it out.',
+        'The call has closed. Finish the session to close it out — '
+            'otherwise it closes itself in a couple of hours.',
       _ when !session.paymentSettled =>
         'The client hasn\'t paid yet — the call opens once they do.',
       _ => 'The call is open.',
@@ -289,6 +290,17 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                           color: Brand.textMuted,
                         ),
                       ),
+                      if (session.clientMissed) ...[
+                        const SizedBox(height: 4),
+                        const Text(
+                          'The client didn\'t join the call.',
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            color: Brand.red,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
                       if (session.isCompleted && summary != null) ...[
                         const SizedBox(height: 4),
                         Text(
@@ -307,9 +319,9 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                 ),
                 const SizedBox(width: 10),
                 if (session.isCancelled)
-                  const Text(
-                    'Cancelled',
-                    style: TextStyle(
+                  Text(
+                    session.didNotHappen ? 'Didn\'t happen' : 'Cancelled',
+                    style: const TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                       color: Brand.textMuted,

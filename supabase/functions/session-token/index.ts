@@ -95,7 +95,9 @@ Deno.serve(async (req: Request) => {
 
   const { data: session, error: sessionError } = await admin
     .from('therapy_requests')
-    .select('id, user_id, therapist_id, status, scheduled_at, duration_minutes, payment_status')
+    .select(
+      'id, user_id, therapist_id, status, scheduled_at, duration_minutes, payment_status',
+    )
     .eq('id', requestId)
     .maybeSingle();
   if (sessionError) {
@@ -166,6 +168,18 @@ Deno.serve(async (req: Request) => {
     },
     LIVEKIT_API_SECRET,
   );
+
+  // Who actually turned up. A token is only handed out inside the call
+  // window to someone tapping Join, so this is the server's best view of
+  // attendance; close_out_elapsed_sessions (0016) decides from it what an
+  // unfinished session becomes.
+  const joinedColumn = role === 'client' ? 'client_joined_at' : 'therapist_joined_at';
+  const { error: joinError } = await admin
+    .from('therapy_requests')
+    .update({ [joinedColumn]: new Date(now).toISOString() })
+    .eq('id', session.id)
+    .is(joinedColumn, null);
+  if (joinError) console.error('session-token: recording join failed', session.id, joinError);
 
   return json({
     url: LIVEKIT_URL,
