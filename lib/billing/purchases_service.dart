@@ -100,6 +100,24 @@ class PurchasesService {
     isPro.value = info.entitlements.active.containsKey(proEntitlementId);
   }
 
+  /// Asks RevenueCat afresh whether the signed-in account has Pro, after
+  /// making sure it is looking at that account. On a device someone has
+  /// just signed in to, the identity switch in [_syncIdentityWithAuth] may
+  /// still be in flight — or have failed offline — by the time a screen
+  /// wants to sell them something they already pay for. Returns the
+  /// entitlement state; never throws.
+  Future<bool> refreshEntitlement() async {
+    if (!_configured) return isPro.value;
+    try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      if (userId != null) await ensureIdentity(userId);
+      _onCustomerInfo(await Purchases.getCustomerInfo());
+    } catch (e) {
+      debugPrint('RevenueCat entitlement refresh failed: $e');
+    }
+    return isPro.value;
+  }
+
   /// The offering to sell from (packages: monthly / yearly),
   /// or null when unavailable.
   Future<Offering?> currentOffering() async {
@@ -141,6 +159,14 @@ class PurchasesService {
   }
 }
 
+/// The store refused because this store account already has the
+/// subscription — Play's "You already own this item". It belongs to the
+/// customer here, or to another account; a restore sorts out which.
+bool isAlreadyOwnedError(Object error) =>
+    error is PlatformException &&
+    PurchasesErrorHelper.getErrorCode(error) ==
+        PurchasesErrorCode.productAlreadyPurchasedError;
+
 /// A user-facing message for a purchase failure, or null when the user
 /// just cancelled and nothing should be shown.
 String? purchaseErrorMessage(Object error) {
@@ -154,6 +180,9 @@ String? purchaseErrorMessage(Object error) {
         'Your payment is pending — premium unlocks once it clears.',
       PurchasesErrorCode.networkError =>
         'Network trouble — check your connection and try again.',
+      PurchasesErrorCode.productAlreadyPurchasedError =>
+        'This store account already has a subscription. Sign in with the '
+            'account you bought it with, or contact support.',
       _ => 'The purchase didn\'t go through. Please try again.',
     };
   }

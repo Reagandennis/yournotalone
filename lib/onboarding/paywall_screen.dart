@@ -5,6 +5,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import '../auth/auth_ui.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../home/home_ui.dart';
 import 'onboarding_ui.dart';
 
 class _PlanRow {
@@ -63,13 +64,62 @@ class PaywallScreen extends StatefulWidget {
 
 class _PaywallScreenState extends State<PaywallScreen> {
   bool _loading = false;
+
+  /// Until the store has said whether this account already has Premium,
+  /// the buy button waits. On a device someone has just signed in to, the
+  /// answer arrives a moment after sign-in; selling them a trial in that
+  /// moment ends in Play's "already owned" error.
+  bool _checking = true;
+
+  /// Set once this screen has decided how it ends, so a purchase, a
+  /// restore and the entitlement listener can't each finish it.
+  bool _done = false;
+
   List<Package> _packages = const [];
   Package? _selected;
 
   @override
   void initState() {
     super.initState();
-    _loadOffering();
+    PurchasesService.instance.isPro.addListener(_onEntitlement);
+    _check();
+  }
+
+  @override
+  void dispose() {
+    PurchasesService.instance.isPro.removeListener(_onEntitlement);
+    super.dispose();
+  }
+
+  /// Nobody is sold Premium who already has it.
+  Future<void> _check() async {
+    final pro = await PurchasesService.instance.refreshEntitlement();
+    if (!mounted) return;
+    if (pro || isPremiumUser()) {
+      await _alreadyPremium();
+      return;
+    }
+    setState(() => _checking = false);
+    await _loadOffering();
+  }
+
+  /// The entitlement can land while this screen is open — RevenueCat
+  /// finishing the sign-in switch, or a purchase made on another device.
+  /// A purchase or restore made here reports its own result instead.
+  void _onEntitlement() {
+    if (PurchasesService.instance.isPro.value && !_loading) {
+      _alreadyPremium();
+    }
+  }
+
+  Future<void> _alreadyPremium() async {
+    if (_done || !mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('You already have Premium — everything is unlocked.'),
+      ),
+    );
+    await _finish('premium');
   }
 
   Future<void> _loadOffering() async {
@@ -91,6 +141,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// to Home; afterwards it means going back to whatever the user was doing
   /// when they decided to upgrade.
   Future<void> _finish(String planChoice) async {
+    if (_done) return;
+    _done = true;
     final data = {
       ...widget.extraData,
       'wellbeing_checkin': widget.checkin,
@@ -147,6 +199,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
         );
       }
     } catch (e) {
+      if (isAlreadyOwnedError(e)) {
+        // The store account already subscribes — typically a subscriber
+        // on a new device whose entitlement hadn't loaded yet. Attach the
+        // subscription to this account rather than report a failure.
+        try {
+          if (await PurchasesService.instance.restore() && mounted) {
+            await _finish('premium');
+            return;
+          }
+        } catch (restoreError) {
+          debugPrint('Restore after already-owned failed: $restoreError');
+        }
+      }
       final message = purchaseErrorMessage(e);
       if (message != null && mounted) {
         ScaffoldMessenger.of(context)
@@ -359,7 +424,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ? 'Try free for $trial'
                     : 'Start Premium — ${_selected!.storeProduct.priceString}')
                 : 'Start Premium',
-            loading: _loading,
+            loading: _loading || _checking,
             onPressed: _buy,
           ),
           const SizedBox(height: 4),

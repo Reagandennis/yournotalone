@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/purchases_service.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/home_ui.dart';
 import 'package:yournotalone/journal/journal_hub_screen.dart';
@@ -117,6 +118,54 @@ void main() {
     expect(find.byIcon(Icons.close_rounded), findsOneWidget);
     expect(find.text('Maybe later'), findsOneWidget);
     expect(find.text('Continue with Free'), findsNothing);
+  });
+
+  /// A home screen with a button that opens the paywall, so leaving it
+  /// can be observed.
+  Widget upgradeFromHome() => MaterialApp(
+        theme: buildAppTheme(),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (_) => const PaywallScreen(checkin: 'steady')),
+              ),
+              child: const Text('Upgrade'),
+            ),
+          ),
+        ),
+      );
+
+  testWidgets('a subscriber is never sold Premium again', (tester) async {
+    // On a new device the entitlement is known a moment after sign-in;
+    // the paywall used to ignore it, show the trial, and the purchase
+    // ended in Play's "already owned" error.
+    tallScreen(tester);
+    PurchasesService.instance.isPro.value = true;
+    addTearDown(() => PurchasesService.instance.isPro.value = false);
+    await tester.pumpWidget(upgradeFromHome());
+    await tester.tap(find.text('Upgrade'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PaywallScreen), findsNothing);
+    expect(find.textContaining('already have Premium'), findsOneWidget);
+  });
+
+  testWidgets('the entitlement arriving while open closes the paywall',
+      (tester) async {
+    tallScreen(tester);
+    addTearDown(() => PurchasesService.instance.isPro.value = false);
+    await tester.pumpWidget(upgradeFromHome());
+    await tester.tap(find.text('Upgrade'));
+    await tester.pumpAndSettle();
+    expect(find.byType(PaywallScreen), findsOneWidget);
+
+    PurchasesService.instance.isPro.value = true;
+    await tester.pumpAndSettle();
+
+    expect(find.byType(PaywallScreen), findsNothing);
+    expect(find.textContaining('already have Premium'), findsOneWidget);
   });
 
   testWidgets('during onboarding it is a one-way door', (tester) async {
