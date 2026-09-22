@@ -10,6 +10,8 @@ import 'session_format.dart';
 import 'therapy_repository.dart';
 
 class CallScreen extends StatefulWidget {
+  static const routeName = '/call';
+
   const CallScreen({
     super.key,
     required this.counterpartName,

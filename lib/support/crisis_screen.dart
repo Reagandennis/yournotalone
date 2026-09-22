@@ -294,9 +294,8 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const TherapyScreen()),
-                  ),
+                  onPressed: () =>
+                      Navigator.of(context).push(TherapyScreen.route()),
                   child: const Text('Book a session'),
                 ),
               ],

@@ -31,8 +31,24 @@ void main() {
       final text = describeSessionNotification(
           'session_booked', _session(payment: 'unpaid'), tenBefore);
       expect(text.title, 'You\'re matched with Tess Mwangi');
-      expect(text.body, contains('50 min · Low mood'));
+      expect(text.body, contains('50 min.'));
       expect(text.body, contains('Pay \$20 in the app'));
+    });
+
+    test('the topic never reaches the lock screen', () {
+      for (final kind in [
+        'session_booked',
+        'session_changed',
+        'session_cancelled',
+        'session_reminder',
+      ]) {
+        for (final role in ['client', 'therapist']) {
+          final text = describeSessionNotification(
+              kind, _session(role: role), tenBefore);
+          expect(text.title, isNot(contains('Low mood')), reason: kind);
+          expect(text.body, isNot(contains('Low mood')), reason: kind);
+        }
+      }
     });
 
     test('a free first session says so', () {

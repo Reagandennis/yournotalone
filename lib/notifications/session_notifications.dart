@@ -36,6 +36,9 @@ const _details = NotificationDetails(
     channelDescription: 'Bookings, changes and reminders for your sessions',
     importance: Importance.high,
     priority: Priority.high,
+    // Marked sensitive, so a phone set to hide sensitive content on the
+    // lock screen shows "Contents hidden" instead of the words below.
+    visibility: NotificationVisibility.private,
   ),
   iOS: DarwinNotificationDetails(),
   macOS: DarwinNotificationDetails(),
@@ -65,6 +68,10 @@ int sessionNotificationId(String sessionId) =>
 
 /// A notification's words, written on the phone so times are in its own
 /// time zone. [data] is what `session_notification_data()` queues.
+///
+/// The session's topic ("Grief & loss", "Addiction & recovery") is never
+/// part of it: a notification sits on the lock screen where anyone holding
+/// the phone can read it. What the session is about stays in the app.
 ({String title, String body}) describeSessionNotification(
   String kind,
   Map<String, dynamic> data,
@@ -82,7 +89,6 @@ int sessionNotificationId(String sessionId) =>
       : DateTime.parse(data['scheduled_at'] as String).toLocal();
   final when = at == null ? 'the booked time' : formatDateTime(at);
   final minutes = (data['duration_minutes'] as num?)?.toInt() ?? 50;
-  final topic = data['topic'] as String? ?? '';
   final unpaid = data['payment_status'] == 'unpaid';
   final price = formatPrice((data['price_cents'] as num?)?.toInt() ?? 0);
 
@@ -96,12 +102,12 @@ int sessionNotificationId(String sessionId) =>
                 : 'You\'re all set.';
         return (
           title: 'You\'re matched with $who',
-          body: '$when · $minutes min · $topic. $next',
+          body: '$when · $minutes min. $next',
         );
       }
       return (
         title: 'New session with $who',
-        body: '$when · $minutes min · $topic.'
+        body: '$when · $minutes min.'
             '${unpaid ? ' Waiting for the client to pay.' : ''}',
       );
     case 'session_changed':
@@ -218,21 +224,48 @@ class SessionNotifications {
   static final bool _silent = Platform.environment.containsKey('FLUTTER_TEST');
 
   late final _prefs = SharedPreferencesAsync();
-  Future<bool>? _syncing;
 
   FlutterLocalNotificationsPlugin get _plugin => LocalNotifications.plugin;
+
+  /// Everything that touches this install's registration runs one at a
+  /// time. [start] is called from several screens and on every resume,
+  /// often within the same second; on a first launch each call would
+  /// otherwise find no key yet, register a key of its own, and leave the
+  /// server with orphan devices whose news nobody ever collects.
+  Future<void> _chain = Future.value();
+
+  Future<T> _serially<T>(Future<T> Function() task) {
+    final run = _chain.then((_) => task());
+    _chain = run.then((_) {}, onError: (Object _) {});
+    return run;
+  }
+
+  /// A [start] waiting for its turn; further calls join it rather than
+  /// queueing another round trip.
+  Future<void>? _queuedStart;
+  bool _queuedAsk = false;
 
   /// Registers this install for whoever is signed in, catches up, and turns
   /// background checks on or off depending on whether there's a session to
   /// watch. Cheap enough to call on every launch and resume.
-  Future<void> start({bool askPermission = false}) async {
-    if (_silent) return;
+  Future<void> start({bool askPermission = false}) {
+    if (_silent) return Future.value();
+    _queuedAsk = _queuedAsk || askPermission;
+    return _queuedStart ??= _serially(() {
+      _queuedStart = null;
+      final ask = _queuedAsk;
+      _queuedAsk = false;
+      return _start(askPermission: ask);
+    });
+  }
+
+  Future<void> _start({required bool askPermission}) async {
     final user = Supabase.instance.client.auth.currentUser;
     if (user == null) return;
     try {
       if (askPermission) await RemindersService.instance.requestPermission();
       await _register(user.id);
-      final active = await sync();
+      final active = await _sync();
       if (Platform.isAndroid) {
         if (active) {
           await Workmanager().registerPeriodicTask(
@@ -253,8 +286,12 @@ class SessionNotifications {
 
   /// On sign-out: forget this install on the server while the session still
   /// allows it, stop checking, and drop any scheduled reminders.
-  Future<void> stop() async {
-    if (_silent) return;
+  Future<void> stop() {
+    if (_silent) return Future.value();
+    return _serially(_stop);
+  }
+
+  Future<void> _stop() async {
     try {
       final key = await _prefs.getString(_keyPref);
       if (key != null && Supabase.instance.client.auth.currentUser != null) {
@@ -272,7 +309,10 @@ class SessionNotifications {
   /// Collects news and upcoming sessions with this install's key. Returns
   /// whether there's anything worth checking for again. Needs no Supabase
   /// session, so it runs the same in the background.
-  Future<bool> sync() => _syncing ??= _sync().whenComplete(() => _syncing = null);
+  Future<bool> sync() {
+    if (_silent) return Future.value(false);
+    return _serially(_sync);
+  }
 
   Future<void> _register(String userId) async {
     final key = await _prefs.getString(_keyPref);
@@ -302,7 +342,12 @@ class SessionNotifications {
     await _prefs.setInt(_afterPref, (after as num).toInt());
   }
 
-  Future<void> _forget() async {
+  /// With [ifKey], only if that's still this install's key: the background
+  /// isolate and the app share these preferences but not the lock above,
+  /// so a check that started before a sign-out or sign-in must not throw
+  /// away the registration made since.
+  Future<void> _forget({String? ifKey}) async {
+    if (ifKey != null && await _prefs.getString(_keyPref) != ifKey) return;
     try {
       if (Platform.isAndroid) {
         await Workmanager().cancelByUniqueName(sessionCheckTask);
@@ -331,8 +376,11 @@ class SessionNotifications {
     final after = await _prefs.getInt(_afterPref) ?? 0;
 
     final result = await _deviceSync(key, after);
+    // Re-registered meanwhile (a sign-out and sign-in from the app while
+    // this ran in the background): these results belong to the old key.
+    if (await _prefs.getString(_keyPref) != key) return false;
     if (result['registered'] != true) {
-      await _forget();
+      await _forget(ifKey: key);
       return false;
     }
     await LocalNotifications.ensureInitialized();

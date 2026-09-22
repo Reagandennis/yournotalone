@@ -22,6 +22,15 @@ class TherapistSessionsScreen extends StatefulWidget {
   /// Injectable so tests can put "now" anywhere around a session.
   final DateTime Function()? clock;
 
+  static const routeName = '/therapist-sessions';
+
+  /// The route every caller pushes, named so a notification tap can find
+  /// the screen if it's already open instead of stacking another.
+  static Route<void> route() => MaterialPageRoute(
+        settings: const RouteSettings(name: routeName),
+        builder: (_) => const TherapistSessionsScreen(),
+      );
+
   @override
   State<TherapistSessionsScreen> createState() =>
       _TherapistSessionsScreenState();
@@ -72,6 +81,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
   Future<void> _join(TherapistSession session) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
+        settings: const RouteSettings(name: CallScreen.routeName),
         builder: (_) => CallScreen(
           counterpartName: session.clientLabel,
           connect: () => _repo.joinSession(session.id),

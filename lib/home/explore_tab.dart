@@ -322,9 +322,7 @@ class ExploreTab extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const TherapyScreen()),
-            ),
+            onTap: () => Navigator.of(context).push(TherapyScreen.route()),
             child: Padding(
               padding: const EdgeInsets.all(18),
               child: Row(

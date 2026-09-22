@@ -453,7 +453,7 @@ class _HomeTabState extends State<HomeTab> {
             borderRadius: BorderRadius.circular(18),
             onTap: () => Navigator.of(
               context,
-            ).push(MaterialPageRoute(builder: (_) => const TherapyScreen())),
+            ).push(TherapyScreen.route()),
             child: Padding(
               padding: const EdgeInsets.all(18),
               child: Row(

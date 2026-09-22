@@ -402,10 +402,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 context,
                 Icons.video_call_outlined,
                 'My therapy sessions',
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => const TherapistSessionsScreen()),
-                ),
+                onTap: () =>
+                    Navigator.of(context).push(TherapistSessionsScreen.route()),
               ),
           ],
         );

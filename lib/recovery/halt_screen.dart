@@ -96,9 +96,7 @@ final _needs = <_Need>[
         'A real person beats anything else here — and if there isn\'t one '
         'right now, a session is a person.',
     action: 'Talk to a therapist',
-    open: (context) => Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const TherapyScreen()),
-    ),
+    open: (context) => Navigator.of(context).push(TherapyScreen.route()),
   ),
   _Need(
     letter: 'T',

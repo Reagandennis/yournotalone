@@ -212,7 +212,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       // Gives Sentry the app-start transaction and one per named route; the
       // app's routes are unnamed today, so screens show up once they get a
       // RouteSettings name.
-      navigatorObservers: [SentryNavigatorObserver()],
+      navigatorObservers: [SentryNavigatorObserver(), appRoutes],
       debugShowCheckedModeBanner: false,
       title: 'Δεν είσαι μόνος',
       theme: buildAppTheme(),

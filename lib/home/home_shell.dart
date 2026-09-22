@@ -6,6 +6,7 @@ import '../brand.dart';
 import '../care/therapist_sessions_screen.dart';
 import '../notifications/local_notifications.dart';
 import '../notifications/session_notifications.dart';
+import '../therapy/call_screen.dart';
 import '../therapy/therapy_screen.dart';
 import 'explore_tab.dart';
 import 'home_tab.dart';
@@ -13,19 +14,27 @@ import 'settings_tab.dart';
 
 /// Opens the screen a tapped session notification is about: a therapist's
 /// sessions, or the client's therapy screen.
+///
+/// If that screen is already open — the usual case, since people wait for
+/// a session on it — it comes back to the front rather than being pushed
+/// again on top of itself. If they're already in the call, nothing moves.
 void openSessionScreen(String payload) {
   final navigator = appNavigatorKey.currentState;
   if (navigator == null ||
       Supabase.instance.client.auth.currentUser == null) {
     return;
   }
-  navigator.push(
-    MaterialPageRoute(
-      builder: (_) => payload == 'therapist'
-          ? const TherapistSessionsScreen()
-          : const TherapyScreen(),
-    ),
-  );
+  if (appRoutes.isOpen(CallScreen.routeName)) return;
+  final name = payload == 'therapist'
+      ? TherapistSessionsScreen.routeName
+      : TherapyScreen.routeName;
+  if (appRoutes.isOpen(name)) {
+    navigator.popUntil((route) => route.settings.name == name);
+    return;
+  }
+  navigator.push(payload == 'therapist'
+      ? TherapistSessionsScreen.route()
+      : TherapyScreen.route());
 }
 
 /// The signed-in shell: bottom navigation between Home, Explore, and
