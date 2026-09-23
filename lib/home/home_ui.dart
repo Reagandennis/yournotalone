@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../billing/pricing_copy.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../billing/purchases_service.dart';
@@ -64,13 +65,22 @@ class PremiumBuilder extends StatelessWidget {
 }
 
 /// Bottom sheet nudging free users toward Premium, leading to the paywall.
+///
+/// [item] is the thing they just tapped — a meditation, a sound, a prompt —
+/// so the sheet is about *that* rather than about Premium in general.
+/// [source] names the entry point for the paywall funnel metrics.
 void showUpgradeSheet(
   BuildContext context, {
   required String title,
   required String message,
+  String? item,
+  String source = 'sheet',
 }) {
   final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
   final checkin = (meta?['wellbeing_checkin'] as String?) ?? 'steady';
+  Sentry.metrics.count('upgrade_sheet.shown', 1, attributes: {
+    'source': SentryAttribute.string(source),
+  });
   showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.white,
@@ -93,7 +103,7 @@ void showUpgradeSheet(
           ),
           const SizedBox(height: 16),
           Text(
-            title,
+            item == null ? title : 'Unlock “$item”',
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18,
@@ -101,6 +111,18 @@ void showUpgradeSheet(
               color: Brand.ink,
             ),
           ),
+          if (item != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Brand.textMuted,
+              ),
+            ),
+          ],
           const SizedBox(height: 8),
           Text(
             message,
@@ -117,11 +139,12 @@ void showUpgradeSheet(
               Navigator.of(sheetContext).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => PaywallScreen(checkin: checkin),
+                  builder: (_) =>
+                      PaywallScreen(checkin: checkin, source: source),
                 ),
               );
             },
-            child: const Text('See Premium'),
+            child: Text(item == null ? 'See Premium' : 'Unlock with Premium'),
           ),
           const SizedBox(height: 4),
           TextButton(

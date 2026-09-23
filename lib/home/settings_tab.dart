@@ -362,7 +362,8 @@ class _SettingsTabState extends State<SettingsTab> {
             TextButton(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => PaywallScreen(checkin: checkin),
+                  builder: (_) =>
+                      PaywallScreen(checkin: checkin, source: 'settings'),
                 ),
               ),
               child: const Text('Upgrade'),

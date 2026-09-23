@@ -1,5 +1,7 @@
 // Hears about refunds from RevenueCat, so a refunded session stops being
-// "paid" and joinable.
+// "paid" and joinable — and about subscriptions ending, so someone who
+// turns Premium off or lets a trial lapse gets one honest win-back email
+// (send_winback_email, migration 0018).
 //
 // RevenueCat POSTs every event here. The event itself is only a nudge: on
 // any event about a customer this re-reads their purchases from RevenueCat
@@ -36,6 +38,7 @@ const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const WEBHOOK_SECRET = Deno.env.get('REVENUECAT_WEBHOOK_SECRET');
 const REVENUECAT_SECRET_KEY = Deno.env.get('REVENUECAT_SECRET_KEY');
 const REVENUECAT_PROJECT_ID = Deno.env.get('REVENUECAT_PROJECT_ID');
+const THERAPY_PRODUCT_ID = Deno.env.get('THERAPY_SESSION_PRODUCT_ID') ?? 'therapy';
 
 const REVENUECAT_API = 'https://api.revenuecat.com/v2';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -168,5 +171,31 @@ Deno.serve(async (req: Request) => {
 
   if (refunded > 0) console.log('revenuecat-webhook: sessions set back to unpaid:', refunded);
   if (reversed > 0) console.log('revenuecat-webhook: sessions paid again:', reversed);
-  return json({ ok: true, refunded, reversed });
+
+  // Win-back: a subscription (not a therapy session) that the customer
+  // turned off, or that ran out. One email per event; the function
+  // dedupes on the event id, so RevenueCat's retries can't repeat it. A
+  // failure here is logged, not returned — a retry would only re-run the
+  // idempotent refund sync above.
+  const productId = String(event.product_id ?? '');
+  const winback =
+    productId !== THERAPY_PRODUCT_ID &&
+    ((type === 'CANCELLATION' && event.cancel_reason === 'UNSUBSCRIBE') ||
+      (type === 'EXPIRATION' && event.expiration_reason !== 'SUBSCRIPTION_PAUSED'));
+  let winbackSent = false;
+  if (winback) {
+    const endsAt =
+      typeof event.expiration_at_ms === 'number'
+        ? new Date(event.expiration_at_ms).toISOString()
+        : null;
+    const { data, error } = await admin.rpc('send_winback_email', {
+      p_user_id: ids[0],
+      p_kind: type === 'CANCELLATION' ? 'cancelled' : 'expired',
+      p_event_id: String(event.id ?? ''),
+      p_ends_at: endsAt,
+    });
+    if (error) console.error('revenuecat-webhook: send_winback_email failed', ids[0], error);
+    else winbackSent = data === true;
+  }
+  return json({ ok: true, refunded, reversed, winbackSent });
 });

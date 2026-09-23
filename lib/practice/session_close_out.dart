@@ -1,9 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../billing/nudges.dart';
+import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../home/home_ui.dart';
+import '../home/mood_face.dart';
 import '../home/mood_repository.dart';
 import '../home/mood_scale.dart';
 import '../journal/new_entry.dart';
+import 'practice_repository.dart';
 
 /// What a finished session ends with.
 ///
@@ -31,6 +38,32 @@ class SessionCloseOut extends StatefulWidget {
 class _SessionCloseOutState extends State<SessionCloseOut> {
   late final _moods = widget.moodRepository ?? MoodRepository();
   int? _picked;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_nudgeAfterFreeSessions());
+  }
+
+  /// Someone who has just finished their second session has used up the
+  /// free ones and liked them enough to come back. Once per account.
+  Future<void> _nudgeAfterFreeSessions() async {
+    if (isPremiumUser()) return;
+    try {
+      final summary = await PracticeRepository().fetchSummary();
+      if (summary.sessions < 2 || !mounted) return;
+      if (!await Nudges.claim('practice2') || !mounted) return;
+      showUpgradeSheet(
+        context,
+        source: 'nudge:practice2',
+        title: 'You\'ve finished your free sessions',
+        message: 'Premium opens all 20 meditations and every breathing '
+            'exercise, with the sounds to go with them — and $introOffer.',
+      );
+    } catch (e) {
+      debugPrint('Practice nudge skipped: $e');
+    }
+  }
 
   Future<void> _pick(int index) async {
     setState(() => _picked = index);
@@ -64,19 +97,17 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(24),
                   onTap: () => _pick(i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                  child: Padding(
                     padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: _picked == i
-                          ? mood.color.withValues(alpha: 0.14)
-                          : Colors.transparent,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      mood.icon,
-                      size: 30,
-                      color: _picked == i ? mood.color : moodIdle,
+                    child: AnimatedScale(
+                      scale: _picked == i ? 1.14 : 1.0,
+                      duration: const Duration(milliseconds: 260),
+                      curve: Curves.easeOutBack,
+                      child: MoodFace(
+                        level: mood,
+                        size: 36,
+                        dimmed: _picked != null && _picked != i,
+                      ),
                     ),
                   ),
                 ),

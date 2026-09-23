@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import '../billing/nudges.dart';
+import '../billing/pricing_copy.dart';
 import '../brand.dart';
 import '../journal/journal_screen.dart';
 import '../meditation/meditations_screen.dart';
@@ -7,9 +11,10 @@ import '../practice/practice_repository.dart';
 import '../practice/practice_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../sounds/sounds_screen.dart';
-import '../support/crisis_screen.dart';
+import '../support/heavy_day_sheet.dart';
 import '../therapy/therapy_screen.dart';
 import 'home_ui.dart';
+import 'mood_face.dart';
 import 'mood_repository.dart';
 import 'mood_scale.dart';
 
@@ -103,32 +108,18 @@ class _HomeTabState extends State<HomeTab> {
   Future<void> _selectMood(int index) async {
     final firstTime = _mood == null;
     setState(() => _mood = index);
+    // An "Awful" day is the one moment the app knows someone is
+    // struggling. Offer the door straight away — before the save, which
+    // may be slow or fail offline — without forcing them through it.
+    if (index == 0) unawaited(showHeavyDaySheet(context));
     try {
       await _moodRepo.saveMood(index);
       if (!mounted) return;
-      // An "Awful" day is the one moment the app knows someone is
-      // struggling. Offer the door without forcing them through it.
-      if (index == 0) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            duration: const Duration(seconds: 8),
-            content: const Text(
-              'That sounds like a heavy day. You can talk '
-              'to someone right now.',
-            ),
-            action: SnackBarAction(
-              label: 'Get help',
-              textColor: Colors.white,
-              onPressed: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const CrisisScreen())),
-            ),
-          ),
-        );
-      } else if (firstTime) {
+      if (index != 0 && firstTime) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Thanks for checking in.')),
         );
+        unawaited(_nudgeAfterCheckins());
       }
     } catch (e) {
       if (mounted) {
@@ -143,6 +134,28 @@ class _HomeTabState extends State<HomeTab> {
           ),
         );
       }
+    }
+  }
+
+  /// The third check-in is the first sign of a habit — the one moment an
+  /// offer to keep the record is about something they're already doing.
+  /// Once per account, free users only.
+  Future<void> _nudgeAfterCheckins() async {
+    if (isPremiumUser()) return;
+    try {
+      final history = await _moodRepo.fetchHistory(days: 30);
+      if (history.length < 3 || !mounted) return;
+      if (!await Nudges.claim('mood3') || !mounted) return;
+      showUpgradeSheet(
+        context,
+        source: 'nudge:mood3',
+        title: 'Three check-ins in',
+        message: 'You\'re building a habit. Premium keeps every check-in '
+            'and shows you how the weeks are actually going — and '
+            '$introOffer.',
+      );
+    } catch (e) {
+      debugPrint('Check-in nudge skipped: $e');
     }
   }
 
@@ -243,7 +256,7 @@ class _HomeTabState extends State<HomeTab> {
     // Five faces have to fit the width, whatever the phone: work out the
     // per-face budget and cap it at the size the design wants.
     final width = MediaQuery.sizeOf(context).width;
-    final faceSize = ((width - 56 - 36) / 5).clamp(28.0, 44.0);
+    final faceSize = ((width - 56 - 36) / 5).clamp(30.0, 48.0);
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
       decoration: BoxDecoration(
@@ -280,28 +293,19 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       child: Column(
                         children: [
+                          // All five in colour until one is picked; then
+                          // the others step back and the pick grows.
                           AnimatedScale(
-                            scale: _mood == i ? 1.12 : 1.0,
+                            scale: _mood == i ? 1.14 : 1.0,
                             duration: const Duration(milliseconds: 260),
                             curve: Curves.easeOutBack,
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 200),
-                              width: faceSize,
-                              height: faceSize,
-                              decoration: BoxDecoration(
-                                color: _mood == i
-                                    ? mood.color.withValues(alpha: 0.14)
-                                    : Colors.transparent,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                mood.icon,
-                                size: faceSize * 0.68,
-                                color: _mood == i ? mood.color : moodIdle,
-                              ),
+                            child: MoodFace(
+                              level: mood,
+                              size: faceSize,
+                              dimmed: _mood != null && _mood != i,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             mood.label,
                             maxLines: 1,

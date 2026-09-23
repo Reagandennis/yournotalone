@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import '../billing/pricing_copy.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../auth/auth_ui.dart';
+import '../billing/paywall_copy.dart';
+import '../billing/pricing_copy.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../home/mood_face.dart';
+import '../home/mood_scale.dart';
 import 'onboarding_ui.dart';
 
 class _PlanRow {
@@ -22,21 +26,24 @@ class _PlanRow {
 
 // Keep this honest: every row here is checked against what the app
 // actually gates. Reminders and urge surfing are free, so they are not
-// sold as Premium.
+// sold as Premium. The first three rows are the ones that differ most,
+// because only those show until "See everything" is tapped.
 const _rows = [
+  _PlanRow('Guided meditations & breathing', '2 free', 'All 20'),
+  _PlanRow('Journaling', '5 entries', 'Unlimited'),
+  _PlanRow('Mood history & progress', null, _PlanRow.included),
+  _PlanRow('Wellbeing sounds — focus, sleep, calm', '1 free', 'All 13'),
+  _PlanRow('Journal prompts', '1 free', 'All 19'),
+  _PlanRow('Recovery tracking & insights', null, _PlanRow.included),
   _PlanRow('Daily mood check-ins', _PlanRow.included, _PlanRow.included),
   _PlanRow('Daily reminders', _PlanRow.included, _PlanRow.included),
   _PlanRow('Urge surfing, any time', _PlanRow.included, _PlanRow.included),
-  _PlanRow('Journaling', '5 entries', 'Unlimited'),
-  _PlanRow('Guided meditations & breathing', '2 free', 'All 20'),
-  _PlanRow('Wellbeing sounds — focus, sleep, calm', '1 free', 'All 13'),
-  _PlanRow('Journal prompts', '1 free', 'All 19'),
-  _PlanRow('Mood history & progress', null, _PlanRow.included),
-  _PlanRow('Recovery tracking & insights', null, _PlanRow.included),
 ];
 
+const _rowsShownFolded = 3;
+
 /// Premium paywall shown at the end of onboarding and from upgrade
-/// prompts. Sells the RevenueCat offering (monthly / yearly);
+/// prompts. Sells the RevenueCat offering (weekly / monthly / yearly);
 /// when the store isn't reachable it falls back to a static preview.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({
@@ -44,9 +51,12 @@ class PaywallScreen extends StatefulWidget {
     required this.checkin,
     this.fromOnboarding = false,
     this.extraData = const {},
+    this.source = 'settings',
+    this.packages,
   });
 
-  /// The wellbeing check-in answer, saved when onboarding completes.
+  /// The wellbeing check-in answer: saved when onboarding completes, and
+  /// what the headline speaks to.
   final String checkin;
 
   /// True only on the last step of onboarding. When false — an upgrade from
@@ -57,6 +67,14 @@ class PaywallScreen extends StatefulWidget {
   /// Answers gathered earlier in onboarding that still need saving with the
   /// rest (the therapy offer collects some before this screen).
   final Map<String, dynamic> extraData;
+
+  /// Where this view came from ("onboarding", "settings", "sheet:sounds",
+  /// "nudge:mood3"), so the funnel can be read per entry point.
+  final String source;
+
+  /// Injectable so the plan picker and trial timeline can be exercised
+  /// without a store. Null means ask RevenueCat.
+  final List<Package>? packages;
 
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
@@ -75,12 +93,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
   /// restore and the entitlement listener can't each finish it.
   bool _done = false;
 
+  bool _expanded = false;
   List<Package> _packages = const [];
   Package? _selected;
 
   @override
   void initState() {
     super.initState();
+    _metric('paywall.shown');
     PurchasesService.instance.isPro.addListener(_onEntitlement);
     _check();
   }
@@ -89,6 +109,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
   void dispose() {
     PurchasesService.instance.isPro.removeListener(_onEntitlement);
     super.dispose();
+  }
+
+  void _metric(String name, {String? plan, bool? trial}) {
+    Sentry.metrics.count(name, 1, attributes: {
+      'source': SentryAttribute.string(widget.source),
+      'checkin': SentryAttribute.string(widget.checkin),
+      if (plan != null) 'plan': SentryAttribute.string(plan),
+      if (trial != null) 'trial': SentryAttribute.string(trial ? 'yes' : 'no'),
+    });
   }
 
   /// Nobody is sold Premium who already has it.
@@ -123,17 +152,27 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Future<void> _loadOffering() async {
-    final offering = await PurchasesService.instance.currentOffering();
-    if (!mounted || offering == null) return;
-    // Sell in this order: monthly first (the intro offer), then bigger
-    // commitments.
-    final ordered = [
-      offering.monthly,
-      offering.annual,
-    ].whereType<Package>().toList();
+    final List<Package> ordered;
+    if (widget.packages != null) {
+      ordered = widget.packages!;
+    } else {
+      final offering = await PurchasesService.instance.currentOffering();
+      if (!mounted || offering == null) return;
+      ordered = [
+        offering.weekly,
+        offering.monthly,
+        offering.annual,
+      ].whereType<Package>().toList();
+    }
+    final preferred = preferredPlan(widget.checkin);
     setState(() {
       _packages = ordered;
-      _selected = ordered.isEmpty ? null : ordered.first;
+      _selected = ordered.isEmpty
+          ? null
+          : ordered.firstWhere(
+              (p) => p.packageType == preferred,
+              orElse: () => ordered.last,
+            );
     });
   }
 
@@ -157,6 +196,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Future<void> _finishFree() async {
+    _metric('paywall.dismissed');
     setState(() => _loading = true);
     // Outside onboarding "maybe later" is just a dismissal — it must not
     // record a downgrade for someone who already pays.
@@ -183,6 +223,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       final pro = await PurchasesService.instance.purchase(package);
       if (pro && mounted) {
+        _metric(
+          'paywall.purchased',
+          plan: package.packageType.name,
+          trial: trialDays(package) != null,
+        );
         await _finish('premium');
         return;
       }
@@ -227,6 +272,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
     try {
       final pro = await PurchasesService.instance.restore();
       if (pro && mounted) {
+        _metric('paywall.restored');
         await _finish('premium');
         return;
       }
@@ -247,14 +293,23 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   String _packageName(Package p) => switch (p.packageType) {
+        PackageType.weekly => 'Weekly',
         PackageType.monthly => 'Monthly',
         PackageType.annual => 'Yearly',
         _ => p.storeProduct.title,
       };
 
   String _packageNote(Package p) => switch (p.packageType) {
+        PackageType.weekly => 'per week',
         PackageType.monthly => 'per month',
         PackageType.annual => 'per year',
+        _ => '',
+      };
+
+  String _periodSuffix(Package p) => switch (p.packageType) {
+        PackageType.weekly => '/week',
+        PackageType.monthly => '/month',
+        PackageType.annual => '/year',
         _ => '',
       };
 
@@ -276,26 +331,50 @@ class _PaywallScreenState extends State<PaywallScreen> {
     return ((1 - yearlyPrice / monthlyTotal) * 100).round();
   }
 
-  /// "3 days" / "1 week" when the package starts with a free trial.
-  String? _trialLabel(Package p) {
-    final intro = p.storeProduct.introductoryPrice;
-    if (intro == null || intro.price > 0) return null;
-    final unit = switch (intro.periodUnit) {
-      PeriodUnit.day => 'day',
-      PeriodUnit.week => 'week',
-      PeriodUnit.month => 'month',
-      PeriodUnit.year => 'year',
-      _ => 'day',
-    };
-    final n = intro.periodNumberOfUnits;
-    return n == 1 ? '1 $unit' : '$n ${unit}s';
+  Widget _faces() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (final (i, level) in moodLevels.indexed) ...[
+          if (i != 0) const SizedBox(width: 10),
+          MoodFace(level: level, size: 40),
+        ],
+      ],
+    );
   }
 
-  String _periodSuffix(Package p) => switch (p.packageType) {
-        PackageType.monthly => '/month',
-        PackageType.annual => '/year',
-        _ => '',
-      };
+  Widget _trust() {
+    const items = ['Licensed therapists', 'Private by design', 'Cancel anytime'];
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final item in items)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+            decoration: BoxDecoration(
+              border: Border.all(color: Brand.border, width: 1.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.check_rounded, size: 14, color: Brand.blue),
+                const SizedBox(width: 5),
+                Text(
+                  item,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Brand.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
 
   Widget _planPicker() {
     final savings = _savingsPercent;
@@ -348,7 +427,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          _packageNote(p),
+                          p.packageType == PackageType.annual
+                              ? perMonthLabel(p)
+                              : _packageNote(p),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 10.5,
                             color: Brand.textMuted,
@@ -389,6 +472,89 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
+  /// How the trial goes, day by day, so nobody has to wonder when the
+  /// charge lands. The day-N-minus-two reminder is a real notification,
+  /// scheduled by TrialReminder once the trial is active.
+  Widget _timeline(Package p, int days) {
+    final steps = trialTimeline(
+      days,
+      p.storeProduct.priceString,
+      _periodSuffix(p),
+    );
+    const accents = [Brand.red, Brand.blue, Brand.yellow];
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      decoration: BoxDecoration(
+        color: const Color(0x0A191919),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          for (final (i, step) in steps.indexed)
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(
+                    width: 22,
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 12,
+                          height: 12,
+                          margin: const EdgeInsets.only(top: 3),
+                          decoration: BoxDecoration(
+                            color: accents[i % accents.length],
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        if (i != steps.length - 1)
+                          Expanded(
+                            child: Container(
+                              width: 2,
+                              margin: const EdgeInsets.symmetric(vertical: 3),
+                              color: Brand.border,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            step.day,
+                            style: const TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                              color: Brand.ink,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            step.detail,
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: Brand.textMuted,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
   Widget _cell(String? value, {required bool premium}) {
     final color = premium ? Brand.ink : Brand.textMuted;
     if (value == null) {
@@ -409,30 +575,115 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
+  List<Widget> _table() {
+    final rows = _expanded ? _rows : _rows.take(_rowsShownFolded).toList();
+    return [
+      Row(
+        children: [
+          const Expanded(child: SizedBox()),
+          const SizedBox(
+            width: 64,
+            child: Text(
+              'Free',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Brand.textMuted,
+              ),
+            ),
+          ),
+          Container(
+            width: 76,
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            decoration: BoxDecoration(
+              color: const Color(0x14191919),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              'Premium',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Brand.ink,
+              ),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 6),
+      for (final (i, row) in rows.indexed) ...[
+        if (i != 0) const Divider(height: 1, color: Brand.border),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 13),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  row.label,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    color: Brand.ink,
+                    height: 1.35,
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 64,
+                child: Center(child: _cell(row.free, premium: false)),
+              ),
+              SizedBox(
+                width: 76,
+                child: Center(child: _cell(row.premium, premium: true)),
+              ),
+            ],
+          ),
+        ),
+      ],
+      Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          onPressed: () => setState(() => _expanded = !_expanded),
+          style: TextButton.styleFrom(padding: EdgeInsets.zero),
+          icon: Icon(
+            _expanded
+                ? Icons.keyboard_arrow_up_rounded
+                : Icons.keyboard_arrow_down_rounded,
+            size: 18,
+          ),
+          label: Text(_expanded ? 'Show less' : 'See everything'),
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hasStore = _selected != null;
-    final trial = hasStore ? _trialLabel(_selected!) : null;
+    final copy = paywallCopy(widget.checkin);
+    final selected = _selected;
+    final trial = selected == null ? null : trialLabel(selected);
+    final days = selected == null ? null : trialDays(selected);
     return OnboardingScaffold(
       dismissible: !widget.fromOnboarding,
       bottom: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           AuthSubmitButton(
-            label: hasStore
+            label: selected != null
                 ? (trial != null
                     ? 'Try free for $trial'
-                    : 'Start Premium — ${_selected!.storeProduct.priceString}')
+                    : 'Start Premium — ${selected.storeProduct.priceString}')
                 : 'Start Premium',
             loading: _loading || _checking,
             onPressed: _buy,
           ),
           const SizedBox(height: 4),
           Text(
-            hasStore
+            selected != null
                 ? '${trial != null ? 'then ' : ''}'
-                    '${_selected!.storeProduct.priceString}'
-                    '${_periodSuffix(_selected!)} · cancel anytime'
+                    '${selected.storeProduct.priceString}'
+                    '${_periodSuffix(selected)} · cancel anytime'
                 : 'Cancel anytime',
             style: const TextStyle(fontSize: 12, color: Brand.textMuted),
           ),
@@ -460,9 +711,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ],
       ),
       children: [
-        const Text(
-          'Go further with Premium',
-          style: TextStyle(
+        _faces(),
+        const SizedBox(height: 18),
+        Text(
+          copy.headline,
+          style: const TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
             color: Brand.ink,
@@ -471,137 +724,38 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ),
         const SizedBox(height: 12),
         const PillarStripe(),
+        const SizedBox(height: 14),
+        Text(
+          copy.detail,
+          style: const TextStyle(
+            fontSize: 14,
+            color: Brand.textMuted,
+            height: 1.55,
+          ),
+        ),
         const SizedBox(height: 16),
-        const Text(
-          'Free gets you started. Premium opens every room in the house — '
-          'and $introOffer.',
-          style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
-        ),
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: const Color(0x1FFAB414),
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.local_offer_rounded,
-                  size: 21,
-                  color: Brand.yellow,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _packages.any((p) => _trialLabel(p) != null)
-                          ? 'Try it free first'
-                          : introOfferSentence,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Brand.ink,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      _packages.any((p) => _trialLabel(p) != null)
-                          ? 'Every plan starts with a free trial'
-                              '${_savingsPercent != null ? ' — and yearly saves you $_savingsPercent% vs paying monthly' : ''}. '
-                              'Cancel anytime.'
-                          : 'Try everything before you pay.',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Brand.textMuted,
-                        height: 1.45,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        _trust(),
         if (_packages.isNotEmpty) ...[
-          const SizedBox(height: 20),
+          const SizedBox(height: 22),
           _planPicker(),
-        ],
-        const SizedBox(height: 24),
-        Row(
-          children: [
-            const Expanded(child: SizedBox()),
-            const SizedBox(
-              width: 64,
-              child: Text(
-                'Free',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Brand.textMuted,
-                ),
-              ),
-            ),
-            Container(
-              width: 76,
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
-                color: const Color(0x14191919),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: const Text(
-                'Premium',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Brand.ink,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        for (final (i, row) in _rows.indexed) ...[
-          if (i != 0) const Divider(height: 1, color: Brand.border),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 13),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    row.label,
-                    style: const TextStyle(
-                      fontSize: 13.5,
-                      color: Brand.ink,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 64,
-                  child: Center(child: _cell(row.free, premium: false)),
-                ),
-                SizedBox(
-                  width: 76,
-                  child: Center(child: _cell(row.premium, premium: true)),
-                ),
-              ],
+        ] else ...[
+          const SizedBox(height: 22),
+          Text(
+            introOfferSentence,
+            style: const TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w600,
+              color: Brand.ink,
             ),
           ),
         ],
-        const SizedBox(height: 8),
+        if (selected != null && days != null) ...[
+          const SizedBox(height: 16),
+          _timeline(selected, days),
+        ],
+        const SizedBox(height: 24),
+        ..._table(),
+        const SizedBox(height: 4),
         const Text(
           'Therapy sessions are available to everyone and booked separately.',
           style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),

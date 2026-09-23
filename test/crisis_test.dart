@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/support/crisis_resources.dart';
 import 'package:yournotalone/support/crisis_screen.dart';
+import 'package:yournotalone/support/heavy_day_sheet.dart';
 
 void main() {
   setUpAll(() async {
@@ -71,6 +72,39 @@ void main() {
 
     // Real, tappable resources — not a paragraph telling you to look one up.
     expect(find.byType(OutlinedButton), findsWidgets);
+  });
+
+  testWidgets('an awful day leads with a therapist, numbers at the bottom',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(400, 1600);
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(),
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: TextButton(
+            onPressed: () => showHeavyDaySheet(context),
+            child: const Text('Awful'),
+          ),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('Awful'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('That sounds like a heavy day.'), findsOneWidget);
+    final booking = tester.getTopLeft(find.text('Book a session')).dy;
+    final emergency = tester
+        .getTopLeft(find.textContaining('Emergency', findRichText: true))
+        .dy;
+    expect(booking, lessThan(emergency));
+    expect(find.text('More ways to get help'), findsOneWidget);
+
+    await tester.tap(find.text('Not now'));
+    await tester.pumpAndSettle();
+    expect(find.text('That sounds like a heavy day.'), findsNothing);
   });
 
   testWidgets('you can switch country when the guess is wrong',

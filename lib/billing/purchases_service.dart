@@ -7,6 +7,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'trial_reminder.dart';
+
 /// Must match the entitlement identifier in the RevenueCat dashboard.
 const proEntitlementId = 'Techgetafrica Pro';
 
@@ -97,7 +99,10 @@ class PurchasesService {
   }
 
   void _onCustomerInfo(CustomerInfo info) {
-    isPro.value = info.entitlements.active.containsKey(proEntitlementId);
+    final pro = info.entitlements.active[proEntitlementId];
+    isPro.value = pro != null;
+    // The paywall promises a reminder before a trial turns into a charge.
+    unawaited(TrialReminder.sync(pro));
   }
 
   /// Asks RevenueCat afresh whether the signed-in account has Pro, after

@@ -5,6 +5,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/home_shell.dart';
+import 'package:yournotalone/home/home_tab.dart';
+import 'package:yournotalone/home/mood_face.dart';
 import 'package:yournotalone/home/settings_tab.dart';
 
 void main() {
@@ -60,22 +62,28 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    Icon greatFace() => tester.widget<Icon>(
-          find.byIcon(Icons.sentiment_very_satisfied_rounded),
+    // Only the faces on the card: an Awful pick opens a sheet with its own.
+    MoodFace face(String label) => tester.widget<MoodFace>(
+          find.descendant(
+            of: find.byType(HomeTab),
+            matching: find.byWidgetPredicate(
+              (w) => w is MoodFace && w.level.label == label,
+            ),
+          ),
         );
-    expect(greatFace().color, isNot(Brand.blue)); // idle grey before tap
+    // Nothing picked yet: every face is in full colour.
+    expect(face('Great').dimmed, isFalse);
+    expect(face('Awful').dimmed, isFalse);
 
     await tester.tap(find.text('Great'));
     await tester.pumpAndSettle();
-    expect(greatFace().color, Brand.blue);
+    expect(face('Great').dimmed, isFalse);
+    expect(face('Awful').dimmed, isTrue);
 
-    // Picking a different mood moves the light.
+    // Picking a different mood moves the emphasis.
     await tester.tap(find.text('Awful'));
     await tester.pumpAndSettle();
-    expect(greatFace().color, isNot(Brand.blue));
-    final awfulFace = tester.widget<Icon>(
-      find.byIcon(Icons.sentiment_very_dissatisfied_rounded),
-    );
-    expect(awfulFace.color, Brand.red);
+    expect(face('Awful').dimmed, isFalse);
+    expect(face('Great').dimmed, isTrue);
   });
 }

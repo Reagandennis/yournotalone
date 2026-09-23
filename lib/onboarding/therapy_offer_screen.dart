@@ -45,6 +45,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
         builder: (_) => PaywallScreen(
           checkin: widget.checkin,
           fromOnboarding: true,
+          source: 'onboarding',
           extraData: {'therapy_free_session': wantsFreeSession},
         ),
       ),

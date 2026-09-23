@@ -30,19 +30,33 @@ class JournalHubScreen extends StatelessWidget {
         journal: journal,
       );
 
-  bool _guardPremium(BuildContext context, String title, String message) {
+  bool _guardPremium(
+    BuildContext context,
+    String title,
+    String message, {
+    String? item,
+    String source = 'sheet:journal',
+  }) {
     if (isPremiumUser()) return true;
-    showUpgradeSheet(context, title: title, message: message);
+    showUpgradeSheet(
+      context,
+      title: title,
+      message: message,
+      item: item,
+      source: source,
+    );
     return false;
   }
 
-  bool _guardPrompt(BuildContext context, bool premium) =>
-      !premium ||
+  bool _guardPrompt(BuildContext context, JournalPrompt prompt) =>
+      !prompt.premium ||
       _guardPremium(
         context,
         'This prompt is part of Premium',
         'Free includes a prompt to try. Premium unlocks all '
             '${journalPrompts.length} — and $introOffer.',
+        item: prompt.title,
+        source: 'sheet:prompts',
       );
 
   Widget _card(
@@ -210,7 +224,7 @@ class JournalHubScreen extends StatelessWidget {
                         detail: prompt.detail,
                         locked: prompt.premium && !isPremiumUser(),
                         onTap: () {
-                          if (!_guardPrompt(context, prompt.premium)) return;
+                          if (!_guardPrompt(context, prompt)) return;
                           _openEditor(
                             context,
                             title: prompt.title,
@@ -235,6 +249,7 @@ class JournalHubScreen extends StatelessWidget {
                       'Mood history is part of Premium',
                       'Checking in is always free. Premium keeps the record '
                           'and shows you the pattern — and $introOffer.',
+                      source: 'sheet:mood_history',
                     )) {
                       return;
                     }

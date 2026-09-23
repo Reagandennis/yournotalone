@@ -24,6 +24,8 @@ class _SoundsScreenState extends State<SoundsScreen> {
     if (sound.premium && !isPremiumUser()) {
       showUpgradeSheet(
         context,
+        item: sound.title,
+        source: 'sheet:sounds',
         title: 'This sound is part of Premium',
         message: 'Free includes one sound to try. Premium unlocks the whole '
             'library — and $introOffer.',

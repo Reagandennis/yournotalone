@@ -4,6 +4,7 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import 'home_ui.dart';
 import 'mood_repository.dart';
+import 'mood_face.dart';
 import 'mood_scale.dart';
 
 /// Everything the daily check-in has added up to: the last month at a
@@ -156,15 +157,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
         ),
         child: Row(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: level.color.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(level.icon, size: 23, color: level.color),
-            ),
+            MoodFace(level: level, size: 38),
             const SizedBox(width: 14),
             Expanded(
               child: Text(

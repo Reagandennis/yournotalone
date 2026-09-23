@@ -64,7 +64,11 @@ class _CheckinScreenState extends State<CheckinScreen> {
     if (choice == null) return;
     final next = choice.needsSupport
         ? TherapyOfferScreen(checkin: choice.key)
-        : PaywallScreen(checkin: choice.key, fromOnboarding: true);
+        : PaywallScreen(
+            checkin: choice.key,
+            fromOnboarding: true,
+            source: 'onboarding',
+          );
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => next));
   }
 

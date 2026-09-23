@@ -13,10 +13,12 @@ import 'meditation_screen.dart';
 class MeditationsScreen extends StatelessWidget {
   const MeditationsScreen({super.key});
 
-  bool _guardPremium(BuildContext context, bool premium) {
+  bool _guardPremium(BuildContext context, bool premium, String item) {
     if (premium && !isPremiumUser()) {
       showUpgradeSheet(
         context,
+        item: item,
+        source: 'sheet:meditations',
         title: 'This session is part of Premium',
         message: 'Free includes a taste of each practice. Premium unlocks '
             'every session — and $introOffer.',
@@ -36,7 +38,9 @@ class MeditationsScreen extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: () {
-            if (!_guardPremium(context, pattern.premium)) return;
+            if (!_guardPremium(context, pattern.premium, pattern.title)) {
+              return;
+            }
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => BreathingScreen(pattern: pattern),
@@ -122,7 +126,13 @@ class MeditationsScreen extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: () {
-            if (!_guardPremium(context, meditation.premium)) return;
+            if (!_guardPremium(
+              context,
+              meditation.premium,
+              meditation.title,
+            )) {
+              return;
+            }
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (_) => MeditationScreen(meditation: meditation),

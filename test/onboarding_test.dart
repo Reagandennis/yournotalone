@@ -85,7 +85,7 @@ void main() {
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Go further with Premium'), findsOneWidget);
+    expect(find.text('Keep the good days coming'), findsOneWidget);
     expect(await scrollTo(tester, introOfferSentence), findsOneWidget);
   });
 }

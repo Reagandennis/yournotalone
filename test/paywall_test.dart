@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/billing/purchases_service.dart';
+import 'package:yournotalone/billing/paywall_copy.dart';
+import 'package:yournotalone/billing/trial_reminder.dart';
+import 'package:yournotalone/home/mood_face.dart';
+import 'package:yournotalone/home/mood_scale.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/home_ui.dart';
 import 'package:yournotalone/journal/journal_hub_screen.dart';
@@ -11,6 +16,8 @@ import 'package:yournotalone/journal/journal_repository.dart';
 import 'package:yournotalone/onboarding/checkin_screen.dart';
 import 'package:yournotalone/onboarding/paywall_screen.dart';
 import 'package:yournotalone/onboarding/therapy_offer_screen.dart';
+
+import 'fake_packages.dart';
 
 /// Reports a fixed entry count, so the free cap can be exercised without
 /// a backend.
@@ -85,6 +92,88 @@ void main() {
       isFalse,
     );
     expect(isPremiumUser(account()), isFalse);
+  });
+
+  test('the headline speaks to the check-in answer', () {
+    expect(paywallCopy('struggling').headline, 'Support for the hard weeks');
+    expect(paywallCopy('dark_place').headline, 'Support for the hard weeks');
+    expect(paywallCopy('stressed').headline, 'Somewhere to put it down');
+    expect(paywallCopy('steady').headline, 'Keep the good days coming');
+    expect(paywallCopy('anything').headline, 'Keep the good days coming');
+  });
+
+  test('a hard week starts on monthly, a steady one on yearly', () {
+    expect(preferredPlan('struggling'), PackageType.monthly);
+    expect(preferredPlan('dark_place'), PackageType.monthly);
+    expect(preferredPlan('stressed'), PackageType.annual);
+    expect(preferredPlan('steady'), PackageType.annual);
+  });
+
+  test('the trial timeline reminds two days before the charge', () {
+    final week = trialTimeline(7, 'Ksh 1,500', '/month');
+    expect(week.map((s) => s.day), ['Today', 'Day 5', 'Day 7']);
+    expect(week.last.detail, startsWith('Ksh 1,500/month starts.'));
+    // A trial too short for a two-day warning skips that step.
+    expect(trialTimeline(2, '\$5', '/week').map((s) => s.day),
+        ['Today', 'Day 2']);
+  });
+
+  test('the trial reminder lands mid-morning two days before the end', () {
+    final expiry = DateTime(2026, 10, 1, 14, 30);
+    expect(remindAtFor(expiry, DateTime(2026, 9, 24)),
+        DateTime(2026, 9, 29, 10));
+    // Past that point: two hours before, or nothing.
+    expect(remindAtFor(expiry, DateTime(2026, 9, 30)),
+        DateTime(2026, 10, 1, 12, 30));
+    expect(remindAtFor(expiry, DateTime(2026, 10, 1, 13)), isNull);
+  });
+
+  testWidgets('the paywall speaks to a struggling check-in', (tester) async {
+    tallScreen(tester);
+    await tester.pumpWidget(wrap(
+      const PaywallScreen(checkin: 'struggling', fromOnboarding: true),
+    ));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Support for the hard weeks'), findsOneWidget);
+    expect(find.text('Licensed therapists'), findsOneWidget);
+    expect(find.byType(MoodFace), findsNWidgets(moodLevels.length));
+  });
+
+  testWidgets('with a store: yearly first for steady, priced per month, '
+      'with the trial spelled out', (tester) async {
+    tallScreen(tester);
+    await tester.pumpWidget(wrap(PaywallScreen(
+      checkin: 'steady',
+      fromOnboarding: true,
+      packages: fakePackages(),
+    )));
+    await tester.pumpAndSettle();
+
+    // Yearly is preselected: the button sells its 1-month trial.
+    expect(find.text('Try free for 1 month'), findsOneWidget);
+    expect(find.text('Ksh 750/month'), findsOneWidget);
+    expect(find.text('SAVE 50%'), findsOneWidget);
+    expect(find.text('Day 28'), findsOneWidget);
+    expect(find.text('Day 30'), findsOneWidget);
+
+    // Switching to monthly moves the timeline to the 7-day trial.
+    await tester.tap(find.text('Monthly'));
+    await tester.pumpAndSettle();
+    expect(find.text('Try free for 7 days'), findsOneWidget);
+    expect(find.text('Day 5'), findsOneWidget);
+    expect(find.text('Day 7'), findsOneWidget);
+  });
+
+  testWidgets('a hard week starts on monthly', (tester) async {
+    tallScreen(tester);
+    await tester.pumpWidget(wrap(PaywallScreen(
+      checkin: 'struggling',
+      fromOnboarding: true,
+      packages: fakePackages(),
+    )));
+    await tester.pumpAndSettle();
+    expect(find.text('Try free for 7 days'), findsOneWidget);
   });
 
   testWidgets('every check-in answer ends up at the paywall', (tester) async {
@@ -185,6 +274,11 @@ void main() {
     await tester.pumpWidget(wrap(
       const PaywallScreen(checkin: 'steady', fromOnboarding: true),
     ));
+    await tester.pumpAndSettle();
+
+    // Only the rows that differ show at first; the rest fold out.
+    expect(find.text('Daily reminders'), findsNothing);
+    await tester.tap(find.text('See everything'));
     await tester.pumpAndSettle();
 
     // Reminders and urge surfing are free; selling them as Premium was a

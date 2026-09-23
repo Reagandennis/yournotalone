@@ -131,7 +131,7 @@ void main() {
     await tester.tap(find.text('White noise'));
     await tester.pumpAndSettle();
     expect(find.text('This sound is part of Premium'), findsOneWidget);
-    expect(find.text('See Premium'), findsOneWidget);
+    expect(find.text('Unlock with Premium'), findsOneWidget);
   });
 
   testWidgets('free sound opens the player, autoplays, and can pause',

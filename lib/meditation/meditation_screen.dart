@@ -120,6 +120,8 @@ class _MeditationScreenState extends State<MeditationScreen>
     if (sound != null && sound.premium && !isPremiumUser()) {
       showUpgradeSheet(
         context,
+        item: sound.title,
+        source: 'sheet:ambient',
         title: 'This sound is part of Premium',
         message:
             'Free includes one sound to try. Premium unlocks the whole '

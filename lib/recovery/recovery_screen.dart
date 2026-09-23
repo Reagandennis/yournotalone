@@ -108,6 +108,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   void _showLockedSheet() {
     showUpgradeSheet(
       context,
+      source: 'sheet:recovery',
       title: 'Recovery tracking is part of Premium',
       message: 'Urge surfing is free for everyone, always. Premium adds '
           'commitment streaks, daily pledges, and the trigger tracker — '
