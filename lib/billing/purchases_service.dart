@@ -15,12 +15,11 @@ const proEntitlementId = 'Techgetafrica Pro';
 /// RevenueCat public API key for the Play Store app.
 const _googlePlayApiKey = 'goog_HcusldvsINIxkCHNpcprsTVSNdw';
 
-/// RevenueCat Test Store key — still used on iOS/macOS until the App
-/// Store app is configured (swap in the appl_… key then).
-const _testStoreApiKey = 'test_LIOnFYhIcjvbOTTSrOhveSnxroM';
+/// RevenueCat public API key for the App Store app.
+const _appStoreApiKey = 'appl_VAPXkxYInHoDdHATCqzNlXhzIzM';
 
 String get _revenueCatApiKey =>
-    Platform.isAndroid ? _googlePlayApiKey : _testStoreApiKey;
+    Platform.isAndroid ? _googlePlayApiKey : _appStoreApiKey;
 
 /// App-wide RevenueCat wrapper: configures the SDK, keeps the RevenueCat
 /// identity in step with the Supabase account, and exposes entitlement
