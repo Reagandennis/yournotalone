@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../cbt/cbt_catalog.dart';
+import '../cbt/cbt_screen.dart';
 import '../journal/journal_hub_screen.dart';
 import '../journal/journal_prompts.dart';
 import '../meditation/meditation_catalog.dart';
@@ -53,10 +55,10 @@ typedef RouteBuilder = Route<void> Function();
 final _programs = <_Program>[
   _Program(
     'CBT for Therapy',
-    'Sessions to combat anxiety & depression',
+    'Tools and reads for anxious & low thoughts',
     _art('cbt'),
     _cardRed,
-    TherapyScreen.route,
+    CbtScreen.route,
   ),
   _Program(
     'Sleep better',
@@ -456,6 +458,9 @@ final _searchItems = <_SearchItem>[
   for (final p in journalPrompts)
     _SearchItem(p.title, 'Journal prompt', p.icon,
         (_) => const JournalHubScreen()),
+  for (final t in cbtTools)
+    _SearchItem(t.title, 'CBT · ${t.minutes} min', t.icon,
+        (_) => const CbtScreen()),
   _SearchItem('Urge surfing', 'Recovery · 8 min', Icons.surfing_rounded,
       (_) => const RecoveryScreen()),
   _SearchItem('HALT check', 'Recovery', Icons.psychology_alt_rounded,
