@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../journal/journal_repository.dart';
-import 'cbt_ui.dart';
+import '../toolkit/toolkit_ui.dart';
+import 'cbt_content.dart';
 
 /// Structured problem solving: name the problem precisely, list every
 /// option without judging, pick one, and plan a first step small enough
@@ -38,11 +39,11 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
   }
 
   bool get _canContinue => switch (_step) {
-        1 => _problem.text.trim().isNotEmpty,
-        2 => _options.length >= 2,
-        3 => _chosen != null,
-        _ => _firstStep.text.trim().isNotEmpty && _when != null,
-      };
+    1 => _problem.text.trim().isNotEmpty,
+    2 => _options.length >= 2,
+    3 => _chosen != null,
+    _ => _firstStep.text.trim().isNotEmpty && _when != null,
+  };
 
   void _addOption() {
     final text = _option.text.trim();
@@ -53,14 +54,15 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
     });
   }
 
-  String get _summary => 'Problem: ${_problem.text.trim()}\n'
+  String get _summary =>
+      'Problem: ${_problem.text.trim()}\n'
       'Options considered: ${_options.join('; ')}\n'
       'Chosen: $_chosen\n'
       'First step: ${_firstStep.text.trim()} — $_when';
 
   Future<void> _save() async {
     setState(() => _saving = true);
-    final saved = await cbtSaveToJournal(
+    final saved = await toolkitSaveToJournal(
       context,
       title: 'Problem-solving plan',
       content: _summary,
@@ -75,11 +77,12 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
     switch (_step) {
       case 1:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 1,
             of: _steps,
             title: 'What exactly is the problem?',
-            hint: 'One problem, in one sentence, specific enough to act on. '
+            hint:
+                'One problem, in one sentence, specific enough to act on. '
                 '"Money" is a worry; "I\'m £300 short for rent on the 1st" '
                 'is a problem.',
           ),
@@ -98,11 +101,12 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
         ];
       case 2:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 2,
             of: _steps,
             title: 'List every option',
-            hint: 'Don\'t judge them yet — bad ideas loosen up good ones. '
+            hint:
+                'Don\'t judge them yet — bad ideas loosen up good ones. '
                 'Aim for at least three, including one you\'d never do.',
           ),
           TextField(
@@ -126,7 +130,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
               dense: true,
               leading: CircleAvatar(
                 radius: 13,
-                backgroundColor: cbtCardColor,
+                backgroundColor: toolkitCardColor,
                 child: Text(
                   '${i + 1}',
                   style: const TextStyle(
@@ -136,7 +140,10 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
                   ),
                 ),
               ),
-              title: Text(o, style: const TextStyle(fontSize: 14, color: Brand.ink)),
+              title: Text(
+                o,
+                style: const TextStyle(fontSize: 14, color: Brand.ink),
+              ),
               trailing: IconButton(
                 icon: const Icon(Icons.close_rounded, size: 18),
                 color: Brand.textMuted,
@@ -149,24 +156,28 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
         ];
       case 3:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 3,
             of: _steps,
             title: 'Pick one to try',
-            hint: 'Not the perfect one — the one that\'s good enough and '
+            hint:
+                'Not the perfect one — the one that\'s good enough and '
                 'that you\'d actually do. You can come back to the others.',
           ),
           for (final o in _options)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Material(
-                color: _chosen == o ? Brand.ink : cbtCardColor,
+                color: _chosen == o ? Brand.ink : toolkitCardColor,
                 borderRadius: BorderRadius.circular(14),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(14),
                   onTap: () => setState(() => _chosen = o),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 13,
+                    ),
                     child: Row(
                       children: [
                         Icon(
@@ -196,17 +207,22 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
         ];
       default:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 4,
             of: _steps,
             title: 'What\'s the first step?',
-            hint: 'Something that takes under twenty minutes and needs no '
+            hint:
+                'Something that takes under twenty minutes and needs no '
                 'one\'s permission. Then decide when.',
           ),
-          CbtNote(
+          ToolkitNote(
             child: Text(
               'Trying: $_chosen',
-              style: const TextStyle(fontSize: 13, color: Brand.textMuted, height: 1.4),
+              style: const TextStyle(
+                fontSize: 13,
+                color: Brand.textMuted,
+                height: 1.4,
+              ),
             ),
           ),
           const SizedBox(height: 14),
@@ -227,7 +243,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
             runSpacing: 8,
             children: [
               for (final w in _whens)
-                CbtPill(
+                ToolkitPill(
                   label: w,
                   selected: _when == w,
                   onTap: () => setState(() => _when = w),
@@ -241,7 +257,8 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
   @override
   Widget build(BuildContext context) {
     final last = _step == _steps;
-    return CbtScaffold(
+    return ToolkitScaffold(
+      accent: cbtAccent,
       title: 'Problem solving',
       bottom: Row(
         children: [
@@ -263,8 +280,8 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
               onPressed: !_canContinue || _saving
                   ? null
                   : last
-                      ? _save
-                      : () => setState(() => _step++),
+                  ? _save
+                  : () => setState(() => _step++),
               child: Text(last ? 'Save to journal' : 'Continue'),
             ),
           ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import 'cbt_content.dart';
-import 'cbt_ui.dart';
+import '../toolkit/toolkit_ui.dart';
 
 /// The field guide to unhelpful thinking: eleven traps, each with how it
 /// sounds, an example, and the question that loosens it. Tap one to open
@@ -29,7 +29,7 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: cbtCardColor,
+        color: toolkitCardColor,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -76,7 +76,9 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
                       ),
                     ),
                     Icon(
-                      open ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                      open
+                          ? Icons.expand_less_rounded
+                          : Icons.expand_more_rounded,
                       color: Brand.textMuted,
                     ),
                   ],
@@ -124,12 +126,14 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CbtScaffold(
+    return ToolkitScaffold(
+      accent: cbtAccent,
       title: 'Thinking traps',
       children: [
-        const CbtSection(
+        const ToolkitSection(
           title: 'Spot the pattern',
-          subtitle: 'Anxious and low moods run on a handful of predictable '
+          subtitle:
+              'Anxious and low moods run on a handful of predictable '
               'distortions. Naming one takes some of its power away. Write '
               'the thought that\'s bothering you, then see which of these '
               'it\'s wearing.',
@@ -147,18 +151,22 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
         ),
         if (_thought.text.trim().isNotEmpty) ...[
           const SizedBox(height: 12),
-          CbtNote(
+          ToolkitNote(
             tint: const Color(0x14C53C26),
             child: Text(
               '“${_thought.text.trim()}”\n\nWhich of these does it sound like?',
-              style: const TextStyle(fontSize: 13, color: Brand.ink, height: 1.5),
+              style: const TextStyle(
+                fontSize: 13,
+                color: Brand.ink,
+                height: 1.5,
+              ),
             ),
           ),
         ],
         const SizedBox(height: 22),
         for (final trap in thinkingTraps) _trapCard(trap),
         const SizedBox(height: 8),
-        const CbtNote(
+        const ToolkitNote(
           child: Text(
             'Found one? The thought record walks you through checking the '
             'evidence and writing something fairer.',

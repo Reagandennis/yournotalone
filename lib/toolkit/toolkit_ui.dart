@@ -4,21 +4,53 @@ import 'package:url_launcher/url_launcher.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
-import 'cbt_art.dart';
+import 'toolkit_art.dart';
 
-/// The warm header colour of the toolkit — the CBT card's red on Explore.
-const cbtAccent = Color(0xFFC53C26);
+/// The accent colour of whichever toolkit is on screen — the CBT card's
+/// red, the sleep card's blue, the stress card's yellow — so the shared
+/// widgets below pick it up without every screen passing it along.
+class ToolkitTheme extends InheritedWidget {
+  const ToolkitTheme({
+    super.key,
+    required this.accent,
+    required this.onAccent,
+    required super.child,
+  });
+
+  final Color accent;
+
+  /// Text and icons on top of [accent]: ink on a light accent, white on a
+  /// dark one.
+  final Color onAccent;
+
+  static ToolkitTheme of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ToolkitTheme>() ??
+      const ToolkitTheme(
+        accent: Color(0xFFC53C26),
+        onAccent: Colors.white,
+        child: SizedBox.shrink(),
+      );
+
+  @override
+  bool updateShouldNotify(ToolkitTheme old) =>
+      old.accent != accent || old.onAccent != onAccent;
+}
+
+/// Ink reads better than white on a light accent such as yellow.
+Color onAccentFor(Color accent) =>
+    accent.computeLuminance() > 0.4 ? Brand.ink : Colors.white;
 
 /// The soft card colour behind each tool, as in the reference design.
-const cbtCardColor = Color(0xFFF6F3EF);
-const cbtRadius = 18.0;
+const toolkitCardColor = Color(0xFFF6F3EF);
+const toolkitRadius = 18.0;
 
-/// A toolkit page: a solid, warm header bar with the title, then a
-/// scrolling body. [actions] sit in the bar.
-class CbtScaffold extends StatelessWidget {
-  const CbtScaffold({
+/// A toolkit page: a solid header bar in the programme's colour with the
+/// title, then a scrolling body. [actions] sit in the bar.
+class ToolkitScaffold extends StatelessWidget {
+  const ToolkitScaffold({
     super.key,
     required this.title,
+    required this.accent,
     required this.children,
     this.actions = const [],
     this.bottom,
@@ -26,6 +58,10 @@ class CbtScaffold extends StatelessWidget {
   });
 
   final String title;
+
+  /// The programme's colour: the header bar, and through [ToolkitTheme]
+  /// every accent below it.
+  final Color accent;
   final List<Widget> children;
   final List<Widget> actions;
 
@@ -35,31 +71,36 @@ class CbtScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: cbtAccent,
-        foregroundColor: Colors.white,
-        titleTextStyle: const TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-          color: Colors.white,
+    final onAccent = onAccentFor(accent);
+    return ToolkitTheme(
+      accent: accent,
+      onAccent: onAccent,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: accent,
+          foregroundColor: onAccent,
+          titleTextStyle: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: onAccent,
+          ),
+          title: Text(title),
+          actions: actions,
         ),
-        title: Text(title),
-        actions: actions,
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(padding: padding, children: children),
-            ),
-            if (bottom != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                child: bottom,
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(padding: padding, children: children),
               ),
-          ],
+              if (bottom != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                  child: bottom,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -67,9 +108,9 @@ class CbtScaffold extends StatelessWidget {
 }
 
 /// A list card in the reference style: title and two lines of copy on the
-/// left, an illustration bleeding off the right edge.
-class CbtCard extends StatelessWidget {
-  const CbtCard({
+/// left, an illustration running off the right edge.
+class ToolkitCard extends StatelessWidget {
+  const ToolkitCard({
     super.key,
     required this.title,
     required this.blurb,
@@ -80,7 +121,7 @@ class CbtCard extends StatelessWidget {
 
   final String title;
   final String blurb;
-  final CbtArtKind art;
+  final ToolkitArtKind art;
   final VoidCallback onTap;
 
   /// A small line under the blurb: "4 min", "External link".
@@ -91,8 +132,8 @@ class CbtCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: cbtCardColor,
-        borderRadius: BorderRadius.circular(cbtRadius),
+        color: toolkitCardColor,
+        borderRadius: BorderRadius.circular(toolkitRadius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
@@ -135,10 +176,10 @@ class CbtCard extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               meta!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
-                                color: cbtAccent,
+                                color: ToolkitTheme.of(context).accent,
                               ),
                             ),
                           ],
@@ -155,7 +196,7 @@ class CbtCard extends StatelessWidget {
                       alignment: Alignment.topCenter,
                       child: Padding(
                         padding: const EdgeInsets.only(top: 12),
-                        child: CbtArt(kind: art, size: 104),
+                        child: ToolkitArt(kind: art, size: 104),
                       ),
                     ),
                   ),
@@ -169,9 +210,9 @@ class CbtCard extends StatelessWidget {
   }
 }
 
-/// Section heading inside the toolkit, with an optional line under it.
-class CbtSection extends StatelessWidget {
-  const CbtSection({super.key, required this.title, this.subtitle});
+/// Section heading inside a toolkit, with an optional line under it.
+class ToolkitSection extends StatelessWidget {
+  const ToolkitSection({super.key, required this.title, this.subtitle});
 
   final String title;
   final String? subtitle;
@@ -210,8 +251,8 @@ class CbtSection extends StatelessWidget {
 
 /// "Step 2 of 6" and the question for that step, at the top of a guided
 /// exercise.
-class CbtStepHeader extends StatelessWidget {
-  const CbtStepHeader({
+class ToolkitStepHeader extends StatelessWidget {
+  const ToolkitStepHeader({
     super.key,
     required this.step,
     required this.of,
@@ -226,6 +267,7 @@ class CbtStepHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = ToolkitTheme.of(context).accent;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -237,7 +279,7 @@ class CbtStepHeader extends StatelessWidget {
                   height: 5,
                   margin: EdgeInsets.only(right: i == of ? 0 : 5),
                   decoration: BoxDecoration(
-                    color: i <= step ? cbtAccent : Brand.border,
+                    color: i <= step ? accent : Brand.border,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -247,10 +289,10 @@ class CbtStepHeader extends StatelessWidget {
         const SizedBox(height: 18),
         Text(
           'Step $step of $of',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: cbtAccent,
+            color: accent,
             letterSpacing: 0.4,
           ),
         ),
@@ -282,8 +324,8 @@ class CbtStepHeader extends StatelessWidget {
 }
 
 /// A selectable pill, the same shape as the therapy screen's.
-class CbtPill extends StatelessWidget {
-  const CbtPill({
+class ToolkitPill extends StatelessWidget {
+  const ToolkitPill({
     super.key,
     required this.label,
     required this.selected,
@@ -340,8 +382,12 @@ class CbtPill extends StatelessWidget {
 }
 
 /// A quiet box for a summary or a tip.
-class CbtNote extends StatelessWidget {
-  const CbtNote({super.key, required this.child, this.tint = cbtCardColor});
+class ToolkitNote extends StatelessWidget {
+  const ToolkitNote({
+    super.key,
+    required this.child,
+    this.tint = toolkitCardColor,
+  });
 
   final Widget child;
   final Color tint;
@@ -361,9 +407,88 @@ class CbtNote extends StatelessWidget {
   }
 }
 
+/// A choice card: an icon, a title and a line, filled with ink once picked.
+/// Used by every tool that asks people to pick from a list.
+class ToolkitChoice extends StatelessWidget {
+  const ToolkitChoice({
+    super.key,
+    required this.title,
+    required this.selected,
+    required this.onTap,
+    this.detail,
+    this.icon,
+    this.trailing,
+  });
+
+  final String title;
+  final String? detail;
+  final IconData? icon;
+  final bool selected;
+  final VoidCallback onTap;
+  final IconData? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = ToolkitTheme.of(context).accent;
+    final fg = selected ? Colors.white : Brand.ink;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: selected ? Brand.ink : toolkitCardColor,
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+            child: Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 18, color: selected ? Colors.white : accent),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: fg,
+                        ),
+                      ),
+                      if (detail != null)
+                        Text(
+                          detail!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: selected ? Colors.white70 : Brand.textMuted,
+                            height: 1.4,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                if (trailing != null)
+                  Icon(
+                    trailing,
+                    size: 18,
+                    color: selected ? Colors.white : Brand.textMuted,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Saves an exercise to the journal, respecting the free plan's cap.
 /// Returns true when it was saved.
-Future<bool> cbtSaveToJournal(
+Future<bool> toolkitSaveToJournal(
   BuildContext context, {
   required String title,
   required String content,
@@ -395,7 +520,7 @@ Future<bool> cbtSaveToJournal(
 }
 
 /// Opens an outside link in the browser, saying so if it can't.
-Future<void> cbtOpenLink(BuildContext context, String url) async {
+Future<void> toolkitOpenLink(BuildContext context, String url) async {
   final uri = Uri.parse(url);
   final messenger = ScaffoldMessenger.of(context);
   try {

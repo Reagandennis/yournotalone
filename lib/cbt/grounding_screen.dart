@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 import '../meditation/meditations_screen.dart';
 import 'cbt_content.dart';
-import 'cbt_ui.dart';
+import '../toolkit/toolkit_ui.dart';
 
 /// 5-4-3-2-1 grounding: five things you can see, four you can feel, three
 /// you can hear, two you can smell, one you can taste. Each tap counts one
@@ -33,14 +33,15 @@ class _GroundingScreenState extends State<GroundingScreen> {
   }
 
   void _restart() => setState(() {
-        _index = 0;
-        _found = 0;
-      });
+    _index = 0;
+    _found = 0;
+  });
 
   @override
   Widget build(BuildContext context) {
     if (_finished) {
-      return CbtScaffold(
+      return ToolkitScaffold(
+        accent: cbtAccent,
         title: 'Grounding',
         children: [
           const SizedBox(height: 24),
@@ -88,14 +89,15 @@ class _GroundingScreenState extends State<GroundingScreen> {
     }
     final step = _step;
     final remaining = step.count - _found;
-    return CbtScaffold(
+    return ToolkitScaffold(
+      accent: cbtAccent,
       title: 'Grounding',
       bottom: ElevatedButton(
         onPressed: _tap,
         child: Text('Found one${remaining == 1 ? ' — last' : ''}'),
       ),
       children: [
-        CbtStepHeader(
+        ToolkitStepHeader(
           step: _index + 1,
           of: groundingSteps.length,
           title: '${step.count} things you can ${step.sense}',
@@ -110,7 +112,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: cbtCardColor,
+                color: toolkitCardColor,
                 shape: BoxShape.circle,
                 border: Border.all(color: cbtAccent, width: 6),
               ),
@@ -131,7 +133,10 @@ class _GroundingScreenState extends State<GroundingScreen> {
                   const SizedBox(height: 4),
                   Text(
                     remaining == 1 ? 'to go' : 'to go',
-                    style: const TextStyle(fontSize: 13, color: Brand.textMuted),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Brand.textMuted,
+                    ),
                   ),
                 ],
               ),

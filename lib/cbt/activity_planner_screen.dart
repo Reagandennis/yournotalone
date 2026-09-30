@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
 import 'cbt_content.dart';
-import 'cbt_ui.dart';
+import '../toolkit/toolkit_ui.dart';
 
 /// Today's plan: which activities were picked and which are done. Kept on
 /// the phone only, one key per day, so an old plan never nags.
@@ -88,10 +88,14 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
       } else {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(const SnackBar(
-            content: Text('Three is plenty for one day. Swap one out if '
-                'you\'d rather.'),
-          ));
+          ..showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Three is plenty for one day. Swap one out if '
+                'you\'d rather.',
+              ),
+            ),
+          );
         return;
       }
     });
@@ -101,16 +105,22 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
   void _markDone(String label) {
     final plan = _plan!;
     setState(() {
-      plan.done.contains(label) ? plan.done.remove(label) : plan.done.add(label);
+      plan.done.contains(label)
+          ? plan.done.remove(label)
+          : plan.done.add(label);
     });
     plan.save();
     if (plan.done.length == plan.picked.length && plan.picked.isNotEmpty) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(
-          content: Text('That\'s today\'s plan done. Notice how you feel now '
-              'compared with before.'),
-        ));
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              'That\'s today\'s plan done. Notice how you feel now '
+              'compared with before.',
+            ),
+          ),
+        );
     }
   }
 
@@ -125,7 +135,8 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
   Widget build(BuildContext context) {
     final plan = _plan;
     if (plan == null) {
-      return const CbtScaffold(
+      return const ToolkitScaffold(
+        accent: cbtAccent,
         title: 'One small thing',
         children: [Center(child: CircularProgressIndicator())],
       );
@@ -133,17 +144,19 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
     final ideas = _filter == null
         ? activityIdeas
         : activityIdeas.where((a) => a.category == _filter).toList();
-    return CbtScaffold(
+    return ToolkitScaffold(
+      accent: cbtAccent,
       title: 'One small thing',
       children: [
-        const CbtSection(
+        const ToolkitSection(
           title: 'Do first, feel later',
-          subtitle: 'When mood is low, motivation doesn\'t come before '
+          subtitle:
+              'When mood is low, motivation doesn\'t come before '
               'action — it comes after. Pick up to three small things for '
               'today. Small enough that you\'d do them on a bad day.',
         ),
         if (plan.picked.isNotEmpty) ...[
-          CbtNote(
+          ToolkitNote(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -186,18 +199,18 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
           ),
           const SizedBox(height: 20),
         ],
-        const CbtSection(title: 'Ideas'),
+        const ToolkitSection(title: 'Ideas'),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            CbtPill(
+            ToolkitPill(
               label: 'All',
               selected: _filter == null,
               onTap: () => setState(() => _filter = null),
             ),
             for (final c in ActivityCategory.values)
-              CbtPill(
+              ToolkitPill(
                 label: c.label,
                 icon: c.icon,
                 selected: _filter == c,
@@ -210,13 +223,18 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Material(
-              color: plan.picked.contains(idea.label) ? Brand.ink : cbtCardColor,
+              color: plan.picked.contains(idea.label)
+                  ? Brand.ink
+                  : toolkitCardColor,
               borderRadius: BorderRadius.circular(14),
               child: InkWell(
                 borderRadius: BorderRadius.circular(14),
                 onTap: () => _toggle(idea.label),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 13,
+                  ),
                   child: Row(
                     children: [
                       Icon(

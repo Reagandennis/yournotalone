@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
-import 'cbt_ui.dart';
+import '../toolkit/toolkit_ui.dart';
+import 'cbt_content.dart';
 
 /// A worry that's been parked until the worry window, and what became of it.
 class ParkedWorry {
@@ -36,7 +37,10 @@ Future<List<ParkedWorry>> loadWorries() async {
 
 Future<void> saveWorries(List<ParkedWorry> worries) async {
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setString(_key, jsonEncode([for (final w in worries) w.toJson()]));
+  await prefs.setString(
+    _key,
+    jsonEncode([for (final w in worries) w.toJson()]),
+  );
 }
 
 /// Worry postponement. Through the day, worries get written down and
@@ -44,7 +48,10 @@ Future<void> saveWorries(List<ParkedWorry> worries) async {
 /// timer — each one is looked at once: something you can act on gets a
 /// plan; the rest is let go. Most have gone quiet by then.
 class WorryTimeScreen extends StatefulWidget {
-  const WorryTimeScreen({super.key, this.windowLength = const Duration(minutes: 15)});
+  const WorryTimeScreen({
+    super.key,
+    this.windowLength = const Duration(minutes: 15),
+  });
 
   final Duration windowLength;
 
@@ -85,10 +92,14 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
     saveWorries(_worries!);
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(
-        content: Text('Parked. It\'ll be here at worry time — you don\'t have '
-            'to hold it now.'),
-      ));
+      ..showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Parked. It\'ll be here at worry time — you don\'t have '
+            'to hold it now.',
+          ),
+        ),
+      );
   }
 
   void _startWindow() {
@@ -111,10 +122,14 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
     if (timeUp) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(
-          content: Text('Time\'s up. Whatever\'s left can wait for tomorrow\'s '
-              'window.'),
-        ));
+        ..showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Time\'s up. Whatever\'s left can wait for tomorrow\'s '
+              'window.',
+            ),
+          ),
+        );
     }
   }
 
@@ -141,7 +156,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         decoration: BoxDecoration(
-          color: cbtCardColor,
+          color: toolkitCardColor,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
@@ -153,7 +168,9 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                 fontSize: 14,
                 color: decided ? Brand.textMuted : Brand.ink,
                 height: 1.4,
-                decoration: worry.outcome == 'let_go' ? TextDecoration.lineThrough : null,
+                decoration: worry.outcome == 'let_go'
+                    ? TextDecoration.lineThrough
+                    : null,
               ),
             ),
             if (decided)
@@ -205,18 +222,21 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
   Widget build(BuildContext context) {
     final worries = _worries;
     if (worries == null) {
-      return const CbtScaffold(
+      return const ToolkitScaffold(
+        accent: cbtAccent,
         title: 'Worry window',
         children: [Center(child: CircularProgressIndicator())],
       );
     }
     final parked = worries.where((w) => w.outcome == null).length;
-    return CbtScaffold(
+    return ToolkitScaffold(
+      accent: cbtAccent,
       title: 'Worry window',
       children: [
-        const CbtSection(
+        const ToolkitSection(
           title: 'Worry later, on purpose',
-          subtitle: 'You can\'t stop a worry arriving, but you can decide when '
+          subtitle:
+              'You can\'t stop a worry arriving, but you can decide when '
               'to give it attention. Park it here as it comes. Then, once a '
               'day, open a fifteen-minute window and go through the list — '
               'and only then.',
@@ -239,7 +259,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
             ),
           ),
           const SizedBox(height: 18),
-          CbtNote(
+          ToolkitNote(
             tint: const Color(0x143764CD),
             child: Row(
               children: [
@@ -285,7 +305,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
             ),
           ),
         ] else ...[
-          CbtNote(
+          ToolkitNote(
             tint: const Color(0x14C53C26),
             child: Row(
               children: [
@@ -302,7 +322,11 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                 const Expanded(
                   child: Text(
                     'Go through each worry once. Decide, don\'t dwell.',
-                    style: TextStyle(fontSize: 13, color: Brand.textMuted, height: 1.4),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Brand.textMuted,
+                      height: 1.4,
+                    ),
                   ),
                 ),
                 TextButton(
@@ -317,11 +341,14 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
         if (worries.isNotEmpty) ...[
           Row(
             children: [
-              const Expanded(child: CbtSection(title: 'Your list')),
+              const Expanded(child: ToolkitSection(title: 'Your list')),
               if (worries.any((w) => w.outcome != null))
                 TextButton(
                   onPressed: _clearDone,
-                  child: const Text('Clear decided', style: TextStyle(fontSize: 13)),
+                  child: const Text(
+                    'Clear decided',
+                    style: TextStyle(fontSize: 13),
+                  ),
                 ),
             ],
           ),
@@ -332,7 +359,11 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
             child: Text(
               'Your parked worries appear here. Most people find half of them '
               'have lost their sting by the time the window opens.',
-              style: TextStyle(fontSize: 13, color: Brand.textMuted, height: 1.5),
+              style: TextStyle(
+                fontSize: 13,
+                color: Brand.textMuted,
+                height: 1.5,
+              ),
             ),
           ),
       ],

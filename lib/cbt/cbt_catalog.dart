@@ -1,83 +1,64 @@
 import 'package:flutter/material.dart';
 
+import '../toolkit/toolkit_art.dart';
+import '../toolkit/toolkit_content.dart';
 import 'activity_planner_screen.dart';
-import 'cbt_art.dart';
 import 'grounding_screen.dart';
 import 'problem_solving_screen.dart';
 import 'thinking_traps_screen.dart';
 import 'thought_record_screen.dart';
 import 'worry_time_screen.dart';
 
-/// One tool in the CBT toolkit, and the screen that runs it.
-class CbtTool {
-  const CbtTool({
-    required this.title,
-    required this.blurb,
-    required this.minutes,
-    required this.icon,
-    required this.art,
-    required this.open,
-  });
-
-  final String title;
-  final String blurb;
-
-  /// Roughly how long it takes; shown on the card and in search.
-  final int minutes;
-  final IconData icon;
-  final CbtArtKind art;
-  final WidgetBuilder open;
-}
-
 /// The tools, in the order a therapist would usually introduce them:
 /// steady first, then notice, then check, then act.
-const cbtTools = <CbtTool>[
-  CbtTool(
+const cbtTools = <ToolkitTool>[
+  ToolkitTool(
     title: 'Grounding: 5-4-3-2-1',
     blurb: 'Back into the room when panic or a spiral takes over.',
     minutes: 3,
     icon: Icons.spa_rounded,
-    art: CbtArtKind.grounding,
+    art: ToolkitArtKind.grounding,
     open: _grounding,
   ),
-  CbtTool(
+  ToolkitTool(
     title: 'Thought record',
     blurb: 'Catch the thought, check the evidence, write a fairer one.',
     minutes: 8,
     icon: Icons.edit_note_rounded,
-    art: CbtArtKind.thoughts,
+    art: ToolkitArtKind.thoughts,
     open: _thoughtRecord,
   ),
-  CbtTool(
+  ToolkitTool(
     title: 'Thinking traps',
-    blurb: 'Eleven patterns anxious and low moods run on, and how to spot them.',
+    blurb:
+        'Eleven patterns anxious and low moods run on, and how to spot them.',
     minutes: 5,
     icon: Icons.psychology_rounded,
-    art: CbtArtKind.traps,
+    art: ToolkitArtKind.traps,
     open: _traps,
   ),
-  CbtTool(
+  ToolkitTool(
     title: 'One small thing',
     blurb: 'Plan up to three doable things for today. Mood follows action.',
     minutes: 4,
     icon: Icons.wb_sunny_rounded,
-    art: CbtArtKind.activity,
+    art: ToolkitArtKind.activity,
     open: _activity,
   ),
-  CbtTool(
+  ToolkitTool(
     title: 'Worry window',
     blurb: 'Park worries as they come; give them fifteen minutes, once a day.',
     minutes: 15,
     icon: Icons.schedule_rounded,
-    art: CbtArtKind.worry,
+    art: ToolkitArtKind.worry,
     open: _worry,
   ),
-  CbtTool(
+  ToolkitTool(
     title: 'Problem solving',
     blurb: 'Name it, list the options, pick one, take a first step.',
     minutes: 10,
     icon: Icons.lightbulb_rounded,
-    art: CbtArtKind.problem,
+    art: ToolkitArtKind.problem,
     open: _problem,
   ),
 ];

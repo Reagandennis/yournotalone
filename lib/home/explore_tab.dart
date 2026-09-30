@@ -8,8 +8,12 @@ import '../journal/journal_prompts.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditations_screen.dart';
 import '../recovery/recovery_screen.dart';
+import '../sleep/sleep_catalog.dart';
+import '../sleep/sleep_screen.dart';
 import '../sounds/sounds_catalog.dart';
 import '../sounds/sounds_screen.dart';
+import '../stress/stress_catalog.dart';
+import '../stress/stress_screen.dart';
 import '../therapy/therapy_screen.dart';
 
 /// Soft grey used for the tiles and panels on this tab.
@@ -62,17 +66,17 @@ final _programs = <_Program>[
   ),
   _Program(
     'Sleep better',
-    'Find a better way to sleep at night',
+    'A wind-down, the 20-minute rule, a sleep diary',
     _art('sleep'),
     _cardBlue,
-    () => MaterialPageRoute(builder: (_) => const MeditationsScreen()),
+    SleepScreen.route,
   ),
   _Program(
     'Manage stress',
-    'Find the space you need to be stress free',
+    'Bring the body down, then sort the load',
     _art('stress'),
     _cardYellow,
-    () => MaterialPageRoute(builder: (_) => const MeditationsScreen()),
+    StressScreen.route,
   ),
 ];
 
@@ -461,6 +465,12 @@ final _searchItems = <_SearchItem>[
   for (final t in cbtTools)
     _SearchItem(t.title, 'CBT · ${t.minutes} min', t.icon,
         (_) => const CbtScreen()),
+  for (final t in sleepTools)
+    _SearchItem(t.title, 'Sleep · ${t.meta ?? '${t.minutes} min'}', t.icon,
+        (_) => const SleepScreen()),
+  for (final t in stressTools)
+    _SearchItem(t.title, 'Stress · ${t.meta ?? '${t.minutes} min'}', t.icon,
+        (_) => const StressScreen()),
   _SearchItem('Urge surfing', 'Recovery · 8 min', Icons.surfing_rounded,
       (_) => const RecoveryScreen()),
   _SearchItem('HALT check', 'Recovery', Icons.psychology_alt_rounded,

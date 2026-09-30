@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 import '../journal/journal_repository.dart';
 import 'cbt_content.dart';
-import 'cbt_ui.dart';
+import '../toolkit/toolkit_ui.dart';
 
 const _feelings = [
   'Anxious',
@@ -53,12 +53,12 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
   }
 
   bool get _canContinue => switch (_step) {
-        1 => _situation.text.trim().isNotEmpty,
-        2 => _thought.text.trim().isNotEmpty,
-        3 => _feelingSet.isNotEmpty,
-        6 => _balanced.text.trim().isNotEmpty,
-        _ => true,
-      };
+    1 => _situation.text.trim().isNotEmpty,
+    2 => _thought.text.trim().isNotEmpty,
+    3 => _feelingSet.isNotEmpty,
+    6 => _balanced.text.trim().isNotEmpty,
+    _ => true,
+  };
 
   String get _summary {
     final feelings = _feelingSet.join(', ');
@@ -75,7 +75,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
 
   Future<void> _save() async {
     setState(() => _saving = true);
-    final saved = await cbtSaveToJournal(
+    final saved = await toolkitSaveToJournal(
       context,
       title: 'Thought record',
       content: _summary,
@@ -86,8 +86,11 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
     if (saved) Navigator.of(context).pop();
   }
 
-  Widget _field(TextEditingController controller, String label,
-      {int lines = 4}) {
+  Widget _field(
+    TextEditingController controller,
+    String label, {
+    int lines = 4,
+  }) {
     return TextField(
       controller: controller,
       maxLines: lines,
@@ -129,29 +132,31 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
     switch (_step) {
       case 1:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 1,
             of: _steps,
             title: 'What was the situation?',
-            hint: 'Just the facts, as a camera would have seen them. Where '
+            hint:
+                'Just the facts, as a camera would have seen them. Where '
                 'were you, who was there, what happened?',
           ),
           _field(_situation, 'e.g. Sent a message at 2pm, no reply by 9pm'),
         ];
       case 2:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 2,
             of: _steps,
             title: 'What went through your mind?',
-            hint: 'The first, quickest thought — the one that stung. Write '
+            hint:
+                'The first, quickest thought — the one that stung. Write '
                 'it the way it sounded in your head.',
           ),
           _field(_thought, 'e.g. She\'s had enough of me'),
         ];
       case 3:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 3,
             of: _steps,
             title: 'How did it make you feel?',
@@ -162,11 +167,14 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
             runSpacing: 8,
             children: [
               for (final f in _feelings)
-                CbtPill(
+                ToolkitPill(
                   label: f,
                   selected: _feelingSet.contains(f),
-                  onTap: () => setState(() =>
-                      _feelingSet.contains(f) ? _feelingSet.remove(f) : _feelingSet.add(f)),
+                  onTap: () => setState(
+                    () => _feelingSet.contains(f)
+                        ? _feelingSet.remove(f)
+                        : _feelingSet.add(f),
+                  ),
                 ),
             ],
           ),
@@ -175,7 +183,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       case 4:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 4,
             of: _steps,
             title: 'Any thinking traps in there?',
@@ -185,22 +193,31 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Material(
-                color: _traps.contains(trap.name) ? Brand.ink : cbtCardColor,
+                color: _traps.contains(trap.name)
+                    ? Brand.ink
+                    : toolkitCardColor,
                 borderRadius: BorderRadius.circular(14),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(14),
-                  onTap: () => setState(() => _traps.contains(trap.name)
-                      ? _traps.remove(trap.name)
-                      : _traps.add(trap.name)),
+                  onTap: () => setState(
+                    () => _traps.contains(trap.name)
+                        ? _traps.remove(trap.name)
+                        : _traps.add(trap.name),
+                  ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                     child: Row(
                       children: [
-                        Icon(trap.icon,
-                            size: 18,
-                            color: _traps.contains(trap.name)
-                                ? Colors.white
-                                : cbtAccent),
+                        Icon(
+                          trap.icon,
+                          size: 18,
+                          color: _traps.contains(trap.name)
+                              ? Colors.white
+                              : cbtAccent,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -237,7 +254,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       case 5:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 5,
             of: _steps,
             title: 'Check the evidence',
@@ -248,7 +265,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
           _field(_against, 'What doesn\'t fit with it?', lines: 3),
           const SizedBox(height: 14),
           if (_traps.isNotEmpty)
-            CbtNote(
+            ToolkitNote(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -261,7 +278,9 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  for (final trap in thinkingTraps.where((t) => _traps.contains(t.name)))
+                  for (final trap in thinkingTraps.where(
+                    (t) => _traps.contains(t.name),
+                  ))
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
@@ -279,14 +298,15 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       case 6:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 6,
             of: _steps,
             title: 'Write a fairer thought',
-            hint: 'Not the cheerful opposite — something you could defend. '
+            hint:
+                'Not the cheerful opposite — something you could defend. '
                 'It often starts "Even though…" or "It\'s possible that…".',
           ),
-          CbtNote(
+          ToolkitNote(
             child: Text(
               '“${_thought.text.trim()}”',
               style: const TextStyle(
@@ -302,16 +322,17 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       default:
         return [
-          const CbtStepHeader(
+          const ToolkitStepHeader(
             step: 7,
             of: _steps,
             title: 'How strong is the feeling now?',
-            hint: 'It rarely goes to zero. A few points down is the skill '
+            hint:
+                'It rarely goes to zero. A few points down is the skill '
                 'working.',
           ),
           _slider(_after, (v) => setState(() => _after = v)),
           const SizedBox(height: 24),
-          CbtNote(
+          ToolkitNote(
             child: Text(
               _summary,
               style: const TextStyle(
@@ -328,7 +349,8 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
   @override
   Widget build(BuildContext context) {
     final last = _step == _steps;
-    return CbtScaffold(
+    return ToolkitScaffold(
+      accent: cbtAccent,
       title: 'Thought record',
       bottom: Row(
         children: [
@@ -350,8 +372,8 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
               onPressed: !_canContinue || _saving
                   ? null
                   : last
-                      ? _save
-                      : () => setState(() => _step++),
+                  ? _save
+                  : () => setState(() => _step++),
               child: Text(last ? 'Save to journal' : 'Continue'),
             ),
           ),
