@@ -102,6 +102,7 @@ flutter:
     - assets/splash/
     - assets/brand/
     - assets/sounds/
+    - assets/explore/
 
   fonts:
     - family: Poppins

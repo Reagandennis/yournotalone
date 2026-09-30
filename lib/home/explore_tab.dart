@@ -9,269 +9,239 @@ import '../recovery/recovery_screen.dart';
 import '../sounds/sounds_catalog.dart';
 import '../sounds/sounds_screen.dart';
 import '../therapy/therapy_screen.dart';
-import 'home_ui.dart';
 
-/// One line of the preview shown on a category card — the same items the
-/// user meets at the top of the list once the card is opened.
-class _PreviewItem {
-  const _PreviewItem(this.title, this.meta, this.icon, {this.premium = true});
+/// Soft grey used for the tiles and panels on this tab.
+const _tile = Color(0xFFE7E7E7);
+const _cardRed = Color(0xFFC53C26);
+const _cardBlue = Color(0xFF3E6AB7);
+const _cardYellow = Color(0xFFF4BB40);
+const _radius = 16.0;
 
-  final String title;
-  final String meta;
-  final IconData icon;
-  final bool premium;
-}
-
-class _ExploreCategory {
-  const _ExploreCategory({
-    required this.title,
-    required this.blurb,
-    required this.icon,
-    required this.accent,
-    required this.items,
-    required this.open,
-  });
+/// One of the four pillars, shown as a tile in the grid at the top.
+class _Pillar {
+  const _Pillar(this.title, this.image, this.open);
 
   final String title;
-  final String blurb;
-  final IconData icon;
-  final Color accent;
-
-  /// Everything inside, in the order the destination screen lists it.
-  final List<_PreviewItem> items;
+  final String image;
   final WidgetBuilder open;
 }
 
-/// Built from the real catalogues so the previews can never drift from
-/// what the destination screens actually offer.
-final _categories = <_ExploreCategory>[
-  _ExploreCategory(
-    title: 'Meditations & breathing',
-    blurb: 'Breathe along with the circle, or settle into a guided session.',
-    icon: Icons.self_improvement_rounded,
-    accent: Brand.blue,
-    items: [
-      for (final p in breathPatterns)
-        _PreviewItem(p.title, p.rhythmLabel, Icons.air_rounded,
-            premium: p.premium),
-      for (final m in meditations)
-        _PreviewItem(m.title, '${m.minutes} min', m.icon, premium: m.premium),
-    ],
-    open: (_) => const MeditationsScreen(),
+/// Illustrations lifted from the Canva design, in `assets/explore/`.
+String _art(String name) => 'assets/explore/$name.png';
+const _bookArt = 'assets/explore/book.png';
+
+final _pillars = <_Pillar>[
+  _Pillar('Meditate', _art('meditate'), (_) => const MeditationsScreen()),
+  _Pillar('Well being', _art('wellbeing'), (_) => const SoundsScreen()),
+  _Pillar('Journal & mood', _art('journal'), (_) => const JournalHubScreen()),
+  _Pillar('Recovery tools', _art('recovery'), (_) => const RecoveryScreen()),
+];
+
+/// A featured programme: a full-width coloured card inside the grey panel.
+class _Program {
+  const _Program(this.title, this.blurb, this.image, this.color, this.open);
+
+  final String title;
+  final String blurb;
+  final String image;
+  final Color color;
+  final RouteBuilder open;
+}
+
+typedef RouteBuilder = Route<void> Function();
+
+final _programs = <_Program>[
+  _Program(
+    'CBT for Therapy',
+    'Sessions to combat anxiety & depression',
+    _art('cbt'),
+    _cardRed,
+    TherapyScreen.route,
   ),
-  _ExploreCategory(
-    title: 'Wellbeing sounds',
-    blurb: 'Loops that keep running while you focus, drift off, or settle.',
-    icon: Icons.graphic_eq_rounded,
-    accent: Brand.yellow,
-    items: [
-      for (final s in soundsCatalog)
-        _PreviewItem(s.title, s.category.label, s.icon, premium: s.premium),
-    ],
-    open: (_) => const SoundsScreen(),
+  _Program(
+    'Sleep better',
+    'Find a better way to sleep at night',
+    _art('sleep'),
+    _cardBlue,
+    () => MaterialPageRoute(builder: (_) => const MeditationsScreen()),
   ),
-  _ExploreCategory(
-    title: 'Journal & mood',
-    blurb: 'A blank page when you need one, a prompt when you don\'t.',
-    icon: Icons.edit_note_rounded,
-    accent: Brand.red,
-    items: [
-      const _PreviewItem('My journal', 'All entries', Icons.menu_book_rounded,
-          premium: false),
-      const _PreviewItem('Free write', 'New entry', Icons.edit_note_rounded,
-          premium: false),
-      for (final p in journalPrompts)
-        _PreviewItem(p.title, 'Prompt', p.icon, premium: p.premium),
-      const _PreviewItem('Mood history', 'Insights', Icons.insights_rounded),
-    ],
-    open: (_) => const JournalHubScreen(),
-  ),
-  _ExploreCategory(
-    title: 'Recovery tools',
-    blurb: 'One day at a time — with tools for the hard minutes.',
-    icon: Icons.healing_rounded,
-    accent: Brand.ink,
-    items: const [
-      _PreviewItem('Urge surfing', '8 min', Icons.surfing_rounded,
-          premium: false),
-      _PreviewItem('HALT check', 'In the moment',
-          Icons.psychology_alt_rounded),
-      _PreviewItem('Play the tape forward', 'In the moment',
-          Icons.movie_filter_rounded),
-      _PreviewItem('My commitments', 'Daily streaks', Icons.verified_rounded),
-      _PreviewItem('Milestones', 'Celebrate wins', Icons.emoji_events_rounded),
-      _PreviewItem('Trigger tracker', 'Log & learn', Icons.bolt_rounded),
-      _PreviewItem('Trigger insights', 'Your patterns',
-          Icons.query_stats_rounded),
-    ],
-    open: (_) => const RecoveryScreen(),
+  _Program(
+    'Manage stress',
+    'Find the space you need to be stress free',
+    _art('stress'),
+    _cardYellow,
+    () => MaterialPageRoute(builder: (_) => const MeditationsScreen()),
   ),
 ];
 
-/// How many items each card previews before falling back to "+N more".
-const _previewCount = 3;
+/// A collection: everything of one kind, counted from the real catalogues
+/// so the number can never drift from what the destination offers.
+class _Collection {
+  const _Collection(this.title, this.count, this.unit, this.color, this.open);
 
-/// Explore tab: one card per pillar, each previewing what's inside and
-/// opening the full, scrollable list to pick from.
+  final String title;
+  final int count;
+  final String unit;
+
+  /// The pillar colour of whatever the collection holds.
+  final Color color;
+  final WidgetBuilder open;
+
+  /// Ink on yellow, white on everything else: keeps the text readable.
+  Color get foreground => color == _cardYellow ? Brand.ink : Colors.white;
+}
+
+final _collections = <_Collection>[
+  _Collection('Breathing exercises', breathPatterns.length, 'rhythms',
+      _cardBlue, (_) => const MeditationsScreen()),
+  _Collection('Guided meditations', meditations.length, 'sessions',
+      Brand.ink, (_) => const MeditationsScreen()),
+  _Collection('Wellbeing sounds', soundsCatalog.length, 'loops',
+      _cardYellow, (_) => const SoundsScreen()),
+  _Collection('Journal prompts', journalPrompts.length, 'prompts',
+      _cardRed, (_) => const JournalHubScreen()),
+];
+
+/// Explore tab: search, the four pillars as tiles, featured programmes,
+/// the collections, and a way to book a human therapist.
 class ExploreTab extends StatelessWidget {
   const ExploreTab({super.key});
 
-  Widget _previewRow(_PreviewItem item, Color accent, bool premium) {
-    final locked = item.premium && !premium;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: [
-          Container(
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(9),
-            ),
-            child: Icon(item.icon, size: 14, color: accent),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              item.title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Brand.ink,
+  void _push(BuildContext context, WidgetBuilder builder) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: builder));
+
+  Widget _searchBar(BuildContext context) {
+    return Material(
+      color: _tile,
+      borderRadius: BorderRadius.circular(_radius),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(_radius),
+        onTap: () => showSearch(
+          context: context,
+          delegate: _ExploreSearchDelegate(),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+          child: Row(
+            children: [
+              Icon(Icons.search_rounded, size: 22, color: Brand.ink),
+              SizedBox(width: 12),
+              Text(
+                'Search',
+                style: TextStyle(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w500,
+                  color: Brand.ink,
+                ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 8),
-          // The badge earns the space the detail would have taken: what
-          // matters in a preview is which items are behind Premium.
-          if (locked)
-            const PremiumChip()
-          else
-            Text(
-              item.meta,
-              maxLines: 1,
-              style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
-            ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _categoryCard(BuildContext context, _ExploreCategory category) {
-    final premium = isPremiumUser();
-    final shown = category.items.take(_previewCount);
-    final more = category.items.length - shown.length;
-    final free = category.items.where((i) => !i.premium).length;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Material(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Brand.border, width: 1.2),
-        ),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: category.open),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: category.accent.withValues(alpha: 0.10),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(category.icon,
-                          size: 21, color: category.accent),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            category.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 15.5,
-                              fontWeight: FontWeight.w600,
-                              color: Brand.ink,
-                            ),
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            premium
-                                ? '${category.items.length} to pick from'
-                                : '$free free · ${category.items.length - free}'
-                                    ' Premium',
-                            maxLines: 1,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Brand.textMuted,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 14,
-                      color: category.accent,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  category.blurb,
+  Widget _pillarTile(BuildContext context, _Pillar pillar) {
+    return Material(
+      color: _tile,
+      borderRadius: BorderRadius.circular(_radius),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(_radius),
+        onTap: () => _push(context, pillar.open),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 32,
+                height: 32,
+                child: Image.asset(pillar.image, fit: BoxFit.contain),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  pillar.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 13,
-                    color: Brand.textMuted,
-                    height: 1.45,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Brand.ink,
+                    height: 1.2,
                   ),
                 ),
-                const SizedBox(height: 12),
-                Container(
-                  decoration: BoxDecoration(
-                    color: category.accent.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _pillarGrid(BuildContext context) {
+    Widget row(_Pillar a, _Pillar b) => Row(
+          children: [
+            Expanded(child: _pillarTile(context, a)),
+            const SizedBox(width: 12),
+            Expanded(child: _pillarTile(context, b)),
+          ],
+        );
+    return Column(
+      children: [
+        row(_pillars[0], _pillars[1]),
+        const SizedBox(height: 12),
+        row(_pillars[2], _pillars[3]),
+      ],
+    );
+  }
+
+  Widget _programCard(BuildContext context, _Program program) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: program.color,
+        borderRadius: BorderRadius.circular(_radius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(_radius),
+          onTap: () => Navigator.of(context).push(program.open()),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
+            child: Row(
+              children: [
+                Expanded(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final item in shown)
-                        _previewRow(item, category.accent, premium),
-                      if (more > 0) ...[
-                        const SizedBox(height: 4),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            '+ $more more inside',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: category.accent,
-                            ),
-                          ),
+                      Text(
+                        program.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
-                      ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        program.blurb,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                          height: 1.3,
+                        ),
+                      ),
                     ],
                   ),
+                ),
+                const SizedBox(width: 12),
+                SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: Image.asset(program.image, fit: BoxFit.contain),
                 ),
               ],
             ),
@@ -281,101 +251,320 @@ class ExploreTab extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) => PremiumBuilder(
-        builder: (context, _) => _buildContent(context),
-      );
-
-  /// Wrapped by [PremiumBuilder] above, so this repaints the moment the
-  /// entitlement changes — buying from inside the app used to leave the
-  /// screen you bought from still locked.
-  Widget _buildContent(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
-      children: [
-        const Text(
-          'Explore',
-          style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w600,
-            color: Brand.ink,
-            height: 1.2,
-          ),
-        ),
-        const SizedBox(height: 12),
-        const PillarStripe(),
-        const SizedBox(height: 16),
-        const Text(
-          'Everything in one place — open a card to see the full list and '
-          'pick whatever today calls for.',
-          style: TextStyle(
-            fontSize: 14,
-            color: Brand.textMuted,
-            height: 1.55,
-          ),
-        ),
-        const SizedBox(height: 24),
-        for (final category in _categories) _categoryCard(context, category),
-        const SizedBox(height: 12),
-        Material(
-          color: const Color(0x0F3764CD),
-          borderRadius: BorderRadius.circular(18),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(18),
-            onTap: () => Navigator.of(context).push(TherapyScreen.route()),
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.support_agent_rounded,
-                      size: 22,
-                      color: Brand.blue,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Real human therapy',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Brand.ink,
-                          ),
-                        ),
-                        SizedBox(height: 3),
-                        Text(
-                          'Book a private session — your first one is free.',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Brand.textMuted,
-                            height: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 15,
-                    color: Brand.textMuted,
-                  ),
-                ],
+  Widget _featuredPanel(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: _tile,
+        borderRadius: BorderRadius.circular(_radius),
+      ),
+      padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6),
+            child: Text(
+              'Our featured programs',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Brand.ink,
               ),
             ),
           ),
+          const SizedBox(height: 6),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 6),
+            child: Text(
+              'A list of our featured content to get the most of your day '
+              'started',
+              style: TextStyle(fontSize: 12, color: Brand.ink, height: 1.4),
+            ),
+          ),
+          const SizedBox(height: 12),
+          for (final program in _programs) _programCard(context, program),
+        ],
+      ),
+    );
+  }
+
+  Widget _collectionCard(BuildContext context, _Collection collection) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: collection.color,
+        borderRadius: BorderRadius.circular(_radius),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(_radius),
+          onTap: () => _push(context, collection.open),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        collection.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w600,
+                          color: collection.foreground,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${collection.count} ${collection.unit}',
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          color: collection.foreground,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.arrow_forward_ios_rounded,
+                    size: 14, color: collection.foreground),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _bookSession(BuildContext context) {
+    return Material(
+      color: _tile,
+      elevation: 8,
+      shadowColor: Colors.black.withValues(alpha: 0.35),
+      borderRadius: BorderRadius.circular(_radius),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(_radius),
+        onTap: () => Navigator.of(context).push(TherapyScreen.route()),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 34,
+                height: 34,
+                child: Image.asset(_bookArt, fit: BoxFit.contain),
+              ),
+              const SizedBox(width: 14),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Book a session',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Brand.ink,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Speak to a human therapist',
+                      style: TextStyle(fontSize: 12.5, color: Brand.ink),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Room left under the list so the last collection can scroll clear of
+  /// the floating card.
+  static const _floatingCardClearance = 96.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        _list(context),
+        Positioned(
+          left: 18,
+          right: 18,
+          bottom: 12,
+          child: _bookSession(context),
         ),
       ],
+    );
+  }
+
+  Widget _list(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(18, 16, 18, _floatingCardClearance),
+      children: [
+        _searchBar(context),
+        const SizedBox(height: 18),
+        _pillarGrid(context),
+        const SizedBox(height: 20),
+        _featuredPanel(context),
+        const SizedBox(height: 22),
+        const Padding(
+          padding: EdgeInsets.only(left: 4, bottom: 12),
+          child: Text(
+            'All collections',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Brand.ink,
+            ),
+          ),
+        ),
+        for (final collection in _collections)
+          _collectionCard(context, collection),
+      ],
+    );
+  }
+}
+
+/// One thing the search can find, and where opening it leads.
+class _SearchItem {
+  const _SearchItem(this.title, this.meta, this.icon, this.open);
+
+  final String title;
+  final String meta;
+  final IconData icon;
+  final WidgetBuilder open;
+}
+
+/// Built from the real catalogues, so the search covers exactly what the
+/// app offers today. Results open the list the item lives in, which keeps
+/// the usual Premium gating in place.
+final _searchItems = <_SearchItem>[
+  for (final p in breathPatterns)
+    _SearchItem(p.title, 'Breathing · ${p.rhythmLabel}', Icons.air_rounded,
+        (_) => const MeditationsScreen()),
+  for (final m in meditations)
+    _SearchItem(m.title, 'Meditation · ${m.minutes} min', m.icon,
+        (_) => const MeditationsScreen()),
+  for (final s in soundsCatalog)
+    _SearchItem(s.title, 'Sound · ${s.category.label}', s.icon,
+        (_) => const SoundsScreen()),
+  for (final p in journalPrompts)
+    _SearchItem(p.title, 'Journal prompt', p.icon,
+        (_) => const JournalHubScreen()),
+  _SearchItem('Urge surfing', 'Recovery · 8 min', Icons.surfing_rounded,
+      (_) => const RecoveryScreen()),
+  _SearchItem('HALT check', 'Recovery', Icons.psychology_alt_rounded,
+      (_) => const RecoveryScreen()),
+  _SearchItem('Play the tape forward', 'Recovery', Icons.movie_filter_rounded,
+      (_) => const RecoveryScreen()),
+  _SearchItem('My commitments', 'Recovery · streaks', Icons.verified_rounded,
+      (_) => const RecoveryScreen()),
+  _SearchItem('Milestones', 'Recovery', Icons.emoji_events_rounded,
+      (_) => const RecoveryScreen()),
+  _SearchItem('Trigger tracker', 'Recovery', Icons.bolt_rounded,
+      (_) => const RecoveryScreen()),
+];
+
+class _ExploreSearchDelegate extends SearchDelegate<void> {
+  _ExploreSearchDelegate() : super(searchFieldLabel: 'Search');
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    final theme = Theme.of(context);
+    return theme.copyWith(
+      inputDecorationTheme: const InputDecorationThemeData(
+        border: InputBorder.none,
+        hintStyle: TextStyle(color: Brand.textMuted, fontSize: 16),
+      ),
+      textTheme: theme.textTheme.copyWith(
+        titleLarge: const TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 16,
+          color: Brand.ink,
+        ),
+      ),
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) => [
+        if (query.isNotEmpty)
+          IconButton(
+            icon: const Icon(Icons.close_rounded),
+            onPressed: () => query = '',
+          ),
+      ];
+
+  @override
+  Widget buildLeading(BuildContext context) => IconButton(
+        icon: const Icon(Icons.arrow_back_rounded),
+        onPressed: () => close(context, null),
+      );
+
+  @override
+  Widget buildResults(BuildContext context) => _list(context);
+
+  @override
+  Widget buildSuggestions(BuildContext context) => _list(context);
+
+  Widget _list(BuildContext context) {
+    final q = query.trim().toLowerCase();
+    final hits = q.isEmpty
+        ? _searchItems
+        : _searchItems
+            .where((i) =>
+                i.title.toLowerCase().contains(q) ||
+                i.meta.toLowerCase().contains(q))
+            .toList();
+    if (hits.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: Text(
+            'Nothing matches that yet.',
+            style: TextStyle(color: Brand.textMuted, fontSize: 14),
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: hits.length,
+      itemBuilder: (context, i) {
+        final item = hits[i];
+        return ListTile(
+          leading: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: _tile,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(item.icon, size: 20, color: Brand.ink),
+          ),
+          title: Text(
+            item.title,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: Brand.ink,
+            ),
+          ),
+          subtitle: Text(
+            item.meta,
+            style: const TextStyle(fontSize: 12.5, color: Brand.textMuted),
+          ),
+          onTap: () {
+            close(context, null);
+            Navigator.of(context).push(MaterialPageRoute(builder: item.open));
+          },
+        );
+      },
     );
   }
 }
