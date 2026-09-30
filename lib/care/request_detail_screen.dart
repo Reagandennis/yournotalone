@@ -160,6 +160,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
   String get _statusLabel {
     final request = _item.request;
     return switch (request.status) {
+      'awaiting_payment' => 'Not sent yet — the client hasn\'t paid',
       'pending' => 'Waiting to be matched',
       'confirmed' when request.needsPayment => 'Matched — waiting for payment',
       'confirmed' => 'Booked',
@@ -174,6 +175,8 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
         'Cancelled — nobody joined the call',
       'cancelled' when request.closeReason == 'unpaid' =>
         'Cancelled — never paid',
+      'cancelled' when request.submittedAt == null =>
+        'Discarded before it was paid for',
       _ => 'Cancelled',
     };
   }

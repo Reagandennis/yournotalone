@@ -71,7 +71,7 @@ void main() {
 
     expect(find.text('You don\'t have to do this alone'), findsOneWidget);
     expect(
-      await scrollTo(tester, 'Your first session is on us'),
+      await scrollTo(tester, 'A real therapist, \$20 a session'),
       findsOneWidget,
     );
   });

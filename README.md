@@ -28,11 +28,14 @@ supabase functions deploy revenuecat-webhook --no-verify-jwt  # refunds
 
 ## Therapy sessions
 
-A client requests a session; the care team matches it with a therapist and a
-time in the app; the client pays if it isn't their free first session; both
-join a video call in the app; afterwards the therapist leaves a note and each
-side rates the other. `supabase/migrations/0009_therapy_platform.sql` explains
-who can see and do what.
+A client pays for and requests a session (the request is a draft until the
+$20 purchase is verified, then the care team is emailed and the client gets a
+receipt — migration 0019); the care team matches it with a therapist and a
+time in the app; both join a video call in the app; afterwards the therapist
+leaves a note and each side rates the other. Sessions can be cancelled in the
+app up to 24 hours ahead for a refund; a no-show is closed out as missed, not
+refunded, and the client is told. `supabase/migrations/0009_therapy_platform.sql`
+explains who can see and do what.
 
 - **Admins** are the emails in `public.admins` (see `supabase/therapy_ops.sql`).
   They get **Settings → Care team dashboard** once signed in with that email
@@ -46,8 +49,8 @@ who can see and do what.
     LIVEKIT_API_KEY=<key> LIVEKIT_API_SECRET=<secret>
   ```
 
-- **Payments** ($20 after the free first session) are the consumable Google
-  Play product `therapy`, sold through RevenueCat. `confirm-session-payment`
+- **Payments** ($20 per session, taken before the request is sent) are the
+  consumable Google Play product `therapy`, sold through RevenueCat. `confirm-session-payment`
   checks purchases with RevenueCat API v2 and needs `REVENUECAT_SECRET_KEY` (a
   v2 secret key) and `REVENUECAT_PROJECT_ID`. The care team can also mark a
   session paid or waive the fee from the dashboard.

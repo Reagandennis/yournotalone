@@ -128,7 +128,7 @@ class _HeavyDaySheet extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               'You don\'t have to carry it on your own. A licensed therapist '
-              'here will listen — and your first session is free.',
+              'here will listen — \$20 a session, booked in a minute.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.5,

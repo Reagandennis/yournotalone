@@ -3,11 +3,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'session_format.dart';
 
-/// What a session costs after someone's free first one. The database holds
-/// the real price (`therapy_session_price_cents()` in migration 0009) and
-/// stamps it on each request; this is only for copy shown before a request
-/// exists.
+/// What a session costs. The database holds the real price
+/// (`therapy_session_price_cents()` in migration 0009) and stamps it on each
+/// request; this is only for copy shown before a request exists.
 const therapySessionPriceCents = 2000;
+
+/// How far ahead a session can still be cancelled from the app, with a
+/// refund. Later than this — or not joining at all — isn't refunded. The
+/// database enforces the same cutoff (`therapy_cancel_notice()`, 0019).
+const therapyCancelNotice = Duration(hours: 24);
+
+/// The policy in one breath, shown wherever someone is about to pay.
+const therapyCancellationPolicy =
+    'Cancel in the app up to 24 hours before your session for a full '
+    'refund. A session cancelled later than that, or not joined, isn\'t '
+    'refunded.';
 
 /// How early a call opens, and how long past its scheduled end it stays
 /// open. The session-token Edge Function enforces the same window.
@@ -70,6 +80,7 @@ class TherapyRequest {
     required this.isFreeSession,
     required this.scheduledAt,
     required this.createdAt,
+    this.submittedAt,
     this.therapistId,
     this.durationMinutes = 50,
     this.priceCents = 0,
@@ -89,6 +100,7 @@ class TherapyRequest {
         isFreeSession: row['is_free_session'] as bool,
         scheduledAt: _time(row['scheduled_at']),
         createdAt: _time(row['created_at'])!,
+        submittedAt: _time(row['submitted_at']),
         therapistId: row['therapist_id'] as String?,
         durationMinutes: (row['duration_minutes'] as num?)?.toInt() ?? 50,
         priceCents: (row['price_cents'] as num?)?.toInt() ?? 0,
@@ -104,19 +116,27 @@ class TherapyRequest {
   final List<String> availability;
   final String? note;
 
-  /// One of: pending, confirmed, completed, cancelled.
+  /// One of: awaiting_payment, pending, confirmed, completed, cancelled.
+  /// A request starts as a draft (awaiting_payment) that only its owner
+  /// sees; paying for it sends it to the care team (pending).
   final String status;
+
+  /// Always false for requests made since migration 0019; kept so older
+  /// rows still read correctly.
   final bool isFreeSession;
 
   /// Set by the care team when they match the request with a therapist.
   final DateTime? scheduledAt;
   final DateTime createdAt;
+
+  /// When the paid request reached the care team; null for a draft.
+  final DateTime? submittedAt;
   final String? therapistId;
   final int durationMinutes;
   final int priceCents;
   final String currency;
 
-  /// One of: not_required (the free session), unpaid, paid, waived.
+  /// One of: unpaid, paid, waived (not_required on rows from before 0019).
   final String paymentStatus;
 
   /// The therapist's note for the client, written when the session ends.
@@ -128,12 +148,18 @@ class TherapyRequest {
   /// therapist_no_show, nobody_joined, unpaid.
   final String? closeReason;
 
+  /// Saved but not paid for yet, so the care team hasn't seen it.
+  bool get isAwaitingPayment => status == 'awaiting_payment';
   bool get isPending => status == 'pending';
   bool get isConfirmed => status == 'confirmed';
   bool get isCompleted => status == 'completed';
 
-  /// Still moving forward — shown as the current session up top.
+  /// With the care team or booked — what the dashboard counts as open.
   bool get isActive => isPending || isConfirmed;
+
+  /// What the client sees as their current request: a draft they still
+  /// have to pay for, or a session on its way.
+  bool get isCurrent => isAwaitingPayment || isActive;
 
   bool get needsPayment => paymentStatus == 'unpaid';
 
@@ -141,7 +167,7 @@ class TherapyRequest {
   bool get wasMissed => isCompleted && closeReason == 'client_no_show';
 
   /// Closed because the call never happened (nobody, or only the client,
-  /// turned up). The free first session came back, if it was one.
+  /// turned up).
   bool get didNotHappen => status == 'cancelled' &&
       (closeReason == 'nobody_joined' || closeReason == 'therapist_no_show');
 
@@ -150,15 +176,19 @@ class TherapyRequest {
   bool hasElapsedAt(DateTime now) =>
       isConfirmed && joinStateAt(now) == JoinState.over;
 
-  /// A paid session goes through the care team, who can refund it. So does
-  /// a session whose call has opened: cancelling after attending used to
-  /// hand the free first session back, so the database refuses it now and
-  /// the button goes away at the same moment.
+  /// A draft or an unmatched request can always be cancelled (the care
+  /// team refunds a paid one). A booked session can be cancelled up to
+  /// [therapyCancelNotice] before it starts; after that the database
+  /// refuses, and the session isn't refunded if it's missed.
   bool canCancelAt(DateTime now) {
-    if (!isActive || paymentStatus == 'paid') return false;
+    if (!isCurrent) return false;
     if (!isConfirmed || scheduledAt == null) return true;
-    return now.isBefore(scheduledAt!.subtract(sessionEarlyJoin));
+    return now.isBefore(scheduledAt!.subtract(therapyCancelNotice));
   }
+
+  /// Booked, paid, and inside the no-refund window.
+  bool isLockedInAt(DateTime now) =>
+      isConfirmed && !canCancelAt(now) && !needsPayment;
 
   String get priceLabel => formatPrice(priceCents, currency);
 
@@ -261,6 +291,8 @@ class SessionAccessException implements Exception {
         'no_payment_found' =>
           'We couldn\'t find your payment yet. If you were charged, try '
               'again in a minute.',
+        'not_payable' =>
+          'This request can\'t be paid for any more — start a new one.',
         'not_configured' =>
           'This isn\'t switched on yet. Please contact us.',
         'invalid_token' ||
@@ -279,6 +311,7 @@ String sessionOutcomeLabel(TherapyRequest request) => switch (request.status) {
       'completed' => 'Completed',
       'cancelled' when request.didNotHappen => 'Didn\'t happen',
       'cancelled' when request.closeReason == 'unpaid' => 'Not paid',
+      'cancelled' when request.submittedAt == null => 'Not sent',
       _ => 'Cancelled',
     };
 
@@ -301,23 +334,24 @@ class TherapyRepository {
     return [for (final row in rows) TherapyRequest.fromRow(row)];
   }
 
-  /// The first session someone actually books is on us; a cancelled
-  /// request doesn't use up the offer. The database makes the same call
-  /// when the request is saved — this is only for the copy.
-  bool isFreeSessionAvailable(List<TherapyRequest> requests) =>
-      requests.every((r) => r.status == 'cancelled');
-
-  Future<void> requestSession({
+  /// Saves a request as a draft. Nothing reaches the care team until it's
+  /// paid for ([SessionPayments.pay]); the database moves it on itself.
+  Future<TherapyRequest> requestSession({
     required String topic,
     List<String> availability = const [],
     String? note,
   }) async {
-    await _client.from('therapy_requests').insert({
-      'user_id': _userId,
-      'topic': topic,
-      'availability': availability,
-      if (note != null && note.isNotEmpty) 'note': note,
-    });
+    final row = await _client
+        .from('therapy_requests')
+        .insert({
+          'user_id': _userId,
+          'topic': topic,
+          'availability': availability,
+          if (note != null && note.isNotEmpty) 'note': note,
+        })
+        .select()
+        .single();
+    return TherapyRequest.fromRow(row);
   }
 
   Future<void> cancelRequest(String id) => _client

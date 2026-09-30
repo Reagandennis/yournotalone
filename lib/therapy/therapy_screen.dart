@@ -22,9 +22,10 @@ const _timeSlots = [
   'Weekends',
 ];
 
-/// Talk to a real therapist: request a private session, see who you've been
-/// matched with and when, pay if it isn't the free one, join the video
-/// call, and rate it afterwards.
+/// Talk to a real therapist: pay for and request a private session, see
+/// who you've been matched with and when, join the video call, and rate it
+/// afterwards. Nothing reaches the care team until the session is paid
+/// for, so therapists are only booked by people who've committed.
 class TherapyScreen extends StatefulWidget {
   const TherapyScreen({
     super.key,
@@ -136,12 +137,16 @@ class _TherapyScreenState extends State<TherapyScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Saves the request as a draft and goes straight to the store. The
+  /// draft stays on screen (with Pay and Check payment) if the payment
+  /// doesn't settle there and then; backing out of the store discards it
+  /// and leaves the form as it was.
   Future<void> _submit() async {
     final topic = _topic;
     if (topic == null) return;
     setState(() => _submitting = true);
     try {
-      await _repo.requestSession(
+      final draft = await _repo.requestSession(
         topic: topic,
         availability: [
           for (final slot in _timeSlots)
@@ -150,13 +155,27 @@ class _TherapyScreenState extends State<TherapyScreen> {
         note: _noteController.text.trim(),
       );
       if (!mounted) return;
-      _topic = null;
-      _slots.clear();
-      _noteController.clear();
-      _say('Request sent — we\'ll let you know as soon as you\'re matched.');
-      // Notifications are how they'll hear about the match and the reminder.
-      unawaited(SessionNotifications.instance.start(askPermission: true));
-      await _load();
+      final outcome = await _pay(draft, fromForm: true);
+      if (!mounted) return;
+      switch (outcome) {
+        case SessionPaymentOutcome.paid:
+          _topic = null;
+          _slots.clear();
+          _noteController.clear();
+          // Notifications are how they'll hear about the match and the
+          // reminder.
+          unawaited(SessionNotifications.instance.start(askPermission: true));
+          await _load();
+        case SessionPaymentOutcome.cancelled:
+        case SessionPaymentOutcome.unavailable:
+          // Nothing was paid, so there's nothing to keep.
+          await _discardQuietly(draft);
+        case SessionPaymentOutcome.pendingVerification:
+        case null:
+          // The store may have taken the money: keep the draft so the
+          // purchase can be attached to it.
+          await _load(quiet: true);
+      }
     } catch (e) {
       if (!mounted) return;
       if (e is PostgrestException && e.code == '23514') {
@@ -180,22 +199,44 @@ class _TherapyScreenState extends State<TherapyScreen> {
     }
   }
 
+  /// Drops a draft nobody paid for, without ceremony.
+  Future<void> _discardQuietly(TherapyRequest draft) async {
+    try {
+      await _repo.cancelRequest(draft.id);
+    } catch (_) {
+      // The sweep cancels unpaid drafts after a day anyway.
+    }
+    if (mounted) await _load(quiet: true);
+  }
+
   Future<void> _cancel(TherapyRequest request) async {
-    final matched = request.isConfirmed;
-    final keepsFreeSession = request.isFreeSession
-        ? ' Your free first session stays yours.'
-        : '';
+    final (title, body, action) = request.isAwaitingPayment
+        ? (
+            'Discard this request?',
+            'Nothing has been paid, so there\'s nothing to refund. You can '
+                'start again whenever you like.',
+            'Discard',
+          )
+        : request.isConfirmed
+            ? (
+                'Cancel this session?',
+                'We\'ll let your therapist know and refund your '
+                    '${request.priceLabel} in full, since it\'s more than 24 '
+                    'hours away. You can book again whenever you\'re ready.',
+                'Cancel session',
+              )
+            : (
+                'Cancel this request?',
+                'We haven\'t matched you yet, so your ${request.priceLabel} '
+                    'is refunded in full. You can book again whenever '
+                    'you\'re ready.',
+                'Cancel request',
+              );
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(matched ? 'Cancel this session?' : 'Cancel this request?'),
-        content: Text(
-          matched
-              ? 'We\'ll let your therapist know. You can book again whenever '
-                  'you\'re ready.$keepsFreeSession'
-              : 'No problem — you can book again whenever you\'re '
-                  'ready.$keepsFreeSession',
-        ),
+        title: Text(title),
+        content: Text(body),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -204,7 +245,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Brand.red),
-            child: Text(matched ? 'Cancel session' : 'Cancel request'),
+            child: Text(action),
           ),
         ],
       ),
@@ -226,32 +267,43 @@ class _TherapyScreenState extends State<TherapyScreen> {
     }
   }
 
-  Future<void> _pay(TherapyRequest request) async {
+  /// Takes the payment for [request]. Returns the outcome, or null when
+  /// the attempt failed before an outcome was known. [fromForm] leaves
+  /// the reload to the caller.
+  Future<SessionPaymentOutcome?> _pay(
+    TherapyRequest request, {
+    bool fromForm = false,
+  }) async {
     setState(() => _paying = true);
     try {
       final outcome = await _payments.pay(request);
-      if (!mounted) return;
+      if (!mounted) return outcome;
       switch (outcome) {
         case SessionPaymentOutcome.paid:
-          _say('Payment received — your session is confirmed.');
-          await _load(quiet: true);
+          _say(request.isAwaitingPayment
+              ? 'Payment received — your request is with our care team and '
+                  'your receipt is on its way by email.'
+              : 'Payment received — your receipt is on its way by email.');
+          if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.pendingVerification:
           _awaitingVerification.add(request.id);
-          _say('Your payment is going through. If the Join button doesn\'t '
-              'unlock soon, tap "Check payment".');
-          await _load(quiet: true);
+          _say('Your payment is going through. If it isn\'t confirmed in a '
+              'minute, tap "Check payment".');
+          if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.unavailable:
-          _say('Paying in the app isn\'t available yet — we\'ll email you '
-              'about payment.');
+          _say('Paying in the app isn\'t available on this device yet, so '
+              'we can\'t take your request — please try again later.');
         case SessionPaymentOutcome.cancelled:
           break;
       }
+      return outcome;
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) return null;
       final message = e is SessionAccessException
           ? e.message
           : purchaseErrorMessage(e);
       if (message != null) _say(message);
+      return null;
     } finally {
       if (mounted) setState(() => _paying = false);
     }
@@ -263,7 +315,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
       await _repo.confirmPayment(request.id);
       if (!mounted) return;
       _awaitingVerification.remove(request.id);
-      _say('Payment found — you\'re all set.');
+      _say(request.isAwaitingPayment
+          ? 'Payment found — your request is with our care team.'
+          : 'Payment found — you\'re all set.');
       await _load(quiet: true);
     } on SessionAccessException catch (e) {
       // The server has looked and there's nothing to attach, so paying is
@@ -450,8 +504,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
     const steps = [
       (
         Icons.tune_rounded,
-        'Tell us what you need',
-        'A topic and the times that suit you. Two taps.',
+        'Tell us what you need, and pay',
+        'A topic, the times that suit you, and \$20 — paid securely in '
+            'the app. Nothing is sent until it\'s paid.',
       ),
       (
         Icons.mark_email_read_rounded,
@@ -528,8 +583,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
       (Icons.lock_rounded, 'Private',
           'What you say in a session stays between you and them. Calls '
               'aren\'t recorded.'),
-      (Icons.event_available_rounded, 'No commitment',
-          'Book one session at a time. No subscription, nothing to cancel.'),
+      (Icons.event_available_rounded, 'One session at a time',
+          'No subscription. Cancel up to 24 hours before for a full '
+              'refund — after that, or if you don\'t join, the session isn\'t '
+              'refunded.'),
     ];
     return Container(
       padding: const EdgeInsets.all(18),
@@ -635,28 +692,18 @@ class _TherapyScreenState extends State<TherapyScreen> {
     );
   }
 
-  Widget _bookingForm({required bool freeSession}) {
+  Widget _bookingForm() {
     final price = formatPrice(therapySessionPriceCents);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (freeSession)
-          _offerBanner(
-            icon: Icons.favorite_rounded,
-            iconColor: Brand.red,
-            title: 'Your first session is on us',
-            detail: 'One full session with a licensed therapist, completely '
-                'free — no card needed.',
-          )
-        else
-          _offerBanner(
-            icon: Icons.payments_outlined,
-            iconColor: Brand.blue,
-            title: 'Sessions are $price',
-            detail: 'Your first one was on us. Once we\'ve matched you with '
-                'a therapist, you pay in the app to confirm — no '
-                'subscription.',
-          ),
+        _offerBanner(
+          icon: Icons.payments_outlined,
+          iconColor: Brand.blue,
+          title: 'Sessions are $price, paid when you book',
+          detail: 'Pay securely in the app and your request goes straight to '
+              'our care team. You get a receipt by email. No subscription.',
+        ),
         const SizedBox(height: 26),
         const SectionHeader(title: 'What would you like to focus on?'),
         const SizedBox(height: 12),
@@ -714,14 +761,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     color: Colors.white,
                   ),
                 )
-              : Text(freeSession
-                  ? 'Request my free session'
-                  : 'Request a session'),
+              : Text('Pay $price and request a session'),
         ),
         const SizedBox(height: 10),
         const Text(
           'We\'ll match you with a licensed therapist and a time, usually '
-          'within a day, and email you when your session is booked.',
+          'within a day, and email you when your session is booked. '
+          '$therapyCancellationPolicy',
           style: TextStyle(fontSize: 12.5, color: Brand.textMuted, height: 1.5),
         ),
       ],
@@ -754,29 +800,39 @@ class _TherapyScreenState extends State<TherapyScreen> {
   String _priceLine(TherapyRequest request) {
     if (request.isFreeSession) return 'First session — free';
     return switch (request.paymentStatus) {
-      'paid' => '${request.priceLabel} — paid',
+      'paid' => '${request.priceLabel} — paid, receipt emailed',
       'waived' => 'No charge for this session',
-      _ when request.isPending =>
-        '${request.priceLabel} — you\'ll pay once you\'re matched',
-      _ => '${request.priceLabel} session',
+      _ when request.isAwaitingPayment =>
+        '${request.priceLabel} — pay to send your request',
+      _ => '${request.priceLabel} — payment needed',
     };
   }
 
   Widget _activeCard(TherapyRequest request) {
     final therapist = _therapists[request.therapistId];
     final confirmed = request.isConfirmed;
-    final (title, detail) = !confirmed
+    final (title, detail) = request.isAwaitingPayment
         ? (
-            'Request received',
-            'We\'re finding the right licensed therapist for you — usually '
-                'within a day. We\'ll email you when your session is booked.',
+            'Almost there',
+            'Your request is saved but hasn\'t reached our care team yet. '
+                'It\'s sent the moment your session is paid for.',
           )
-        : request.needsPayment
-            ? ('You\'re matched', 'Pay for your session to confirm your place.')
-            : (
-                'Session confirmed',
-                'Everything\'s set. Join right here when it\'s time.',
-              );
+        : !confirmed
+            ? (
+                'Request received',
+                'We\'re finding the right licensed therapist for you — '
+                    'usually within a day. We\'ll email you when your '
+                    'session is booked.',
+              )
+            : request.needsPayment
+                ? (
+                    'You\'re matched',
+                    'Pay for your session to confirm your place.',
+                  )
+                : (
+                    'Session confirmed',
+                    'Everything\'s set. Join right here when it\'s time.',
+                  );
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -828,7 +884,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ),
           // Once the call window has closed there's nothing left to pay for:
           // the server cancels an unpaid session within a couple of hours.
-          if (confirmed && request.needsPayment && !request.hasElapsedAt(_now())) ...[
+          if (request.needsPayment && !request.hasElapsedAt(_now())) ...[
             const SizedBox(height: 16),
             _paymentBox(request),
           ],
@@ -843,14 +899,19 @@ class _TherapyScreenState extends State<TherapyScreen> {
               child: TextButton(
                 onPressed: () => _cancel(request),
                 style: TextButton.styleFrom(foregroundColor: Brand.red),
-                child: Text(confirmed ? 'Cancel session' : 'Cancel request'),
+                child: Text(request.isAwaitingPayment
+                    ? 'Discard'
+                    : confirmed
+                        ? 'Cancel session'
+                        : 'Cancel request'),
               ),
             ),
           ] else if (request.isActive) ...[
             const SizedBox(height: 12),
             const Text(
-              'Need to cancel a paid session? Contact us from Settings and '
-              'we\'ll sort out a refund.',
+              'Your session is less than 24 hours away, so it can no longer '
+              'be cancelled here. If you can\'t make it, reply to your booking '
+              'email — a missed or late-cancelled session isn\'t refunded.',
               style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
             ),
           ],
@@ -879,7 +940,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
           Text(
             awaiting
                 ? 'Your payment is being verified'
-                : '${request.priceLabel} to confirm your session',
+                : request.isAwaitingPayment
+                    ? '${request.priceLabel} to send your request'
+                    : '${request.priceLabel} to confirm your session',
             style: const TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
@@ -889,10 +952,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const SizedBox(height: 4),
           Text(
             awaiting
-                ? 'The store has your payment. Don\'t pay again — the Join '
-                    'button unlocks as soon as it\'s found.'
-                : 'Pay securely in the app. The Join button unlocks as soon '
-                    'as it\'s paid.',
+                ? 'The store has your payment. Don\'t pay again — your '
+                    'request goes through as soon as it\'s found.'
+                : request.isAwaitingPayment
+                    ? 'Pay securely in the app and your request goes '
+                        'straight to our care team, with a receipt by '
+                        'email. $therapyCancellationPolicy'
+                    : 'Pay securely in the app. The Join button unlocks as '
+                        'soon as it\'s paid.',
             style: const TextStyle(
               fontSize: 12.5,
               color: Brand.textMuted,
@@ -1076,8 +1143,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _body(List<TherapyRequest> requests) {
-    final active = requests.where((r) => r.isActive).firstOrNull;
-    final past = [...requests.where((r) => !r.isActive)];
+    final active = requests.where((r) => r.isCurrent).firstOrNull;
+    // A draft that was discarded or expired never went anywhere; listing
+    // it as a past session would only puzzle people.
+    final past = [
+      ...requests.where((r) => !r.isCurrent && r.submittedAt != null),
+    ];
     return RefreshIndicator(
       onRefresh: () => _load(quiet: true),
       child: ListView(
@@ -1110,12 +1181,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
             _howItWorks(),
             const SizedBox(height: 24),
           ],
-          if (active != null)
-            _activeCard(active)
-          else
-            _bookingForm(
-              freeSession: _repo.isFreeSessionAvailable(requests),
-            ),
+          if (active != null) _activeCard(active) else _bookingForm(),
           if (active == null) ...[
             const SizedBox(height: 24),
             _reassurance(),

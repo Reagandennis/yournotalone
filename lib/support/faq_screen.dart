@@ -82,10 +82,20 @@ const _sections = [
           '— and you\'ll see who and when in the app and by email.',
     ),
     _FaqItem(
-      'Is my first session really free?',
-      'Yes. Your first session is on us — no payment needed. It\'s the '
-          'easiest way to find out whether talking to someone helps. Each '
-          'session after that is \$20, paid in the app once you\'re matched.',
+      'How much does a session cost, and when do I pay?',
+      'Each session is \$20, paid securely in the app when you book — '
+          'that\'s what sends your request to our care team, and you get a '
+          'receipt by email straight away. No subscription; you book one '
+          'session at a time.',
+    ),
+    _FaqItem(
+      'What if I need to cancel or move my session?',
+      'You can cancel in the app up to 24 hours before your session and '
+          'you\'ll be refunded in full. To move it, reply to your booking '
+          'email at least 24 hours before and we\'ll rebook you. A session '
+          'cancelled later than that, or one you don\'t join, isn\'t '
+          'refunded — your therapist has set that time aside for you. If we '
+          'or your therapist have to cancel, you\'re refunded in full.',
     ),
     _FaqItem(
       'How do sessions work?',

@@ -51,10 +51,18 @@ void main() {
       }
     });
 
-    test('a free first session says so', () {
+    test('a paid booking needs nothing more from the client', () {
       final text = describeSessionNotification(
-          'session_booked', _session(free: true), tenBefore);
-      expect(text.body, contains('Your first session is free.'));
+          'session_booked', _session(), tenBefore);
+      expect(text.body, endsWith('You\'re all set.'));
+    });
+
+    test('a missed session says it isn\'t refunded, without the topic', () {
+      final text = describeSessionNotification(
+          'session_missed', _session(), tenBefore);
+      expect(text.title, 'You missed your session');
+      expect(text.body, contains('isn\'t refunded'));
+      expect(text.body, isNot(contains('Low mood')));
     });
 
     test('a therapist hears only the client\'s first name', () {

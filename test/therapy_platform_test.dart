@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/session_payments.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/care/care_dashboard_screen.dart';
 import 'package:yournotalone/care/care_repository.dart';
@@ -23,7 +24,8 @@ TherapyRequest _request({
   String? summary,
   String? closeReason,
 }) {
-  final matched = status != 'pending';
+  final draft = status == 'awaiting_payment';
+  final matched = !draft && status != 'pending';
   return TherapyRequest(
     id: id,
     topic: 'Anxiety & stress',
@@ -33,6 +35,7 @@ TherapyRequest _request({
     isFreeSession: free,
     scheduledAt: matched ? _start : null,
     createdAt: _now.subtract(const Duration(days: 1)),
+    submittedAt: draft ? null : _now.subtract(const Duration(days: 1)),
     therapistId: matched ? 't1' : null,
     priceCents: free ? 0 : 2000,
     paymentStatus: free ? 'not_required' : payment,
@@ -55,9 +58,31 @@ class _FakeTherapy extends TherapyRepository {
 
   final List<TherapyRequest> requests;
   final rated = <(String, int, String?)>[];
+  final cancelled = <String>[];
+  var drafts = 0;
 
   @override
   Future<List<TherapyRequest>> fetchRequests() async => requests;
+
+  /// A draft the way the database saves one: unpaid, unseen by the care
+  /// team, and shown as the current request from then on.
+  @override
+  Future<TherapyRequest> requestSession({
+    required String topic,
+    List<String> availability = const [],
+    String? note,
+  }) async {
+    drafts++;
+    final draft = _request(id: 'draft-$drafts', status: 'awaiting_payment');
+    requests.insert(0, draft);
+    return draft;
+  }
+
+  @override
+  Future<void> cancelRequest(String id) async {
+    cancelled.add(id);
+    requests.removeWhere((r) => r.id == id);
+  }
 
   @override
   Future<Map<String, TherapistProfile>> fetchTherapists(
@@ -83,12 +108,26 @@ class _RefusingTherapy extends _FakeTherapy {
   final Object error;
 
   @override
-  Future<void> requestSession({
+  Future<TherapyRequest> requestSession({
     required String topic,
     List<String> availability = const [],
     String? note,
   }) async =>
       throw error;
+}
+
+/// The store side, scripted: every payment ends the same way.
+class _FixedPayments extends SessionPayments {
+  _FixedPayments(this.outcome, {required super.repository});
+
+  final SessionPaymentOutcome outcome;
+  final paidFor = <String>[];
+
+  @override
+  Future<SessionPaymentOutcome> pay(TherapyRequest request) async {
+    paidFor.add(request.id);
+    return outcome;
+  }
 }
 
 class _FakeCare extends CareRepository {
@@ -222,22 +261,34 @@ void main() {
       expect(request.canCancelAt(_now), isTrue);
     });
 
-    test('a paid session is cancelled through the care team', () {
-      expect(_request(payment: 'paid').canCancelAt(_now), isFalse);
-      expect(_request(payment: 'unpaid').canCancelAt(_now), isTrue);
+    test('a booked session can be cancelled until a day before it starts',
+        () {
+      final paid = _request(payment: 'paid');
+      expect(paid.canCancelAt(_start.subtract(const Duration(hours: 25))),
+          isTrue);
+      expect(paid.canCancelAt(_start.subtract(const Duration(hours: 23))),
+          isFalse);
+      expect(paid.isLockedInAt(_start.subtract(const Duration(hours: 23))),
+          isTrue);
+      // Not matched yet: cancel any time, the care team refunds it.
+      expect(_request(status: 'pending', payment: 'paid').canCancelAt(_now),
+          isTrue);
+      // A draft costs nothing to drop.
+      final draft = _request(status: 'awaiting_payment');
+      expect(draft.isCurrent, isTrue);
+      expect(draft.isActive, isFalse);
+      expect(draft.canCancelAt(_now), isTrue);
     });
 
-    test('a session is locked to the app once its call opens', () {
-      final session = _request(free: true);
-      final opens = _start.subtract(const Duration(minutes: 10));
-      expect(session.canCancelAt(opens.subtract(const Duration(seconds: 1))),
-          isTrue);
-      expect(session.canCancelAt(opens), isFalse);
+    test('a session stays locked to the app once its call opens', () {
+      final session = _request(payment: 'paid');
+      expect(session.canCancelAt(_start.subtract(const Duration(minutes: 10))),
+          isFalse);
       expect(session.canCancelAt(_start.add(const Duration(hours: 1))),
           isFalse);
       // A request that hasn't been matched has no start to pass.
       expect(
-          _request(status: 'pending', free: true)
+          _request(status: 'pending', payment: 'paid')
               .canCancelAt(_start.add(const Duration(days: 30))),
           isTrue);
     });
@@ -301,61 +352,105 @@ void main() {
           findsOneWidget);
     });
 
-    testWidgets('a free request waiting for a match can be cancelled',
+    testWidgets('a paid request waiting for a match can be cancelled',
         (tester) async {
       await _show(
         tester,
         TherapyScreen(
-          repository: _FakeTherapy([_request(status: 'pending', free: true)]),
+          repository: _FakeTherapy([_request(status: 'pending', payment: 'paid')]),
           clock: () => _now,
         ),
       );
       expect(find.text('Request received'), findsOneWidget);
-      expect(find.text('First session — free'), findsOneWidget);
+      expect(find.text('\$20 — paid, receipt emailed'), findsOneWidget);
       expect(find.text('Cancel request'), findsOneWidget);
+      expect(find.text('Pay \$20'), findsNothing);
       expect(find.text('Join session'), findsNothing);
     });
 
-    testWidgets('a session that has started can no longer be cancelled',
+    testWidgets('a session less than a day away can no longer be cancelled',
         (tester) async {
-      // Cancelling after attending, before the therapist tapped Finish,
-      // handed the free first session back — forever.
-      final started = _start.add(const Duration(minutes: 5));
       await _show(
         tester,
         TherapyScreen(
-          repository: _FakeTherapy([_request(free: true)]),
-          clock: () => started,
+          repository: _FakeTherapy([_request(payment: 'paid')]),
+          clock: () => _start.subtract(const Duration(hours: 23)),
         ),
       );
       expect(find.text('Join session'), findsOneWidget);
       expect(find.text('Cancel session'), findsNothing);
+      expect(find.textContaining('isn\'t refunded'), findsOneWidget);
     });
 
-    testWidgets('a session that has not opened yet can still be cancelled',
+    testWidgets('a session more than a day away can still be cancelled',
         (tester) async {
       await _show(
         tester,
         TherapyScreen(
-          repository: _FakeTherapy([_request(free: true)]),
-          clock: () => _now,
+          repository: _FakeTherapy([_request(payment: 'paid')]),
+          clock: () => _start.subtract(const Duration(hours: 25)),
         ),
       );
       expect(find.text('Cancel session'), findsOneWidget);
     });
 
-    testWidgets('after the free session, booking shows the price',
+    testWidgets('booking asks for payment up front and says what it buys',
         (tester) async {
       await _show(
         tester,
         TherapyScreen(
-          repository: _FakeTherapy(
-              [_request(status: 'completed', free: true)]),
+          repository: _FakeTherapy([_request(status: 'completed')]),
           clock: () => _now,
         ),
       );
-      expect(find.text('Sessions are \$20'), findsOneWidget);
-      expect(find.text('Request a session'), findsOneWidget);
+      expect(find.text('Sessions are \$20, paid when you book'), findsOneWidget);
+      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
+      expect(find.textContaining('up to 24 hours before'), findsWidgets);
+      expect(find.textContaining('free'), findsNothing);
+    });
+
+    testWidgets('paying sends the request; backing out discards the draft',
+        (tester) async {
+      final repo = _FakeTherapy([]);
+      final payments =
+          _FixedPayments(SessionPaymentOutcome.cancelled, repository: repo);
+      await _show(
+        tester,
+        TherapyScreen(repository: repo, payments: payments, clock: () => _now),
+      );
+      await tester.tap(find.text('Anxiety & stress'));
+      await tester.pump();
+      await tester.tap(find.text('Pay \$20 and request a session'));
+      await _settle(tester);
+
+      // The draft was saved, offered to the store, then dropped — and the
+      // form is still there with the topic chosen.
+      expect(payments.paidFor, ['draft-1']);
+      expect(repo.cancelled, ['draft-1']);
+      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
+      expect(find.text('Almost there'), findsNothing);
+    });
+
+    testWidgets('a payment the store took but the server hasn\'t seen keeps '
+        'the draft on screen', (tester) async {
+      final repo = _FakeTherapy([]);
+      final payments = _FixedPayments(
+          SessionPaymentOutcome.pendingVerification,
+          repository: repo);
+      await _show(
+        tester,
+        TherapyScreen(repository: repo, payments: payments, clock: () => _now),
+      );
+      await tester.tap(find.text('Anxiety & stress'));
+      await tester.pump();
+      await tester.tap(find.text('Pay \$20 and request a session'));
+      await _settle(tester);
+
+      expect(repo.cancelled, isEmpty);
+      expect(find.text('Almost there'), findsOneWidget);
+      expect(find.text('\$20 — pay to send your request'), findsOneWidget);
+      expect(_button('Check payment'), findsOneWidget);
+      expect(find.text('Discard'), findsOneWidget);
     });
 
     testWidgets('a refused booking shows the database\'s reason',
@@ -376,14 +471,14 @@ void main() {
       );
       await tester.tap(find.text('Anxiety & stress'));
       await tester.pump();
-      await tester.tap(find.text('Request my free session'));
+      await tester.tap(find.text('Pay \$20 and request a session'));
       await _settle(tester);
       expect(
         find.text('You already have a session on the way. Cancel it first '
             'if you need to change something.'),
         findsOneWidget,
       );
-      expect(find.text('Request my free session'), findsOneWidget);
+      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
     });
 
     testWidgets('a finished session shows the note and takes a rating',
@@ -680,7 +775,7 @@ void main() {
       expect(find.text('Rate'), findsNothing);
       // Both are over, so booking is open again.
       expect(find.text('Cancelled'), findsNothing);
-      expect(_button('Request a session'), findsOneWidget);
+      expect(_button('Pay \$20 and request a session'), findsOneWidget);
     });
 
     testWidgets('the care dashboard flags a session nobody finished',

@@ -143,10 +143,14 @@ priced at US$20 (`lib/billing/session_payments.dart`). It is in RevenueCat as a
 consumable (`prod3c624dcc89`), and the `confirm-session-payment` Edge Function
 verifies purchases with RevenueCat API v2 (`REVENUECAT_SECRET_KEY`,
 `REVENUECAT_PROJECT_ID`).
-Someone's first session is free and needs no purchase.
+Every session is paid for up front: the request is saved as a draft and only
+reaches the care team once the purchase is verified (migration 0019). The
+client is emailed a receipt with the cancellation policy (full refund up to
+24 hours before; no refund for a late cancellation or a no-show).
 
-To let a reviewer see a session without paying: book one for the review account
-from Settings → Care team and use **Waive fee**.
+To let a reviewer see a session without paying: have the review account start
+a request (it stays a draft), then open it from Settings → Care team and use
+**Waive fee** — that sends it on as if paid — and match it.
 
 ## Before each release
 

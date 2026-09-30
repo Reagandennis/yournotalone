@@ -1,8 +1,8 @@
 // Marks a therapy session paid once RevenueCat confirms the purchase.
 //
-// Every session after someone's free first one is bought in the app as a
-// one-time Google Play product, through RevenueCat. The app calls this after
-// buying (and again from "Already paid?"). The app's word is never taken for
+// Every session is bought in the app as a one-time Google Play product,
+// through RevenueCat, before the request reaches the care team. The app
+// calls this after buying (and again from "Check payment"). The app's word is never taken for
 // it: this reads RevenueCat's own record of the caller's purchases, through
 // RevenueCat API v2. Each purchase pays for exactly one session — its
 // RevenueCat purchase id goes into therapy_requests.payment_ref, which is
@@ -107,7 +107,9 @@ Deno.serve(async (req: Request) => {
   }
   if (!session || session.user_id !== user.id) return json({ error: 'not_found' }, 404);
   if (session.payment_status !== 'unpaid') return json({ paid: true });
-  if (!['pending', 'confirmed'].includes(session.status)) {
+  // A draft (awaiting_payment) is what the app pays for first; the database
+  // moves it to pending the moment the payment lands (migration 0019).
+  if (!['awaiting_payment', 'pending', 'confirmed'].includes(session.status)) {
     return json({ error: 'not_payable' }, 409);
   }
 

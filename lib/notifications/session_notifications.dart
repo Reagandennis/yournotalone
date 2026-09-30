@@ -97,9 +97,7 @@ int sessionNotificationId(String sessionId) =>
       if (client) {
         final next = unpaid
             ? 'Pay $price in the app to confirm your place.'
-            : data['is_free_session'] == true
-                ? 'Your first session is free.'
-                : 'You\'re all set.';
+            : 'You\'re all set.';
         return (
           title: 'You\'re matched with $who',
           body: '$when · $minutes min. $next',
@@ -124,6 +122,13 @@ int sessionNotificationId(String sessionId) =>
       return (
         title: 'Session cancelled',
         body: 'Your session with $who on $when has been cancelled.',
+      );
+    case 'session_missed':
+      // Only the client is told; the therapist was there.
+      return (
+        title: 'You missed your session',
+        body: '$who was in the call on $when but you didn\'t join, so this '
+            'session isn\'t refunded. You can book again in the app.',
       );
     case 'session_reminder':
       final left =

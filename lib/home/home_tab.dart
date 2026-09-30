@@ -490,7 +490,7 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                         SizedBox(height: 3),
                         Text(
-                          'Your first session is free.',
+                          '\$20 a session, paid when you book.',
                           style: TextStyle(
                             fontSize: 13,
                             color: Brand.textMuted,

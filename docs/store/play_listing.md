@@ -39,8 +39,8 @@ trigger log.
 TALK TO A REAL THERAPIST
 Private one-on-one sessions with licensed therapists, requested right from
 the app. Tell us what you'd like to focus on and when you could meet, and our
-care team matches you personally. Your first session is completely free — no
-card needed.
+care team matches you personally. Sessions are $20 each, paid securely in the
+app when you book — no subscription.
 
 GENTLE REMINDERS
 Optional daily nudges so caring for yourself becomes a habit, not an
