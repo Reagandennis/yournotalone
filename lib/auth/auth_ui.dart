@@ -11,16 +11,31 @@ class AuthScaffold extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.children,
+    this.footer,
   });
 
   final String title;
   final String subtitle;
   final List<Widget> children;
 
+  /// Pinned below the scrolling form, so it stays on screen however long
+  /// the form runs — the link between logging in and signing up, which
+  /// the Apple and Google buttons had pushed below the fold.
+  final Widget? footer;
+
   @override
   Widget build(BuildContext context) {
     final canPop = Navigator.of(context).canPop();
     return Scaffold(
+      bottomNavigationBar: footer == null
+          ? null
+          : SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(28, 0, 28, 8),
+                child: footer,
+              ),
+            ),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(

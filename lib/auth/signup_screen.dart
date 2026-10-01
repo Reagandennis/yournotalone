@@ -143,6 +143,20 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     return AuthScaffold(
+      footer: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          const Text(
+            'Already have an account?',
+            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).maybePop(),
+            child: const Text('Log in'),
+          ),
+        ],
+      ),
       title: 'Create your account',
       subtitle: 'A calmer mind starts here. It only takes a minute.',
       children: [
@@ -237,21 +251,6 @@ class _SignupScreenState extends State<SignupScreen> {
             color: Brand.textMuted,
             height: 1.5,
           ),
-        ),
-        const SizedBox(height: 18),
-        Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            const Text(
-              'Already have an account?',
-              style: TextStyle(fontSize: 14, color: Brand.textMuted),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).maybePop(),
-              child: const Text('Log in'),
-            ),
-          ],
         ),
       ],
     );

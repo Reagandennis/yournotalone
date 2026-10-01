@@ -54,6 +54,22 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return AuthScaffold(
+      footer: Wrap(
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: [
+          const Text(
+            'New here?',
+            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const SignupScreen()),
+            ),
+            child: const Text('Create an account'),
+          ),
+        ],
+      ),
       title: 'Welcome back',
       subtitle:
           'You are not alone. Log in to pick up right where you left off.',
@@ -109,23 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 12),
         ],
         const GoogleAuthButton(),
-        const SizedBox(height: 26),
-        Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            const Text(
-              'New here?',
-              style: TextStyle(fontSize: 14, color: Brand.textMuted),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SignupScreen()),
-              ),
-              child: const Text('Create an account'),
-            ),
-          ],
-        ),
       ],
     );
   }
