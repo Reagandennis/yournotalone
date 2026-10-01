@@ -8,6 +8,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../brand.dart';
 import '../legal/legal_content.dart';
 import '../legal/legal_screen.dart';
+import 'apple_auth.dart';
+import 'apple_button.dart';
 import 'auth_gate.dart';
 import 'auth_redirect.dart';
 import 'auth_ui.dart';
@@ -197,7 +199,12 @@ class _SignupScreenState extends State<SignupScreen> {
         const AuthDivider(),
         const SizedBox(height: 24),
         // Placed above the legal notice on purpose: signing up through
-        // Google is still creating an account, so the same terms apply.
+        // Apple or Google is still creating an account, so the same terms
+        // apply.
+        if (AppleAuth.isSupported) ...[
+          const AppleAuthButton(),
+          const SizedBox(height: 12),
+        ],
         const GoogleAuthButton(),
         const SizedBox(height: 18),
         Text.rich(

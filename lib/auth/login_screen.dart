@@ -3,6 +3,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import 'apple_auth.dart';
+import 'apple_button.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
 import 'google_button.dart';
@@ -102,6 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
         const SizedBox(height: 24),
         const AuthDivider(),
         const SizedBox(height: 24),
+        if (AppleAuth.isSupported) ...[
+          const AppleAuthButton(),
+          const SizedBox(height: 12),
+        ],
         const GoogleAuthButton(),
         const SizedBox(height: 26),
         Wrap(

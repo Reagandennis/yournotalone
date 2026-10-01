@@ -4,15 +4,20 @@
 // so this can only ever delete the caller's own account.
 //
 // Order matters: storage objects are removed first (they are not covered by
-// the foreign-key cascade), then the auth user — which cascades through
-// journal_entries, mood_entries, therapy_requests, recovery_habits,
-// recovery_pledges, craving_logs and deletion_requests.
+// the foreign-key cascade), then a Sign in with Apple user's access is
+// revoked with Apple (App Store guideline 5.1.1(v)), then the auth user —
+// which cascades through journal_entries, mood_entries, therapy_requests,
+// recovery_habits, recovery_pledges, craving_logs, deletion_requests and
+// apple_refresh_tokens.
 //
 // Deploy:  supabase functions deploy delete-account
-// It needs no extra secrets: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are
-// injected by the platform.
+// Secrets: APPLE_TEAM_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY — see
+//          ../_shared/apple.ts. Without them Apple users are still deleted,
+//          just not revoked with Apple.
+// SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by the platform.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
+import { appleConfigured, revokeRefreshToken } from '../_shared/apple.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -65,7 +70,27 @@ Deno.serve(async (req: Request) => {
       .eq('user_id', user.id)
       .eq('status', 'pending');
 
-    // 3. The auth user. Everything else cascades from here.
+    // 3. Revoke Sign in with Apple. Best-effort: Apple being unreachable
+    //    must not keep someone's data around against their wishes, so a
+    //    failure is logged for a manual revoke rather than thrown.
+    const { data: appleToken } = await admin
+      .from('apple_refresh_tokens')
+      .select('refresh_token')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (appleToken) {
+      if (!appleConfigured()) {
+        console.error('delete-account: Apple token not revoked, APPLE_* secrets missing', user.id);
+      } else {
+        try {
+          await revokeRefreshToken(appleToken.refresh_token);
+        } catch (error) {
+          console.error('delete-account: Apple revoke failed', user.id, error);
+        }
+      }
+    }
+
+    // 4. The auth user. Everything else cascades from here.
     const { error: deleteError } = await admin.auth.admin.deleteUser(user.id);
     if (deleteError) throw deleteError;
 
