@@ -5,6 +5,7 @@ import '../app_navigation.dart';
 import '../brand.dart';
 import '../care/therapist_sessions_screen.dart';
 import '../notifications/local_notifications.dart';
+import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
 import '../therapy/call_screen.dart';
 import '../therapy/therapy_screen.dart';
@@ -56,6 +57,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     // Catch up on session news, and keep background checks in step with
     // whether there's a session to watch.
     SessionNotifications.instance.start();
+    // People who signed up before the app asked, or who skipped the step:
+    // the system prompt once, then never again from here.
+    NotificationPermission.instance.promptIfNeverAsked();
     final payload = LocalNotifications.takeLaunchPayload();
     if (payload != null) {
       WidgetsBinding.instance

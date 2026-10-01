@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
 import '../therapy/call_screen.dart';
 import '../therapy/session_format.dart';
@@ -50,7 +51,15 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
   void initState() {
     super.initState();
     _load();
-    SessionNotifications.instance.start(askPermission: true);
+    SessionNotifications.instance.start();
+    // Therapists miss sessions too: ask properly, and point at Settings if
+    // it was refused.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        NotificationPermission.instance
+            .ensure(context, reason: NotificationReasons.therapist);
+      }
+    });
     _ticker = Timer.periodic(const Duration(seconds: 30), (_) {
       if (mounted) setState(() {});
     });

@@ -7,6 +7,7 @@ import '../billing/purchases_service.dart';
 import '../billing/session_payments.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
 import '../support/crisis_screen.dart';
 import 'call_screen.dart';
@@ -31,12 +32,14 @@ class TherapyScreen extends StatefulWidget {
     super.key,
     this.repository,
     this.payments,
+    this.notifications,
     this.clock,
   });
 
   /// Injectable so the booking flow can be exercised without a backend.
   final TherapyRepository? repository;
   final SessionPayments? payments;
+  final NotificationPermission? notifications;
 
   /// Injectable so tests can put "now" anywhere around a session.
   final DateTime Function()? clock;
@@ -58,7 +61,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
   late final _repo = widget.repository ?? TherapyRepository();
   late final _payments =
       widget.payments ?? SessionPayments(repository: _repo);
+  late final _notifications =
+      widget.notifications ?? NotificationPermission.instance;
   final _noteController = TextEditingController();
+
+  /// Whether the phone will show our notifications. While a session is on
+  /// the way and this is false, the card says so.
+  bool _notificationsOn = true;
 
   List<TherapyRequest>? _requests;
   Map<String, TherapistProfile> _therapists = const {};
@@ -119,11 +128,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
       final ratings = requests.any((r) => r.isCompleted)
           ? await _repo.fetchMyRatings()
           : const <String, int>{};
+      final notificationsOn = await _notifications.isEnabled();
       if (!mounted) return;
       setState(() {
         _requests = requests;
         _therapists = therapists;
         _myRatings = ratings;
+        _notificationsOn = notificationsOn;
         _failed = false;
       });
     } catch (e) {
@@ -163,8 +174,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
           _slots.clear();
           _noteController.clear();
           // Notifications are how they'll hear about the match and the
-          // reminder.
-          unawaited(SessionNotifications.instance.start(askPermission: true));
+          // reminder, so this is the moment to make sure they can arrive.
+          await _ensureNotifications();
           await _load();
         case SessionPaymentOutcome.cancelled:
         case SessionPaymentOutcome.unavailable:
@@ -197,6 +208,17 @@ class _TherapyScreenState extends State<TherapyScreen> {
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  /// Asks for notification permission if we never have, or shows where to
+  /// turn it on if it was refused — then starts watching for session news.
+  Future<void> _ensureNotifications() async {
+    final on = await _notifications.ensure(
+      context,
+      reason: NotificationReasons.session,
+    );
+    unawaited(SessionNotifications.instance.start());
+    if (mounted) setState(() => _notificationsOn = on);
   }
 
   /// Drops a draft nobody paid for, without ceremony.
@@ -861,6 +883,21 @@ class _TherapyScreenState extends State<TherapyScreen> {
               height: 1.4,
             ),
           ),
+          if (request.isActive && !_notificationsOn) ...[
+            const SizedBox(height: 14),
+            NotificationsOffBanner(
+              message: confirmed
+                  ? 'Notifications are off, so you won\'t get the ten-minute '
+                      'reminder for this session.'
+                  : 'Notifications are off, so you won\'t hear when you\'re '
+                      'matched.',
+              reason: NotificationReasons.session,
+              permission: _notifications,
+              onChanged: (on) {
+                if (mounted) setState(() => _notificationsOn = on);
+              },
+            ),
+          ],
           if (therapist != null) ...[
             const SizedBox(height: 14),
             TherapistCard(profile: therapist),

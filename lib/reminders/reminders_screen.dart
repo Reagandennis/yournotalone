@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../notifications/notification_permission.dart';
 import 'reminders_service.dart';
 
 /// Settings for the four daily reminders: toggle each on/off and pick
@@ -36,18 +37,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
   Future<void> _toggle(ReminderKind kind, bool on) async {
     try {
       if (on) {
-        final granted = await _service.requestPermission();
-        if (!granted) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Notifications are blocked for this app — you '
-                    'can allow them in your phone\'s settings.'),
-              ),
-            );
-          }
-          return;
-        }
+        final granted = await NotificationPermission.instance
+            .ensure(context, reason: NotificationReasons.reminders);
+        if (!granted) return;
         await _service.enable(kind, _times[kind]!);
       } else {
         await _service.disable(kind);

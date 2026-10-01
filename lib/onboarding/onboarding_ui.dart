@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
 import '../home/home_shell.dart';
+import '../notifications/notification_permission.dart';
+import 'notifications_screen.dart';
 
 /// Shared layout for the onboarding screens: optional step dots up top,
 /// scrollable content, and a pinned button area at the bottom.
@@ -163,9 +165,16 @@ Future<void> completeOnboarding(
   } catch (_) {
     // Covered by the local flag above.
   }
+  // Last stop before Home: the notification ask, while the person still
+  // has the context to say yes. Skipped when the phone already allows them.
+  final notificationsOn = await NotificationPermission.instance.isEnabled();
   if (!context.mounted) return;
   Navigator.of(context).pushAndRemoveUntil(
-    MaterialPageRoute(builder: (_) => const HomeShell()),
+    MaterialPageRoute(
+      builder: (_) => notificationsOn
+          ? const HomeShell()
+          : const NotificationsSetupScreen(),
+    ),
     (route) => false,
   );
 }
