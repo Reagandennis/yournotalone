@@ -17,6 +17,7 @@ class ToolkitTool {
     required this.open,
     this.meta,
     this.guard,
+    this.premium = true,
   });
 
   final String title;
@@ -27,6 +28,10 @@ class ToolkitTool {
   final IconData icon;
   final ToolkitArtKind art;
   final WidgetBuilder open;
+
+  /// Part of Premium. Each programme leaves one tool free as a taste, the
+  /// same way the practices do; everything else needs the subscription.
+  final bool premium;
 
   /// Replaces the "N min" line on the card when set ("Premium · 12 min").
   final String? meta;
@@ -44,6 +49,7 @@ class ToolkitLesson {
     required this.minutes,
     required this.art,
     required this.paragraphs,
+    this.premium = true,
   });
 
   final String title;
@@ -51,6 +57,9 @@ class ToolkitLesson {
   final int minutes;
   final ToolkitArtKind art;
   final List<String> paragraphs;
+
+  /// Part of Premium; the first read in each programme is free.
+  final bool premium;
 }
 
 /// Free, reputable self-help material from outside the app.

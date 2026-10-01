@@ -25,6 +25,8 @@ final stressTools = <ToolkitTool>[
     icon: Icons.air_rounded,
     art: ToolkitArtKind.sigh,
     open: _sigh,
+    // The free taste of the programme.
+    premium: false,
   ),
   const ToolkitTool(
     title: 'Tense and release',
@@ -68,6 +70,7 @@ final stressTools = <ToolkitTool>[
         '${meditationTitled(stressMeditationTitle).minutes} min',
     icon: Icons.self_improvement_rounded,
     art: ToolkitArtKind.pause,
+    premium: meditationTitled(stressMeditationTitle).premium,
     open: (_) =>
         MeditationScreen(meditation: meditationTitled(stressMeditationTitle)),
     guard: (context) => allowPractice(
@@ -85,6 +88,7 @@ final stressTools = <ToolkitTool>[
         '${breathPatternTitled(stressBreathingTitle).premium ? 'Premium · ' : ''}breathing',
     icon: Icons.waves_rounded,
     art: ToolkitArtKind.worry,
+    premium: breathPatternTitled(stressBreathingTitle).premium,
     open: (_) =>
         BreathingScreen(pattern: breathPatternTitled(stressBreathingTitle)),
     guard: (context) => allowPractice(

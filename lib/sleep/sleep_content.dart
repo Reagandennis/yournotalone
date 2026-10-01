@@ -171,6 +171,7 @@ const sleepLessons = <ToolkitLesson>[
     blurb: 'Sleep is something that happens to you, not something you do.',
     minutes: 3,
     art: ToolkitArtKind.moon,
+    premium: false,
     paragraphs: [
       'Two things decide whether you fall asleep: how much sleep pressure '
           'has built up since you last slept, and how switched on your '

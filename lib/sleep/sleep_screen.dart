@@ -32,6 +32,7 @@ class SleepScreen extends StatelessWidget {
       lessons: sleepLessons,
       resources: sleepResources,
       resourceArt: ToolkitArtKind.resources,
+      source: 'sleep',
       footer: ToolkitBanner(
         icon: Icons.graphic_eq_rounded,
         iconColor: Brand.yellow,

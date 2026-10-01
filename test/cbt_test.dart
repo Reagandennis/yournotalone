@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/purchases_service.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/cbt/activity_planner_screen.dart';
 import 'package:yournotalone/cbt/cbt_catalog.dart';
@@ -80,7 +81,39 @@ void main() {
     );
   });
 
-  testWidgets('every tool card opens its screen', (tester) async {
+  testWidgets('a free user gets one tool and one read; the rest ask for Premium',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(600, 2400);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrap(const CbtScreen()));
+    await tester.pumpAndSettle();
+
+    // Counted the way Explore counts the other pillars.
+    expect(find.text('1 free · 5 Premium'), findsOneWidget); // tools
+    expect(find.text('1 free · 2 Premium'), findsOneWidget); // reads
+    expect(find.text('Premium'), findsNWidgets(7));
+
+    // The taste opens…
+    await tester.tap(find.text('Grounding: 5-4-3-2-1'));
+    await tester.pumpAndSettle();
+    expect(find.byType(GroundingScreen), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    // …a locked tool asks for Premium instead of opening.
+    await tester.tap(find.text('Thought record'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ThoughtRecordScreen), findsNothing);
+    expect(find.text('This is part of Premium'), findsOneWidget);
+    await tester.tap(find.text('Not now'));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('every tool card opens its screen for a Premium user',
+      (tester) async {
+    PurchasesService.instance.isPro.value = true;
+    addTearDown(() => PurchasesService.instance.isPro.value = false);
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(600, 1600);
     addTearDown(tester.view.reset);

@@ -126,6 +126,7 @@ const stressLessons = <ToolkitLesson>[
     blurb: 'The problem is never the surge. It\'s the missing recovery.',
     minutes: 3,
     art: ToolkitArtKind.gauge,
+    premium: false,
     paragraphs: [
       'The stress response is a piece of good engineering. Heart rate up, '
           'attention narrowed, fuel released: it\'s what lets you swerve a '

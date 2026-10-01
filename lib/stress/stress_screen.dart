@@ -32,6 +32,7 @@ class StressScreen extends StatelessWidget {
       lessons: stressLessons,
       resources: stressResources,
       resourceArt: ToolkitArtKind.resources,
+      source: 'stress',
       footer: Column(
         children: [
           ToolkitBanner(

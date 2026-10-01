@@ -19,6 +19,8 @@ const cbtTools = <ToolkitTool>[
     icon: Icons.spa_rounded,
     art: ToolkitArtKind.grounding,
     open: _grounding,
+    // The free taste of the toolkit.
+    premium: false,
   ),
   ToolkitTool(
     title: 'Thought record',

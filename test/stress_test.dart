@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/purchases_service.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/explore_tab.dart';
 import 'package:yournotalone/stress/control_circle_screen.dart';
@@ -77,6 +78,36 @@ void main() {
     }
     expect(await _scrollTo(tester, find.text(stressLessons.first.title)), findsOneWidget);
     expect(await _scrollTo(tester, find.text(stressResources.first.title)), findsOneWidget);
+  });
+
+  testWidgets('the sigh is the free taste; tense and release needs Premium',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(600, 2400);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrap(const StressScreen()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 free · 6 Premium'), findsOneWidget);
+    await tester.tap(find.text('Physiological sigh'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SighScreen), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Tense and release'));
+    await tester.pumpAndSettle();
+    expect(find.byType(MuscleRelaxationScreen), findsNothing);
+    expect(find.text('This is part of Premium'), findsOneWidget);
+    await tester.tap(find.text('Not now'));
+    await tester.pumpAndSettle();
+
+    PurchasesService.instance.isPro.value = true;
+    addTearDown(() => PurchasesService.instance.isPro.value = false);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tense and release'));
+    await tester.pumpAndSettle();
+    expect(find.byType(MuscleRelaxationScreen), findsOneWidget);
   });
 
   testWidgets('a check-in is scored, explained and kept', (tester) async {

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/purchases_service.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/explore_tab.dart';
 import 'package:yournotalone/journal/journal_repository.dart';
@@ -127,6 +128,37 @@ void main() {
     }
     expect(await _scrollTo(tester, find.text(sleepLessons.first.title)), findsOneWidget);
     expect(await _scrollTo(tester, find.text(sleepResources.first.title)), findsOneWidget);
+  });
+
+  testWidgets('the wind-down is the free taste; the diary needs Premium',
+      (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(600, 2400);
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_wrap(const SleepScreen()));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 free · 6 Premium'), findsOneWidget);
+    await tester.tap(find.text('Wind-down plan'));
+    await tester.pumpAndSettle();
+    expect(find.byType(WindDownScreen), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Sleep diary'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SleepDiaryScreen), findsNothing);
+    expect(find.text('This is part of Premium'), findsOneWidget);
+    await tester.tap(find.text('Not now'));
+    await tester.pumpAndSettle();
+
+    // Premium opens it.
+    PurchasesService.instance.isPro.value = true;
+    addTearDown(() => PurchasesService.instance.isPro.value = false);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Sleep diary'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SleepDiaryScreen), findsOneWidget);
   });
 
   testWidgets('logging a night shows its efficiency and keeps it', (tester) async {

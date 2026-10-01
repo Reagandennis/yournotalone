@@ -31,6 +31,7 @@ class CbtScreen extends StatelessWidget {
       lessons: cbtLessons,
       resources: cbtResources,
       resourceArt: ToolkitArtKind.resources,
+      source: 'cbt',
       footer: ToolkitBanner(
         icon: Icons.favorite_rounded,
         iconColor: Brand.red,

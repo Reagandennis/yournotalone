@@ -26,6 +26,8 @@ final sleepTools = <ToolkitTool>[
     icon: Icons.nights_stay_rounded,
     art: ToolkitArtKind.windDown,
     open: _windDown,
+    // The free taste of the programme.
+    premium: false,
   ),
   const ToolkitTool(
     title: 'Put the day down',
@@ -70,6 +72,7 @@ final sleepTools = <ToolkitTool>[
         '${meditationTitled(sleepMeditationTitle).minutes} min',
     icon: Icons.self_improvement_rounded,
     art: ToolkitArtKind.moon,
+    premium: meditationTitled(sleepMeditationTitle).premium,
     open: (_) =>
         MeditationScreen(meditation: meditationTitled(sleepMeditationTitle)),
     guard: (context) => allowPractice(
@@ -87,6 +90,7 @@ final sleepTools = <ToolkitTool>[
         '${breathPatternTitled(sleepBreathingTitle).premium ? 'Premium · ' : ''}breathing',
     icon: Icons.air_rounded,
     art: ToolkitArtKind.sigh,
+    premium: breathPatternTitled(sleepBreathingTitle).premium,
     open: (_) =>
         BreathingScreen(pattern: breathPatternTitled(sleepBreathingTitle)),
     guard: (context) => allowPractice(

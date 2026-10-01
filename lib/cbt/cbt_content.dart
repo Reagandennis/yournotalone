@@ -234,6 +234,7 @@ const cbtLessons = <ToolkitLesson>[
         'whole idea.',
     minutes: 3,
     art: ToolkitArtKind.learn,
+    premium: false,
     paragraphs: [
       'Cognitive behavioural therapy starts from one observation: how we '
           'feel depends less on what happens to us than on what we make of '

@@ -117,6 +117,7 @@ class ToolkitCard extends StatelessWidget {
     required this.art,
     required this.onTap,
     this.meta,
+    this.locked = false,
   });
 
   final String title;
@@ -126,6 +127,9 @@ class ToolkitCard extends StatelessWidget {
 
   /// A small line under the blurb: "4 min", "External link".
   final String? meta;
+
+  /// Shows the Premium chip; tapping is the caller's business.
+  final bool locked;
 
   @override
   Widget build(BuildContext context) {
@@ -172,15 +176,27 @@ class ToolkitCard extends StatelessWidget {
                               height: 1.4,
                             ),
                           ),
-                          if (meta != null) ...[
+                          if (meta != null || locked) ...[
                             const SizedBox(height: 6),
-                            Text(
-                              meta!,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w600,
-                                color: ToolkitTheme.of(context).accent,
-                              ),
+                            Row(
+                              children: [
+                                if (meta != null)
+                                  Flexible(
+                                    child: Text(
+                                      meta!,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: ToolkitTheme.of(context).accent,
+                                      ),
+                                    ),
+                                  ),
+                                if (locked) ...[
+                                  if (meta != null) const SizedBox(width: 8),
+                                  const PremiumChip(),
+                                ],
+                              ],
                             ),
                           ],
                         ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../cbt/cbt_catalog.dart';
+import '../cbt/cbt_content.dart';
 import '../cbt/cbt_screen.dart';
 import '../journal/journal_hub_screen.dart';
 import '../journal/journal_prompts.dart';
@@ -9,12 +10,15 @@ import '../meditation/meditation_catalog.dart';
 import '../meditation/meditations_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../sleep/sleep_catalog.dart';
+import '../sleep/sleep_content.dart';
 import '../sleep/sleep_screen.dart';
 import '../sounds/sounds_catalog.dart';
 import '../sounds/sounds_screen.dart';
 import '../stress/stress_catalog.dart';
+import '../stress/stress_content.dart';
 import '../stress/stress_screen.dart';
 import '../therapy/therapy_screen.dart';
+import '../toolkit/toolkit_hub.dart';
 
 /// Soft grey used for the tiles and panels on this tab.
 const _tile = Color(0xFFE7E7E7);
@@ -45,14 +49,27 @@ final _pillars = <_Pillar>[
 
 /// A featured programme: a full-width coloured card inside the grey panel.
 class _Program {
-  const _Program(this.title, this.blurb, this.image, this.color, this.open);
+  const _Program(
+    this.title,
+    this.blurb,
+    this.image,
+    this.color,
+    this.open, {
+    required this.counts,
+  });
 
   final String title;
   final String blurb;
   final String image;
   final Color color;
   final RouteBuilder open;
+
+  /// "1 free · 8 Premium", counted from the programme's tools and reads.
+  final String counts;
 }
+
+String _programCounts(Iterable<bool> tools, Iterable<bool> lessons) =>
+    ToolkitHub.countLine([...tools, ...lessons]);
 
 typedef RouteBuilder = Route<void> Function();
 
@@ -63,6 +80,10 @@ final _programs = <_Program>[
     _art('cbt'),
     _cardRed,
     CbtScreen.route,
+    counts: _programCounts(
+      cbtTools.map((t) => t.premium),
+      cbtLessons.map((l) => l.premium),
+    ),
   ),
   _Program(
     'Sleep better',
@@ -70,6 +91,10 @@ final _programs = <_Program>[
     _art('sleep'),
     _cardBlue,
     SleepScreen.route,
+    counts: _programCounts(
+      sleepTools.map((t) => t.premium),
+      sleepLessons.map((l) => l.premium),
+    ),
   ),
   _Program(
     'Manage stress',
@@ -77,6 +102,10 @@ final _programs = <_Program>[
     _art('stress'),
     _cardYellow,
     StressScreen.route,
+    counts: _programCounts(
+      stressTools.map((t) => t.premium),
+      stressLessons.map((l) => l.premium),
+    ),
   ),
 ];
 
@@ -98,14 +127,34 @@ class _Collection {
 }
 
 final _collections = <_Collection>[
-  _Collection('Breathing exercises', breathPatterns.length, 'rhythms',
-      _cardBlue, (_) => const MeditationsScreen()),
-  _Collection('Guided meditations', meditations.length, 'sessions',
-      Brand.ink, (_) => const MeditationsScreen()),
-  _Collection('Wellbeing sounds', soundsCatalog.length, 'loops',
-      _cardYellow, (_) => const SoundsScreen()),
-  _Collection('Journal prompts', journalPrompts.length, 'prompts',
-      _cardRed, (_) => const JournalHubScreen()),
+  _Collection(
+    'Breathing exercises',
+    breathPatterns.length,
+    'rhythms',
+    _cardBlue,
+    (_) => const MeditationsScreen(),
+  ),
+  _Collection(
+    'Guided meditations',
+    meditations.length,
+    'sessions',
+    Brand.ink,
+    (_) => const MeditationsScreen(),
+  ),
+  _Collection(
+    'Wellbeing sounds',
+    soundsCatalog.length,
+    'loops',
+    _cardYellow,
+    (_) => const SoundsScreen(),
+  ),
+  _Collection(
+    'Journal prompts',
+    journalPrompts.length,
+    'prompts',
+    _cardRed,
+    (_) => const JournalHubScreen(),
+  ),
 ];
 
 /// Explore tab: search, the four pillars as tiles, featured programmes,
@@ -122,10 +171,8 @@ class ExploreTab extends StatelessWidget {
       borderRadius: BorderRadius.circular(_radius),
       child: InkWell(
         borderRadius: BorderRadius.circular(_radius),
-        onTap: () => showSearch(
-          context: context,
-          delegate: _ExploreSearchDelegate(),
-        ),
+        onTap: () =>
+            showSearch(context: context, delegate: _ExploreSearchDelegate()),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 18, vertical: 13),
           child: Row(
@@ -186,12 +233,12 @@ class ExploreTab extends StatelessWidget {
 
   Widget _pillarGrid(BuildContext context) {
     Widget row(_Pillar a, _Pillar b) => Row(
-          children: [
-            Expanded(child: _pillarTile(context, a)),
-            const SizedBox(width: 12),
-            Expanded(child: _pillarTile(context, b)),
-          ],
-        );
+      children: [
+        Expanded(child: _pillarTile(context, a)),
+        const SizedBox(width: 12),
+        Expanded(child: _pillarTile(context, b)),
+      ],
+    );
     return Column(
       children: [
         row(_pillars[0], _pillars[1]),
@@ -238,6 +285,15 @@ class ExploreTab extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           color: Colors.white,
                           height: 1.3,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        program.counts,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white70,
                         ),
                       ),
                     ],
@@ -333,8 +389,11 @@ class ExploreTab extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios_rounded,
-                    size: 14, color: collection.foreground),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: collection.foreground,
+                ),
               ],
             ),
           ),
@@ -451,38 +510,90 @@ class _SearchItem {
 /// the usual Premium gating in place.
 final _searchItems = <_SearchItem>[
   for (final p in breathPatterns)
-    _SearchItem(p.title, 'Breathing · ${p.rhythmLabel}', Icons.air_rounded,
-        (_) => const MeditationsScreen()),
+    _SearchItem(
+      p.title,
+      'Breathing · ${p.rhythmLabel}',
+      Icons.air_rounded,
+      (_) => const MeditationsScreen(),
+    ),
   for (final m in meditations)
-    _SearchItem(m.title, 'Meditation · ${m.minutes} min', m.icon,
-        (_) => const MeditationsScreen()),
+    _SearchItem(
+      m.title,
+      'Meditation · ${m.minutes} min',
+      m.icon,
+      (_) => const MeditationsScreen(),
+    ),
   for (final s in soundsCatalog)
-    _SearchItem(s.title, 'Sound · ${s.category.label}', s.icon,
-        (_) => const SoundsScreen()),
+    _SearchItem(
+      s.title,
+      'Sound · ${s.category.label}',
+      s.icon,
+      (_) => const SoundsScreen(),
+    ),
   for (final p in journalPrompts)
-    _SearchItem(p.title, 'Journal prompt', p.icon,
-        (_) => const JournalHubScreen()),
+    _SearchItem(
+      p.title,
+      'Journal prompt',
+      p.icon,
+      (_) => const JournalHubScreen(),
+    ),
   for (final t in cbtTools)
-    _SearchItem(t.title, 'CBT · ${t.minutes} min', t.icon,
-        (_) => const CbtScreen()),
+    _SearchItem(
+      t.title,
+      'CBT · ${t.minutes} min',
+      t.icon,
+      (_) => const CbtScreen(),
+    ),
   for (final t in sleepTools)
-    _SearchItem(t.title, 'Sleep · ${t.meta ?? '${t.minutes} min'}', t.icon,
-        (_) => const SleepScreen()),
+    _SearchItem(
+      t.title,
+      'Sleep · ${t.meta ?? '${t.minutes} min'}',
+      t.icon,
+      (_) => const SleepScreen(),
+    ),
   for (final t in stressTools)
-    _SearchItem(t.title, 'Stress · ${t.meta ?? '${t.minutes} min'}', t.icon,
-        (_) => const StressScreen()),
-  _SearchItem('Urge surfing', 'Recovery · 8 min', Icons.surfing_rounded,
-      (_) => const RecoveryScreen()),
-  _SearchItem('HALT check', 'Recovery', Icons.psychology_alt_rounded,
-      (_) => const RecoveryScreen()),
-  _SearchItem('Play the tape forward', 'Recovery', Icons.movie_filter_rounded,
-      (_) => const RecoveryScreen()),
-  _SearchItem('My commitments', 'Recovery · streaks', Icons.verified_rounded,
-      (_) => const RecoveryScreen()),
-  _SearchItem('Milestones', 'Recovery', Icons.emoji_events_rounded,
-      (_) => const RecoveryScreen()),
-  _SearchItem('Trigger tracker', 'Recovery', Icons.bolt_rounded,
-      (_) => const RecoveryScreen()),
+    _SearchItem(
+      t.title,
+      'Stress · ${t.meta ?? '${t.minutes} min'}',
+      t.icon,
+      (_) => const StressScreen(),
+    ),
+  _SearchItem(
+    'Urge surfing',
+    'Recovery · 8 min',
+    Icons.surfing_rounded,
+    (_) => const RecoveryScreen(),
+  ),
+  _SearchItem(
+    'HALT check',
+    'Recovery',
+    Icons.psychology_alt_rounded,
+    (_) => const RecoveryScreen(),
+  ),
+  _SearchItem(
+    'Play the tape forward',
+    'Recovery',
+    Icons.movie_filter_rounded,
+    (_) => const RecoveryScreen(),
+  ),
+  _SearchItem(
+    'My commitments',
+    'Recovery · streaks',
+    Icons.verified_rounded,
+    (_) => const RecoveryScreen(),
+  ),
+  _SearchItem(
+    'Milestones',
+    'Recovery',
+    Icons.emoji_events_rounded,
+    (_) => const RecoveryScreen(),
+  ),
+  _SearchItem(
+    'Trigger tracker',
+    'Recovery',
+    Icons.bolt_rounded,
+    (_) => const RecoveryScreen(),
+  ),
 ];
 
 class _ExploreSearchDelegate extends SearchDelegate<void> {
@@ -508,18 +619,18 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
 
   @override
   List<Widget> buildActions(BuildContext context) => [
-        if (query.isNotEmpty)
-          IconButton(
-            icon: const Icon(Icons.close_rounded),
-            onPressed: () => query = '',
-          ),
-      ];
+    if (query.isNotEmpty)
+      IconButton(
+        icon: const Icon(Icons.close_rounded),
+        onPressed: () => query = '',
+      ),
+  ];
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
-        icon: const Icon(Icons.arrow_back_rounded),
-        onPressed: () => close(context, null),
-      );
+    icon: const Icon(Icons.arrow_back_rounded),
+    onPressed: () => close(context, null),
+  );
 
   @override
   Widget buildResults(BuildContext context) => _list(context);
@@ -532,10 +643,12 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
     final hits = q.isEmpty
         ? _searchItems
         : _searchItems
-            .where((i) =>
-                i.title.toLowerCase().contains(q) ||
-                i.meta.toLowerCase().contains(q))
-            .toList();
+              .where(
+                (i) =>
+                    i.title.toLowerCase().contains(q) ||
+                    i.meta.toLowerCase().contains(q),
+              )
+              .toList();
     if (hits.isEmpty) {
       return const Center(
         child: Padding(

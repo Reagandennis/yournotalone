@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../home/home_ui.dart';
 import 'toolkit_art.dart';
 import 'toolkit_content.dart';
 import 'toolkit_lesson_screen.dart';
@@ -20,6 +22,7 @@ class ToolkitHub extends StatelessWidget {
     required this.lessons,
     required this.resources,
     required this.resourceArt,
+    required this.source,
     this.toolsTitle = 'Tools',
     this.lessonsTitle = 'Learn the ideas',
     this.resourcesIntro =
@@ -37,6 +40,9 @@ class ToolkitHub extends StatelessWidget {
   final List<ToolkitLesson> lessons;
   final List<ToolkitResource> resources;
   final ToolkitArtKind resourceArt;
+
+  /// Names the programme in upgrade-sheet analytics ("cbt", "sleep").
+  final String source;
   final String toolsTitle;
   final String lessonsTitle;
   final String resourcesIntro;
@@ -47,13 +53,53 @@ class ToolkitHub extends StatelessWidget {
   /// Small print at the very end.
   final String? footnote;
 
+  /// False, after showing the upgrade sheet, when [item] needs Premium
+  /// and the person doesn't have it.
+  bool _allow(
+    BuildContext context, {
+    required bool premium,
+    required String item,
+  }) {
+    if (!premium || isPremiumUser()) return true;
+    showUpgradeSheet(
+      context,
+      item: item,
+      source: 'toolkit:$source',
+      title: 'This is part of Premium',
+      message:
+          'Free includes a taste of each programme. Premium unlocks '
+          'every tool and read — and $introOffer.',
+    );
+    return false;
+  }
+
   void _open(BuildContext context, ToolkitTool tool) {
+    if (!_allow(context, premium: tool.premium, item: tool.title)) return;
     if (tool.guard != null && !tool.guard!(context)) return;
     Navigator.of(context).push(MaterialPageRoute(builder: tool.open));
   }
 
+  void _read(BuildContext context, ToolkitLesson lesson) {
+    if (!_allow(context, premium: lesson.premium, item: lesson.title)) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ToolkitLessonScreen(lesson: lesson, accent: accent),
+      ),
+    );
+  }
+
+  /// "1 free · 6 Premium", the way Explore counts the other pillars.
+  static String countLine(Iterable<bool> premiumFlags) {
+    final locked = premiumFlags.where((p) => p).length;
+    final free = premiumFlags.length - locked;
+    return '$free free · $locked Premium';
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      PremiumBuilder(builder: (context, premium) => _page(context, premium));
+
+  Widget _page(BuildContext context, bool premium) {
     return ToolkitScaffold(
       accent: accent,
       title: title,
@@ -78,30 +124,33 @@ class ToolkitHub extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        ToolkitSection(title: toolsTitle),
+        ToolkitSection(
+          title: toolsTitle,
+          subtitle: countLine(tools.map((t) => t.premium)),
+        ),
         for (final tool in tools)
           ToolkitCard(
             title: tool.title,
             blurb: tool.blurb,
             meta: tool.meta ?? '${tool.minutes} min',
             art: tool.art,
+            locked: tool.premium && !premium,
             onTap: () => _open(context, tool),
           ),
         if (lessons.isNotEmpty) ...[
           const SizedBox(height: 14),
-          ToolkitSection(title: lessonsTitle),
+          ToolkitSection(
+            title: lessonsTitle,
+            subtitle: countLine(lessons.map((l) => l.premium)),
+          ),
           for (final lesson in lessons)
             ToolkitCard(
               title: lesson.title,
               blurb: lesson.blurb,
               meta: '${lesson.minutes} min read',
               art: lesson.art,
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) =>
-                      ToolkitLessonScreen(lesson: lesson, accent: accent),
-                ),
-              ),
+              locked: lesson.premium && !premium,
+              onTap: () => _read(context, lesson),
             ),
         ],
         if (resources.isNotEmpty) ...[
