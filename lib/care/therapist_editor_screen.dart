@@ -143,6 +143,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final existing = widget.therapist;
     final photoUrl = _removePhoto ? null : _existing?.photoUrl;
     final photo = _photo;
@@ -188,7 +189,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                               _photo = null;
                               _removePhoto = true;
                             }),
-                    style: TextButton.styleFrom(foregroundColor: Brand.red),
+                    style: TextButton.styleFrom(foregroundColor: c.red),
                     child: const Text('Remove'),
                   ),
               ],
@@ -297,14 +298,14 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
               contentPadding: EdgeInsets.zero,
               value: _active,
               onChanged: (value) => setState(() => _active = value),
-              title: const Text(
+              title: Text(
                 'Taking new clients',
-                style: TextStyle(fontSize: 14.5, color: Brand.ink),
+                style: TextStyle(fontSize: 14.5, color: c.ink),
               ),
-              subtitle: const Text(
+              subtitle: Text(
                 'When off, they can\'t be matched. Their booked and past '
                 'sessions stay.',
-                style: TextStyle(fontSize: 12.5, color: Brand.textMuted),
+                style: TextStyle(fontSize: 12.5, color: c.textMuted),
               ),
             ),
             const SizedBox(height: 18),
@@ -323,12 +324,12 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
             ),
             if (existing == null) ...[
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'They\'ll get an email explaining how to sign in and find '
                 'their sessions.',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: Brand.textMuted,
+                  color: c.textMuted,
                   height: 1.5,
                 ),
               ),
@@ -337,12 +338,12 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
               const SizedBox(height: 30),
               const SectionHeader(title: 'Client feedback'),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Only the care team sees individual ratings. Clients see an '
                 'average once there are three.',
                 style: TextStyle(
                   fontSize: 12.5,
-                  color: Brand.textMuted,
+                  color: c.textMuted,
                   height: 1.5,
                 ),
               ),
@@ -356,11 +357,12 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
   }
 
   Widget _stats(AdminTherapist therapist) {
+    final c = context.brand;
     final rating = therapist.profile.ratingAverage;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0x0A191919),
+        color: c.tint(Pillars.black, 0.04),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -369,10 +371,10 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
           Text(
             '${therapist.upcomingSessions} upcoming · '
             '${therapist.completedSessions} completed',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           if (rating != null) ...[
@@ -384,7 +386,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 Text(
                   '${rating.toStringAsFixed(1)} from '
                   '${therapist.profile.ratingCount}',
-                  style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+                  style: TextStyle(fontSize: 12, color: c.textMuted),
                 ),
               ],
             ),
@@ -398,7 +400,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
             style: TextStyle(
               fontSize: 12.5,
               height: 1.45,
-              color: therapist.hasAccount ? Brand.textMuted : Brand.red,
+              color: therapist.hasAccount ? c.textMuted : c.red,
             ),
           ),
         ],
@@ -407,13 +409,15 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
   }
 
   Widget _feedbackRow(AdminTherapyRequest item) {
+    final c = context.brand;
     final when = item.request.scheduledAt ?? item.request.createdAt;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
+        color: c.card,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Brand.border, width: 1.2),
+        border: Border.all(color: c.border, width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -424,7 +428,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
               const Spacer(),
               Text(
                 formatDate(when),
-                style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+                style: TextStyle(fontSize: 12, color: c.textMuted),
               ),
             ],
           ),
@@ -432,13 +436,13 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
             const SizedBox(height: 6),
             Text(
               item.clientComment!,
-              style: const TextStyle(fontSize: 13, color: Brand.ink, height: 1.45),
+              style: TextStyle(fontSize: 13, color: c.ink, height: 1.45),
             ),
           ],
           const SizedBox(height: 4),
           Text(
             item.clientLabel,
-            style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+            style: TextStyle(fontSize: 12, color: c.textMuted),
           ),
         ],
       ),

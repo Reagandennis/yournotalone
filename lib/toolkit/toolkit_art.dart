@@ -48,7 +48,9 @@ class ToolkitArt extends StatelessWidget {
       width: size,
       height: size,
       child: RepaintBoundary(
-        child: CustomPaint(painter: _ToolkitArtPainter(kind)),
+        child: CustomPaint(
+          painter: _ToolkitArtPainter(kind, _paletteFor(context.brand)),
+        ),
       ),
     );
   }
@@ -62,10 +64,58 @@ const _mint = Color(0xFFBFE3CF);
 const _green = Color(0xFF3E9B5B);
 const _stone = Color(0xFFD9D4CC);
 
+/// The colours an illustration is drawn in, for one mode. Resolved from
+/// the theme in [ToolkitArt.build], since a painter can't read it; a
+/// record, so two palettes compare by their colours.
+typedef _Palette = ({
+  Color red,
+  Color blue,
+  Color yellow,
+  Color green,
+  Color ink,
+  Color peach,
+  Color sky,
+  Color sand,
+  Color mint,
+  Color stone,
+  Color cut,
+  Color mark,
+});
+
+_Palette _paletteFor(BrandColors c) {
+  // On paper the soft tints are pillar colours mixed with white. On navy
+  // they're the lightened pillar colours mixed into the page instead:
+  // muted mid-tones that still stand off a dark card, and stay quieter
+  // than the shapes beside them.
+  Color soft(Color light, Color pillar) =>
+      c.isDark ? Color.lerp(c.accent(pillar), c.background, 0.5)! : light;
+  return (
+    red: c.art(Pillars.red),
+    blue: c.art(Pillars.blue),
+    yellow: c.art(Pillars.yellow),
+    green: c.art(_green),
+    // Ink strokes and shapes on the page: off-white in the dark, like the
+    // black pillar of the dark logo.
+    ink: c.ink,
+    peach: soft(_peach, Pillars.red),
+    sky: soft(_sky, Pillars.blue),
+    sand: soft(_sand, Pillars.yellow),
+    mint: soft(_mint, _green),
+    stone: soft(_stone, Pillars.black),
+    // White cut-outs on a coloured shape: ruled lines, a tick. The shapes
+    // lighten in the dark, so the cut-outs turn to the navy of the page.
+    cut: c.isDark ? c.background : Colors.white,
+    // Small ink marks on a bright shape, such as an eye on a pebble, stay
+    // dark in both modes, like the face on a mood character.
+    mark: c.isDark ? c.background : c.ink,
+  );
+}
+
 class _ToolkitArtPainter extends CustomPainter {
-  const _ToolkitArtPainter(this.kind);
+  const _ToolkitArtPainter(this.kind, this.p);
 
   final ToolkitArtKind kind;
+  final _Palette p;
 
   Paint _fill(Color colour) => Paint()
     ..color = colour
@@ -136,7 +186,7 @@ class _ToolkitArtPainter extends CustomPainter {
 
   /// A crescent over a dark hill, two small stars keeping it company.
   void _moon(Canvas c) {
-    c.drawOval(const Rect.fromLTWH(0.2, 0.74, 1.1, 0.7), _fill(Brand.blue));
+    c.drawOval(const Rect.fromLTWH(0.2, 0.74, 1.1, 0.7), _fill(p.blue));
     final moon = Path.combine(
       PathOperation.difference,
       Path()..addOval(
@@ -146,10 +196,10 @@ class _ToolkitArtPainter extends CustomPainter {
         Rect.fromCircle(center: const Offset(0.72, 0.34), radius: 0.27),
       ),
     );
-    c.drawPath(moon, _fill(Brand.yellow));
-    c.drawPath(_spark(0.18, 0.22, 0.09), _fill(_sand));
-    c.drawPath(_spark(0.9, 0.62, 0.06), _fill(_peach));
-    c.drawCircle(const Offset(0.3, 0.5), 0.035, _fill(_sky));
+    c.drawPath(moon, _fill(p.yellow));
+    c.drawPath(_spark(0.18, 0.22, 0.09), _fill(p.sand));
+    c.drawPath(_spark(0.9, 0.62, 0.06), _fill(p.peach));
+    c.drawCircle(const Offset(0.3, 0.5), 0.035, _fill(p.sky));
   }
 
   /// A notebook with ruled lines and a moon in the corner: last night,
@@ -160,19 +210,19 @@ class _ToolkitArtPainter extends CustomPainter {
         const Rect.fromLTWH(0.34, 0.16, 0.7, 0.92),
         const Radius.circular(0.08),
       ),
-      _fill(Brand.blue),
+      _fill(p.blue),
     );
-    c.drawRect(const Rect.fromLTWH(0.34, 0.16, 0.1, 0.92), _fill(_sky));
+    c.drawRect(const Rect.fromLTWH(0.34, 0.16, 0.1, 0.92), _fill(p.sky));
     final line = Paint()
-      ..color = Colors.white
+      ..color = p.cut
       ..strokeWidth = 0.05
       ..strokeCap = StrokeCap.round;
     for (var i = 0; i < 4; i++) {
       final y = 0.36 + i * 0.16;
       c.drawLine(Offset(0.56, y), Offset(i == 3 ? 0.78 : 0.94, y), line);
     }
-    c.drawCircle(const Offset(0.16, 0.3), 0.13, _fill(Brand.yellow));
-    c.drawCircle(const Offset(0.12, 0.72), 0.05, _fill(Brand.red));
+    c.drawCircle(const Offset(0.16, 0.3), 0.13, _fill(p.yellow));
+    c.drawCircle(const Offset(0.12, 0.72), 0.05, _fill(p.red));
   }
 
   /// Three ticked rows on a card: tomorrow, already handled.
@@ -182,11 +232,11 @@ class _ToolkitArtPainter extends CustomPainter {
         const Rect.fromLTWH(0.24, 0.1, 0.9, 0.9),
         const Radius.circular(0.1),
       ),
-      _fill(_peach),
+      _fill(p.peach),
     );
-    final colours = [Brand.red, Brand.blue, Brand.yellow];
+    final colours = [p.red, p.blue, p.yellow];
     final line = Paint()
-      ..color = Colors.white
+      ..color = p.cut
       ..strokeWidth = 0.06
       ..strokeCap = StrokeCap.round;
     for (var i = 0; i < 3; i++) {
@@ -200,25 +250,25 @@ class _ToolkitArtPainter extends CustomPainter {
       );
       c.drawLine(Offset(0.6, y), Offset(i == 1 ? 0.8 : 1.0, y), line);
     }
-    c.drawCircle(const Offset(0.12, 0.84), 0.09, _fill(Brand.ink));
+    c.drawCircle(const Offset(0.12, 0.84), 0.09, _fill(p.ink));
   }
 
   /// A figure up in the small hours, a lamp glowing low beside them.
   void _awake(Canvas c) {
-    c.drawRect(const Rect.fromLTWH(0.62, 0.0, 0.5, 1.1), _fill(_sky));
-    c.drawCircle(const Offset(0.82, 0.3), 0.2, _fill(_sand));
-    c.drawCircle(const Offset(0.82, 0.3), 0.1, _fill(Brand.yellow));
-    c.drawRect(const Rect.fromLTWH(0.8, 0.4, 0.04, 0.4), _fill(Brand.ink));
+    c.drawRect(const Rect.fromLTWH(0.62, 0.0, 0.5, 1.1), _fill(p.sky));
+    c.drawCircle(const Offset(0.82, 0.3), 0.2, _fill(p.sand));
+    c.drawCircle(const Offset(0.82, 0.3), 0.1, _fill(p.yellow));
+    c.drawRect(const Rect.fromLTWH(0.8, 0.4, 0.04, 0.4), _fill(p.ink));
     // The person: a pillar body and a round head, like the logo bars.
     c.drawRRect(
       RRect.fromRectAndRadius(
         const Rect.fromLTWH(0.24, 0.44, 0.22, 0.66),
         const Radius.circular(0.11),
       ),
-      _fill(Brand.ink),
+      _fill(p.ink),
     );
-    c.drawCircle(const Offset(0.35, 0.3), 0.12, _fill(Brand.ink));
-    c.drawCircle(const Offset(0.1, 0.16), 0.05, _fill(Brand.red));
+    c.drawCircle(const Offset(0.35, 0.3), 0.12, _fill(p.ink));
+    c.drawCircle(const Offset(0.1, 0.16), 0.05, _fill(p.red));
   }
 
   /// Three habit tiles, one already ticked.
@@ -230,11 +280,11 @@ class _ToolkitArtPainter extends CustomPainter {
       ),
       _fill(colour),
     );
-    tile(0.56, 0.06, Brand.yellow);
-    tile(0.3, 0.36, Brand.blue);
-    tile(0.6, 0.66, _green);
+    tile(0.56, 0.06, p.yellow);
+    tile(0.3, 0.36, p.blue);
+    tile(0.6, 0.66, p.green);
     final tick = Paint()
-      ..color = Colors.white
+      ..color = p.cut
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.06
       ..strokeCap = StrokeCap.round
@@ -246,22 +296,22 @@ class _ToolkitArtPainter extends CustomPainter {
         ..lineTo(0.88, 0.76),
       tick,
     );
-    c.drawCircle(const Offset(0.14, 0.2), 0.07, _fill(Brand.red));
+    c.drawCircle(const Offset(0.14, 0.2), 0.07, _fill(p.red));
   }
 
   /// The sun going down behind a blue horizon: lights dimming on purpose.
   void _windDown(Canvas c) {
-    c.drawCircle(const Offset(0.62, 0.6), 0.44, _fill(_sand));
-    c.drawCircle(const Offset(0.62, 0.6), 0.27, _fill(Brand.yellow));
+    c.drawCircle(const Offset(0.62, 0.6), 0.44, _fill(p.sand));
+    c.drawCircle(const Offset(0.62, 0.6), 0.27, _fill(p.yellow));
     c.drawRRect(
       RRect.fromRectAndCorners(
         const Rect.fromLTWH(0.1, 0.62, 1.1, 0.5),
         topLeft: const Radius.circular(0.16),
       ),
-      _fill(Brand.blue),
+      _fill(p.blue),
     );
-    c.drawOval(const Rect.fromLTWH(0.66, 0.72, 0.5, 0.36), _fill(_sky));
-    c.drawCircle(const Offset(0.14, 0.24), 0.06, _fill(Brand.red));
+    c.drawOval(const Rect.fromLTWH(0.66, 0.72, 0.5, 0.36), _fill(p.sky));
+    c.drawCircle(const Offset(0.14, 0.24), 0.06, _fill(p.red));
   }
 
   // ── Stress ───────────────────────────────────────────────────────
@@ -270,7 +320,7 @@ class _ToolkitArtPainter extends CustomPainter {
   void _gauge(Canvas c) {
     const centre = Offset(0.6, 0.72);
     final track = Paint()
-      ..color = _stone
+      ..color = p.stone
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.16
       ..strokeCap = StrokeCap.round;
@@ -286,41 +336,43 @@ class _ToolkitArtPainter extends CustomPainter {
       math.pi,
       math.pi * 0.62,
       false,
-      track..color = Brand.yellow,
+      track..color = p.yellow,
     );
     c.drawArc(
       Rect.fromCircle(center: centre, radius: 0.42),
       math.pi * 1.62,
       math.pi * 0.16,
       false,
-      track..color = Brand.red,
+      track..color = p.red,
     );
     final needle = Paint()
-      ..color = Brand.ink
+      ..color = p.ink
       ..strokeWidth = 0.06
       ..strokeCap = StrokeCap.round;
     c.drawLine(centre, centre + const Offset(0.14, -0.34), needle);
-    c.drawCircle(centre, 0.07, _fill(Brand.ink));
-    c.drawRect(const Rect.fromLTWH(0.08, 0.14, 0.12, 0.12), _fill(Brand.blue));
+    c.drawCircle(centre, 0.07, _fill(p.ink));
+    c.drawRect(const Rect.fromLTWH(0.08, 0.14, 0.12, 0.12), _fill(p.blue));
   }
 
   /// Three rings — control, influence, everything else — with you in the
   /// middle.
   void _circles(Canvas c) {
     const centre = Offset(0.62, 0.58);
-    c.drawCircle(centre, 0.46, _fill(_sky));
-    c.drawCircle(centre, 0.3, _fill(Brand.blue));
-    c.drawCircle(centre, 0.14, _fill(Brand.yellow));
-    c.drawCircle(centre, 0.05, _fill(Brand.ink));
-    c.drawRect(const Rect.fromLTWH(0.06, 0.1, 0.12, 0.12), _fill(Brand.red));
-    c.drawCircle(const Offset(0.14, 0.86), 0.06, _fill(_peach));
+    c.drawCircle(centre, 0.46, _fill(p.sky));
+    c.drawCircle(centre, 0.3, _fill(p.blue));
+    c.drawCircle(centre, 0.14, _fill(p.yellow));
+    c.drawCircle(centre, 0.05, _fill(p.mark));
+    c.drawRect(const Rect.fromLTWH(0.06, 0.1, 0.12, 0.12), _fill(p.red));
+    c.drawCircle(const Offset(0.14, 0.86), 0.06, _fill(p.peach));
   }
 
   /// Two short waves in and one long wave out.
   void _sigh(Canvas c) {
-    c.drawCircle(const Offset(0.66, 0.56), 0.4, _fill(Brand.yellow));
+    c.drawCircle(const Offset(0.66, 0.56), 0.4, _fill(p.yellow));
+    // The breath runs mostly over the yellow disc, so it keeps the logo's
+    // blue in the dark too: the lightened blue fades against the yellow.
     final breath = Paint()
-      ..color = Brand.blue
+      ..color = Pillars.blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.07
       ..strokeCap = StrokeCap.round;
@@ -330,8 +382,8 @@ class _ToolkitArtPainter extends CustomPainter {
       ..quadraticBezierTo(0.44, 0.26, 0.54, 0.44)
       ..cubicTo(0.7, 0.7, 0.86, 0.92, 1.08, 0.84);
     c.drawPath(path, breath);
-    c.drawCircle(const Offset(0.16, 0.2), 0.06, _fill(Brand.red));
-    c.drawCircle(const Offset(0.92, 0.22), 0.05, _fill(_sky));
+    c.drawCircle(const Offset(0.16, 0.2), 0.06, _fill(p.red));
+    c.drawCircle(const Offset(0.92, 0.22), 0.05, _fill(p.sky));
   }
 
   /// Three bands, tight to loose: tense, then let go.
@@ -343,12 +395,12 @@ class _ToolkitArtPainter extends CustomPainter {
       ),
       _fill(colour),
     );
-    band(0.12, 0.44, Brand.ink);
-    band(0.42, 0.64, Brand.blue);
-    band(0.72, 0.84, _sand);
+    band(0.12, 0.44, p.ink);
+    band(0.42, 0.64, p.blue);
+    band(0.72, 0.84, p.sand);
     // A pulse of tension leaving the top band.
     final zig = Paint()
-      ..color = Brand.yellow
+      ..color = p.yellow
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.06
       ..strokeCap = StrokeCap.round
@@ -361,13 +413,13 @@ class _ToolkitArtPainter extends CustomPainter {
         ..lineTo(0.26, 0.12),
       zig,
     );
-    c.drawCircle(const Offset(0.14, 0.62), 0.06, _fill(Brand.red));
+    c.drawCircle(const Offset(0.14, 0.62), 0.06, _fill(p.red));
   }
 
   /// A battery a third full, and the spark that refills it.
   void _battery(Canvas c) {
     final shell = Paint()
-      ..color = Brand.ink
+      ..color = p.ink
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.07;
     c.drawRRect(
@@ -382,34 +434,36 @@ class _ToolkitArtPainter extends CustomPainter {
         const Rect.fromLTWH(0.98, 0.42, 0.08, 0.16),
         const Radius.circular(0.03),
       ),
-      _fill(Brand.ink),
+      _fill(p.ink),
     );
     c.drawRRect(
       RRect.fromRectAndRadius(
         const Rect.fromLTWH(0.37, 0.37, 0.22, 0.26),
         const Radius.circular(0.05),
       ),
-      _fill(Brand.yellow),
+      _fill(p.yellow),
     );
-    c.drawPath(_spark(0.18, 0.2, 0.14), _fill(_green));
-    c.drawCircle(const Offset(0.8, 0.88), 0.07, _fill(Brand.red));
-    c.drawCircle(const Offset(0.16, 0.8), 0.05, _fill(_sky));
+    c.drawPath(_spark(0.18, 0.2, 0.14), _fill(p.green));
+    c.drawCircle(const Offset(0.8, 0.88), 0.07, _fill(p.red));
+    c.drawCircle(const Offset(0.16, 0.8), 0.05, _fill(p.sky));
   }
 
   /// A pause mark on a warm disc: permission to stop for a minute.
   void _pause(Canvas c) {
-    c.drawCircle(const Offset(0.62, 0.56), 0.42, _fill(Brand.yellow));
+    c.drawCircle(const Offset(0.62, 0.56), 0.42, _fill(p.yellow));
+    // The bars sit on the disc, not the page: the logo's blue in both
+    // modes, as the lightened blue fades against the yellow.
     for (final x in [0.48, 0.66]) {
       c.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(x, 0.34, 0.12, 0.44),
           const Radius.circular(0.06),
         ),
-        _fill(Brand.blue),
+        _fill(Pillars.blue),
       );
     }
-    c.drawCircle(const Offset(0.12, 0.2), 0.07, _fill(Brand.red));
-    c.drawCircle(const Offset(0.14, 0.86), 0.05, _fill(_stone));
+    c.drawCircle(const Offset(0.12, 0.2), 0.07, _fill(p.red));
+    c.drawCircle(const Offset(0.14, 0.86), 0.05, _fill(p.stone));
   }
 
   /// A thought rising out of a solid base: three bubbles climbing away
@@ -421,19 +475,19 @@ class _ToolkitArtPainter extends CustomPainter {
         topLeft: const Radius.circular(0.14),
         topRight: const Radius.circular(0.04),
       ),
-      _fill(Brand.yellow),
+      _fill(p.yellow),
     );
-    c.drawCircle(const Offset(0.5, 0.5), 0.06, _fill(_peach));
-    c.drawCircle(const Offset(0.36, 0.36), 0.09, _fill(_peach));
-    c.drawCircle(const Offset(0.5, 0.17), 0.16, _fill(Brand.red));
-    c.drawRect(const Rect.fromLTWH(0.82, 0.3, 0.14, 0.14), _fill(Brand.blue));
+    c.drawCircle(const Offset(0.5, 0.5), 0.06, _fill(p.peach));
+    c.drawCircle(const Offset(0.36, 0.36), 0.09, _fill(p.peach));
+    c.drawCircle(const Offset(0.5, 0.17), 0.16, _fill(p.red));
+    c.drawRect(const Rect.fromLTWH(0.82, 0.3, 0.14, 0.14), _fill(p.blue));
   }
 
   /// Arcs curling inward with a small red dot caught in the middle — the
   /// pull of a thinking trap.
   void _traps(Canvas c) {
     final stroke = Paint()
-      ..color = Brand.blue
+      ..color = p.blue
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.11
       ..strokeCap = StrokeCap.round
@@ -451,21 +505,21 @@ class _ToolkitArtPainter extends CustomPainter {
       math.pi * 0.3,
       math.pi * 1.3,
       false,
-      stroke..color = _sky,
+      stroke..color = p.sky,
     );
-    c.drawCircle(centre, 0.08, _fill(Brand.red));
+    c.drawCircle(centre, 0.08, _fill(p.red));
     final tri = Path()
       ..moveTo(0.06, 0.18)
       ..lineTo(0.3, 0.06)
       ..lineTo(0.26, 0.34)
       ..close();
-    c.drawPath(tri, _fill(Brand.yellow));
+    c.drawPath(tri, _fill(p.yellow));
   }
 
   /// A sun coming up over a hill: doing one small thing today.
   void _activity(Canvas c) {
     final rays = Paint()
-      ..color = _sand
+      ..color = p.sand
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.06
       ..strokeCap = StrokeCap.round;
@@ -478,44 +532,44 @@ class _ToolkitArtPainter extends CustomPainter {
         rays,
       );
     }
-    c.drawCircle(sun, 0.25, _fill(Brand.yellow));
-    c.drawOval(const Rect.fromLTWH(0.1, 0.62, 1.1, 0.7), _fill(_green));
-    c.drawOval(const Rect.fromLTWH(-0.2, 0.74, 0.7, 0.5), _fill(_mint));
-    c.drawCircle(const Offset(0.16, 0.3), 0.07, _fill(Brand.red));
+    c.drawCircle(sun, 0.25, _fill(p.yellow));
+    c.drawOval(const Rect.fromLTWH(0.1, 0.62, 1.1, 0.7), _fill(p.green));
+    c.drawOval(const Rect.fromLTWH(-0.2, 0.74, 0.7, 0.5), _fill(p.mint));
+    c.drawCircle(const Offset(0.16, 0.3), 0.07, _fill(p.red));
   }
 
   /// A clock face with a little cloud parked beside it: worry has a time
   /// and a place.
   void _worry(Canvas c) {
     const centre = Offset(0.62, 0.6);
-    c.drawCircle(centre, 0.36, _fill(Brand.blue));
-    c.drawCircle(centre, 0.28, _fill(_sky));
+    c.drawCircle(centre, 0.36, _fill(p.blue));
+    c.drawCircle(centre, 0.28, _fill(p.sky));
     final hand = Paint()
-      ..color = Brand.ink
+      ..color = p.ink
       ..strokeWidth = 0.05
       ..strokeCap = StrokeCap.round;
     c.drawLine(centre, centre + const Offset(0, -0.2), hand);
     c.drawLine(centre, centre + const Offset(0.15, 0.08), hand);
-    c.drawCircle(centre, 0.04, _fill(Brand.ink));
+    c.drawCircle(centre, 0.04, _fill(p.ink));
     // The cloud: three overlapping circles on a flat base.
-    final cloud = _fill(_stone);
+    final cloud = _fill(p.stone);
     c.drawCircle(const Offset(0.18, 0.24), 0.11, cloud);
     c.drawCircle(const Offset(0.3, 0.18), 0.13, cloud);
     c.drawCircle(const Offset(0.4, 0.27), 0.09, cloud);
     c.drawRect(const Rect.fromLTWH(0.1, 0.24, 0.36, 0.12), cloud);
-    c.drawCircle(const Offset(0.9, 0.16), 0.08, _fill(Brand.yellow));
+    c.drawCircle(const Offset(0.9, 0.16), 0.08, _fill(p.yellow));
   }
 
   /// Stacked pebbles — steady, and here. Modelled on the reference's
   /// "challenging times" card.
   void _grounding(Canvas c) {
-    c.drawOval(const Rect.fromLTWH(0.1, 0.78, 0.86, 0.3), _fill(_stone));
-    c.drawOval(const Rect.fromLTWH(0.2, 0.46, 0.66, 0.42), _fill(Brand.yellow));
-    c.drawOval(const Rect.fromLTWH(0.3, 0.22, 0.44, 0.3), _fill(_sand));
-    c.drawCircle(const Offset(0.52, 0.12), 0.11, _fill(Brand.ink));
+    c.drawOval(const Rect.fromLTWH(0.1, 0.78, 0.86, 0.3), _fill(p.stone));
+    c.drawOval(const Rect.fromLTWH(0.2, 0.46, 0.66, 0.42), _fill(p.yellow));
+    c.drawOval(const Rect.fromLTWH(0.3, 0.22, 0.44, 0.3), _fill(p.sand));
+    c.drawCircle(const Offset(0.52, 0.12), 0.11, _fill(p.ink));
     // A closed, resting eye on the big pebble.
     final eye = Paint()
-      ..color = Brand.ink
+      ..color = p.mark
       ..style = PaintingStyle.stroke
       ..strokeWidth = 0.035
       ..strokeCap = StrokeCap.round;
@@ -526,7 +580,7 @@ class _ToolkitArtPainter extends CustomPainter {
       false,
       eye,
     );
-    c.drawCircle(const Offset(0.1, 0.36), 0.06, _fill(Brand.blue));
+    c.drawCircle(const Offset(0.1, 0.36), 0.06, _fill(p.blue));
   }
 
   /// A spark above a solid block: the moment a way through shows itself.
@@ -536,17 +590,17 @@ class _ToolkitArtPainter extends CustomPainter {
         const Rect.fromLTWH(0.34, 0.62, 0.5, 0.5),
         const Radius.circular(0.1),
       ),
-      _fill(Brand.blue),
+      _fill(p.blue),
     );
-    c.drawRect(const Rect.fromLTWH(0.46, 0.5, 0.26, 0.14), _fill(_sky));
-    c.drawPath(_spark(0.58, 0.28, 0.26), _fill(Brand.yellow));
-    c.drawCircle(const Offset(0.14, 0.7), 0.09, _fill(Brand.red));
-    c.drawRect(const Rect.fromLTWH(0.9, 0.12, 0.1, 0.1), _fill(_peach));
+    c.drawRect(const Rect.fromLTWH(0.46, 0.5, 0.26, 0.14), _fill(p.sky));
+    c.drawPath(_spark(0.58, 0.28, 0.26), _fill(p.yellow));
+    c.drawCircle(const Offset(0.14, 0.7), 0.09, _fill(p.red));
+    c.drawRect(const Rect.fromLTWH(0.9, 0.12, 0.1, 0.1), _fill(p.peach));
   }
 
   /// An open book: two leaning pages and a sun to read by.
   void _learn(Canvas c) {
-    c.drawCircle(const Offset(0.28, 0.3), 0.2, _fill(Brand.yellow));
+    c.drawCircle(const Offset(0.28, 0.3), 0.2, _fill(p.yellow));
     c.save();
     c.translate(0.52, 0.98);
     c.rotate(-0.22);
@@ -555,7 +609,7 @@ class _ToolkitArtPainter extends CustomPainter {
         const Rect.fromLTWH(-0.4, -0.46, 0.4, 0.5),
         const Radius.circular(0.05),
       ),
-      _fill(Brand.red),
+      _fill(p.red),
     );
     c.restore();
     c.save();
@@ -566,11 +620,11 @@ class _ToolkitArtPainter extends CustomPainter {
         const Rect.fromLTWH(0, -0.46, 0.4, 0.5),
         const Radius.circular(0.05),
       ),
-      _fill(_peach),
+      _fill(p.peach),
     );
     c.restore();
-    c.drawRect(const Rect.fromLTWH(0.49, 0.52, 0.06, 0.46), _fill(Brand.ink));
-    c.drawCircle(const Offset(0.86, 0.22), 0.06, _fill(Brand.blue));
+    c.drawRect(const Rect.fromLTWH(0.49, 0.52, 0.06, 0.46), _fill(p.ink));
+    c.drawCircle(const Offset(0.86, 0.22), 0.06, _fill(p.blue));
   }
 
   /// A signpost pointing onward: the good places to go next.
@@ -580,9 +634,9 @@ class _ToolkitArtPainter extends CustomPainter {
       math.pi,
       math.pi,
       true,
-      _fill(Brand.red),
+      _fill(p.red),
     );
-    c.drawRect(const Rect.fromLTWH(0.3, 0.42, 0.08, 0.6), _fill(Brand.ink));
+    c.drawRect(const Rect.fromLTWH(0.3, 0.42, 0.08, 0.6), _fill(p.ink));
     final sign = Path()
       ..moveTo(0.14, 0.2)
       ..lineTo(0.6, 0.2)
@@ -590,11 +644,12 @@ class _ToolkitArtPainter extends CustomPainter {
       ..lineTo(0.6, 0.44)
       ..lineTo(0.14, 0.44)
       ..close();
-    c.drawPath(sign, _fill(Brand.blue));
-    c.drawCircle(const Offset(0.86, 0.14), 0.07, _fill(Brand.yellow));
-    c.drawCircle(const Offset(0.1, 0.72), 0.05, _fill(_sand));
+    c.drawPath(sign, _fill(p.blue));
+    c.drawCircle(const Offset(0.86, 0.14), 0.07, _fill(p.yellow));
+    c.drawCircle(const Offset(0.1, 0.72), 0.05, _fill(p.sand));
   }
 
   @override
-  bool shouldRepaint(covariant _ToolkitArtPainter old) => old.kind != kind;
+  bool shouldRepaint(covariant _ToolkitArtPainter old) =>
+      old.kind != kind || old.p != p;
 }

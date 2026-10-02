@@ -100,6 +100,7 @@ class ToolkitHub extends StatelessWidget {
       PremiumBuilder(builder: (context, premium) => _page(context, premium));
 
   Widget _page(BuildContext context, bool premium) {
+    final c = context.brand;
     return ToolkitScaffold(
       accent: accent,
       title: title,
@@ -107,19 +108,19 @@ class ToolkitHub extends StatelessWidget {
       children: [
         Text(
           headline,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.2,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           intro,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13.5,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.55,
           ),
         ),
@@ -171,9 +172,9 @@ class ToolkitHub extends StatelessWidget {
           Text(
             footnote!,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.5,
             ),
           ),
@@ -192,20 +193,26 @@ class ToolkitBanner extends StatelessWidget {
     required this.title,
     required this.detail,
     required this.onTap,
-    this.tint = const Color(0x0F3764CD),
+    this.tint,
   });
 
   final IconData icon;
+
+  /// Drawn as given: pass a theme colour, e.g. `context.brand.red`.
   final Color iconColor;
   final String title;
   final String detail;
   final VoidCallback onTap;
-  final Color tint;
+
+  /// The banner's wash, e.g. `context.brand.tint(...)`; a soft blue if
+  /// null.
+  final Color? tint;
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: tint,
+      color: tint ?? c.tint(Pillars.blue, 0.06),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -222,25 +229,25 @@ class ToolkitBanner extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       detail,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.45,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded, color: Brand.textMuted),
+              Icon(Icons.chevron_right_rounded, color: c.textMuted),
             ],
           ),
         ),

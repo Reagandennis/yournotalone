@@ -266,7 +266,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Brand.red),
+            style: TextButton.styleFrom(foregroundColor: context.brand.red),
             child: Text(action),
           ),
         ],
@@ -392,13 +392,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Future<void> _showCompleted(TherapyRequest request) async {
+    final c = context.brand;
     final therapist = _therapists[request.therapistId];
     final rating = _myRatings[request.id];
     final when = request.scheduledAt ?? request.createdAt;
     final wantsRating = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -422,17 +422,17 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       children: [
                         Text(
                           therapist?.fullName ?? request.topic,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: Brand.ink,
+                            color: c.ink,
                           ),
                         ),
                         Text(
                           formatDateTime(when),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.5,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ),
                       ],
@@ -445,10 +445,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 therapist == null
                     ? 'Notes from your therapist'
                     : 'Notes from ${therapist.firstName}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
               ),
               const SizedBox(height: 6),
@@ -458,8 +458,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
                   fontSize: 14,
                   height: 1.6,
                   color: request.clientSummary == null
-                      ? Brand.textMuted
-                      : Brand.ink,
+                      ? c.textMuted
+                      : c.ink,
                 ),
               ),
               const SizedBox(height: 24),
@@ -472,9 +472,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'You rated it  ',
-                      style: TextStyle(fontSize: 13.5, color: Brand.textMuted),
+                      style: TextStyle(fontSize: 13.5, color: c.textMuted),
                     ),
                     StarRow(rating: rating.toDouble(), size: 18),
                   ],
@@ -494,12 +494,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Widget _pill(String label,
       {required bool selected, required VoidCallback onTap}) {
+    final c = context.brand;
     return Material(
-      color: selected ? const Color(0x0A191919) : Colors.white,
+      color: selected ? c.tint(Pillars.black, 0.04) : c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(999),
         side: BorderSide(
-          color: selected ? Brand.ink : Brand.border,
+          color: selected ? c.ink : c.border,
           width: selected ? 1.6 : 1.2,
         ),
       ),
@@ -513,7 +514,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
             style: TextStyle(
               fontSize: 13,
               fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-              color: selected ? Brand.ink : Brand.textMuted,
+              color: selected ? c.ink : c.textMuted,
             ),
           ),
         ),
@@ -523,6 +524,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   /// Three steps, so nobody has to guess what happens after they tap.
   Widget _howItWorks() {
+    final c = context.brand;
     const steps = [
       (
         Icons.tune_rounded,
@@ -557,10 +559,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
                         width: 30,
                         height: 30,
                         decoration: BoxDecoration(
-                          color: Brand.blue.withValues(alpha: 0.10),
+                          color: c.tint(Pillars.blue, 0.10),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(icon, size: 15, color: Brand.blue),
+                        child: Icon(icon, size: 15, color: c.blue),
                       ),
                     ],
                   ),
@@ -572,18 +574,18 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     children: [
                       Text(
                         '${index + 1}. $title',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         detail,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.45,
                         ),
                       ),
@@ -599,6 +601,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   /// The questions people actually have before they ask for help.
   Widget _reassurance() {
+    final c = context.brand;
     const points = [
       (Icons.verified_user_rounded, 'Licensed therapists',
           'Qualified practitioners, not volunteers or chatbots.'),
@@ -613,7 +616,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0x0A191919),
+        color: c.tint(Pillars.black, 0.04),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -626,7 +629,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(icon, size: 18, color: Brand.ink),
+                  Icon(icon, size: 18, color: c.ink),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -634,18 +637,18 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Brand.ink,
+                            color: c.ink,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           detail,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.5,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                             height: 1.45,
                           ),
                         ),
@@ -666,10 +669,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
     required String title,
     required String detail,
   }) {
+    final c = context.brand;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0x0F3764CD),
+        color: c.tint(Pillars.blue, 0.06),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -678,8 +682,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
           Container(
             width: 44,
             height: 44,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: c.chip,
               shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 22, color: iconColor),
@@ -691,18 +695,18 @@ class _TherapyScreenState extends State<TherapyScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   detail,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.5,
                   ),
                 ),
@@ -715,13 +719,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _bookingForm() {
+    final c = context.brand;
     final price = formatPrice(therapySessionPriceCents);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _offerBanner(
           icon: Icons.payments_outlined,
-          iconColor: Brand.blue,
+          iconColor: c.blue,
           title: 'Sessions are $price, paid when you book',
           detail: 'Pay securely in the app and your request goes straight to '
               'our care team. You get a receipt by email. No subscription.',
@@ -786,30 +791,31 @@ class _TherapyScreenState extends State<TherapyScreen> {
               : Text('Pay $price and request a session'),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'We\'ll match you with a licensed therapist and a time, usually '
           'within a day, and email you when your session is booked. '
           '$therapyCancellationPolicy',
-          style: TextStyle(fontSize: 12.5, color: Brand.textMuted, height: 1.5),
+          style: TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.5),
         ),
       ],
     );
   }
 
   Widget _detailRow(IconData icon, String text) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: Brand.textMuted),
+          Icon(icon, size: 16, color: c.textMuted),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.45,
               ),
             ),
@@ -831,6 +837,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _activeCard(TherapyRequest request) {
+    final c = context.brand;
     final therapist = _therapists[request.therapistId];
     final confirmed = request.isConfirmed;
     final (title, detail) = request.isAwaitingPayment
@@ -858,7 +865,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0x0F3764CD),
+        color: c.tint(Pillars.blue, 0.06),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -868,18 +875,18 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const SizedBox(height: 14),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             detail,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.4,
             ),
           ),
@@ -935,7 +942,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () => _cancel(request),
-                style: TextButton.styleFrom(foregroundColor: Brand.red),
+                style: TextButton.styleFrom(foregroundColor: c.red),
                 child: Text(request.isAwaitingPayment
                     ? 'Discard'
                     : confirmed
@@ -945,11 +952,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
             ),
           ] else if (request.isActive) ...[
             const SizedBox(height: 12),
-            const Text(
+            Text(
               'Your session is less than 24 hours away, so it can no longer '
               'be cancelled here. If you can\'t make it, reply to your booking '
               'email — a missed or late-cancelled session isn\'t refunded.',
-              style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
+              style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.5),
             ),
           ],
         ],
@@ -958,6 +965,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _paymentBox(TherapyRequest request) {
+    final c = context.brand;
     final awaiting = _awaitingVerification.contains(request.id);
     final spinner = const SizedBox(
       width: 22,
@@ -967,9 +975,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: c.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Brand.border, width: 1.2),
+        border: Border.all(color: c.border, width: 1.2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -980,10 +988,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 : request.isAwaitingPayment
                     ? '${request.priceLabel} to send your request'
                     : '${request.priceLabel} to confirm your session',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 4),
@@ -997,9 +1005,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                         'email. $therapyCancellationPolicy'
                     : 'Pay securely in the app. The Join button unlocks as '
                         'soon as it\'s paid.',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12.5,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.45,
             ),
           ),
@@ -1026,6 +1034,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _joinSection(TherapyRequest request) {
+    final c = context.brand;
     final state = request.joinStateAt(_now());
     final ready = state == JoinState.open && !request.needsPayment;
     final hint = switch (state) {
@@ -1056,13 +1065,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
         Text(
           hint,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12.5, color: Brand.textMuted, height: 1.45),
+          style: TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.45),
         ),
       ],
     );
   }
 
   Widget _pastRow(TherapyRequest request) {
+    final c = context.brand;
     // A missed session has no note to read and nothing fair to rate.
     final completed = request.isCompleted && !request.wasMissed;
     final therapist = _therapists[request.therapistId];
@@ -1071,10 +1081,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: Colors.white,
+        color: c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Brand.border, width: 1.2),
+          side: BorderSide(color: c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -1089,10 +1099,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     children: [
                       Text(
                         request.topic,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -1100,9 +1110,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                         therapist == null
                             ? formatDate(when)
                             : '${therapist.fullName} · ${formatDate(when)}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                     ],
@@ -1112,10 +1122,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 if (!completed)
                   Text(
                     sessionOutcomeLabel(request),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   )
                 else if (rating != null)
@@ -1125,15 +1135,15 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: const Color(0x143764CD),
+                      color: c.tint(Pillars.blue, 0.08),
                       borderRadius: BorderRadius.circular(999),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Rate',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: Brand.blue,
+                        color: c.blue,
                       ),
                     ),
                   ),
@@ -1147,6 +1157,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final requests = _requests;
     return Scaffold(
       appBar: AppBar(
@@ -1160,9 +1171,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'Couldn\'t load — check your connection.',
-                      style: TextStyle(fontSize: 14, color: Brand.textMuted),
+                      style: TextStyle(fontSize: 14, color: c.textMuted),
                     ),
                     const SizedBox(height: 10),
                     TextButton(
@@ -1180,6 +1191,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Widget _body(List<TherapyRequest> requests) {
+    final c = context.brand;
     final active = requests.where((r) => r.isCurrent).firstOrNull;
     // A draft that was discarded or expired never went anywhere; listing
     // it as a past session would only puzzle people.
@@ -1193,25 +1205,25 @@ class _TherapyScreenState extends State<TherapyScreen> {
         children: [
           const TherapyArt(height: 156),
           const SizedBox(height: 18),
-          const Text(
+          Text(
             'You don\'t have to do this alone',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
               height: 1.25,
             ),
           ),
           const SizedBox(height: 12),
           const Center(child: PillarStripe()),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Private one-on-one sessions with licensed therapists, right '
             'from here. Tell us a little about what you need and we\'ll '
             'match you with the right person.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
+            style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
           const SizedBox(height: 24),
           if (active == null) ...[

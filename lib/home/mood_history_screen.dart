@@ -81,6 +81,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
   /// One column per day for the last month: taller and warmer as the day
   /// went better, a flat grey stub for days with no check-in.
   Widget _strip(Map<String, MoodEntry> byDate) {
+    final c = context.brand;
     final today = DateTime.now();
     return SizedBox(
       height: 77,
@@ -105,7 +106,9 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                             ? 6
                             : 16 + (entry.index + 1) * 11.0,
                         decoration: BoxDecoration(
-                          color: level?.color ?? const Color(0xFFEDEDF2),
+                          color: level == null
+                              ? c.border
+                              : c.art(level.color),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -121,6 +124,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
   }
 
   Widget _stat(String value, String label) {
+    final c = context.brand;
     return Expanded(
       child: Column(
         children: [
@@ -128,17 +132,17 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 11.5, color: c.textMuted),
           ),
         ],
       ),
@@ -146,13 +150,15 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
   }
 
   Widget _entryRow(MoodEntry entry) {
+    final c = context.brand;
     final level = moodLevels[entry.index];
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: Brand.border, width: 1.2),
+          color: c.card,
+          border: Border.all(color: c.border, width: 1.2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -162,10 +168,10 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
             Expanded(
               child: Text(
                 _dateLabel(entry.date),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w500,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
               ),
             ),
@@ -174,7 +180,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: level.color,
+                color: c.accent(level.color),
               ),
             ),
           ],
@@ -184,13 +190,14 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
   }
 
   Widget _body() {
+    final c = context.brand;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Couldn\'t load your check-ins.',
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
           OutlinedButton(onPressed: _load, child: const Text('Try again')),
@@ -205,10 +212,10 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
       );
     }
     if (entries.isEmpty) {
-      return const Text(
+      return Text(
         'No check-ins yet. Tap a face on the home screen and this fills '
         'in — one day at a time.',
-        style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
+        style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
 
@@ -240,11 +247,11 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
             Text(
               _dateLabel(DateTime.now()
                   .subtract(const Duration(days: _stripDays - 1))),
-              style: const TextStyle(fontSize: 11, color: Brand.textMuted),
+              style: TextStyle(fontSize: 11, color: c.textMuted),
             ),
-            const Text(
+            Text(
               'Today',
-              style: TextStyle(fontSize: 11, color: Brand.textMuted),
+              style: TextStyle(fontSize: 11, color: c.textMuted),
             ),
           ],
         ),
@@ -252,7 +259,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0x0A191919),
+            color: c.tint(Pillars.black, .04),
             borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
@@ -274,6 +281,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -287,24 +295,24 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Mood history',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Hard weeks feel permanent while you\'re in them. This is '
                   'the record that says otherwise.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),

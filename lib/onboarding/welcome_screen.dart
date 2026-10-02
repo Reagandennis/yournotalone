@@ -68,6 +68,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return OnboardingScaffold(
       step: 0,
       bottom: _reveal(
@@ -88,7 +89,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           end: 0.30,
           drift: 12,
           child: Center(
-            child: Image.asset('assets/brand/pillars.png', height: 150),
+            child: Image.asset(c.pillarsAsset, height: 150),
           ),
         ),
         const SizedBox(height: 30),
@@ -98,10 +99,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           child: Text(
             'Welcome, $_firstName',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
         ),
@@ -115,13 +116,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         _reveal(
           begin: 0.50,
           end: 0.74,
-          child: const Text(
+          child: Text(
             'Δεν είσαι μόνος',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.w700,
-              color: Brand.ink,
+              color: c.ink,
               height: 1.2,
             ),
           ),
@@ -130,7 +131,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
         _reveal(
           begin: 0.66,
           end: 0.92,
-          child: const Text(
+          child: Text(
             'It\'s Greek for "you\'re not alone" — the promise this app is '
             'built on. Like the four pillars in our logo, support stands '
             'strongest side by side. Whatever you\'re carrying, from today '
@@ -138,7 +139,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.6,
             ),
           ),

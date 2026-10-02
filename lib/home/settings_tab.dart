@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../account/account_repository.dart';
+import '../appearance.dart';
 import '../auth/auth_redirect.dart';
 import '../auth/auth_ui.dart';
 import '../auth/google_auth.dart';
@@ -137,7 +138,7 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Brand.red),
+            style: TextButton.styleFrom(foregroundColor: context.brand.red),
             child: const Text('Log out'),
           ),
         ],
@@ -221,6 +222,7 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Widget _profileCard(BuildContext context) {
+    final c = context.brand;
     final user = Supabase.instance.client.auth.currentUser;
     final name = (_meta?['full_name'] as String?)?.trim();
     final displayName = (name == null || name.isEmpty) ? 'Your account' : name;
@@ -229,17 +231,18 @@ class _SettingsTabState extends State<SettingsTab> {
     final initialAvatar = Center(
       child: Text(
         initial,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Brand.blue,
+          color: c.blue,
         ),
       ),
     );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(color: Brand.border, width: 1.2),
+        color: c.card,
+        border: Border.all(color: c.border, width: 1.2),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -248,8 +251,8 @@ class _SettingsTabState extends State<SettingsTab> {
             width: 52,
             height: 52,
             clipBehavior: Clip.antiAlias,
-            decoration: const BoxDecoration(
-              color: Color(0x143764CD),
+            decoration: BoxDecoration(
+              color: c.tint(Pillars.blue, 0.08),
               shape: BoxShape.circle,
             ),
             child: avatarUrl.isEmpty
@@ -269,10 +272,10 @@ class _SettingsTabState extends State<SettingsTab> {
                   displayName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 if (user?.email != null) ...[
@@ -281,9 +284,9 @@ class _SettingsTabState extends State<SettingsTab> {
                     user!.email!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                 ],
@@ -292,10 +295,10 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           IconButton(
             onPressed: () => _openEditProfile(context),
-            icon: const Icon(
+            icon: Icon(
               Icons.edit_outlined,
               size: 20,
-              color: Brand.textMuted,
+              color: c.textMuted,
             ),
           ),
         ],
@@ -304,12 +307,13 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   Widget _planCard(BuildContext context) {
+    final c = context.brand;
     final premium = _isPremium;
     final checkin = (_meta?['wellbeing_checkin'] as String?) ?? 'steady';
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0x1FFAB414),
+        color: c.tint(Pillars.yellow, 0.12),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -317,14 +321,14 @@ class _SettingsTabState extends State<SettingsTab> {
           Container(
             width: 44,
             height: 44,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: c.chip,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.workspace_premium_rounded,
               size: 22,
-              color: Brand.yellow,
+              color: c.yellow,
             ),
           ),
           const SizedBox(width: 14),
@@ -334,10 +338,10 @@ class _SettingsTabState extends State<SettingsTab> {
               children: [
                 Text(
                   premium ? 'Premium' : 'Free plan',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -345,9 +349,9 @@ class _SettingsTabState extends State<SettingsTab> {
                   premium
                       ? 'Every room in the house is open.'
                       : introOfferSentence,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                 ),
               ],
@@ -412,13 +416,17 @@ class _SettingsTabState extends State<SettingsTab> {
     );
   }
 
+  /// A settings row. [color] tints a warning row (log out, delete);
+  /// [value] shows the current choice, as for Appearance.
   Widget _row(
     BuildContext context,
     IconData icon,
     String label, {
     VoidCallback? onTap,
-    Color color = Brand.ink,
+    Color? color,
+    String? value,
   }) {
+    final c = context.brand;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap ?? () => showComingSoon(context, label),
@@ -426,21 +434,91 @@ class _SettingsTabState extends State<SettingsTab> {
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 13),
         child: Row(
           children: [
-            Icon(icon, size: 21, color: color == Brand.ink ? Brand.textMuted : color),
+            Icon(icon, size: 21, color: color ?? c.textMuted),
             const SizedBox(width: 14),
             Expanded(
               child: Text(
                 label,
-                style: TextStyle(fontSize: 14.5, color: color),
+                style: TextStyle(fontSize: 14.5, color: color ?? c.ink),
               ),
             ),
-            const Icon(
+            if (value != null) ...[
+              Text(value, style: TextStyle(fontSize: 13, color: c.textMuted)),
+              const SizedBox(width: 8),
+            ],
+            Icon(
               Icons.arrow_forward_ios_rounded,
               size: 14,
-              color: Brand.border,
+              color: c.border,
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Match my phone, Light or Dark. The app changes as soon as one is
+  /// picked, so the sheet stays open long enough to see it.
+  Future<void> _chooseAppearance(BuildContext context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => ValueListenableBuilder<ThemeMode>(
+        valueListenable: AppearanceSetting.instance,
+        builder: (sheetContext, current, _) {
+          final c = sheetContext.brand;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                    child: Text(
+                      'Appearance',
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: c.ink,
+                      ),
+                    ),
+                  ),
+                  for (final (mode, icon) in const [
+                    (ThemeMode.system, Icons.brightness_auto_outlined),
+                    (ThemeMode.light, Icons.light_mode_outlined),
+                    (ThemeMode.dark, Icons.dark_mode_outlined),
+                  ])
+                    ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      leading: Icon(icon, color: c.textMuted),
+                      title: Text(
+                        appearanceLabel(mode),
+                        style: TextStyle(fontSize: 14.5, color: c.ink),
+                      ),
+                      subtitle: mode == ThemeMode.system
+                          ? Text(
+                              'Light by day, dark when your phone is.',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: c.textMuted,
+                              ),
+                            )
+                          : null,
+                      trailing: mode == current
+                          ? Icon(Icons.check_rounded, color: c.blue)
+                          : null,
+                      selected: mode == current,
+                      onTap: () => AppearanceSetting.instance.choose(mode),
+                    ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -450,11 +528,11 @@ class _SettingsTabState extends State<SettingsTab> {
       padding: const EdgeInsets.only(left: 4, bottom: 4),
       child: Text(
         label.toUpperCase(),
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
-          color: Brand.textMuted,
+          color: context.brand.textMuted,
         ),
       ),
     );
@@ -469,15 +547,16 @@ class _SettingsTabState extends State<SettingsTab> {
   /// entitlement changes — buying from inside the app used to leave the
   /// screen you bought from still locked.
   Widget _buildContent(BuildContext context) {
+    final c = context.brand;
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       children: [
-        const Text(
+        Text(
           'Settings',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.2,
           ),
         ),
@@ -508,6 +587,16 @@ class _SettingsTabState extends State<SettingsTab> {
           'Reminders & notifications',
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const RemindersScreen()),
+          ),
+        ),
+        ValueListenableBuilder<ThemeMode>(
+          valueListenable: AppearanceSetting.instance,
+          builder: (context, mode, _) => _row(
+            context,
+            Icons.contrast_rounded,
+            'Appearance',
+            value: appearanceLabel(mode),
+            onTap: () => _chooseAppearance(context),
           ),
         ),
         _row(
@@ -564,14 +653,14 @@ class _SettingsTabState extends State<SettingsTab> {
           context,
           Icons.logout_rounded,
           'Log out',
-          color: Brand.red,
+          color: c.red,
           onTap: () => _confirmLogout(context),
         ),
         _row(
           context,
           Icons.delete_outline_rounded,
           'Delete account',
-          color: Brand.red,
+          color: c.red,
           onTap: () => _confirmDelete(context),
         ),
         const SizedBox(height: 30),
@@ -587,7 +676,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   : ' · v${info.version} (${info.buildNumber})';
               return Text(
                 'Δεν είσαι μόνος$version',
-                style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+                style: TextStyle(fontSize: 12, color: c.textMuted),
               );
             },
           ),
@@ -648,7 +737,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         ),
         TextButton(
           onPressed: armed ? () => Navigator.of(context).pop(true) : null,
-          style: TextButton.styleFrom(foregroundColor: Brand.red),
+          style: TextButton.styleFrom(foregroundColor: context.brand.red),
           child: const Text('Delete for good'),
         ),
       ],

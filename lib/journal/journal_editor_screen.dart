@@ -90,7 +90,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Brand.red),
+            style: TextButton.styleFrom(foregroundColor: context.brand.red),
             child: const Text('Delete'),
           ),
         ],
@@ -113,6 +113,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final canSave = _content.text.trim().isNotEmpty;
     return Scaffold(
       body: SafeArea(
@@ -132,10 +133,10 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                         IconButton(
                           tooltip: 'Delete entry',
                           onPressed: _saving ? null : _confirmDelete,
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.delete_outline_rounded,
                             size: 22,
-                            color: Brand.red,
+                            color: c.red,
                           ),
                         ),
                     ],
@@ -144,12 +145,12 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                   TextField(
                     controller: _title,
                     textCapitalization: TextCapitalization.sentences,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                       border: InputBorder.none,
@@ -159,7 +160,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                       hintStyle: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Brand.border,
+                        color: c.border,
                       ),
                     ),
                   ),
@@ -175,12 +176,12 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                       maxLines: null,
                       expands: true,
                       textAlignVertical: TextAlignVertical.top,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
-                        color: Brand.ink,
+                        color: c.ink,
                         height: 1.65,
                       ),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.zero,
                         border: InputBorder.none,
@@ -190,7 +191,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                             'yours alone.',
                         hintStyle: TextStyle(
                           fontSize: 15,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.65,
                         ),
                       ),

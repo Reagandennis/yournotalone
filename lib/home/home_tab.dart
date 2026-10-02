@@ -39,28 +39,28 @@ class _QuickItem {
 const _quickItems = [
   _QuickItem(
     Icons.self_improvement_rounded,
-    Brand.blue,
+    Pillars.blue,
     'Meditate',
     'Breathe & settle',
     action: _QuickAction.meditate,
   ),
   _QuickItem(
     Icons.edit_note_rounded,
-    Brand.red,
+    Pillars.red,
     'Journal',
     'Write it out',
     action: _QuickAction.journal,
   ),
   _QuickItem(
     Icons.graphic_eq_rounded,
-    Brand.yellow,
+    Pillars.yellow,
     'Sounds',
     'Focus · sleep · calm',
     action: _QuickAction.sounds,
   ),
   _QuickItem(
     Icons.healing_rounded,
-    Brand.ink,
+    Pillars.black,
     'Recovery',
     'One day at a time',
     action: _QuickAction.recovery,
@@ -169,13 +169,14 @@ class _HomeTabState extends State<HomeTab> {
   /// What the app remembers about you. Hidden until there is something to
   /// show, so a first-time user isn't greeted by a row of zeroes.
   Widget _practiceCard() {
+    final c = context.brand;
     final summary = _practice;
     if (summary == null || summary.isEmpty) return const SizedBox.shrink();
     final last = summary.last!;
     return Padding(
       padding: const EdgeInsets.only(bottom: 28),
       child: Material(
-        color: const Color(0x0F3764CD),
+        color: c.tint(Pillars.blue, 0.06),
         borderRadius: BorderRadius.circular(18),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
@@ -194,17 +195,17 @@ class _HomeTabState extends State<HomeTab> {
                         summary.dayStreak > 1
                             ? '${summary.dayStreak} days in a row'
                             : 'Your practice',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 14,
-                      color: Brand.blue,
+                      color: c.blue,
                     ),
                   ],
                 ),
@@ -212,9 +213,9 @@ class _HomeTabState extends State<HomeTab> {
                 Text(
                   '${summary.minutesThisWeek.round()} minutes this week · '
                   '${summary.sessions} sessions in all',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -223,14 +224,14 @@ class _HomeTabState extends State<HomeTab> {
                     Container(
                       width: 34,
                       height: 34,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: c.chip,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         last.kind.icon,
                         size: 17,
-                        color: last.kind.color,
+                        color: c.accent(last.kind.color),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -239,7 +240,7 @@ class _HomeTabState extends State<HomeTab> {
                         'Last time: ${last.title}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontSize: 13, color: Brand.ink),
+                        style: TextStyle(fontSize: 13, color: c.ink),
                       ),
                     ),
                   ],
@@ -253,6 +254,7 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _moodCard() {
+    final c = context.brand;
     // Five faces have to fit the width, whatever the phone: work out the
     // per-face budget and cap it at the size the design wants.
     final width = MediaQuery.sizeOf(context).width;
@@ -260,18 +262,19 @@ class _HomeTabState extends State<HomeTab> {
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
       decoration: BoxDecoration(
-        border: Border.all(color: Brand.border, width: 1.2),
+        color: c.card,
+        border: Border.all(color: c.border, width: 1.2),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'How are you feeling today?',
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 14),
@@ -315,7 +318,9 @@ class _HomeTabState extends State<HomeTab> {
                               fontWeight: _mood == i
                                   ? FontWeight.w600
                                   : FontWeight.w400,
-                              color: _mood == i ? mood.color : Brand.textMuted,
+                              color: _mood == i
+                                  ? c.accent(mood.color)
+                                  : c.textMuted,
                             ),
                           ),
                         ],
@@ -331,8 +336,9 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget _quickCard(_QuickItem item) {
+    final c = context.brand;
     return Material(
-      color: item.accent.withValues(alpha: 0.07),
+      color: c.tint(item.accent, 0.07),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -359,21 +365,21 @@ class _HomeTabState extends State<HomeTab> {
               Container(
                 width: 38,
                 height: 38,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: c.chip,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(item.icon, size: 20, color: item.accent),
+                child: Icon(item.icon, size: 20, color: c.accent(item.accent)),
               ),
               const Spacer(),
               Text(
                 item.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
               ),
               const SizedBox(height: 2),
@@ -381,7 +387,7 @@ class _HomeTabState extends State<HomeTab> {
                 item.sub,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+                style: TextStyle(fontSize: 12, color: c.textMuted),
               ),
             ],
           ),
@@ -392,6 +398,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       children: [
@@ -404,26 +411,26 @@ class _HomeTabState extends State<HomeTab> {
                 children: [
                   Text(
                     _greeting,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                   Text(
                     firstNameOf(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                       height: 1.2,
                     ),
                   ),
                 ],
               ),
             ),
-            Image.asset('assets/brand/pillars.png', height: 44),
+            Image.asset(c.pillarsAsset, height: 44),
           ],
         ),
         const SizedBox(height: 12),
@@ -451,7 +458,7 @@ class _HomeTabState extends State<HomeTab> {
         ),
         const SizedBox(height: 24),
         Material(
-          color: const Color(0x0F3764CD),
+          color: c.tint(Pillars.blue, 0.06),
           borderRadius: BorderRadius.circular(18),
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
@@ -465,18 +472,18 @@ class _HomeTabState extends State<HomeTab> {
                   Container(
                     width: 44,
                     height: 44,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: c.chip,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.favorite_rounded,
                       size: 22,
-                      color: Brand.red,
+                      color: c.red,
                     ),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -485,7 +492,7 @@ class _HomeTabState extends State<HomeTab> {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: Brand.ink,
+                            color: c.ink,
                           ),
                         ),
                         SizedBox(height: 3),
@@ -493,16 +500,16 @@ class _HomeTabState extends State<HomeTab> {
                           '\$20 a session, paid when you book.',
                           style: TextStyle(
                             fontSize: 13,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Icon(
+                  Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 15,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                 ],
               ),

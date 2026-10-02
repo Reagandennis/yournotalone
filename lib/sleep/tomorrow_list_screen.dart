@@ -192,10 +192,10 @@ class _Label extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: Brand.ink,
+          color: context.brand.ink,
         ),
       ),
     );

@@ -19,6 +19,7 @@ class StressScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return ToolkitHub(
       title: 'Manage stress',
       accent: stressAccent,
@@ -37,8 +38,8 @@ class StressScreen extends StatelessWidget {
         children: [
           ToolkitBanner(
             icon: Icons.psychology_rounded,
-            iconColor: Brand.red,
-            tint: const Color(0x14C53C26),
+            iconColor: c.red,
+            tint: c.tint(const Color(0xFFC53C26), 0.08),
             title: 'When the stress is in the thinking',
             detail:
                 'Thought records, thinking traps and worry windows are '
@@ -48,7 +49,7 @@ class StressScreen extends StatelessWidget {
           const SizedBox(height: 12),
           ToolkitBanner(
             icon: Icons.favorite_rounded,
-            iconColor: Brand.red,
+            iconColor: c.red,
             title: 'Been like this for months?',
             detail:
                 'That\'s worth a real conversation. Book a private '

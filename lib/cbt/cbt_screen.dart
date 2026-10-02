@@ -34,7 +34,7 @@ class CbtScreen extends StatelessWidget {
       source: 'cbt',
       footer: ToolkitBanner(
         icon: Icons.favorite_rounded,
-        iconColor: Brand.red,
+        iconColor: context.brand.red,
         title: 'Want to do this with someone?',
         detail:
             'A licensed therapist can take you through these properly. '

@@ -74,6 +74,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
   }
 
   List<Widget> _body() {
+    final c = context.brand;
     switch (_step) {
       case 1:
         return [
@@ -130,23 +131,23 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
               dense: true,
               leading: CircleAvatar(
                 radius: 13,
-                backgroundColor: toolkitCardColor,
+                backgroundColor: c.card,
                 child: Text(
                   '${i + 1}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ),
               title: Text(
                 o,
-                style: const TextStyle(fontSize: 14, color: Brand.ink),
+                style: TextStyle(fontSize: 14, color: c.ink),
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.close_rounded, size: 18),
-                color: Brand.textMuted,
+                color: c.textMuted,
                 onPressed: () => setState(() {
                   _options.removeAt(i);
                   if (_chosen == o) _chosen = null;
@@ -168,7 +169,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Material(
-                color: _chosen == o ? Brand.ink : toolkitCardColor,
+                color: _chosen == o ? c.ink : c.card,
                 borderRadius: BorderRadius.circular(14),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(14),
@@ -185,7 +186,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
                               ? Icons.radio_button_checked_rounded
                               : Icons.radio_button_off_rounded,
                           size: 18,
-                          color: _chosen == o ? Colors.white : Brand.textMuted,
+                          color: _chosen == o ? c.onInk : c.textMuted,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -194,7 +195,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
-                              color: _chosen == o ? Colors.white : Brand.ink,
+                              color: _chosen == o ? c.onInk : c.ink,
                             ),
                           ),
                         ),
@@ -218,9 +219,9 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
           ToolkitNote(
             child: Text(
               'Trying: $_chosen',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.4,
               ),
             ),

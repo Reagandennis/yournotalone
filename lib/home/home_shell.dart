@@ -95,8 +95,8 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
         ),
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Brand.border, width: 1)),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: context.brand.border, width: 1)),
         ),
         child: NavigationBar(
           selectedIndex: _index,

@@ -76,15 +76,16 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           _picked == null ? 'How do you feel now?' : 'Noted. Thank you.',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14.5,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
           ),
         ),
         const SizedBox(height: 10),

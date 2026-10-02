@@ -74,8 +74,10 @@ class _PlayerScreenState extends State<PlayerScreen>
   }
 
   /// Sleep timer. Five of the sounds are made for falling asleep to, and
-  /// without this they play until the battery dies.
+  /// without this they play until the battery dies. [accent] is already
+  /// resolved for the mode.
   Widget _sleepTimerRow(Color accent) {
+    final c = context.brand;
     const options = [15, 30, 60];
     return ValueListenableBuilder<Duration?>(
       valueListenable: SoundPlayer.instance.sleepTimer,
@@ -96,17 +98,16 @@ class _PlayerScreenState extends State<PlayerScreen>
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.bedtime_outlined,
-                size: 16, color: Brand.textMuted),
+            Icon(Icons.bedtime_outlined, size: 16, color: c.textMuted),
             const SizedBox(width: 2),
             for (final minutes in options)
               Padding(
                 padding: const EdgeInsets.only(left: 8),
                 child: Material(
-                  color: Colors.white,
+                  color: c.card,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
-                    side: const BorderSide(color: Brand.border, width: 1.2),
+                    side: BorderSide(color: c.border, width: 1.2),
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
@@ -117,10 +118,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                           horizontal: 12, vertical: 6),
                       child: Text(
                         '${minutes}m',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                     ),
@@ -135,6 +136,7 @@ class _PlayerScreenState extends State<PlayerScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final accent = sound.category.accent;
     final player = SoundPlayer.instance;
     return Scaffold(
@@ -146,6 +148,9 @@ class _PlayerScreenState extends State<PlayerScreen>
               animation: Listenable.merge([player.nowPlaying, player.paused]),
               builder: (context, _) {
                 final active = player.isActive(sound.asset);
+                // An ink button turns off-white in the dark, like the
+                // logo's black pillar; a coloured one keeps its white icon.
+                final inkButton = !active || accent == Pillars.black;
                 return FlexibleColumn(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -161,7 +166,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: accent.withValues(alpha: 0.10),
+                              color: c.tint(accent, 0.10),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -169,7 +174,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                               style: TextStyle(
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w600,
-                                color: accent,
+                                color: c.accent(accent),
                               ),
                             ),
                           ),
@@ -201,19 +206,22 @@ class _PlayerScreenState extends State<PlayerScreen>
                             width: 130,
                             height: 130,
                             decoration: BoxDecoration(
-                              color: accent.withValues(alpha: 0.10),
+                              color: c.tint(accent, 0.10),
                               shape: BoxShape.circle,
                             ),
                             child: Center(
                               child: Container(
                                 width: 92,
                                 height: 92,
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                decoration: BoxDecoration(
+                                  color: c.chip,
                                   shape: BoxShape.circle,
                                 ),
-                                child:
-                                    Icon(sound.icon, size: 40, color: accent),
+                                child: Icon(
+                                  sound.icon,
+                                  size: 40,
+                                  color: c.accent(accent),
+                                ),
                               ),
                             ),
                           ),
@@ -224,10 +232,10 @@ class _PlayerScreenState extends State<PlayerScreen>
                     Text(
                       sound.title,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -236,9 +244,9 @@ class _PlayerScreenState extends State<PlayerScreen>
                       child: Text(
                         sound.detail,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.5,
                         ),
                       ),
@@ -259,6 +267,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                               t: _wave.value,
                               sound: sound,
                               energy: energy,
+                              color: c.art(accent),
                             ),
                           ),
                         ),
@@ -277,15 +286,15 @@ class _PlayerScreenState extends State<PlayerScreen>
                               Navigator.of(context).maybePop();
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.stop_rounded,
                             size: 30,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ),
                         const SizedBox(width: 26),
                         Material(
-                          color: active ? accent : Brand.ink,
+                          color: inkButton ? c.ink : accent,
                           shape: const CircleBorder(),
                           child: InkWell(
                             customBorder: const CircleBorder(),
@@ -298,7 +307,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                                     ? Icons.pause_rounded
                                     : Icons.play_arrow_rounded,
                                 size: 40,
-                                color: Colors.white,
+                                color: inkButton ? c.onInk : Colors.white,
                               ),
                             ),
                           ),
@@ -312,19 +321,19 @@ class _PlayerScreenState extends State<PlayerScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 36),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.volume_down_rounded,
                             size: 20,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                           Expanded(
                             child: SliderTheme(
                               data: SliderThemeData(
                                 trackHeight: 3,
-                                activeTrackColor: accent,
-                                inactiveTrackColor: Brand.border,
-                                thumbColor: accent,
-                                overlayColor: accent.withValues(alpha: 0.12),
+                                activeTrackColor: c.accent(accent),
+                                inactiveTrackColor: c.border,
+                                thumbColor: c.accent(accent),
+                                overlayColor: c.tint(accent, 0.12),
                                 thumbShape: const RoundSliderThumbShape(
                                   enabledThumbRadius: 7,
                                 ),
@@ -338,16 +347,16 @@ class _PlayerScreenState extends State<PlayerScreen>
                               ),
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.volume_up_rounded,
                             size: 20,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 14),
-                    _sleepTimerRow(accent),
+                    _sleepTimerRow(c.accent(accent)),
                     const SizedBox(height: 18),
                   ],
                 );
@@ -368,15 +377,18 @@ class _WavePainter extends CustomPainter {
     required this.t,
     required this.sound,
     required this.energy,
+    required this.color,
   });
 
   final double t;
   final Sound sound;
   final double energy;
 
+  /// The sound's accent, resolved for the mode.
+  final Color color;
+
   @override
   void paint(Canvas canvas, Size size) {
-    final accent = sound.category.accent;
     final mid = size.height / 2;
     final phase = t * 2 * math.pi;
     var amp = size.height * 0.42 * sound.waveHeight * energy;
@@ -390,7 +402,7 @@ class _WavePainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeWidth = 2.6 - layer * 0.6
-        ..color = accent.withValues(alpha: 0.55 - layer * 0.17);
+        ..color = color.withValues(alpha: 0.55 - layer * 0.17);
       final freq = sound.waveFreq * (1 + layer * 0.35);
       final speed = sound.waveSpeed * (layer.isEven ? 1 : -1);
       final layerAmp = amp * (1 - layer * 0.28);
@@ -416,5 +428,6 @@ class _WavePainter extends CustomPainter {
   bool shouldRepaint(_WavePainter oldDelegate) =>
       oldDelegate.t != t ||
       oldDelegate.energy != energy ||
-      oldDelegate.sound != sound;
+      oldDelegate.sound != sound ||
+      oldDelegate.color != color;
 }

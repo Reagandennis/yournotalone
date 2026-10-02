@@ -61,6 +61,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   /// Minutes per day for the last month — taller bars for longer practice,
   /// a flat stub for days you didn't.
   Widget _strip(Map<String, double> minutesByDay) {
+    final c = context.brand;
     final today = DateTime.now();
     final busiest = minutesByDay.values.isEmpty
         ? 1.0
@@ -84,8 +85,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
                         : 12 + (minutes / busiest) * 54,
                     decoration: BoxDecoration(
                       color: minutes == 0
-                          ? const Color(0xFFEDEDF2)
-                          : Brand.blue,
+                          ? c.tint(Pillars.black, 0.06)
+                          : c.art(Pillars.blue),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -98,6 +99,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Widget _stat(String value, String label) {
+    final c = context.brand;
     return Expanded(
       child: Column(
         children: [
@@ -105,17 +107,17 @@ class _PracticeScreenState extends State<PracticeScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 11.5, color: c.textMuted),
           ),
         ],
       ),
@@ -123,12 +125,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Widget _sessionRow(PracticeSession session) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(color: Brand.border, width: 1.2),
+          color: c.card,
+          border: Border.all(color: c.border, width: 1.2),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -137,11 +141,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: session.kind.color.withValues(alpha: 0.12),
+                color: c.tint(session.kind.color, 0.12),
                 shape: BoxShape.circle,
               ),
               child: Icon(session.kind.icon,
-                  size: 20, color: session.kind.color),
+                  size: 20, color: c.accent(session.kind.color)),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -152,19 +156,19 @@ class _PracticeScreenState extends State<PracticeScreen> {
                     session.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14.5,
                       fontWeight: FontWeight.w500,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '${session.kind.label} · '
                     '${_dateLabel(session.completedAt)}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                 ],
@@ -172,10 +176,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
             ),
             Text(
               '${session.minutes.round()} min',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Brand.textMuted,
+                color: c.textMuted,
               ),
             ),
           ],
@@ -185,13 +189,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Widget _body() {
+    final c = context.brand;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Couldn\'t load your practice history.',
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
           OutlinedButton(onPressed: _load, child: const Text('Try again')),
@@ -206,10 +211,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
       );
     }
     if (sessions.isEmpty) {
-      return const Text(
+      return Text(
         'Nothing here yet. Finish a meditation, a breathing session, or a '
         'few minutes of sound, and it starts filling in.',
-        style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
+        style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
 
@@ -230,7 +235,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0x0A191919),
+            color: c.tint(Pillars.black, 0.04),
             borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
@@ -252,6 +257,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -265,23 +271,23 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Your practice',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Minutes nobody else counted. They still happened.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),

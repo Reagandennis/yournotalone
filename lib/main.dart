@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'app_navigation.dart';
+import 'appearance.dart';
 import 'auth/auth_gate.dart';
 import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
@@ -114,6 +116,7 @@ Future<void> _start() async {
   }
   await PurchasesService.instance.init();
   await initOnboardingFlags();
+  await AppearanceSetting.instance.load();
   await _initSessionNotifications();
   runApp(SentryWidget(child: const MyApp()));
 }
@@ -207,16 +210,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorKey: appNavigatorKey,
-      // Gives Sentry the app-start transaction and one per named route; the
-      // app's routes are unnamed today, so screens show up once they get a
-      // RouteSettings name.
-      navigatorObservers: [SentryNavigatorObserver(), appRoutes],
-      debugShowCheckedModeBanner: false,
-      title: 'Δεν είσαι μόνος',
-      theme: buildAppTheme(),
-      home: const SplashScreen(next: AuthGate()),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppearanceSetting.instance,
+      builder: (context, themeMode, _) => MaterialApp(
+        navigatorKey: appNavigatorKey,
+        // Gives Sentry the app-start transaction and one per named route;
+        // the app's routes are unnamed today, so screens show up once they
+        // get a RouteSettings name.
+        navigatorObservers: [SentryNavigatorObserver(), appRoutes],
+        debugShowCheckedModeBanner: false,
+        title: 'Δεν είσαι μόνος',
+        theme: buildAppTheme(Brightness.light),
+        darkTheme: buildAppTheme(Brightness.dark),
+        themeMode: themeMode,
+        // Status-bar icons for screens without an app bar: dark on paper,
+        // light on navy. An AppBar sets its own over this.
+        builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+          value: context.brand.systemOverlayStyle,
+          child: child!,
+        ),
+        home: const SplashScreen(next: AuthGate()),
+      ),
     );
   }
 }
@@ -227,33 +241,34 @@ class _SomethingWentWrong extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: Colors.white,
+      color: c.background,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(28),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.sentiment_dissatisfied_rounded,
-                  size: 40, color: Brand.textMuted),
+              Icon(Icons.sentiment_dissatisfied_rounded,
+                  size: 40, color: c.textMuted),
               const SizedBox(height: 14),
-              const Text(
+              Text(
                 'Something went wrong here.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
               ),
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Go back and try again — nothing you saved is affected.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
-                  color: Brand.textMuted,
+                  color: c.textMuted,
                   height: 1.5,
                 ),
               ),

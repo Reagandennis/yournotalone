@@ -58,9 +58,9 @@ class _LoginScreenState extends State<LoginScreen> {
         alignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          const Text(
+          Text(
             'New here?',
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: context.brand.textMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).push(

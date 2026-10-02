@@ -160,13 +160,14 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _durationChip(int minutes) {
+    final c = context.brand;
     final selected = _minutes == minutes;
     return Material(
-      color: selected ? Brand.ink : Colors.white,
+      color: selected ? c.ink : c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: selected ? Brand.ink : Brand.border,
+          color: selected ? c.ink : c.border,
           width: 1.2,
         ),
       ),
@@ -180,7 +181,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
-              color: selected ? Colors.white : Brand.textMuted,
+              color: selected ? c.onInk : c.textMuted,
             ),
           ),
         ),
@@ -189,6 +190,9 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _circle({required double scale, required Widget center}) {
+    // A drawing, not a card wash: the accent's shade for the mode at the
+    // same strengths in both, so the words on it stay readable in the dark.
+    final fill = context.brand.art(pattern.accent);
     return SizedBox(
       width: 260,
       height: 260,
@@ -201,7 +205,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: pattern.accent.withValues(alpha: 0.25),
+                color: fill.withValues(alpha: 0.25),
                 width: 1.5,
               ),
             ),
@@ -211,7 +215,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             height: 260 * scale,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: pattern.accent.withValues(alpha: 0.16),
+              color: fill.withValues(alpha: 0.16),
             ),
           ),
           Container(
@@ -219,7 +223,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             height: 150 * scale,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: pattern.accent.withValues(alpha: 0.28),
+              color: fill.withValues(alpha: 0.28),
             ),
           ),
           center,
@@ -229,12 +233,17 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _setupView() {
+    final c = context.brand;
     return FlexibleColumn(
       children: [
         const Spacer(),
         _circle(
           scale: 0.75,
-          center: Icon(Icons.air_rounded, size: 44, color: pattern.accent),
+          center: Icon(
+            Icons.air_rounded,
+            size: 44,
+            color: c.accent(pattern.accent),
+          ),
         ),
         const SizedBox(height: 30),
         Text(
@@ -242,7 +251,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: pattern.accent,
+            color: c.accent(pattern.accent),
             letterSpacing: 1.5,
           ),
         ),
@@ -252,9 +261,9 @@ class _BreathingScreenState extends State<BreathingScreen>
           child: Text(
             pattern.detail,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.5,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.5,
             ),
           ),
@@ -286,6 +295,7 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _doneView() {
+    final c = context.brand;
     final cycles = (_minutes * 60 / pattern.cycleSeconds).floor();
     return FlexibleColumn(
       children: [
@@ -294,18 +304,22 @@ class _BreathingScreenState extends State<BreathingScreen>
           width: 96,
           height: 96,
           decoration: BoxDecoration(
-            color: pattern.accent.withValues(alpha: 0.12),
+            color: c.tint(pattern.accent, 0.12),
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.check_rounded, size: 42, color: pattern.accent),
+          child: Icon(
+            Icons.check_rounded,
+            size: 42,
+            color: c.accent(pattern.accent),
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           'Well done',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
           ),
         ),
         const SizedBox(height: 10),
@@ -313,16 +327,16 @@ class _BreathingScreenState extends State<BreathingScreen>
           '$_minutes minute${_minutes == 1 ? '' : 's'} · about $cycles '
           'breath cycles.\nNotice how you feel right now.',
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.6,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Added to your practice history.',
-          style: TextStyle(fontSize: 12.5, color: pattern.accent),
+          style: TextStyle(fontSize: 12.5, color: c.accent(pattern.accent)),
         ),
         const Spacer(),
         Padding(
@@ -330,9 +344,9 @@ class _BreathingScreenState extends State<BreathingScreen>
           child: OutlinedButton(
             onPressed: _start,
             style: OutlinedButton.styleFrom(
-              foregroundColor: Brand.ink,
+              foregroundColor: c.ink,
               minimumSize: const Size.fromHeight(52),
-              side: const BorderSide(color: Brand.border, width: 1.3),
+              side: BorderSide(color: c.border, width: 1.3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -349,6 +363,10 @@ class _BreathingScreenState extends State<BreathingScreen>
   }
 
   Widget _runningView() {
+    final c = context.brand;
+    // An ink button turns off-white in the dark, like the logo's black
+    // pillar; a coloured one keeps its white icon in both modes.
+    final inkButton = pattern.accent == Pillars.black;
     final session = _session;
     return AnimatedBuilder(
       animation: session,
@@ -367,18 +385,18 @@ class _BreathingScreenState extends State<BreathingScreen>
                 children: [
                   Text(
                     phase.label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     _clock(total - elapsed),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                 ],
@@ -390,7 +408,7 @@ class _BreathingScreenState extends State<BreathingScreen>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: pattern.accent,
+                color: c.accent(pattern.accent),
                 letterSpacing: 1.5,
               ),
             ),
@@ -403,15 +421,15 @@ class _BreathingScreenState extends State<BreathingScreen>
                   IconButton(
                     tooltip: 'End session',
                     onPressed: _end,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.stop_rounded,
                       size: 30,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                   const SizedBox(width: 24),
                   Material(
-                    color: pattern.accent,
+                    color: inkButton ? c.ink : pattern.accent,
                     shape: const CircleBorder(),
                     child: InkWell(
                       customBorder: const CircleBorder(),
@@ -428,7 +446,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                               ? Icons.pause_rounded
                               : Icons.play_arrow_rounded,
                           size: 36,
-                          color: Colors.white,
+                          color: inkButton ? c.onInk : Colors.white,
                         ),
                       ),
                     ),
@@ -487,10 +505,10 @@ class _BreathingScreenState extends State<BreathingScreen>
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Brand.ink,
+                                color: context.brand.ink,
                               ),
                             ),
                           ),

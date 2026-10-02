@@ -42,6 +42,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     if (_sent) {
       return AuthScaffold(
         title: 'Check your inbox',
@@ -52,14 +53,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             child: Container(
               width: 96,
               height: 96,
-              decoration: const BoxDecoration(
-                color: Color(0x143764CD),
+              decoration: BoxDecoration(
+                color: c.tint(Pillars.blue, 0.08),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.mark_email_read_outlined,
                 size: 40,
-                color: Brand.blue,
+                color: c.blue,
               ),
             ),
           ),
@@ -67,10 +68,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           Center(
             child: Text(
               _email.text.trim(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
           ),

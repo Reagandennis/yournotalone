@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 
 enum SoundCategory {
-  focus('Focus', Brand.yellow),
-  sleep('Sleep', Brand.ink),
-  calm('Calm', Brand.blue);
+  focus('Focus', Pillars.yellow),
+  sleep('Sleep', Pillars.black),
+  calm('Calm', Pillars.blue);
 
   const SoundCategory(this.label, this.accent);
 

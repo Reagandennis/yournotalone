@@ -49,21 +49,21 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
   static const _points = [
     (
       Icons.favorite_rounded,
-      Brand.red,
+      Pillars.red,
       'Your therapy sessions',
       'When you\'re matched, if the time moves, and ten minutes before '
           'the call — so a paid session is never missed.',
     ),
     (
       Icons.notifications_active_rounded,
-      Brand.blue,
+      Pillars.blue,
       'Reminders you choose',
       'A morning check-in, evening pages, a wind-down. Each one is a '
           'switch in Settings; none is on until you say.',
     ),
     (
       Icons.block_rounded,
-      Brand.ink,
+      Pillars.black,
       'Nothing else',
       'No marketing, no streak guilt, no "we miss you". If it isn\'t '
           'about your care, it isn\'t sent.',
@@ -72,6 +72,7 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return OnboardingScaffold(
       bottom: Column(
         mainAxisSize: MainAxisSize.min,
@@ -94,35 +95,35 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
           child: Container(
             width: 96,
             height: 96,
-            decoration: const BoxDecoration(
-              color: Color(0x14FAB414),
+            decoration: BoxDecoration(
+              color: c.tint(Pillars.yellow, 0.08),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: Icon(
               Icons.notifications_rounded,
               size: 42,
-              color: Brand.yellow,
+              color: c.yellow,
             ),
           ),
         ),
         const SizedBox(height: 26),
-        const Text(
+        Text(
           'Don\'t miss what matters',
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.25,
           ),
         ),
         const SizedBox(height: 14),
         const Center(child: PillarStripe()),
         const SizedBox(height: 18),
-        const Text(
+        Text(
           'Your phone will ask once. Here\'s exactly what a yes means.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
+          style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 26),
         for (final (icon, colour, title, detail) in _points)
@@ -135,10 +136,10 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: colour.withValues(alpha: 0.1),
+                    color: c.tint(colour, 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 20, color: colour),
+                  child: Icon(icon, size: 20, color: c.accent(colour)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -147,18 +148,18 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         detail,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.5,
                         ),
                       ),

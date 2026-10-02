@@ -89,18 +89,20 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final requests = _requests;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Care team'),
-          bottom: const TabBar(
-            labelColor: Brand.ink,
-            unselectedLabelColor: Brand.textMuted,
-            indicatorColor: Brand.ink,
-            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            tabs: [Tab(text: 'Requests'), Tab(text: 'Therapists')],
+          bottom: TabBar(
+            labelColor: c.ink,
+            unselectedLabelColor: c.textMuted,
+            indicatorColor: c.ink,
+            labelStyle:
+                const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            tabs: const [Tab(text: 'Requests'), Tab(text: 'Therapists')],
           ),
         ),
         body: requests == null
@@ -121,6 +123,7 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
   }
 
   Widget _requestsTab(List<AdminTherapyRequest> all) {
+    final c = context.brand;
     // Oldest first: whoever has waited longest is next.
     final toMatch = [
       for (final item in all)
@@ -171,7 +174,7 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
               child: Text(
                 empty,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, color: Brand.textMuted),
+                style: TextStyle(fontSize: 14, color: c.textMuted),
               ),
             )
           else
@@ -187,6 +190,7 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
   }
 
   Widget _therapistsTab() {
+    final c = context.brand;
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
@@ -199,12 +203,12 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
           ),
           const SizedBox(height: 16),
           if (_therapists.isEmpty)
-            const Padding(
-              padding: EdgeInsets.only(top: 24),
+            Padding(
+              padding: const EdgeInsets.only(top: 24),
               child: Text(
                 'No therapists yet. Add one to start matching requests.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Brand.textMuted),
+                style: TextStyle(fontSize: 14, color: c.textMuted),
               ),
             )
           else
@@ -232,8 +236,9 @@ class _RequestTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final request = item.request;
-    var lineColor = Brand.textMuted;
+    var lineColor = c.textMuted;
     final String line;
     if (request.isPending) {
       final hours = now.difference(request.createdAt).inHours;
@@ -243,14 +248,14 @@ class _RequestTile extends StatelessWidget {
               ? 'Waiting ${hours}h'
               : 'Waiting ${hours ~/ 24} days';
       // Clients are told to expect a match within a day.
-      if (hours >= 20) lineColor = Brand.red;
+      if (hours >= 20) lineColor = c.red;
     } else if (request.isConfirmed && request.scheduledAt != null) {
       final ended = request.hasElapsedAt(now);
       line = '${item.therapistName ?? 'Therapist'} · '
           '${formatDateTime(request.scheduledAt!)}'
           '${ended ? ' · Not finished' : ''}';
       // Someone should tap Finish before the server closes it out.
-      if (ended) lineColor = Brand.red;
+      if (ended) lineColor = c.red;
     } else {
       line = '${sessionOutcomeLabel(request)} · '
           '${formatDate(request.scheduledAt ?? request.createdAt)}';
@@ -259,10 +264,10 @@ class _RequestTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: Colors.white,
+        color: c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Brand.border, width: 1.2),
+          side: BorderSide(color: c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -279,18 +284,18 @@ class _RequestTile extends StatelessWidget {
                         item.clientLabel,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         request.topic,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -333,6 +338,7 @@ class _TherapistTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final profile = therapist.profile;
     final rating = profile.ratingAverage;
     final stats = [
@@ -345,10 +351,10 @@ class _TherapistTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: Colors.white,
+        color: c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Brand.border, width: 1.2),
+          side: BorderSide(color: c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -373,10 +379,10 @@ class _TherapistTile extends StatelessWidget {
                               profile.fullName,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w600,
-                                color: Brand.ink,
+                                color: c.ink,
                               ),
                             ),
                           ),
@@ -389,36 +395,36 @@ class _TherapistTile extends StatelessWidget {
                       if (profile.title != null)
                         Text(
                           profile.title!,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.5,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ),
                       const SizedBox(height: 4),
                       Text(
                         stats,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                       if (!therapist.hasAccount) ...[
                         const SizedBox(height: 4),
                         Text(
                           'Not signed in yet — ${therapist.email}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Brand.red,
+                            color: c.red,
                           ),
                         ),
                       ],
                     ],
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,
-                  color: Brand.border,
+                  color: c.border,
                 ),
               ],
             ),

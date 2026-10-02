@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
@@ -64,6 +65,11 @@ class _PillarBackdropState extends State<PillarBackdrop>
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
+    // In the dark the pillars are the lighter accents, and the ink one is
+    // off-white, as on the dark-mode logo.
+    final pillars = c.pillars;
+    final accent = widget.accent == null ? null : c.art(widget.accent!);
     // Someone who has asked their phone to reduce motion should not get a
     // drifting background — they get the same picture, held still.
     if (MediaQuery.disableAnimationsOf(context)) {
@@ -73,7 +79,8 @@ class _PillarBackdropState extends State<PillarBackdrop>
           painter: _PillarPainter(
             t: 0.2,
             swell: 0,
-            accent: widget.accent,
+            pillars: pillars,
+            accent: accent,
             intensity: widget.intensity,
           ),
           size: Size.infinite,
@@ -92,7 +99,8 @@ class _PillarBackdropState extends State<PillarBackdrop>
           painter: _PillarPainter(
             t: _drift.value,
             swell: _swell,
-            accent: widget.accent,
+            pillars: pillars,
+            accent: accent,
             intensity: widget.intensity,
           ),
           size: Size.infinite,
@@ -106,6 +114,7 @@ class _PillarPainter extends CustomPainter {
   _PillarPainter({
     required this.t,
     required this.swell,
+    required this.pillars,
     required this.accent,
     required this.intensity,
   });
@@ -115,6 +124,10 @@ class _PillarPainter extends CustomPainter {
 
   /// 0–1 breathing swell, when one was supplied.
   final double swell;
+
+  /// The pillar colours for the mode, in logo order: red, blue, ink,
+  /// yellow.
+  final List<Color> pillars;
   final Color? accent;
   final double intensity;
 
@@ -126,8 +139,8 @@ class _PillarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final tau = math.pi * 2;
-    for (var i = 0; i < Brand.pillarColors.length; i++) {
-      var colour = Brand.pillarColors[i];
+    for (var i = 0; i < pillars.length; i++) {
+      var colour = pillars[i];
       if (accent != null) {
         // Nudge every wash toward the session's colour so the screen reads
         // as one thing rather than four.
@@ -157,8 +170,9 @@ class _PillarPainter extends CustomPainter {
         height: height,
       );
 
-      // Ink would read as a grey smudge; keep it faintest.
-      final isInk = Brand.pillarColors[i] == Brand.ink;
+      // Ink would read as a grey smudge; keep it faintest. (Third in logo
+      // order; off-white in the dark, where it stays just as quiet.)
+      final isInk = i == 2;
       final peak = (isInk ? 0.07 : 0.20) * intensity;
 
       final paint = Paint()
@@ -178,6 +192,7 @@ class _PillarPainter extends CustomPainter {
   bool shouldRepaint(_PillarPainter old) =>
       old.t != t ||
       old.swell != swell ||
+      !listEquals(old.pillars, pillars) ||
       old.accent != accent ||
       old.intensity != intensity;
 }

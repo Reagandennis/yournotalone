@@ -102,10 +102,11 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
   }
 
   Widget _tile(Stressor s) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: toolkitCardColor,
+        color: c.card,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 12, 6, 12),
@@ -117,16 +118,16 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
                   Expanded(
                     child: Text(
                       s.text,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Brand.ink,
+                        color: c.ink,
                         height: 1.4,
                       ),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded, size: 18),
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     tooltip: 'Remove',
                     onPressed: () => _remove(s),
                   ),
@@ -155,6 +156,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
 
   Widget _zoneSummary(Zone z, List<Stressor> items) {
     if (items.isEmpty) return const SizedBox.shrink();
+    final c = context.brand;
     final (advice, action, onTap) = switch (z) {
       Zone.control => (
         'These are yours to move. Pick one — the smallest — and take '
@@ -186,14 +188,14 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
           children: [
             Row(
               children: [
-                Icon(z.icon, size: 18, color: Brand.ink),
+                Icon(z.icon, size: 18, color: c.ink),
                 const SizedBox(width: 8),
                 Text(
                   '${z.label} · ${items.length}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ],
@@ -202,18 +204,18 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
             for (final s in items)
               Text(
                 '• ${s.text}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: Brand.ink,
+                  color: c.ink,
                   height: 1.45,
                 ),
               ),
             const SizedBox(height: 8),
             Text(
               advice,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.5,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.45,
               ),
             ),
@@ -273,14 +275,14 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
             _zoneSummary(z, items.where((s) => s.zone == z).toList()),
         ],
         if (items.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: 6),
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
             child: Text(
               'Start with whatever came to mind first. Vague is fine — '
               '"work", "money", "mum" — you can sharpen it later.',
               style: TextStyle(
                 fontSize: 13,
-                color: Brand.textMuted,
+                color: context.brand.textMuted,
                 height: 1.5,
               ),
             ),

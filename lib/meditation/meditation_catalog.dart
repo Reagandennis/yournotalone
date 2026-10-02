@@ -38,7 +38,7 @@ const breathPatterns = [
   BreathPattern(
     'Box breathing',
     'Even sides, steady mind — used by athletes and navy divers alike.',
-    Brand.blue,
+    Pillars.blue,
     inhale: 4,
     holdIn: 4,
     exhale: 4,
@@ -48,7 +48,7 @@ const breathPatterns = [
   BreathPattern(
     '4-7-8 calm',
     'A long hold and slow release that tells your body it\'s safe.',
-    Brand.yellow,
+    Pillars.yellow,
     inhale: 4,
     holdIn: 7,
     exhale: 8,
@@ -56,28 +56,28 @@ const breathPatterns = [
   BreathPattern(
     'Slow exhale',
     'Breathing out longer than in — the quickest way to downshift.',
-    Brand.ink,
+    Pillars.black,
     inhale: 4,
     exhale: 7,
   ),
   BreathPattern(
     'Coherent breath',
     'Five in, five out — the steady pace your heart settles into.',
-    Brand.blue,
+    Pillars.blue,
     inhale: 5,
     exhale: 5,
   ),
   BreathPattern(
     'Ocean breath',
     'Long and soft, like a wave drawing back from the shore.',
-    Brand.blue,
+    Pillars.blue,
     inhale: 5,
     exhale: 7,
   ),
   BreathPattern(
     'Triangle breath',
     'In, hold, then a longer way out — for when your head is loud.',
-    Brand.yellow,
+    Pillars.yellow,
     inhale: 4,
     holdIn: 4,
     exhale: 6,
@@ -85,7 +85,7 @@ const breathPatterns = [
   BreathPattern(
     'Panic reset',
     'For the minutes when your chest races and you need out fast.',
-    Brand.red,
+    Pillars.red,
     inhale: 4,
     exhale: 6,
     holdOut: 2,
@@ -93,7 +93,7 @@ const breathPatterns = [
   BreathPattern(
     'Morning lift',
     'A fuller inhale to wake the body up without rushing it.',
-    Brand.yellow,
+    Pillars.yellow,
     inhale: 6,
     holdIn: 2,
     exhale: 4,
@@ -128,7 +128,7 @@ const meditations = [
     'Arrive in your day before the day arrives at you.',
     5,
     Icons.wb_twilight_rounded,
-    Brand.yellow,
+    Pillars.yellow,
     premium: false,
     prompts: [
       (0.0, 'Find a comfortable seat and let your eyes soften or close.'),
@@ -146,7 +146,7 @@ const meditations = [
     'Ground yourself in what\'s real and right here.',
     8,
     Icons.spa_rounded,
-    Brand.blue,
+    Pillars.blue,
     prompts: [
       (0.0, 'Settle in. Let your shoulders drop away from your ears.'),
       (0.06, 'Breathe out longer than you breathe in, just for a while.'),
@@ -163,7 +163,7 @@ const meditations = [
     'Travel slowly from head to toe, releasing as you go.',
     12,
     Icons.accessibility_new_rounded,
-    Brand.red,
+    Pillars.red,
     prompts: [
       (0.0, 'Lie down or sit back. Close your eyes when you\'re ready.'),
       (0.05, 'Bring your attention to the top of your head.'),
@@ -182,7 +182,7 @@ const meditations = [
     'Put the day down gently and let your body get heavy.',
     10,
     Icons.bedtime_rounded,
-    Brand.ink,
+    Pillars.black,
     prompts: [
       (0.0, 'Get comfortable — this one can end in sleep.'),
       (0.08, 'Let today be finished. Nothing more is needed from you.'),
@@ -198,7 +198,7 @@ const meditations = [
     'Turn some warmth toward yourself and the people you carry.',
     6,
     Icons.favorite_rounded,
-    Brand.red,
+    Pillars.red,
     prompts: [
       (0.0, 'Sit comfortably and bring a soft breath in.'),
       (0.08, 'Picture yourself as you are right now.'),
@@ -215,7 +215,7 @@ const meditations = [
     'Put the morning down before you pick the afternoon up.',
     5,
     Icons.restart_alt_rounded,
-    Brand.yellow,
+    Pillars.yellow,
     prompts: [
       (0.0, 'Stop where you are. Both feet flat, hands still.'),
       (0.08, 'One long breath out — longer than feels necessary.'),
@@ -232,7 +232,7 @@ const meditations = [
     'Clear the desk in your head before you start.',
     7,
     Icons.center_focus_strong_rounded,
-    Brand.blue,
+    Pillars.blue,
     prompts: [
       (0.0, 'Sit upright but easy. Phone face down.'),
       (0.07, 'Three slow breaths — in through the nose, out through the mouth.'),
@@ -250,7 +250,7 @@ const meditations = [
     'Speak to yourself the way you\'d speak to a friend.',
     7,
     Icons.volunteer_activism_rounded,
-    Brand.red,
+    Pillars.red,
     prompts: [
       (0.0, 'Settle in. Place a hand somewhere that feels kind — chest, arm.'),
       (0.09, 'Bring to mind what\'s hurting. Just name it, gently.'),
@@ -267,7 +267,7 @@ const meditations = [
     'Feel it fully, then set down what it costs you to carry.',
     9,
     Icons.local_fire_department_rounded,
-    Brand.red,
+    Pillars.red,
     prompts: [
       (0.0, 'Sit somewhere you won\'t be interrupted. Let the eyes close.'),
       (0.07, 'Anger is allowed here. Nothing has to be forgiven yet.'),
@@ -285,7 +285,7 @@ const meditations = [
     'Ten minutes outside, with your attention in your feet.',
     10,
     Icons.directions_walk_rounded,
-    Brand.ink,
+    Pillars.black,
     prompts: [
       (0.0, 'Start walking, slower than usual. No destination.'),
       (0.08, 'Feel the ground meet each foot — heel, then toe.'),
@@ -303,7 +303,7 @@ const meditations = [
     'Count what\'s already here before reaching for more.',
     6,
     Icons.wb_sunny_rounded,
-    Brand.yellow,
+    Pillars.yellow,
     prompts: [
       (0.0, 'Sit comfortably. Let the breath find its own pace.'),
       (0.1, 'Bring to mind one small thing that went right today.'),
@@ -320,7 +320,7 @@ const meditations = [
     'A long, guided lie-down for when sleep won\'t come.',
     15,
     Icons.nights_stay_rounded,
-    Brand.ink,
+    Pillars.black,
     prompts: [
       (0.0, 'Lie on your back, arms a little away from your sides.'),
       (0.05, 'You don\'t need to fall asleep. Resting is enough.'),

@@ -75,13 +75,15 @@ class _RemindersScreenState extends State<RemindersScreen> {
   }
 
   Widget _reminderCard(ReminderKind kind) {
+    final c = context.brand;
     final on = _enabled[kind] ?? false;
     final time = _times[kind] ?? kind.defaultTime;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
       decoration: BoxDecoration(
-        border: Border.all(color: Brand.border, width: 1.2),
+        color: c.card,
+        border: Border.all(color: c.border, width: 1.2),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -90,10 +92,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: kind.accent.withValues(alpha: 0.10),
+              color: c.tint(kind.accent, 0.10),
               shape: BoxShape.circle,
             ),
-            child: Icon(kind.icon, size: 21, color: kind.accent),
+            child: Icon(kind.icon, size: 21, color: c.accent(kind.accent)),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -102,10 +104,10 @@ class _RemindersScreenState extends State<RemindersScreen> {
               children: [
                 Text(
                   kind.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -113,9 +115,9 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   kind.description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -129,8 +131,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                     ),
                     decoration: BoxDecoration(
                       color: on
-                          ? kind.accent.withValues(alpha: 0.10)
-                          : const Color(0x0A191919),
+                          ? c.tint(kind.accent, 0.10)
+                          : c.tint(Pillars.black, 0.04),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -139,7 +141,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                         Icon(
                           Icons.schedule_rounded,
                           size: 13,
-                          color: on ? kind.accent : Brand.textMuted,
+                          color: on ? c.accent(kind.accent) : c.textMuted,
                         ),
                         const SizedBox(width: 5),
                         Flexible(
@@ -150,7 +152,8 @@ class _RemindersScreenState extends State<RemindersScreen> {
                             style: TextStyle(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w600,
-                              color: on ? kind.accent : Brand.textMuted,
+                              color:
+                                  on ? c.accent(kind.accent) : c.textMuted,
                             ),
                           ),
                         ),
@@ -163,7 +166,6 @@ class _RemindersScreenState extends State<RemindersScreen> {
           ),
           Switch(
             value: on,
-            activeTrackColor: Brand.ink,
             onChanged: (value) => _toggle(kind, value),
           ),
         ],
@@ -173,6 +175,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -186,34 +189,34 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Reminders',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Gentle daily nudges, only if you want them — tap a time '
                   'to change it.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
                 const SizedBox(height: 24),
                 if (!_loaded)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
                     child: Center(
                       child: CircularProgressIndicator(
-                        color: Brand.ink,
+                        color: c.ink,
                         strokeWidth: 2.6,
                       ),
                     ),
@@ -221,13 +224,13 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 else
                   for (final kind in ReminderKind.values) _reminderCard(kind),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Reminders are scheduled on this device and arrive even '
                   'when the app is closed. Times may shift a few minutes to '
                   'save battery.',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.5,
                   ),
                 ),

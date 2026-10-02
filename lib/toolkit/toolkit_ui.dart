@@ -36,12 +36,11 @@ class ToolkitTheme extends InheritedWidget {
       old.accent != accent || old.onAccent != onAccent;
 }
 
-/// Ink reads better than white on a light accent such as yellow.
+/// Ink reads better than white on a light accent such as yellow. The
+/// accent fill looks the same in both modes, so its ink does too.
 Color onAccentFor(Color accent) =>
-    accent.computeLuminance() > 0.4 ? Brand.ink : Colors.white;
+    accent.computeLuminance() > 0.4 ? BrandColors.light.ink : Colors.white;
 
-/// The soft card colour behind each tool, as in the reference design.
-const toolkitCardColor = Color(0xFFF6F3EF);
 const toolkitRadius = 18.0;
 
 /// A toolkit page: a solid header bar in the programme's colour with the
@@ -133,10 +132,11 @@ class ToolkitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: toolkitCardColor,
+        color: c.card,
         borderRadius: BorderRadius.circular(toolkitRadius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
@@ -158,10 +158,10 @@ class ToolkitCard extends StatelessWidget {
                             title,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: Brand.ink,
+                              color: c.ink,
                               height: 1.25,
                             ),
                           ),
@@ -170,9 +170,9 @@ class ToolkitCard extends StatelessWidget {
                             blurb,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.5,
-                              color: Brand.textMuted,
+                              color: c.textMuted,
                               height: 1.4,
                             ),
                           ),
@@ -188,7 +188,9 @@ class ToolkitCard extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 11.5,
                                         fontWeight: FontWeight.w600,
-                                        color: ToolkitTheme.of(context).accent,
+                                        color: c.accent(
+                                          ToolkitTheme.of(context).accent,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -235,6 +237,7 @@ class ToolkitSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -242,19 +245,19 @@ class ToolkitSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           if (subtitle != null) ...[
             const SizedBox(height: 4),
             Text(
               subtitle!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.5,
               ),
             ),
@@ -283,7 +286,8 @@ class ToolkitStepHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = ToolkitTheme.of(context).accent;
+    final c = context.brand;
+    final accent = c.accent(ToolkitTheme.of(context).accent);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -295,7 +299,7 @@ class ToolkitStepHeader extends StatelessWidget {
                   height: 5,
                   margin: EdgeInsets.only(right: i == of ? 0 : 5),
                   decoration: BoxDecoration(
-                    color: i <= step ? accent : Brand.border,
+                    color: i <= step ? accent : c.border,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -315,10 +319,10 @@ class ToolkitStepHeader extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 21,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.25,
           ),
         ),
@@ -326,9 +330,9 @@ class ToolkitStepHeader extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             hint!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.5,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.5,
             ),
           ),
@@ -356,12 +360,13 @@ class ToolkitPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: selected ? Brand.ink : Colors.white,
+      color: selected ? c.ink : c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(999),
         side: BorderSide(
-          color: selected ? Brand.ink : Brand.border,
+          color: selected ? c.ink : c.border,
           width: 1.2,
         ),
       ),
@@ -377,7 +382,7 @@ class ToolkitPill extends StatelessWidget {
                 Icon(
                   icon,
                   size: 15,
-                  color: selected ? Colors.white : Brand.ink,
+                  color: selected ? c.onInk : c.ink,
                 ),
                 const SizedBox(width: 6),
               ],
@@ -386,7 +391,7 @@ class ToolkitPill extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: selected ? Colors.white : Brand.ink,
+                  color: selected ? c.onInk : c.ink,
                 ),
               ),
             ],
@@ -399,21 +404,19 @@ class ToolkitPill extends StatelessWidget {
 
 /// A quiet box for a summary or a tip.
 class ToolkitNote extends StatelessWidget {
-  const ToolkitNote({
-    super.key,
-    required this.child,
-    this.tint = toolkitCardColor,
-  });
+  const ToolkitNote({super.key, required this.child, this.tint});
 
   final Widget child;
-  final Color tint;
+
+  /// The box's fill, e.g. `context.brand.tint(...)`; a plain card if null.
+  final Color? tint;
 
   @override
   Widget build(BuildContext context) {
     // A Material rather than a Container, so list tiles and ink inside it
     // draw properly.
     return Material(
-      color: tint,
+      color: tint ?? context.brand.card,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -445,12 +448,13 @@ class ToolkitChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = ToolkitTheme.of(context).accent;
-    final fg = selected ? Colors.white : Brand.ink;
+    final c = context.brand;
+    final accent = c.accent(ToolkitTheme.of(context).accent);
+    final fg = selected ? c.onInk : c.ink;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: selected ? Brand.ink : toolkitCardColor,
+        color: selected ? c.ink : c.card,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
@@ -460,7 +464,7 @@ class ToolkitChoice extends StatelessWidget {
             child: Row(
               children: [
                 if (icon != null) ...[
-                  Icon(icon, size: 18, color: selected ? Colors.white : accent),
+                  Icon(icon, size: 18, color: selected ? c.onInk : accent),
                   const SizedBox(width: 12),
                 ],
                 Expanded(
@@ -480,7 +484,9 @@ class ToolkitChoice extends StatelessWidget {
                           detail!,
                           style: TextStyle(
                             fontSize: 12,
-                            color: selected ? Colors.white70 : Brand.textMuted,
+                            color: selected
+                                ? c.onInk.withValues(alpha: 0.7)
+                                : c.textMuted,
                             height: 1.4,
                           ),
                         ),
@@ -491,7 +497,7 @@ class ToolkitChoice extends StatelessWidget {
                   Icon(
                     trailing,
                     size: 18,
-                    color: selected ? Colors.white : Brand.textMuted,
+                    color: selected ? c.onInk : c.textMuted,
                   ),
               ],
             ),

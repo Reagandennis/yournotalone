@@ -116,6 +116,7 @@ class _WindDownScreenState extends State<WindDownScreen> {
         children: [Center(child: CircularProgressIndicator())],
       );
     }
+    final c = context.brand;
     final bed = plan.bedtime.format(context);
     return ToolkitScaffold(
       accent: sleepAccent,
@@ -129,10 +130,10 @@ class _WindDownScreenState extends State<WindDownScreen> {
               'waits for. Tick them off as you go.',
         ),
         ToolkitNote(
-          tint: const Color(0x143E6AB7),
+          tint: c.tint(sleepAccent, 0.08),
           child: Row(
             children: [
-              const Icon(Icons.bedtime_rounded, color: sleepAccent),
+              Icon(Icons.bedtime_rounded, color: c.accent(sleepAccent)),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -140,17 +141,17 @@ class _WindDownScreenState extends State<WindDownScreen> {
                   children: [
                     Text(
                       'Lights out at $bed',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
-                    const Text(
+                    Text(
                       'Same time most nights, and a wake time that never moves.',
                       style: TextStyle(
                         fontSize: 12.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.4,
                       ),
                     ),
@@ -173,18 +174,18 @@ class _WindDownScreenState extends State<WindDownScreen> {
         ToolkitNote(
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.notifications_active_outlined,
-                color: Brand.textMuted,
+                color: c.textMuted,
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Want a nudge when it\'s time to start? The Wind-down '
                   'reminder is in Reminders.',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.45,
                   ),
                 ),
@@ -218,10 +219,12 @@ class _StepTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
+    final mutedOnInk = c.onInk.withValues(alpha: 0.7);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: done ? Brand.ink : toolkitCardColor,
+        color: done ? c.ink : c.card,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -235,13 +238,15 @@ class _StepTile extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: done ? Colors.white24 : Colors.white,
+                    color: done
+                        ? c.onInk.withValues(alpha: 0.24)
+                        : c.tint(sleepAccent, 0.08),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     done ? Icons.check_rounded : step.icon,
                     size: 20,
-                    color: done ? Colors.white : sleepAccent,
+                    color: done ? c.onInk : c.accent(sleepAccent),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -254,7 +259,7 @@ class _StepTile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
-                          color: done ? Colors.white70 : sleepAccent,
+                          color: done ? mutedOnInk : c.accent(sleepAccent),
                           letterSpacing: 0.3,
                         ),
                       ),
@@ -264,7 +269,7 @@ class _StepTile extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: done ? Colors.white : Brand.ink,
+                          color: done ? c.onInk : c.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -272,7 +277,7 @@ class _StepTile extends StatelessWidget {
                         step.detail,
                         style: TextStyle(
                           fontSize: 12.5,
-                          color: done ? Colors.white70 : Brand.textMuted,
+                          color: done ? mutedOnInk : c.textMuted,
                           height: 1.4,
                         ),
                       ),

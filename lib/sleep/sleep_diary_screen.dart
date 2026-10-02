@@ -238,15 +238,16 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     double max,
     ValueChanged<double> onChanged,
   ) {
+    final c = context.brand;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           '$label · ${value.round()} min',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
           ),
         ),
         Slider(
@@ -254,7 +255,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
           min: 0,
           max: max,
           divisions: (max / 5).round(),
-          activeColor: sleepAccent,
+          activeColor: c.accent(sleepAccent),
           onChanged: onChanged,
         ),
       ],
@@ -284,12 +285,12 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       (v) => setState(() => _awake = v),
     ),
     const SizedBox(height: 6),
-    const Text(
+    Text(
       'How did you feel on waking?',
       style: TextStyle(
         fontSize: 13.5,
         fontWeight: FontWeight.w600,
-        color: Brand.ink,
+        color: context.brand.ink,
       ),
     ),
     const SizedBox(height: 10),
@@ -308,6 +309,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   ];
 
   List<Widget> _overview(List<SleepNight> nights) {
+    final c = context.brand;
     final summary = SleepSummary(nights);
     final window = summary.window;
     return [
@@ -318,7 +320,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             'actually spend asleep. Clinics aim for 85% and above.',
       ),
       ToolkitNote(
-        tint: const Color(0x143E6AB7),
+        tint: c.tint(sleepAccent, 0.08),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -342,9 +344,9 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             const SizedBox(height: 12),
             Text(
               summary.verdict,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.5,
               ),
             ),
@@ -352,10 +354,10 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
               const SizedBox(height: 10),
               Text(
                 'Suggested window: in bed ${_fmt(window.$1)} to ${_fmt(window.$2)}.',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
-                  color: sleepAccent,
+                  color: c.accent(sleepAccent),
                 ),
               ),
             ],
@@ -364,12 +366,12 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       ),
       const SizedBox(height: 18),
       if (nights.isEmpty)
-        const Padding(
-          padding: EdgeInsets.only(top: 4),
+        Padding(
+          padding: const EdgeInsets.only(top: 4),
           child: Text(
             'No nights yet. Log this morning\'s and the picture starts to '
             'form within a week.',
-            style: TextStyle(fontSize: 13, color: Brand.textMuted, height: 1.5),
+            style: TextStyle(fontSize: 13, color: c.textMuted, height: 1.5),
           ),
         )
       else
@@ -377,7 +379,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Material(
-              color: toolkitCardColor,
+              color: c.card,
               borderRadius: BorderRadius.circular(14),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -393,7 +395,9 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: n.efficiency >= 0.85 ? sleepAccent : Brand.red,
+                          color: n.efficiency >= 0.85
+                              ? c.accent(sleepAccent)
+                              : c.red,
                         ),
                       ),
                     ),
@@ -403,16 +407,16 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
                         children: [
                           Text(
                             '${_fmt(n.bedMinutes)} → ${_fmt(n.wakeMinutes)} · ${_hours(n.totalSleep)} asleep',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13.5,
-                              color: Brand.ink,
+                              color: c.ink,
                             ),
                           ),
                           Text(
                             '${n.date} · ${n.latency} min to drop off, ${n.awake} min awake · ${_qualities[n.quality - 1].toLowerCase()}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Brand.textMuted,
+                              color: c.textMuted,
                             ),
                           ),
                         ],
@@ -477,21 +481,22 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           Text(
             label,
-            style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+            style: TextStyle(fontSize: 12, color: c.textMuted),
           ),
         ],
       ),

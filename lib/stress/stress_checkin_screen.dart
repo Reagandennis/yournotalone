@@ -117,11 +117,12 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
   }
 
   Widget _question(int i) {
+    final c = context.brand;
     final q = stressQuestions[i];
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: toolkitCardColor,
+        color: c.card,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
@@ -130,9 +131,9 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
             children: [
               Text(
                 '${i + 1}. ${q.text}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
-                  color: Brand.ink,
+                  color: c.ink,
                   height: 1.4,
                 ),
               ),
@@ -157,17 +158,18 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
   }
 
   Widget _trend(List<StressCheckin> history) {
+    final c = context.brand;
     final recent = history.take(8).toList().reversed.toList();
     return ToolkitNote(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Your last check-ins',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 10),
@@ -176,7 +178,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                for (final c in recent)
+                for (final checkin in recent)
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 3),
@@ -184,21 +186,23 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            '${c.score}',
-                            style: const TextStyle(
+                            '${checkin.score}',
+                            style: TextStyle(
                               fontSize: 10.5,
-                              color: Brand.textMuted,
+                              color: c.textMuted,
                             ),
                           ),
                           const SizedBox(height: 3),
                           Container(
-                            height: 6 + c.score * 2.2,
+                            height: 6 + checkin.score * 2.2,
                             decoration: BoxDecoration(
-                              color: c.score > 13
-                                  ? Brand.red
-                                  : c.score > 6
-                                  ? stressAccent
-                                  : const Color(0xFF3E9B5B),
+                              color: c.art(
+                                checkin.score > 13
+                                    ? Pillars.red
+                                    : checkin.score > 6
+                                    ? stressAccent
+                                    : const Color(0xFF3E9B5B),
+                              ),
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
@@ -212,7 +216,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
           const SizedBox(height: 6),
           Text(
             '${recent.first.date} → ${recent.last.date} · 0 is calm, 20 is a lot',
-            style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 11.5, color: c.textMuted),
           ),
         ],
       ),
@@ -229,6 +233,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
         children: [Center(child: CircularProgressIndicator())],
       );
     }
+    final c = context.brand;
     final result = _result;
     if (result != null) {
       final (band, advice) = stressBand(result);
@@ -241,24 +246,24 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
         ),
         children: [
           ToolkitNote(
-            tint: const Color(0x24F4BB40),
+            tint: c.tint(stressAccent, 0.14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   '$result out of 20 · $band',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   advice,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.5,
                   ),
                 ),
@@ -268,12 +273,12 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
           const SizedBox(height: 16),
           if (history.length > 1) _trend(history),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'A check-in is a snapshot of one week, not a diagnosis. If the '
             'high scores keep coming, that\'s the signal to talk to someone.',
             style: TextStyle(
               fontSize: 12.5,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.5,
             ),
           ),

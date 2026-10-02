@@ -18,6 +18,7 @@ class ToolkitLessonScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return ToolkitScaffold(
       accent: accent,
       title: 'Learn',
@@ -26,10 +27,10 @@ class ToolkitLessonScreen extends StatelessWidget {
         const SizedBox(height: 18),
         Text(
           lesson.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 23,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.25,
           ),
         ),
@@ -39,7 +40,7 @@ class ToolkitLessonScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
-            color: accent,
+            color: c.accent(accent),
           ),
         ),
         const SizedBox(height: 18),
@@ -48,9 +49,9 @@ class ToolkitLessonScreen extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 16),
             child: Text(
               p,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.65,
               ),
             ),

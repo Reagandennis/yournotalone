@@ -52,13 +52,14 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
 
   Widget _milestoneRow(RecoveryHabit habit, int days, String label,
       {required bool last}) {
+    final c = context.brand;
     final reached = habit.daysIn >= days;
     final isNext = habit.nextMilestone?.$1 == days;
     final color = reached
-        ? Brand.blue
+        ? c.blue
         : isNext
-            ? Brand.yellow
-            : Brand.border;
+            ? c.yellow
+            : c.border;
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,20 +70,21 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                 width: 26,
                 height: 26,
                 decoration: BoxDecoration(
-                  color: reached ? Brand.blue : Colors.white,
+                  color: reached ? c.art(Pillars.blue) : c.card,
                   shape: BoxShape.circle,
                   border: Border.all(color: color, width: 1.8),
                 ),
+                // The tick is cut out of the disc: white on blue, and navy
+                // on the lighter blue of dark mode.
                 child: reached
-                    ? const Icon(Icons.check_rounded,
-                        size: 15, color: Colors.white)
+                    ? Icon(Icons.check_rounded, size: 15, color: c.card)
                     : null,
               ),
               if (!last)
                 Expanded(
                   child: Container(
                     width: 2,
-                    color: reached ? Brand.blue : Brand.border,
+                    color: reached ? c.blue : c.border,
                   ),
                 ),
             ],
@@ -101,7 +103,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                       fontWeight: reached || isNext
                           ? FontWeight.w600
                           : FontWeight.w400,
-                      color: reached || isNext ? Brand.ink : Brand.textMuted,
+                      color: reached || isNext ? c.ink : c.textMuted,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -112,7 +114,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                             '${days - habit.daysIn == 1 ? 'day' : 'days'} to go',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isNext ? Brand.ink : Brand.textMuted,
+                      color: isNext ? c.ink : c.textMuted,
                     ),
                   ),
                 ],
@@ -125,6 +127,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
   }
 
   Widget _habitCard(RecoveryHabit habit) {
+    final c = context.brand;
     final reached =
         recoveryMilestones.where((m) => habit.daysIn >= m.$1).length;
     return Padding(
@@ -132,7 +135,8 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
       child: Container(
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          border: Border.all(color: Brand.border, width: 1.2),
+          color: c.card,
+          border: Border.all(color: c.border, width: 1.2),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -148,10 +152,10 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                         habit.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -159,9 +163,9 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                         '$reached of ${recoveryMilestones.length} reached'
                         '${habit.bestStreakDays > habit.daysIn ? ' · best '
                             '${habit.bestStreakDays} days' : ''}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                     ],
@@ -169,10 +173,10 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                 ),
                 Text(
                   'Day ${habit.daysIn}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: Brand.blue,
+                    color: c.blue,
                   ),
                 ),
               ],
@@ -192,13 +196,14 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
   }
 
   Widget _body() {
+    final c = context.brand;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Couldn\'t load your commitments.',
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
           OutlinedButton(onPressed: _load, child: const Text('Try again')),
@@ -213,10 +218,10 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
       );
     }
     if (habits.isEmpty) {
-      return const Text(
+      return Text(
         'No commitments yet. Add one on the recovery screen and every '
         'marker below starts counting from today.',
-        style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
+        style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
     return Column(
@@ -227,6 +232,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -240,24 +246,24 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Milestones',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Days add up whether or not anyone claps. Here they are, '
                   'counted.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),

@@ -134,6 +134,7 @@ class _MatchScreenState extends State<MatchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final request = widget.item.request;
     final therapists = _therapists;
     final note = request.note?.trim() ?? '';
@@ -164,7 +165,7 @@ class _MatchScreenState extends State<MatchScreen> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   decoration: BoxDecoration(
-                    color: const Color(0x0F3764CD),
+                    color: c.tint(Pillars.blue, 0.06),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
@@ -172,10 +173,10 @@ class _MatchScreenState extends State<MatchScreen> {
                     children: [
                       Text(
                         widget.item.clientLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -194,12 +195,12 @@ class _MatchScreenState extends State<MatchScreen> {
                 const SectionHeader(title: 'Therapist'),
                 const SizedBox(height: 10),
                 if (therapists.isEmpty)
-                  const Text(
+                  Text(
                     'No active therapists yet. Add one from the Therapists '
                     'tab first.',
                     style: TextStyle(
                       fontSize: 13.5,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                       height: 1.5,
                     ),
                   )
@@ -238,10 +239,10 @@ class _MatchScreenState extends State<MatchScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'In this phone\'s time zone. The client and therapist see '
                   'it in theirs.',
-                  style: TextStyle(fontSize: 12, color: Brand.textMuted),
+                  style: TextStyle(fontSize: 12, color: c.textMuted),
                 ),
                 const SizedBox(height: 18),
                 const SectionHeader(title: 'Length'),
@@ -279,9 +280,9 @@ class _MatchScreenState extends State<MatchScreen> {
                 const SizedBox(height: 10),
                 Text(
                   'The client and therapist are emailed the details. $payment',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.5,
                   ),
                 ),
@@ -306,6 +307,7 @@ class _TherapistOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final profile = therapist.profile;
     final detail = [
       if (fitsTopic) 'Specialises in this',
@@ -314,11 +316,11 @@ class _TherapistOption extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: selected ? const Color(0x0A191919) : Colors.white,
+        color: selected ? c.tint(Pillars.black, 0.04) : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: selected ? Brand.ink : Brand.border,
+            color: selected ? c.ink : c.border,
             width: selected ? 1.6 : 1.2,
           ),
         ),
@@ -341,23 +343,23 @@ class _TherapistOption extends StatelessWidget {
                     children: [
                       Text(
                         profile.fullName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       Text(
                         detail,
                         style: TextStyle(
                           fontSize: 12,
-                          color: fitsTopic ? Brand.blue : Brand.textMuted,
+                          color: fitsTopic ? c.blue : c.textMuted,
                         ),
                       ),
                       if (!therapist.hasAccount)
-                        const Text(
+                        Text(
                           'Not signed in yet — they can\'t join until they do',
-                          style: TextStyle(fontSize: 12, color: Brand.red),
+                          style: TextStyle(fontSize: 12, color: c.red),
                         ),
                     ],
                   ),
@@ -366,7 +368,7 @@ class _TherapistOption extends StatelessWidget {
                   selected
                       ? Icons.check_circle_rounded
                       : Icons.radio_button_unchecked_rounded,
-                  color: selected ? Brand.ink : Brand.border,
+                  color: selected ? c.ink : c.border,
                 ),
               ],
             ),
@@ -390,11 +392,12 @@ class _PickerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: Colors.white,
+      color: c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
-        side: const BorderSide(color: Brand.border, width: 1.2),
+        side: BorderSide(color: c.border, width: 1.2),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
@@ -403,17 +406,17 @@ class _PickerButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
           child: Row(
             children: [
-              Icon(icon, size: 18, color: Brand.textMuted),
+              Icon(icon, size: 18, color: c.textMuted),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ),

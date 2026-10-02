@@ -59,12 +59,13 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
   }
 
   Widget _question(SleepHabit h) {
+    final c = context.brand;
     final yes = _yes.contains(h.id);
     final no = _no.contains(h.id);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: toolkitCardColor,
+        color: c.card,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
@@ -74,14 +75,14 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(h.icon, size: 20, color: sleepAccent),
+                  Icon(h.icon, size: 20, color: c.accent(sleepAccent)),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       h.question,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
-                        color: Brand.ink,
+                        color: c.ink,
                         height: 1.4,
                       ),
                     ),
@@ -112,6 +113,7 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
   }
 
   List<Widget> _results() {
+    final c = context.brand;
     final hits = sleepHabits.where((h) => _yes.contains(h.id)).toList();
     final verdict = switch (hits.length) {
       0 =>
@@ -137,7 +139,7 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
         Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: Material(
-            color: toolkitCardColor,
+            color: c.card,
             borderRadius: BorderRadius.circular(16),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -147,19 +149,23 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
                   Container(
                     width: 38,
                     height: 38,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: c.tint(sleepAccent, 0.08),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(h.icon, size: 19, color: sleepAccent),
+                    child: Icon(
+                      h.icon,
+                      size: 19,
+                      color: c.accent(sleepAccent),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       h.tip,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13.5,
-                        color: Brand.ink,
+                        color: c.ink,
                         height: 1.5,
                       ),
                     ),

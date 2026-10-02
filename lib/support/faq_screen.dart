@@ -180,27 +180,29 @@ class FaqScreen extends StatelessWidget {
       );
   }
 
-  Widget _sectionLabel(String label) {
+  Widget _sectionLabel(BuildContext context, String label) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, top: 22, bottom: 8),
       child: Text(
         label.toUpperCase(),
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.8,
-          color: Brand.textMuted,
+          color: context.brand.textMuted,
         ),
       ),
     );
   }
 
-  Widget _item(_FaqItem item) {
+  Widget _item(BuildContext context, _FaqItem item) {
+    final c = context.brand;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        border: Border.all(color: Brand.border, width: 1.2),
+        color: c.card,
+        border: Border.all(color: c.border, width: 1.2),
         borderRadius: BorderRadius.circular(16),
       ),
       child: ExpansionTile(
@@ -209,23 +211,23 @@ class FaqScreen extends StatelessWidget {
         tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
-        iconColor: Brand.textMuted,
-        collapsedIconColor: Brand.textMuted,
+        iconColor: c.textMuted,
+        collapsedIconColor: c.textMuted,
         title: Text(
           item.question,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.4,
           ),
         ),
         children: [
           Text(
             item.answer,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.6,
             ),
           ),
@@ -235,11 +237,12 @@ class FaqScreen extends StatelessWidget {
   }
 
   Widget _contactCard(BuildContext context) {
+    final c = context.brand;
     return Container(
       margin: const EdgeInsets.only(top: 16),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0x143764CD),
+        color: c.tint(Pillars.blue, 0.08),
         borderRadius: BorderRadius.circular(18),
       ),
       child: InkWell(
@@ -251,14 +254,14 @@ class FaqScreen extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: c.chip,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.mail_outline_rounded,
                   size: 22,
-                  color: Brand.blue,
+                  color: c.blue,
                 ),
               ),
               const SizedBox(width: 14),
@@ -266,20 +269,20 @@ class FaqScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Still need help?',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Write to us at $legalContactEmail — tap to copy.',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.5,
                       ),
                     ),
@@ -295,6 +298,7 @@ class FaqScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       appBar: AppBar(title: const Text('FAQ')),
       body: SafeArea(
@@ -306,18 +310,18 @@ class FaqScreen extends StatelessWidget {
               children: [
                 const PillarStripe(),
                 const SizedBox(height: 14),
-                const Text(
+                Text(
                   'Quick answers to the questions we hear most. Tap a '
                   'question to open it.',
                   style: TextStyle(
                     fontSize: 13.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
                 for (final section in _sections) ...[
-                  _sectionLabel(section.title),
-                  for (final item in section.items) _item(item),
+                  _sectionLabel(context, section.title),
+                  for (final item in section.items) _item(context, item),
                 ],
                 _contactCard(context),
               ],

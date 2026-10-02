@@ -29,6 +29,7 @@ class MoodFace extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return AnimatedOpacity(
       opacity: dimmed ? 0.38 : 1,
       duration: const Duration(milliseconds: 220),
@@ -39,6 +40,10 @@ class MoodFace extends StatelessWidget {
             level: level,
             shape: _shapeFor(level),
             expression: _expressionFor(level),
+            fill: c.art(level.color),
+            // The face stays dark on its bright body in both modes: navy
+            // ink on paper, the page's navy in the dark.
+            ink: c.isDark ? c.background : c.ink,
           ),
         ),
       ),
@@ -138,11 +143,15 @@ class _MoodFacePainter extends CustomPainter {
     required this.level,
     required this.shape,
     required this.expression,
+    required this.fill,
+    required this.ink,
   });
 
   final MoodLevel level;
   final _BlobShape shape;
   final _Expression expression;
+  final Color fill;
+  final Color ink;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -166,26 +175,26 @@ class _MoodFacePainter extends CustomPainter {
 
     // A single lighter tint of the same colour towards the top-left gives
     // the body some roundness without turning it into a glossy sphere.
-    final light = Color.lerp(level.color, Colors.white, 0.3)!;
+    final light = Color.lerp(fill, Colors.white, 0.3)!;
     canvas.drawPath(
       body,
       Paint()
         ..shader = RadialGradient(
           center: const Alignment(-0.45, -0.5),
           radius: 1.05,
-          colors: [light, level.color],
+          colors: [light, fill],
           stops: const [0.0, 0.8],
         ).createShader(Rect.fromCircle(center: c, radius: r)),
     );
 
     // Face.
     final ink = Paint()
-      ..color = Brand.ink
+      ..color = this.ink
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.shortestSide * 0.078
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round;
-    final dot = Paint()..color = Brand.ink;
+    final dot = Paint()..color = this.ink;
 
     final eyeY = c.dy - r * 0.14;
     final eyeDx = r * 0.36;
@@ -272,5 +281,9 @@ class _MoodFacePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_MoodFacePainter old) =>
-      old.level != level || old.shape != shape || old.expression != expression;
+      old.level != level ||
+      old.shape != shape ||
+      old.expression != expression ||
+      old.fill != fill ||
+      old.ink != ink;
 }

@@ -56,7 +56,10 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
     return entries;
   }
 
+  /// [color] is declared, as a pillar colour; it's drawn through
+  /// [BrandColors.art] so the bar stands out on either page.
   Widget _bar(String label, int count, int max, Color color) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -67,7 +70,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 13, color: Brand.ink),
+              style: TextStyle(fontSize: 13, color: c.ink),
             ),
           ),
           const SizedBox(width: 10),
@@ -77,7 +80,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
                 Container(
                   height: 16,
                   decoration: BoxDecoration(
-                    color: const Color(0x0A191919),
+                    color: c.tint(Pillars.black, 0.04),
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -86,7 +89,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
                   child: Container(
                     height: 16,
                     decoration: BoxDecoration(
-                      color: color,
+                      color: c.art(color),
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
@@ -99,10 +102,10 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
             child: Text(
               '$count',
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w600,
-                color: Brand.textMuted,
+                color: c.textMuted,
               ),
             ),
           ),
@@ -112,6 +115,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
   }
 
   Widget _stat(String value, String label) {
+    final c = context.brand;
     return Expanded(
       child: Column(
         children: [
@@ -119,17 +123,17 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 11.5, color: c.textMuted),
           ),
         ],
       ),
@@ -137,13 +141,14 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
   }
 
   Widget _body() {
+    final c = context.brand;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Couldn\'t load your craving log.',
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
           OutlinedButton(onPressed: _load, child: const Text('Try again')),
@@ -158,11 +163,11 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
       );
     }
     if (logs.isEmpty) {
-      return const Text(
+      return Text(
         'Nothing logged in the last three months. Log a craving as it '
         'happens and the pattern shows up here — usually sooner than '
         'you\'d expect.',
-        style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
+        style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
 
@@ -181,7 +186,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: const Color(0x0A191919),
+            color: c.tint(Pillars.black, 0.04),
             borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
@@ -197,21 +202,21 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: const Color(0x1FFAB414),
+            color: c.tint(Pillars.yellow, 0.12),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
             children: [
-              const Icon(Icons.insights_rounded, size: 18, color: Brand.ink),
+              Icon(Icons.insights_rounded, size: 18, color: c.ink),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   '${triggers.first.key} in the '
                   '${times.first.key.toLowerCase()} is your pattern. '
                   'That\'s the one worth planning for.',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.45,
                   ),
                 ),
@@ -223,19 +228,19 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
         const SectionHeader(title: 'What sets them off'),
         const SizedBox(height: 12),
         for (final entry in triggers)
-          _bar(entry.key, entry.value, maxTrigger, Brand.red),
+          _bar(entry.key, entry.value, maxTrigger, Pillars.red),
         const SizedBox(height: 20),
         const SectionHeader(title: 'When they land'),
         const SizedBox(height: 12),
         for (final part in _partsOfDay)
-          _bar(part, timeCounts[part] ?? 0, maxTime, Brand.blue),
+          _bar(part, timeCounts[part] ?? 0, maxTime, Pillars.blue),
         const SizedBox(height: 22),
-        const Text(
+        Text(
           'Every one of these was a craving you sat with instead of acting '
           'on. That is the whole skill.',
           style: TextStyle(
             fontSize: 12.5,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.5,
           ),
         ),
@@ -245,6 +250,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -258,25 +264,25 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Trigger insights',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Cravings feel random from the inside. Logged, they stop '
                   'being random — and a pattern you can see is one you can '
                   'plan around.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),

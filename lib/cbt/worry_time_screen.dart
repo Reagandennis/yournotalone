@@ -150,13 +150,14 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
   }
 
   Widget _worryTile(ParkedWorry worry) {
+    final c = context.brand;
     final decided = worry.outcome != null;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Container(
         padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
         decoration: BoxDecoration(
-          color: toolkitCardColor,
+          color: c.card,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Column(
@@ -166,7 +167,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
               worry.text,
               style: TextStyle(
                 fontSize: 14,
-                color: decided ? Brand.textMuted : Brand.ink,
+                color: decided ? c.textMuted : c.ink,
                 height: 1.4,
                 decoration: worry.outcome == 'let_go'
                     ? TextDecoration.lineThrough
@@ -180,18 +181,18 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                   worry.outcome == 'plan'
                       ? 'You\'ve got a plan for this one.'
                       : 'Let go — nothing to do here today.',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: cbtAccent,
+                    color: c.accent(cbtAccent),
                   ),
                 ),
               )
             else if (_inWindow) ...[
               const SizedBox(height: 6),
-              const Text(
+              Text(
                 'Can you do something about it in the next week?',
-                style: TextStyle(fontSize: 12.5, color: Brand.textMuted),
+                style: TextStyle(fontSize: 12.5, color: c.textMuted),
               ),
               const SizedBox(height: 8),
               Row(
@@ -228,6 +229,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
         children: [Center(child: CircularProgressIndicator())],
       );
     }
+    final c = context.brand;
     final parked = worries.where((w) => w.outcome == null).length;
     return ToolkitScaffold(
       accent: cbtAccent,
@@ -260,7 +262,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
           ),
           const SizedBox(height: 18),
           ToolkitNote(
-            tint: const Color(0x143764CD),
+            tint: c.tint(Pillars.blue, 0.08),
             child: Row(
               children: [
                 Expanded(
@@ -271,19 +273,19 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                         parked == 0
                             ? 'Nothing parked'
                             : '$parked parked for worry time',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 3),
                       Text(
                         'Best kept to the same time each day — not the '
                         'hour before bed.',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.4,
                         ),
                       ),
@@ -306,25 +308,25 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
           ),
         ] else ...[
           ToolkitNote(
-            tint: const Color(0x14C53C26),
+            tint: c.tint(cbtAccent, 0.08),
             child: Row(
               children: [
                 Text(
                   _clock(_left!),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 34,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
-                    fontFeatures: [FontFeature.tabularFigures()],
+                    color: c.ink,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Go through each worry once. Decide, don\'t dwell.',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                       height: 1.4,
                     ),
                   ),
@@ -354,14 +356,14 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
           ),
           for (final w in worries) _worryTile(w),
         ] else
-          const Padding(
-            padding: EdgeInsets.only(top: 8),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
               'Your parked worries appear here. Most people find half of them '
               'have lost their sting by the time the window opens.',
               style: TextStyle(
                 fontSize: 13,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.5,
               ),
             ),
