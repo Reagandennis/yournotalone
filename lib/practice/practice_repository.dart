@@ -13,9 +13,9 @@ import 'pending_practice.dart';
 /// What kind of practice a session was.
 enum PracticeKind {
   meditation('meditation', 'Meditation', Icons.self_improvement_rounded,
-      Brand.blue),
-  breathing('breathing', 'Breathing', Icons.air_rounded, Brand.yellow),
-  sound('sound', 'Sound', Icons.graphic_eq_rounded, Brand.ink);
+      Pillars.blue),
+  breathing('breathing', 'Breathing', Icons.air_rounded, Pillars.yellow),
+  sound('sound', 'Sound', Icons.graphic_eq_rounded, Pillars.black);
 
   const PracticeKind(this.key, this.label, this.icon, this.color);
 

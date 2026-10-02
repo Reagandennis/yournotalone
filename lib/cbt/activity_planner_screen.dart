@@ -141,6 +141,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
         children: [Center(child: CircularProgressIndicator())],
       );
     }
+    final c = context.brand;
     final ideas = _filter == null
         ? activityIdeas
         : activityIdeas.where((a) => a.category == _filter).toList();
@@ -162,10 +163,10 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
               children: [
                 Text(
                   'Today · ${plan.done.length} of ${plan.picked.length} done',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -174,14 +175,16 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
                     contentPadding: EdgeInsets.zero,
                     dense: true,
                     controlAffinity: ListTileControlAffinity.leading,
+                    // A fixed red box carrying its own white tick.
                     activeColor: cbtAccent,
+                    checkColor: Colors.white,
                     value: plan.done.contains(label),
                     onChanged: (_) => _markDone(label),
                     title: Text(
                       label,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Brand.ink,
+                        color: c.ink,
                         decoration: plan.done.contains(label)
                             ? TextDecoration.lineThrough
                             : null,
@@ -189,7 +192,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
                     ),
                     secondary: IconButton(
                       icon: const Icon(Icons.close_rounded, size: 18),
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                       onPressed: () => _toggle(label),
                       tooltip: 'Remove',
                     ),
@@ -209,12 +212,12 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
               selected: _filter == null,
               onTap: () => setState(() => _filter = null),
             ),
-            for (final c in ActivityCategory.values)
+            for (final category in ActivityCategory.values)
               ToolkitPill(
-                label: c.label,
-                icon: c.icon,
-                selected: _filter == c,
-                onTap: () => setState(() => _filter = c),
+                label: category.label,
+                icon: category.icon,
+                selected: _filter == category,
+                onTap: () => setState(() => _filter = category),
               ),
           ],
         ),
@@ -223,9 +226,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Material(
-              color: plan.picked.contains(idea.label)
-                  ? Brand.ink
-                  : toolkitCardColor,
+              color: plan.picked.contains(idea.label) ? c.ink : c.card,
               borderRadius: BorderRadius.circular(14),
               child: InkWell(
                 borderRadius: BorderRadius.circular(14),
@@ -241,8 +242,8 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
                         idea.category.icon,
                         size: 18,
                         color: plan.picked.contains(idea.label)
-                            ? Colors.white
-                            : cbtAccent,
+                            ? c.onInk
+                            : c.accent(cbtAccent),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -252,8 +253,8 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: plan.picked.contains(idea.label)
-                                ? Colors.white
-                                : Brand.ink,
+                                ? c.onInk
+                                : c.ink,
                           ),
                         ),
                       ),
@@ -263,8 +264,8 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
                             : Icons.add_rounded,
                         size: 18,
                         color: plan.picked.contains(idea.label)
-                            ? Colors.white
-                            : Brand.textMuted,
+                            ? c.onInk
+                            : c.textMuted,
                       ),
                     ],
                   ),

@@ -25,11 +25,12 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
   }
 
   Widget _trapCard(ThinkingTrap trap) {
+    final c = context.brand;
     final open = _open == trap.name;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: toolkitCardColor,
+        color: c.card,
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -44,11 +45,16 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
                     Container(
                       width: 38,
                       height: 38,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
+                      // A soft disc: a white one would vanish on the card.
+                      decoration: BoxDecoration(
+                        color: c.tint(Pillars.black, 0.06),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(trap.icon, size: 19, color: cbtAccent),
+                      child: Icon(
+                        trap.icon,
+                        size: 19,
+                        color: c.accent(cbtAccent),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -57,18 +63,18 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
                         children: [
                           Text(
                             trap.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14.5,
                               fontWeight: FontWeight.w600,
-                              color: Brand.ink,
+                              color: c.ink,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             '“${trap.soundsLike}”',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.5,
-                              color: Brand.textMuted,
+                              color: c.textMuted,
                               height: 1.4,
                             ),
                           ),
@@ -79,7 +85,7 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
                       open
                           ? Icons.expand_less_rounded
                           : Icons.expand_more_rounded,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ],
                 ),
@@ -98,16 +104,17 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
   }
 
   Widget _row(String label, String text, {bool strong = false}) {
+    final c = context.brand;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 10.5,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.8,
-            color: cbtAccent,
+            color: c.accent(cbtAccent),
           ),
         ),
         const SizedBox(height: 3),
@@ -116,7 +123,7 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
           style: TextStyle(
             fontSize: 13.5,
             fontWeight: strong ? FontWeight.w500 : FontWeight.w400,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.5,
           ),
         ),
@@ -126,6 +133,7 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return ToolkitScaffold(
       accent: cbtAccent,
       title: 'Thinking traps',
@@ -152,12 +160,12 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
         if (_thought.text.trim().isNotEmpty) ...[
           const SizedBox(height: 12),
           ToolkitNote(
-            tint: const Color(0x14C53C26),
+            tint: c.tint(cbtAccent, 0.08),
             child: Text(
               '“${_thought.text.trim()}”\n\nWhich of these does it sound like?',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.5,
               ),
             ),
@@ -166,11 +174,11 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
         const SizedBox(height: 22),
         for (final trap in thinkingTraps) _trapCard(trap),
         const SizedBox(height: 8),
-        const ToolkitNote(
+        ToolkitNote(
           child: Text(
             'Found one? The thought record walks you through checking the '
             'evidence and writing something fairer.',
-            style: TextStyle(fontSize: 13, color: Brand.textMuted, height: 1.5),
+            style: TextStyle(fontSize: 13, color: c.textMuted, height: 1.5),
           ),
         ),
       ],

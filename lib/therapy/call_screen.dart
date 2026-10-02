@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -267,29 +268,34 @@ class _CallScreenState extends State<CallScreen>
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _leave();
       },
-      child: Scaffold(
-        backgroundColor: Brand.ink,
-        body: switch (_phase) {
-          _Phase.connecting => _message(
-              icon: null,
-              title: 'Connecting to your session…',
-              detail: null,
-            ),
-          _Phase.failed => _message(
-              icon: Icons.videocam_off_rounded,
-              title: 'Couldn\'t join',
-              detail: _error,
-              primary: ('Try again', _start),
-            ),
-          _Phase.ended => _message(
-              icon: Icons.call_end_rounded,
-              title: 'The call has ended',
-              detail: 'If you were cut off, you can rejoin while the '
-                  'session is still on.',
-              primary: ('Rejoin', _start),
-            ),
-          _Phase.live => _live(),
-        },
+      // Dark in both modes, like any video call: light status-bar icons
+      // whatever the app's appearance.
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: Scaffold(
+          backgroundColor: Pillars.black,
+          body: switch (_phase) {
+            _Phase.connecting => _message(
+                icon: null,
+                title: 'Connecting to your session…',
+                detail: null,
+              ),
+            _Phase.failed => _message(
+                icon: Icons.videocam_off_rounded,
+                title: 'Couldn\'t join',
+                detail: _error,
+                primary: ('Try again', _start),
+              ),
+            _Phase.ended => _message(
+                icon: Icons.call_end_rounded,
+                title: 'The call has ended',
+                detail: 'If you were cut off, you can rejoin while the '
+                    'session is still on.',
+                primary: ('Rejoin', _start),
+              ),
+            _Phase.live => _live(),
+          },
+        ),
       ),
     );
   }
@@ -346,7 +352,7 @@ class _CallScreenState extends State<CallScreen>
                   onPressed: primary.$2,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    foregroundColor: Brand.ink,
+                    foregroundColor: Pillars.black,
                   ),
                   child: Text(primary.$1),
                 ),
@@ -461,7 +467,7 @@ class _CallScreenState extends State<CallScreen>
                     icon: Icons.call_end_rounded,
                     label: 'Leave',
                     active: true,
-                    color: Brand.red,
+                    color: Pillars.red,
                     onTap: _leave,
                   ),
                 ],
@@ -476,7 +482,7 @@ class _CallScreenState extends State<CallScreen>
   Widget _placeholder(bool joined) {
     final name = widget.counterpartName.trim();
     return ColoredBox(
-      color: Brand.ink,
+      color: Pillars.black,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -530,7 +536,7 @@ class _CallScreenState extends State<CallScreen>
             child: Icon(
               icon,
               size: 26,
-              color: color != null || active ? Colors.white : Brand.ink,
+              color: color != null || active ? Colors.white : Pillars.black,
               semanticLabel: label,
             ),
           ),

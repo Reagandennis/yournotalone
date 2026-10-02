@@ -36,9 +36,9 @@ class _CrisisScreenState extends State<CrisisScreen> {
   }
 
   Future<void> _pickRegion() async {
+    final c = context.brand;
     final picked = await showModalBottomSheet<CrisisRegion>(
       context: context,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -47,12 +47,12 @@ class _CrisisScreenState extends State<CrisisScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'Where are you?',
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
             const SizedBox(height: 8),
@@ -60,7 +60,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
               ListTile(
                 title: Text(region.label),
                 trailing: region.code == _region.code
-                    ? const Icon(Icons.check_rounded, color: Brand.blue)
+                    ? Icon(Icons.check_rounded, color: c.blue)
                     : null,
                 onTap: () => Navigator.of(sheetContext).pop(region),
               ),
@@ -73,8 +73,9 @@ class _CrisisScreenState extends State<CrisisScreen> {
   }
 
   Widget _emergencyCard() {
+    final c = context.brand;
     return Material(
-      color: const Color(0x14E12D23),
+      color: c.tint(Pillars.red, 0.08),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -87,7 +88,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 width: 48,
                 height: 48,
                 decoration: const BoxDecoration(
-                  color: Brand.red,
+                  color: Pillars.red,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.call_rounded,
@@ -100,18 +101,18 @@ class _CrisisScreenState extends State<CrisisScreen> {
                   children: [
                     Text(
                       'Call ${_region.emergency}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     const SizedBox(height: 3),
-                    const Text(
+                    Text(
                       'If you are in immediate danger, this comes first.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.4,
                       ),
                     ),
@@ -151,12 +152,14 @@ class _CrisisScreenState extends State<CrisisScreen> {
         ),
     ];
 
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Brand.border, width: 1.2),
+          color: c.card,
+          border: Border.all(color: c.border, width: 1.2),
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
@@ -164,18 +167,18 @@ class _CrisisScreenState extends State<CrisisScreen> {
           children: [
             Text(
               line.name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15.5,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
             const SizedBox(height: 3),
             Text(
               line.detail,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.4,
               ),
             ),
@@ -190,11 +193,11 @@ class _CrisisScreenState extends State<CrisisScreen> {
                     icon: Icon(action.icon, size: 18),
                     label: Text(action.label),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Brand.ink,
+                      foregroundColor: c.ink,
                       alignment: Alignment.centerLeft,
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 14),
-                      side: const BorderSide(color: Brand.border, width: 1.3),
+                      side: BorderSide(color: c.border, width: 1.3),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -210,6 +213,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final showInternational = _region.code != internationalRegion.code;
     return Scaffold(
       body: SafeArea(
@@ -224,24 +228,24 @@ class _CrisisScreenState extends State<CrisisScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Help right now',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'You do not have to explain yourself well, or be in enough '
                   'trouble to deserve it. Any of these will pick up.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
@@ -253,10 +257,10 @@ class _CrisisScreenState extends State<CrisisScreen> {
                     Expanded(
                       child: Text(
                         _region.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                     ),
@@ -270,25 +274,25 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 for (final line in _region.lines) _lineCard(line),
                 if (showInternational) ...[
                   const SizedBox(height: 10),
-                  const Text(
+                  Text(
                     'Somewhere else',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
                   const SizedBox(height: 10),
                   for (final line in internationalRegion.lines) _lineCard(line),
                 ],
                 const SizedBox(height: 14),
-                const Text(
+                Text(
                   'This app can\'t replace emergency care. When the moment '
                   'has passed, a licensed therapist here can help you work '
                   'through what led to it.',
                   style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.5,
                   ),
                 ),
@@ -322,6 +326,7 @@ class CrisisFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () => Navigator.of(context).push(
@@ -332,22 +337,22 @@ class CrisisFooter extends StatelessWidget {
         child: Text.rich(
           TextSpan(
             children: [
-              const TextSpan(
+              TextSpan(
                 text: 'In crisis or immediate danger? Get help now',
                 style: TextStyle(
-                  color: Brand.red,
+                  color: c.red,
                   fontWeight: FontWeight.w600,
                   decoration: TextDecoration.underline,
-                  decorationColor: Brand.red,
+                  decorationColor: c.red,
                 ),
               ),
               TextSpan(text: ' — real numbers, one tap.${trailing ?? ''}'),
             ],
           ),
           textAlign: textAlign,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.5,
           ),
         ),

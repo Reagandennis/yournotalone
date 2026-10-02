@@ -306,4 +306,34 @@ void main() {
           reason: 'Layout failures on $label:\n${broken.join('\n')}');
     });
   }
+
+  // Dark mode draws every colour through the theme, so a screen or painter
+  // still holding a light-only value fails to build here.
+  testWidgets('every screen builds in dark mode', (tester) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+
+    final broken = <String>[];
+    for (final entry in screens.entries) {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          darkTheme: buildAppTheme(Brightness.dark),
+          themeMode: ThemeMode.dark,
+          home: entry.value(),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      final error = tester.takeException();
+      if (error != null) {
+        broken.add('${entry.key}: ${error.toString().split('\n').first}');
+      }
+    }
+
+    expect(broken, isEmpty,
+        reason: 'Dark mode failures:\n${broken.join('\n')}');
+  });
 }

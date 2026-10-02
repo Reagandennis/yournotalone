@@ -21,21 +21,21 @@ const _steps = [
     'You gave in. What does the next hour actually look like?',
     'Not the first five minutes — the hour.',
     Icons.schedule_rounded,
-    Brand.yellow,
+    Pillars.yellow,
   ),
   _Step(
     'Tomorrow morning',
     'You wake up. What\'s the first thing you remember?',
     'How does the day start from there?',
     Icons.wb_twilight_rounded,
-    Brand.red,
+    Pillars.red,
   ),
   _Step(
     'A week from now',
     'Where has this put you by next week?',
     'And what would the other choice have bought you?',
     Icons.calendar_month_rounded,
-    Brand.blue,
+    Pillars.blue,
   ),
 ];
 
@@ -110,13 +110,15 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
   }
 
   Widget _stepCard(int index) {
+    final c = context.brand;
     final step = _steps[index];
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: Brand.border, width: 1.2),
+          color: c.card,
+          border: Border.all(color: c.border, width: 1.2),
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
@@ -128,19 +130,20 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: step.accent.withValues(alpha: 0.12),
+                    color: c.tint(step.accent, 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(step.icon, size: 17, color: step.accent),
+                  child: Icon(step.icon,
+                      size: 17, color: c.accent(step.accent)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     step.when,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
                 ),
@@ -149,9 +152,9 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
             const SizedBox(height: 12),
             Text(
               step.question,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13.5,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.5,
               ),
             ),
@@ -163,9 +166,9 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                 hintText: step.hint,
-                hintStyle: const TextStyle(
+                hintStyle: TextStyle(
                   fontSize: 13,
-                  color: Brand.textMuted,
+                  color: c.textMuted,
                 ),
                 contentPadding: const EdgeInsets.all(14),
               ),
@@ -179,6 +182,7 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -192,25 +196,25 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Play the tape forward',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'A craving only ever shows you the first five minutes. '
                   'Watch the rest of the film before you decide — in your '
                   'own words, because yours are the ones you believe.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
@@ -222,13 +226,13 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
                   child: Text(_saving ? 'Saving…' : 'Keep this in my journal'),
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'Next time, this is waiting for you — written by the one '
                   'person the craving can\'t argue with.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.45,
                   ),
                 ),

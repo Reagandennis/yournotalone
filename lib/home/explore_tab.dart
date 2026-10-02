@@ -20,8 +20,13 @@ import '../stress/stress_screen.dart';
 import '../therapy/therapy_screen.dart';
 import '../toolkit/toolkit_hub.dart';
 
-/// Soft grey used for the tiles and panels on this tab.
-const _tile = Color(0xFFE7E7E7);
+/// Soft grey used for the tiles and panels on this tab: a wash of ink over
+/// the page, made opaque so the floating card hides what scrolls under it.
+Color _tile(BrandColors c) =>
+    Color.alphaBlend(c.tint(Pillars.black, 0.08), c.background);
+
+/// Solid card fills that carry their own text and art; the same in both
+/// modes.
 const _cardRed = Color(0xFFC53C26);
 const _cardBlue = Color(0xFF3E6AB7);
 const _cardYellow = Color(0xFFF4BB40);
@@ -122,8 +127,17 @@ class _Collection {
   final Color color;
   final WidgetBuilder open;
 
-  /// Ink on yellow, white on everything else: keeps the text readable.
-  Color get foreground => color == _cardYellow ? Brand.ink : Colors.white;
+  /// The card's fill. Ink flips to off-white in the dark, like the logo's
+  /// black pillar; the coloured cards look the same in both modes.
+  Color fill(BrandColors c) => color == Pillars.black ? c.ink : color;
+
+  /// Ink on yellow (in both modes), white on the other colours, and the
+  /// reverse of the ink card on it: keeps the text readable.
+  Color foreground(BrandColors c) => switch (color) {
+        _cardYellow => BrandColors.light.ink,
+        Pillars.black => c.onInk,
+        _ => Colors.white,
+      };
 }
 
 final _collections = <_Collection>[
@@ -138,7 +152,7 @@ final _collections = <_Collection>[
     'Guided meditations',
     meditations.length,
     'sessions',
-    Brand.ink,
+    Pillars.black,
     (_) => const MeditationsScreen(),
   ),
   _Collection(
@@ -166,25 +180,26 @@ class ExploreTab extends StatelessWidget {
       Navigator.of(context).push(MaterialPageRoute(builder: builder));
 
   Widget _searchBar(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: _tile,
+      color: _tile(c),
       borderRadius: BorderRadius.circular(_radius),
       child: InkWell(
         borderRadius: BorderRadius.circular(_radius),
         onTap: () =>
             showSearch(context: context, delegate: _ExploreSearchDelegate()),
-        child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
           child: Row(
             children: [
-              Icon(Icons.search_rounded, size: 22, color: Brand.ink),
-              SizedBox(width: 12),
+              Icon(Icons.search_rounded, size: 22, color: c.ink),
+              const SizedBox(width: 12),
               Text(
                 'Search',
                 style: TextStyle(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w500,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
               ),
             ],
@@ -195,8 +210,9 @@ class ExploreTab extends StatelessWidget {
   }
 
   Widget _pillarTile(BuildContext context, _Pillar pillar) {
+    final c = context.brand;
     return Material(
-      color: _tile,
+      color: _tile(c),
       borderRadius: BorderRadius.circular(_radius),
       child: InkWell(
         borderRadius: BorderRadius.circular(_radius),
@@ -216,10 +232,10 @@ class ExploreTab extends StatelessWidget {
                   pillar.title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
@@ -314,33 +330,34 @@ class ExploreTab extends StatelessWidget {
   }
 
   Widget _featuredPanel(BuildContext context) {
+    final c = context.brand;
     return Container(
       decoration: BoxDecoration(
-        color: _tile,
+        color: _tile(c),
         borderRadius: BorderRadius.circular(_radius),
       ),
       padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               'Our featured programs',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
           ),
           const SizedBox(height: 6),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
               'A list of our featured content to get the most of your day '
               'started',
-              style: TextStyle(fontSize: 12, color: Brand.ink, height: 1.4),
+              style: TextStyle(fontSize: 12, color: c.ink, height: 1.4),
             ),
           ),
           const SizedBox(height: 12),
@@ -351,10 +368,12 @@ class ExploreTab extends StatelessWidget {
   }
 
   Widget _collectionCard(BuildContext context, _Collection collection) {
+    final c = context.brand;
+    final foreground = collection.foreground(c);
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: collection.color,
+        color: collection.fill(c),
         borderRadius: BorderRadius.circular(_radius),
         child: InkWell(
           borderRadius: BorderRadius.circular(_radius),
@@ -374,7 +393,7 @@ class ExploreTab extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15.5,
                           fontWeight: FontWeight.w600,
-                          color: collection.foreground,
+                          color: foreground,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -383,7 +402,7 @@ class ExploreTab extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
-                          color: collection.foreground,
+                          color: foreground,
                         ),
                       ),
                     ],
@@ -392,7 +411,7 @@ class ExploreTab extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,
-                  color: collection.foreground,
+                  color: foreground,
                 ),
               ],
             ),
@@ -403,8 +422,9 @@ class ExploreTab extends StatelessWidget {
   }
 
   Widget _bookSession(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: _tile,
+      color: _tile(c),
       elevation: 8,
       shadowColor: Colors.black.withValues(alpha: 0.35),
       borderRadius: BorderRadius.circular(_radius),
@@ -421,7 +441,7 @@ class ExploreTab extends StatelessWidget {
                 child: Image.asset(_bookArt, fit: BoxFit.contain),
               ),
               const SizedBox(width: 14),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -430,13 +450,13 @@ class ExploreTab extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       'Speak to a human therapist',
-                      style: TextStyle(fontSize: 12.5, color: Brand.ink),
+                      style: TextStyle(fontSize: 12.5, color: c.ink),
                     ),
                   ],
                 ),
@@ -477,14 +497,14 @@ class ExploreTab extends StatelessWidget {
         const SizedBox(height: 20),
         _featuredPanel(context),
         const SizedBox(height: 22),
-        const Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 12),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
             'All collections',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: context.brand.ink,
             ),
           ),
         ),
@@ -602,16 +622,17 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     final theme = Theme.of(context);
+    final c = context.brand;
     return theme.copyWith(
-      inputDecorationTheme: const InputDecorationThemeData(
+      inputDecorationTheme: InputDecorationThemeData(
         border: InputBorder.none,
-        hintStyle: TextStyle(color: Brand.textMuted, fontSize: 16),
+        hintStyle: TextStyle(color: c.textMuted, fontSize: 16),
       ),
       textTheme: theme.textTheme.copyWith(
-        titleLarge: const TextStyle(
+        titleLarge: TextStyle(
           fontFamily: 'Poppins',
           fontSize: 16,
-          color: Brand.ink,
+          color: c.ink,
         ),
       ),
     );
@@ -639,6 +660,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
   Widget buildSuggestions(BuildContext context) => _list(context);
 
   Widget _list(BuildContext context) {
+    final c = context.brand;
     final q = query.trim().toLowerCase();
     final hits = q.isEmpty
         ? _searchItems
@@ -650,12 +672,12 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
               )
               .toList();
     if (hits.isEmpty) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
           child: Text(
             'Nothing matches that yet.',
-            style: TextStyle(color: Brand.textMuted, fontSize: 14),
+            style: TextStyle(color: c.textMuted, fontSize: 14),
           ),
         ),
       );
@@ -670,22 +692,22 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: _tile,
+              color: _tile(c),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(item.icon, size: 20, color: Brand.ink),
+            child: Icon(item.icon, size: 20, color: c.ink),
           ),
           title: Text(
             item.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           subtitle: Text(
             item.meta,
-            style: const TextStyle(fontSize: 12.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 12.5, color: c.textMuted),
           ),
           onTap: () {
             close(context, null);

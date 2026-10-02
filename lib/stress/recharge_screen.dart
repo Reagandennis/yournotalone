@@ -113,6 +113,7 @@ class _RechargeScreenState extends State<RechargeScreen> {
   }
 
   Widget _chips(List<String> items, {required bool refuel}) {
+    final c = context.brand;
     final pick = _list!.pickFor(_today);
     return Wrap(
       spacing: 8,
@@ -122,14 +123,21 @@ class _RechargeScreenState extends State<RechargeScreen> {
           InputChip(
             label: Text(item),
             selected: refuel && pick == item,
+            // Today's pick is solid yellow, so it keeps dark text in both
+            // modes.
             selectedColor: stressAccent,
-            checkmarkColor: Brand.ink,
-            backgroundColor: toolkitCardColor,
+            checkmarkColor: BrandColors.light.ink,
+            backgroundColor: c.card,
             side: BorderSide.none,
-            labelStyle: const TextStyle(fontSize: 13, color: Brand.ink),
+            labelStyle: TextStyle(
+              fontSize: 13,
+              color: refuel && pick == item ? BrandColors.light.ink : c.ink,
+            ),
             onSelected: refuel ? (_) => _pick(item) : null,
             onDeleted: () => _remove(items, item),
-            deleteIconColor: Brand.textMuted,
+            deleteIconColor: refuel && pick == item
+                ? BrandColors.light.textMuted
+                : c.textMuted,
           ),
       ],
     );
@@ -162,6 +170,7 @@ class _RechargeScreenState extends State<RechargeScreen> {
         children: [Center(child: CircularProgressIndicator())],
       );
     }
+    final c = context.brand;
     final pick = list.pickFor(_today);
     return ToolkitScaffold(
       accent: stressAccent,
@@ -177,21 +186,21 @@ class _RechargeScreenState extends State<RechargeScreen> {
         ),
         if (pick != null) ...[
           ToolkitNote(
-            tint: const Color(0x24F4BB40),
+            tint: c.tint(stressAccent, 0.14),
             child: Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.battery_charging_full_rounded,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     'Today: $pick',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 14.5,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
                 ),
@@ -213,12 +222,12 @@ class _RechargeScreenState extends State<RechargeScreen> {
         const SizedBox(height: 10),
         _input(_refuel, 'Add a refill', list.refuels),
         const SizedBox(height: 18),
-        const Text(
+        Text(
           'Stuck for refills? Borrow one:',
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
           ),
         ),
         const SizedBox(height: 8),
@@ -229,11 +238,11 @@ class _RechargeScreenState extends State<RechargeScreen> {
             for (final idea in rechargeIdeas)
               if (!list.refuels.contains(idea.label))
                 ActionChip(
-                  avatar: Icon(idea.icon, size: 16, color: Brand.ink),
+                  avatar: Icon(idea.icon, size: 16, color: c.ink),
                   label: Text(idea.label),
-                  labelStyle: const TextStyle(fontSize: 12.5, color: Brand.ink),
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(color: Brand.border),
+                  labelStyle: TextStyle(fontSize: 12.5, color: c.ink),
+                  backgroundColor: c.card,
+                  side: BorderSide(color: c.border),
                   onPressed: () {
                     setState(() => list.refuels.add(idea.label));
                     list.save();

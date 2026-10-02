@@ -80,6 +80,7 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final running = _index >= 0;
     final group = running ? muscleGroups[_index] : null;
     return ToolkitScaffold(
@@ -129,7 +130,7 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
               width: _tensing ? 150 : 220,
               height: _tensing ? 150 : 220,
               decoration: BoxDecoration(
-                color: _tensing ? Brand.ink : const Color(0x33F4BB40),
+                color: _tensing ? c.ink : c.tint(stressAccent, 0.2),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -141,7 +142,7 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: _tensing ? Colors.white : Brand.ink,
+                        color: _tensing ? c.onInk : c.ink,
                       ),
                     ),
                     Text(
@@ -149,7 +150,7 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
                       style: TextStyle(
                         fontSize: 40,
                         fontWeight: FontWeight.w600,
-                        color: _tensing ? Colors.white : Brand.ink,
+                        color: _tensing ? c.onInk : c.ink,
                         height: 1.1,
                       ),
                     ),

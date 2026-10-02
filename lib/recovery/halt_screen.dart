@@ -58,7 +58,7 @@ final _needs = <_Need>[
     title: 'Hungry',
     question: 'When did you last eat something proper?',
     icon: Icons.restaurant_rounded,
-    accent: Brand.yellow,
+    accent: Pillars.yellow,
     advice: 'Low blood sugar feels a lot like craving, and it argues with '
         'you the same way. Eat something first — a real meal if you can, '
         'anything if you can\'t — then see what\'s left of the urge.',
@@ -74,7 +74,7 @@ final _needs = <_Need>[
     title: 'Angry',
     question: 'Is something still sitting unsaid?',
     icon: Icons.local_fire_department_rounded,
-    accent: Brand.red,
+    accent: Pillars.red,
     advice: 'Anger wants somewhere to go, and the old habit is the easiest '
         'door. Give it a different one for nine minutes and see if it '
         'still wants the same thing.',
@@ -91,7 +91,7 @@ final _needs = <_Need>[
     title: 'Lonely',
     question: 'Who have you actually spoken to today?',
     icon: Icons.people_alt_rounded,
-    accent: Brand.blue,
+    accent: Pillars.blue,
     advice: 'This is the one that most often gets answered with the habit. '
         'A real person beats anything else here — and if there isn\'t one '
         'right now, a session is a person.',
@@ -103,7 +103,7 @@ final _needs = <_Need>[
     title: 'Tired',
     question: 'Have you slept properly this week?',
     icon: Icons.bedtime_rounded,
-    accent: Brand.ink,
+    accent: Pillars.black,
     advice: 'Tired makes every urge louder and every reason quieter. '
         'Nothing you decide right now will be as good as what you decide '
         'after some rest.',
@@ -127,15 +127,22 @@ class _HaltScreenState extends State<HaltScreen> {
   final _picked = <String>{};
 
   Widget _option(_Need need) {
+    final c = context.brand;
     final on = _picked.contains(need.letter);
+    // The picked letter sits on a solid disc of the need's colour. Pillar
+    // colours stay as they are under white; the black one is the ink fill,
+    // which turns off-white in the dark.
+    final black = need.accent == Pillars.black;
+    final disc = black ? c.ink : need.accent;
+    final onDisc = black ? c.onInk : Colors.white;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: on ? need.accent.withValues(alpha: 0.09) : Colors.white,
+        color: on ? c.tint(need.accent, 0.09) : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: BorderSide(
-            color: on ? need.accent : Brand.border,
+            color: on ? c.accent(need.accent) : c.border,
             width: on ? 1.6 : 1.2,
           ),
         ),
@@ -152,7 +159,7 @@ class _HaltScreenState extends State<HaltScreen> {
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: on ? need.accent : const Color(0x0A191919),
+                    color: on ? disc : c.tint(Pillars.black, 0.04),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -161,7 +168,7 @@ class _HaltScreenState extends State<HaltScreen> {
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
-                        color: on ? Colors.white : Brand.textMuted,
+                        color: on ? onDisc : c.textMuted,
                       ),
                     ),
                   ),
@@ -173,18 +180,18 @@ class _HaltScreenState extends State<HaltScreen> {
                     children: [
                       Text(
                         need.title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         need.question,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.35,
                         ),
                       ),
@@ -197,7 +204,7 @@ class _HaltScreenState extends State<HaltScreen> {
                       ? Icons.check_circle_rounded
                       : Icons.circle_outlined,
                   size: 22,
-                  color: on ? need.accent : Brand.border,
+                  color: on ? c.accent(need.accent) : c.border,
                 ),
               ],
             ),
@@ -208,12 +215,14 @@ class _HaltScreenState extends State<HaltScreen> {
   }
 
   Widget _answer(_Need need) {
+    final c = context.brand;
+    final accent = c.accent(need.accent);
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: need.accent.withValues(alpha: 0.06),
+          color: c.tint(need.accent, 0.06),
           borderRadius: BorderRadius.circular(18),
         ),
         child: Column(
@@ -221,14 +230,14 @@ class _HaltScreenState extends State<HaltScreen> {
           children: [
             Row(
               children: [
-                Icon(need.icon, size: 19, color: need.accent),
+                Icon(need.icon, size: 19, color: accent),
                 const SizedBox(width: 10),
                 Text(
                   need.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ],
@@ -236,9 +245,9 @@ class _HaltScreenState extends State<HaltScreen> {
             const SizedBox(height: 8),
             Text(
               need.advice,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13.5,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.5,
               ),
             ),
@@ -248,8 +257,8 @@ class _HaltScreenState extends State<HaltScreen> {
               child: OutlinedButton(
                 onPressed: () => need.open(context),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: need.accent,
-                  side: BorderSide(color: need.accent, width: 1.3),
+                  foregroundColor: accent,
+                  side: BorderSide(color: accent, width: 1.3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -265,6 +274,7 @@ class _HaltScreenState extends State<HaltScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final picked = [for (final n in _needs) if (_picked.contains(n.letter)) n];
     return Scaffold(
       body: SafeArea(
@@ -279,25 +289,25 @@ class _HaltScreenState extends State<HaltScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'HALT check',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'A craving is often something else wearing a disguise. '
                   'Before you decide anything, check the four it\'s usually '
                   'hiding behind — tick whichever are true.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
@@ -308,15 +318,15 @@ class _HaltScreenState extends State<HaltScreen> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0x0A191919),
+                      color: c.tint(Pillars.black, 0.04),
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: const Text(
+                    child: Text(
                       'None of them? Then it\'s the urge on its own — and '
                       'those pass on their own too. Ride it out.',
                       style: TextStyle(
                         fontSize: 13.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.5,
                       ),
                     ),

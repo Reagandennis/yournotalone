@@ -25,6 +25,7 @@ class AuthScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final canPop = Navigator.of(context).canPop();
     return Scaffold(
       bottomNavigationBar: footer == null
@@ -54,15 +55,15 @@ class AuthScaffold extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Center(
-                  child: Image.asset('assets/brand/pillars.png', height: 96),
+                  child: Image.asset(c.pillarsAsset, height: 96),
                 ),
                 const SizedBox(height: 36),
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
@@ -71,9 +72,9 @@ class AuthScaffold extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
@@ -93,20 +94,21 @@ class BackChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: Colors.white,
+      color: c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(13),
-        side: const BorderSide(color: Brand.border, width: 1.2),
+        side: BorderSide(color: c.border, width: 1.2),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(13),
         onTap: () => Navigator.of(context).maybePop(),
-        child: const SizedBox(
+        child: SizedBox(
           width: 42,
           height: 42,
           child: Icon(Icons.arrow_back_ios_new_rounded,
-              size: 17, color: Brand.ink),
+              size: 17, color: c.ink),
         ),
       ),
     );
@@ -151,9 +153,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
       textInputAction: widget.textInputAction,
       validator: widget.validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 15,
-        color: Brand.ink,
+        color: context.brand.ink,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
@@ -191,18 +193,19 @@ class AuthSubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return ElevatedButton(
       onPressed: loading ? null : onPressed,
       style: loading
-          ? ElevatedButton.styleFrom(disabledBackgroundColor: Brand.ink)
+          ? ElevatedButton.styleFrom(disabledBackgroundColor: c.ink)
           : null,
       child: loading
-          ? const SizedBox(
+          ? SizedBox(
               width: 22,
               height: 22,
               child: CircularProgressIndicator(
                 strokeWidth: 2.4,
-                color: Colors.white,
+                color: c.onInk,
               ),
             )
           : Text(label),
@@ -219,7 +222,8 @@ class AuthDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const line = Expanded(child: Divider(color: Brand.border, height: 1));
+    final c = context.brand;
+    final line = Expanded(child: Divider(color: c.border, height: 1));
     return Row(
       children: [
         line,
@@ -227,9 +231,9 @@ class AuthDivider extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: Brand.textMuted,
+              color: c.textMuted,
               fontWeight: FontWeight.w500,
             ),
           ),

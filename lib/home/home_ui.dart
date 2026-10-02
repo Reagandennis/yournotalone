@@ -81,9 +81,9 @@ void showUpgradeSheet(
   Sentry.metrics.count('upgrade_sheet.shown', 1, attributes: {
     'source': SentryAttribute.string(source),
   });
+  final c = context.brand;
   showModalBottomSheet<void>(
     context: context,
-    backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -95,20 +95,20 @@ void showUpgradeSheet(
           Container(
             width: 60,
             height: 60,
-            decoration: const BoxDecoration(
-              color: Color(0x1FFAB414),
+            decoration: BoxDecoration(
+              color: c.tint(Pillars.yellow, 0.12),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.lock_rounded, size: 26, color: Brand.yellow),
+            child: Icon(Icons.lock_rounded, size: 26, color: c.yellow),
           ),
           const SizedBox(height: 16),
           Text(
             item == null ? title : 'Unlock “$item”',
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           if (item != null) ...[
@@ -116,10 +116,10 @@ void showUpgradeSheet(
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Brand.textMuted,
+                color: c.textMuted,
               ),
             ),
           ],
@@ -127,9 +127,9 @@ void showUpgradeSheet(
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.5,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.5,
             ),
           ),
@@ -207,10 +207,10 @@ class SectionHeader extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: context.brand.ink,
             ),
           ),
         ),
@@ -230,23 +230,24 @@ class PremiumChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: const Color(0x1FFAB414),
+        color: c.tint(Pillars.yellow, 0.12),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.lock_rounded, size: 10, color: Brand.ink),
-          SizedBox(width: 3),
+          Icon(Icons.lock_rounded, size: 10, color: c.ink),
+          const SizedBox(width: 3),
           Text(
             'Premium',
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
         ],

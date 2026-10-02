@@ -101,8 +101,12 @@ class _SighScreenState extends State<SighScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final phase = sighPhases[_phase];
     final scale = _running ? phase.scale : 0.6;
+    // The label runs past the inner circle as it shrinks, so in the dark it
+    // stays light and the circle is a deep amber rather than bright yellow.
+    final core = c.isDark ? const Color(0xFF946200) : stressAccent;
     return ToolkitScaffold(
       accent: stressAccent,
       title: 'Physiological sigh',
@@ -140,8 +144,8 @@ class _SighScreenState extends State<SighScreen> {
                   curve: Curves.easeInOut,
                   width: 240 * scale,
                   height: 240 * scale,
-                  decoration: const BoxDecoration(
-                    color: Color(0x33F4BB40),
+                  decoration: BoxDecoration(
+                    color: c.tint(stressAccent, 0.2),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -150,8 +154,8 @@ class _SighScreenState extends State<SighScreen> {
                   curve: Curves.easeInOut,
                   width: 150 * scale,
                   height: 150 * scale,
-                  decoration: const BoxDecoration(
-                    color: stressAccent,
+                  decoration: BoxDecoration(
+                    color: core,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -164,19 +168,19 @@ class _SighScreenState extends State<SighScreen> {
                           : _done
                           ? 'Done'
                           : 'Ready',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     if (_running)
                       Text(
                         '$_left',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                           height: 1.1,
                         ),
                       ),
@@ -191,9 +195,9 @@ class _SighScreenState extends State<SighScreen> {
           Text(
             phase.hint,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              color: Brand.textMuted,
+              color: c.textMuted,
               height: 1.5,
             ),
           ),

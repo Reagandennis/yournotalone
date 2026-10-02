@@ -87,9 +87,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _showPhotoSheet() {
+    final c = context.brand;
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -100,20 +100,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.photo_library_outlined,
-                    color: Brand.textMuted),
-                title: const Text('Choose from library',
-                    style: TextStyle(fontSize: 14.5, color: Brand.ink)),
+                leading: Icon(Icons.photo_library_outlined,
+                    color: c.textMuted),
+                title: Text('Choose from library',
+                    style: TextStyle(fontSize: 14.5, color: c.ink)),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   _pick(ImageSource.gallery);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_camera_outlined,
-                    color: Brand.textMuted),
-                title: const Text('Take a photo',
-                    style: TextStyle(fontSize: 14.5, color: Brand.ink)),
+                leading: Icon(Icons.photo_camera_outlined,
+                    color: c.textMuted),
+                title: Text('Take a photo',
+                    style: TextStyle(fontSize: 14.5, color: c.ink)),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   _pick(ImageSource.camera);
@@ -121,10 +121,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               if (_hasPhoto)
                 ListTile(
-                  leading:
-                      const Icon(Icons.delete_outline_rounded, color: Brand.red),
-                  title: const Text('Remove photo',
-                      style: TextStyle(fontSize: 14.5, color: Brand.red)),
+                  leading: Icon(Icons.delete_outline_rounded, color: c.red),
+                  title: Text('Remove photo',
+                      style: TextStyle(fontSize: 14.5, color: c.red)),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     setState(() {
@@ -193,6 +192,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _avatar() {
+    final c = context.brand;
     final name = _name.text.trim();
     final initial =
         name.isEmpty ? '?' : name.characters.first.toUpperCase();
@@ -220,9 +220,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               height: 112,
               clipBehavior: Clip.antiAlias,
               decoration: BoxDecoration(
-                color: const Color(0x143764CD),
+                color: c.tint(Pillars.blue, 0.08),
                 shape: BoxShape.circle,
-                border: Border.all(color: Brand.border, width: 1.2),
+                border: Border.all(color: c.border, width: 1.2),
               ),
               child: inner,
             ),
@@ -233,14 +233,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: Brand.ink,
+                  color: c.ink,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2.5),
+                  // The page colour, so the badge looks cut out of it.
+                  border: Border.all(color: c.background, width: 2.5),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.photo_camera_rounded,
                   size: 16,
-                  color: Colors.white,
+                  color: c.onInk,
                 ),
               ),
             ),
@@ -254,10 +255,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Center(
       child: Text(
         initial,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 38,
           fontWeight: FontWeight.w600,
-          color: Brand.blue,
+          color: context.brand.blue,
         ),
       ),
     );
@@ -265,6 +266,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final email = _client.auth.currentUser?.email;
     return Scaffold(
       appBar: AppBar(title: const Text('Edit profile')),
@@ -300,23 +302,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 18, vertical: 16),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Brand.border, width: 1.2),
+                        border: Border.all(color: c.border, width: 1.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.mail_outline_rounded,
-                              size: 21, color: Brand.textMuted),
+                          Icon(Icons.mail_outline_rounded,
+                              size: 21, color: c.textMuted),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               email,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w500,
-                                color: Brand.textMuted,
+                                color: c.textMuted,
                               ),
                             ),
                           ),
@@ -324,12 +326,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    const Padding(
-                      padding: EdgeInsets.only(left: 4),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4),
                       child: Text(
                         'Your email can\'t be changed here.',
                         style:
-                            TextStyle(fontSize: 12, color: Brand.textMuted),
+                            TextStyle(fontSize: 12, color: c.textMuted),
                       ),
                     ),
                   ],

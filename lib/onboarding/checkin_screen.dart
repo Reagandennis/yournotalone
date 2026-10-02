@@ -73,15 +73,16 @@ class _CheckinScreenState extends State<CheckinScreen> {
   }
 
   Widget _optionCard(_CheckinOption option) {
+    final c = context.brand;
     final selected = option == _selected;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: selected ? const Color(0x0A191919) : Colors.white,
+        color: selected ? c.tint(Pillars.black, 0.04) : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: selected ? Brand.ink : Brand.border,
+            color: selected ? c.ink : c.border,
             width: selected ? 1.6 : 1.2,
           ),
         ),
@@ -95,7 +96,7 @@ class _CheckinScreenState extends State<CheckinScreen> {
                 Icon(
                   option.icon,
                   size: 26,
-                  color: selected ? Brand.ink : Brand.textMuted,
+                  color: selected ? c.ink : c.textMuted,
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -104,18 +105,18 @@ class _CheckinScreenState extends State<CheckinScreen> {
                     children: [
                       Text(
                         option.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         option.detail,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 13,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.4,
                         ),
                       ),
@@ -132,6 +133,7 @@ class _CheckinScreenState extends State<CheckinScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return OnboardingScaffold(
       step: 2,
       bottom: ElevatedButton(
@@ -139,22 +141,22 @@ class _CheckinScreenState extends State<CheckinScreen> {
         child: const Text('Continue'),
       ),
       children: [
-        const Text(
+        Text(
           'How are you feeling these days?',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.2,
           ),
         ),
         const SizedBox(height: 12),
         const PillarStripe(),
         const SizedBox(height: 16),
-        const Text(
+        Text(
           'This helps us point you to the right kind of support first. '
           'It stays private, and you can change it anytime.',
-          style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.55),
+          style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
         ),
         const SizedBox(height: 26),
         for (final option in _options) _optionCard(option),

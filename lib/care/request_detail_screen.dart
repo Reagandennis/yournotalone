@@ -79,7 +79,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: destructive
-                ? TextButton.styleFrom(foregroundColor: Brand.red)
+                ? TextButton.styleFrom(foregroundColor: context.brand.red)
                 : null,
             child: Text(action),
           ),
@@ -199,6 +199,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final request = _item.request;
     final email = _item.clientEmail;
     final note = request.note?.trim() ?? '';
@@ -226,10 +227,10 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                     trailing: IconButton(
                       tooltip: 'Copy email',
                       visualDensity: VisualDensity.compact,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.copy_rounded,
                         size: 18,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                       ),
                       onPressed: () async {
                         await Clipboard.setData(ClipboardData(text: email));
@@ -339,7 +340,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                 alignment: Alignment.centerLeft,
                 child: TextButton(
                   onPressed: _busy ? null : _cancel,
-                  style: TextButton.styleFrom(foregroundColor: Brand.red),
+                  style: TextButton.styleFrom(foregroundColor: c.red),
                   child: Text(request.isConfirmed
                       ? 'Cancel this session'
                       : 'Cancel this request'),
@@ -357,11 +358,12 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
     String? text,
     List<String> flags = const [],
   }) {
+    final c = context.brand;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0x0A191919),
+        color: c.tint(Pillars.black, 0.04),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -372,10 +374,10 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ),
@@ -386,9 +388,9 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
             const SizedBox(height: 4),
             Text(
               text,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.45,
               ),
             ),
@@ -402,7 +404,9 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                 for (final flag in flags)
                   StatusBadge(
                     therapistFlagLabels[flag] ?? flag,
-                    color: flag == 'safety_concern' ? Brand.red : Brand.ink,
+                    color: flag == 'safety_concern'
+                        ? Pillars.red
+                        : Pillars.black,
                   ),
               ],
             ),

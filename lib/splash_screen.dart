@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'brand.dart';
+
 /// Animated splash screen: the four pillars rise into place one after
 /// another, then the wordmark fades in beneath them.
 ///
@@ -67,12 +69,14 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   /// A layer that rises from [offset] pixels below while fading in,
-  /// active during [begin]..[end] of the controller's timeline.
+  /// active during [begin]..[end] of the controller's timeline. A
+  /// [recolour] paints the layer's shape in that colour instead.
   Widget _risingLayer(
     String asset, {
     required double begin,
     required double end,
     double offset = 90,
+    Color? recolour,
   }) {
     final curved = CurvedAnimation(
       parent: _controller,
@@ -87,14 +91,23 @@ class _SplashScreenState extends State<SplashScreen>
           child: child,
         ),
       ),
-      child: Image.asset(asset, fit: BoxFit.contain),
+      child: Image.asset(
+        asset,
+        fit: BoxFit.contain,
+        color: recolour,
+        colorBlendMode: recolour == null ? null : BlendMode.srcIn,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
+    // The black pillar and the wordmark turn off-white on navy, as on the
+    // dark logo.
+    final ink = c.isDark ? c.ink : null;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: c.background,
       body: Center(
         child: FractionallySizedBox(
           widthFactor: 0.72,
@@ -108,13 +121,13 @@ class _SplashScreenState extends State<SplashScreen>
                 _risingLayer('assets/splash/pillar_blue.png',
                     begin: 0.12, end: 0.50),
                 _risingLayer('assets/splash/pillar_black.png',
-                    begin: 0.24, end: 0.62),
+                    begin: 0.24, end: 0.62, recolour: ink),
                 _risingLayer('assets/splash/pillar_yellow.png',
                     begin: 0.36, end: 0.74),
                 _risingLayer('assets/splash/title.png',
-                    begin: 0.62, end: 0.86, offset: 30),
+                    begin: 0.62, end: 0.86, offset: 30, recolour: ink),
                 _risingLayer('assets/splash/subtitle.png',
-                    begin: 0.76, end: 1.00, offset: 20),
+                    begin: 0.76, end: 1.00, offset: 20, recolour: ink),
               ],
             ),
           ),

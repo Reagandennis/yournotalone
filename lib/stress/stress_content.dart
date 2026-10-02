@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_content.dart';
 
-/// The programme's accent: the stress card's yellow on Explore.
+/// The programme's accent: the stress card's yellow on Explore. Draw it
+/// through `context.brand.accent` (text, icons — a dark amber in light
+/// mode), `.tint` (washes) or `.art` (drawings).
 const stressAccent = Color(0xFFF4BB40);
 
 /// One question of the weekly stress check-in, answered 0 (never) to 4

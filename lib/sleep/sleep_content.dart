@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_content.dart';
 
-/// The programme's accent: the sleep card's blue on Explore.
+/// The programme's accent: the sleep card's blue on Explore. Draw it
+/// through `context.brand.accent` (text, icons), `.tint` (washes) or
+/// `.art` (drawings), which pick the shade for light or dark mode.
 const sleepAccent = Color(0xFF3E6AB7);
 
 /// One habit the sleep check asks about. A "yes" is the unhelpful answer,

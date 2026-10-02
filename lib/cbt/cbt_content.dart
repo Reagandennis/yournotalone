@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_content.dart';
 
-/// The toolkit's accent: the CBT card's red on Explore.
+/// The toolkit's accent: the CBT card's red on Explore. This is the
+/// declared colour: the header bar is filled with it as it is; text, icons
+/// and lines draw it through `context.brand.accent`, washes through
+/// `.tint`.
 const cbtAccent = Color(0xFFC53C26);
 
 /// A common unhelpful thinking pattern, with the question that loosens it.

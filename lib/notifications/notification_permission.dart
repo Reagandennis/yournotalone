@@ -237,26 +237,27 @@ class NotificationsOffBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final permission = this.permission ?? NotificationPermission.instance;
     return Material(
-      color: const Color(0x24FAB414),
+      color: c.tint(Pillars.yellow, 0.14),
       borderRadius: BorderRadius.circular(14),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.notifications_off_outlined,
               size: 20,
-              color: Brand.ink,
+              color: c.ink,
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
                 message,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12.5,
-                  color: Brand.ink,
+                  color: c.ink,
                   height: 1.4,
                 ),
               ),

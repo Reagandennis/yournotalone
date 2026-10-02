@@ -29,11 +29,12 @@ class MeditationsScreen extends StatelessWidget {
   }
 
   Widget _breathCard(BuildContext context, BreathPattern pattern) {
+    final c = context.brand;
     final locked = pattern.premium && !isPremiumUser();
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: pattern.accent.withValues(alpha: 0.06),
+        color: c.tint(pattern.accent, 0.06),
         borderRadius: BorderRadius.circular(18),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
@@ -54,12 +55,15 @@ class MeditationsScreen extends StatelessWidget {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: c.chip,
                     shape: BoxShape.circle,
                   ),
-                  child:
-                      Icon(Icons.air_rounded, size: 21, color: pattern.accent),
+                  child: Icon(
+                    Icons.air_rounded,
+                    size: 21,
+                    color: c.accent(pattern.accent),
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -73,10 +77,10 @@ class MeditationsScreen extends StatelessWidget {
                               pattern.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Brand.ink,
+                                color: c.ink,
                               ),
                             ),
                           ),
@@ -91,9 +95,9 @@ class MeditationsScreen extends StatelessWidget {
                         '${pattern.rhythmLabel} · ${pattern.detail}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                     ],
@@ -103,7 +107,7 @@ class MeditationsScreen extends StatelessWidget {
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,
-                  color: pattern.accent,
+                  color: c.accent(pattern.accent),
                 ),
               ],
             ),
@@ -114,14 +118,15 @@ class MeditationsScreen extends StatelessWidget {
   }
 
   Widget _meditationCard(BuildContext context, Meditation meditation) {
+    final c = context.brand;
     final locked = meditation.premium && !isPremiumUser();
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: Colors.white,
+        color: c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: const BorderSide(color: Brand.border, width: 1.2),
+          side: BorderSide(color: c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
@@ -147,11 +152,11 @@ class MeditationsScreen extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: meditation.accent.withValues(alpha: 0.10),
+                    color: c.tint(meditation.accent, 0.10),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(meditation.icon,
-                      size: 21, color: meditation.accent),
+                      size: 21, color: c.accent(meditation.accent)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -165,10 +170,10 @@ class MeditationsScreen extends StatelessWidget {
                               meditation.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Brand.ink,
+                                color: c.ink,
                               ),
                             ),
                           ),
@@ -183,9 +188,9 @@ class MeditationsScreen extends StatelessWidget {
                         '${meditation.minutes} min · ${meditation.detail}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                     ],
@@ -208,6 +213,7 @@ class MeditationsScreen extends StatelessWidget {
   /// entitlement changes — buying from inside the app used to leave the
   /// screen you bought from still locked.
   Widget _buildContent(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -221,24 +227,24 @@ class MeditationsScreen extends StatelessWidget {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Meditations & breathing',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'A few minutes of guided calm — breathe along with the '
                   'circle, or settle into a quiet session.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),

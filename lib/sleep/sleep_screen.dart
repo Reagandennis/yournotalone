@@ -18,6 +18,7 @@ class SleepScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return ToolkitHub(
       title: 'Sleep better',
       accent: sleepAccent,
@@ -35,8 +36,8 @@ class SleepScreen extends StatelessWidget {
       source: 'sleep',
       footer: ToolkitBanner(
         icon: Icons.graphic_eq_rounded,
-        iconColor: Brand.yellow,
-        tint: const Color(0x14FAB414),
+        iconColor: c.yellow,
+        tint: c.tint(Pillars.yellow, 0.08),
         title: 'Sounds to fall asleep to',
         detail:
             'Rainfall, crickets, pink noise and more — loops that keep '

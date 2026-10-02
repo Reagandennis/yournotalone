@@ -47,6 +47,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final price = formatPrice(therapySessionPriceCents);
     return OnboardingScaffold(
       bottom: Column(
@@ -66,30 +67,30 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
         ],
       ),
       children: [
-        const Text(
+        Text(
           'You don\'t have to do this alone',
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.2,
           ),
         ),
         const SizedBox(height: 12),
         const PillarStripe(),
         const SizedBox(height: 16),
-        const Text(
+        Text(
           'Some seasons are too heavy to carry with an app alone — and '
           'that\'s exactly why we work with real people. Δεν είσαι μόνος '
           'offers private one-on-one sessions with licensed therapists, '
           'right from here.',
-          style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
+          style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 26),
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: const Color(0x0F3764CD),
+            color: c.tint(Pillars.blue, 0.06),
             borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
@@ -98,14 +99,14 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
               Container(
                 width: 44,
                 height: 44,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+                decoration: BoxDecoration(
+                  color: c.chip,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.favorite_rounded,
                   size: 22,
-                  color: Brand.red,
+                  color: c.red,
                 ),
               ),
               const SizedBox(width: 14),
@@ -115,20 +116,20 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
                   children: [
                     Text(
                       'A real therapist, $price a session',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
+                    Text(
                       'One session at a time, no subscription. You pay when '
                       'you book, from Talk to a therapist on your Home '
                       'screen, and our care team matches you within a day.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.5,
                       ),
                     ),

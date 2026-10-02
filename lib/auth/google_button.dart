@@ -40,14 +40,22 @@ class _GoogleAuthButtonState extends State<GoogleAuthButton> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
+    // Google's own button colours for light and dark themes, not the app's:
+    // the brand guidelines fix them. The G keeps its colours in both.
+    final dark = c.isDark;
     return OutlinedButton(
       onPressed: _loading ? null : _signIn,
       style: OutlinedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Brand.ink,
-        disabledForegroundColor: Brand.textMuted,
+        backgroundColor: dark ? const Color(0xFF131314) : Colors.white,
+        foregroundColor:
+            dark ? const Color(0xFFE3E3E3) : const Color(0xFF1F1F1F),
+        disabledForegroundColor: c.textMuted,
         minimumSize: const Size.fromHeight(56),
-        side: const BorderSide(color: Brand.border, width: 1.2),
+        side: BorderSide(
+          color: dark ? const Color(0xFF8E918F) : const Color(0xFF747775),
+          width: 1.2,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -58,12 +66,12 @@ class _GoogleAuthButtonState extends State<GoogleAuthButton> {
         ),
       ),
       child: _loading
-          ? const SizedBox(
+          ? SizedBox(
               width: 22,
               height: 22,
               child: CircularProgressIndicator(
                 strokeWidth: 2.4,
-                color: Brand.textMuted,
+                color: c.textMuted,
               ),
             )
           // Scales down rather than overflowing when the label runs wide —

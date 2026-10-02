@@ -71,6 +71,7 @@ class _AwakeScreenState extends State<AwakeScreen> {
   }
 
   List<Widget> _body() {
+    final c = context.brand;
     switch (_step) {
       case 1:
         return [
@@ -83,13 +84,13 @@ class _AwakeScreenState extends State<AwakeScreen> {
                 'it feels like you\'ve been lying here twenty minutes or '
                 'more, that\'s long enough.',
           ),
-          const ToolkitNote(
+          ToolkitNote(
             child: Text(
               'Lying in bed awake and frustrated teaches your brain that the '
               'bed is a place to be awake and frustrated. Getting up breaks '
               'that link. It feels backwards; it\'s the most reliable trick '
               'sleep clinics have.',
-              style: TextStyle(fontSize: 13.5, color: Brand.ink, height: 1.55),
+              style: TextStyle(fontSize: 13.5, color: c.ink, height: 1.55),
             ),
           ),
         ];
@@ -106,26 +107,26 @@ class _AwakeScreenState extends State<AwakeScreen> {
           ),
           if (_left != null) ...[
             ToolkitNote(
-              tint: const Color(0x143E6AB7),
+              tint: c.tint(sleepAccent, 0.08),
               child: Row(
                 children: [
                   Text(
                     _clock(_left!),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
-                      fontFeatures: [FontFeature.tabularFigures()],
+                      color: c.ink,
+                      fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'Sleepy before this runs out? Go back to bed now — '
                       'sleepiness wins over the timer.',
                       style: TextStyle(
                         fontSize: 13,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.4,
                       ),
                     ),
@@ -177,12 +178,12 @@ class _AwakeScreenState extends State<AwakeScreen> {
                 'it doesn\'t come, stay up a little longer; if you go back '
                 'and it doesn\'t take, do the whole thing again.',
           ),
-          const ToolkitNote(
+          ToolkitNote(
             child: Text(
               'Tomorrow: get up at your usual time however the night went. '
               'The sleep pressure you build will make tonight easier. One '
               'rough night is survivable; a drifting wake time isn\'t.',
-              style: TextStyle(fontSize: 13.5, color: Brand.ink, height: 1.55),
+              style: TextStyle(fontSize: 13.5, color: c.ink, height: 1.55),
             ),
           ),
         ];

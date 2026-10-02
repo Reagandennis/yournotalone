@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
@@ -16,15 +17,37 @@ class TherapyArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return SizedBox(
       height: height,
       width: double.infinity,
-      child: RepaintBoundary(child: CustomPaint(painter: _TherapyArtPainter())),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: _TherapyArtPainter(
+            shadow: c.tint(Pillars.black, 0.05),
+            glow: c.tint(Pillars.yellow, 0.22),
+            listener: c.art(Pillars.blue),
+            speaker: c.art(Pillars.red),
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _TherapyArtPainter extends CustomPainter {
+  _TherapyArtPainter({
+    required this.shadow,
+    required this.glow,
+    required this.listener,
+    required this.speaker,
+  });
+
+  final Color shadow;
+  final Color glow;
+  final Color listener;
+  final Color speaker;
+
   /// Draws one figure: a rounded pillar body and a circular head, tilted
   /// by [lean] radians toward the conversation.
   void _figure(
@@ -70,7 +93,7 @@ class _TherapyArtPainter extends CustomPainter {
     final ground = Offset(centre, h * 0.93);
     canvas.drawOval(
       Rect.fromCenter(center: ground, width: w * 0.34, height: h * 0.055),
-      Paint()..color = Brand.ink.withValues(alpha: 0.05),
+      Paint()..color = shadow,
     );
 
     // The warm wash behind them — the yellow pillar, out of focus.
@@ -81,8 +104,8 @@ class _TherapyArtPainter extends CustomPainter {
         ..shader =
             RadialGradient(
               colors: [
-                Brand.yellow.withValues(alpha: 0.22),
-                Brand.yellow.withValues(alpha: 0),
+                glow,
+                glow.withValues(alpha: 0),
               ],
             ).createShader(
               Rect.fromCircle(
@@ -101,7 +124,7 @@ class _TherapyArtPainter extends CustomPainter {
       Offset(centre + unit * 1.35, baseline),
       h * 0.46,
       unit * 1.5,
-      Brand.blue,
+      listener,
       -0.06,
     );
 
@@ -111,14 +134,18 @@ class _TherapyArtPainter extends CustomPainter {
       Offset(centre - unit * 1.35, baseline),
       h * 0.38,
       unit * 1.45,
-      Brand.red,
+      speaker,
       0.10,
     );
 
   }
 
   @override
-  bool shouldRepaint(_TherapyArtPainter oldDelegate) => false;
+  bool shouldRepaint(_TherapyArtPainter oldDelegate) =>
+      oldDelegate.shadow != shadow ||
+      oldDelegate.glow != glow ||
+      oldDelegate.listener != listener ||
+      oldDelegate.speaker != speaker;
 }
 
 /// The smaller mark used once a session is booked: the logo's four
@@ -130,15 +157,30 @@ class TherapyBookedArt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return SizedBox(
       width: size,
       height: size,
-      child: RepaintBoundary(child: CustomPaint(painter: _BookedPainter())),
+      child: RepaintBoundary(
+        child: CustomPaint(
+          painter: _BookedPainter(
+            disc: c.tint(Pillars.blue, 0.10),
+            pillars: c.pillars,
+          ),
+        ),
+      ),
     );
   }
 }
 
 class _BookedPainter extends CustomPainter {
+  _BookedPainter({required this.disc, required this.pillars});
+
+  final Color disc;
+
+  /// In logo order: red, blue, black, yellow.
+  final List<Color> pillars;
+
   @override
   void paint(Canvas canvas, Size size) {
     final centre = Offset(size.width / 2, size.height / 2);
@@ -147,15 +189,15 @@ class _BookedPainter extends CustomPainter {
     canvas.drawCircle(
       centre,
       radius,
-      Paint()..color = Brand.blue.withValues(alpha: 0.10),
+      Paint()..color = disc,
     );
 
     // The logo itself: four upright pillars, the middle pair taller.
     final barWidth = radius * 0.17;
     final gap = barWidth * 0.75;
-    final totalWidth = Brand.pillarColors.length * barWidth + 3 * gap;
+    final totalWidth = pillars.length * barWidth + 3 * gap;
     var x = centre.dx - totalWidth / 2;
-    for (var i = 0; i < Brand.pillarColors.length; i++) {
+    for (var i = 0; i < pillars.length; i++) {
       final tall = i == 1 || i == 2;
       final barHeight = radius * (tall ? 1.02 : 0.72);
       canvas.drawRRect(
@@ -168,12 +210,13 @@ class _BookedPainter extends CustomPainter {
           ),
           Radius.circular(barWidth / 2),
         ),
-        Paint()..color = Brand.pillarColors[i],
+        Paint()..color = pillars[i],
       );
       x += barWidth + gap;
     }
   }
 
   @override
-  bool shouldRepaint(_BookedPainter oldDelegate) => false;
+  bool shouldRepaint(_BookedPainter oldDelegate) =>
+      oldDelegate.disc != disc || !listEquals(oldDelegate.pillars, pillars);
 }

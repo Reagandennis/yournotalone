@@ -18,6 +18,7 @@ class TherapistAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final trimmed = name.trim();
     final initial = Center(
       child: Text(
@@ -25,7 +26,7 @@ class TherapistAvatar extends StatelessWidget {
         style: TextStyle(
           fontSize: size * 0.4,
           fontWeight: FontWeight.w600,
-          color: Brand.blue,
+          color: c.blue,
         ),
       ),
     );
@@ -34,8 +35,8 @@ class TherapistAvatar extends StatelessWidget {
       width: size,
       height: size,
       clipBehavior: Clip.antiAlias,
-      decoration: const BoxDecoration(
-        color: Color(0x143764CD),
+      decoration: BoxDecoration(
+        color: c.tint(Pillars.blue, 0.08),
         shape: BoxShape.circle,
       ),
       child: url.isEmpty
@@ -58,6 +59,7 @@ class StarRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Semantics(
       label: '${rating.toStringAsFixed(1)} out of 5 stars',
       child: ExcludeSemantics(
@@ -72,7 +74,7 @@ class StarRow extends StatelessWidget {
                         ? Icons.star_half_rounded
                         : Icons.star_outline_rounded,
                 size: size,
-                color: Brand.yellow,
+                color: c.yellow,
               ),
           ],
         ),
@@ -96,6 +98,7 @@ class StarRatingInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -106,7 +109,7 @@ class StarRatingInput extends StatelessWidget {
             icon: Icon(
               i <= value ? Icons.star_rounded : Icons.star_outline_rounded,
               size: size,
-              color: i <= value ? Brand.yellow : Brand.border,
+              color: i <= value ? c.yellow : c.tint(Pillars.black, 0.12),
             ),
           ),
       ],
@@ -122,12 +125,13 @@ class TherapistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final rating = profile.ratingAverage;
     return Material(
-      color: Colors.white,
+      color: c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Brand.border, width: 1.2),
+        side: BorderSide(color: c.border, width: 1.2),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -148,19 +152,19 @@ class TherapistCard extends StatelessWidget {
                   children: [
                     Text(
                       profile.fullName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     if (profile.title != null) ...[
                       const SizedBox(height: 2),
                       Text(
                         profile.title!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.35,
                         ),
                       ),
@@ -173,9 +177,9 @@ class TherapistCard extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             '${rating.toStringAsFixed(1)} · ${profile.ratingCount}',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Brand.textMuted,
+                              color: c.textMuted,
                             ),
                           ),
                         ],
@@ -184,10 +188,10 @@ class TherapistCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
-                color: Brand.border,
+                color: c.border,
               ),
             ],
           ),
@@ -201,10 +205,10 @@ Future<void> showTherapistProfile(
   BuildContext context,
   TherapistProfile profile,
 ) {
+  final c = context.brand;
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -227,10 +231,10 @@ Future<void> showTherapistProfile(
           Text(
             profile.fullName,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           if (profile.title != null) ...[
@@ -238,7 +242,7 @@ Future<void> showTherapistProfile(
             Text(
               profile.title!,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: Brand.textMuted),
+              style: TextStyle(fontSize: 14, color: c.textMuted),
             ),
           ],
           if (profile.ratingAverage != null) ...[
@@ -251,7 +255,7 @@ Future<void> showTherapistProfile(
                 Text(
                   '${profile.ratingAverage!.toStringAsFixed(1)} from '
                   '${profile.ratingCount} ratings',
-                  style: const TextStyle(fontSize: 12.5, color: Brand.textMuted),
+                  style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
               ],
             ),
@@ -279,15 +283,15 @@ Future<void> showTherapistProfile(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: const Color(0x0F3764CD),
+                      color: c.tint(Pillars.blue, 0.06),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       specialty,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: Brand.blue,
+                        color: c.blue,
                       ),
                     ),
                   ),
@@ -298,9 +302,9 @@ Future<void> showTherapistProfile(
             const SizedBox(height: 18),
             Text(
               profile.bio!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.6,
               ),
             ),
@@ -319,17 +323,18 @@ class _ProfileLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 17, color: Brand.textMuted),
+          Icon(icon, size: 17, color: c.textMuted),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 13.5, color: Brand.ink, height: 1.4),
+              style: TextStyle(fontSize: 13.5, color: c.ink, height: 1.4),
             ),
           ),
         ],
@@ -354,7 +359,6 @@ Future<bool?> showSessionRatingSheet(
   return showModalBottomSheet<bool>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
@@ -426,6 +430,7 @@ class _RatingSheetState extends State<_RatingSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: SingleChildScrollView(
@@ -437,19 +442,19 @@ class _RatingSheetState extends State<_RatingSheet> {
             Text(
               widget.title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               widget.subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13.5,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.5,
               ),
             ),
@@ -473,7 +478,7 @@ class _RatingSheetState extends State<_RatingSheet> {
               const SizedBox(height: 10),
               Text(
                 _error!,
-                style: const TextStyle(fontSize: 13, color: Brand.red),
+                style: TextStyle(fontSize: 13, color: c.red),
               ),
             ],
             const SizedBox(height: 18),

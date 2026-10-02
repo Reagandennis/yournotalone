@@ -143,16 +143,17 @@ class _MeditationScreenState extends State<MeditationScreen>
   }
 
   Widget _ambientChip(String label, Sound? sound) {
+    final c = context.brand;
     final selected = _ambient == sound?.asset;
     final locked = sound != null && sound.premium && !isPremiumUser();
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? Brand.ink : Colors.white,
+        color: selected ? c.ink : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: selected ? Brand.ink : Brand.border,
+            color: selected ? c.ink : c.border,
             width: 1.2,
           ),
         ),
@@ -165,10 +166,10 @@ class _MeditationScreenState extends State<MeditationScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (locked) ...[
-                  const Icon(
+                  Icon(
                     Icons.lock_rounded,
                     size: 11,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                   const SizedBox(width: 4),
                 ],
@@ -177,7 +178,7 @@ class _MeditationScreenState extends State<MeditationScreen>
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
-                    color: selected ? Colors.white : Brand.textMuted,
+                    color: selected ? c.onInk : c.textMuted,
                   ),
                 ),
               ],
@@ -189,6 +190,7 @@ class _MeditationScreenState extends State<MeditationScreen>
   }
 
   Widget _doneView() {
+    final c = context.brand;
     return FlexibleColumn(
       children: [
         const Spacer(),
@@ -196,18 +198,22 @@ class _MeditationScreenState extends State<MeditationScreen>
           width: 96,
           height: 96,
           decoration: BoxDecoration(
-            color: meditation.accent.withValues(alpha: 0.12),
+            color: c.tint(meditation.accent, 0.12),
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.check_rounded, size: 42, color: meditation.accent),
+          child: Icon(
+            Icons.check_rounded,
+            size: 42,
+            color: c.accent(meditation.accent),
+          ),
         ),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           'Session complete',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
           ),
         ),
         const SizedBox(height: 10),
@@ -215,16 +221,19 @@ class _MeditationScreenState extends State<MeditationScreen>
           '${meditation.minutes} quiet minutes, just for you.\n'
           'Carry a little of this with you.',
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.6,
           ),
         ),
         const SizedBox(height: 8),
         Text(
           'Added to your practice history.',
-          style: TextStyle(fontSize: 12.5, color: meditation.accent),
+          style: TextStyle(
+            fontSize: 12.5,
+            color: c.accent(meditation.accent),
+          ),
         ),
         const Spacer(),
         Padding(
@@ -240,6 +249,8 @@ class _MeditationScreenState extends State<MeditationScreen>
 
   /// The ring and countdown, repainting with the session clock.
   Widget _progressRing() {
+    final c = context.brand;
+    final accent = c.accent(meditation.accent);
     return AnimatedBuilder(
       animation: _session,
       builder: (context, _) {
@@ -255,25 +266,26 @@ class _MeditationScreenState extends State<MeditationScreen>
                 size: const Size(240, 240),
                 painter: _RingPainter(
                   progress: _session.value,
-                  accent: meditation.accent,
+                  accent: accent,
+                  track: c.tint(meditation.accent, 0.14),
                 ),
               ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(meditation.icon, size: 30, color: meditation.accent),
+                  Icon(meditation.icon, size: 30, color: accent),
                   const SizedBox(height: 10),
                   Text(
                     _clock(remaining),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'remaining',
-                    style: TextStyle(fontSize: 12, color: Brand.textMuted),
+                    style: TextStyle(fontSize: 12, color: c.textMuted),
                   ),
                 ],
               ),
@@ -285,6 +297,10 @@ class _MeditationScreenState extends State<MeditationScreen>
   }
 
   Widget _runningView() {
+    final c = context.brand;
+    // An ink button turns off-white in the dark, like the logo's black
+    // pillar; a coloured one keeps its white icon in both modes.
+    final inkButton = meditation.accent == Pillars.black;
     return FlexibleColumn(
       children: [
         const Spacer(),
@@ -322,9 +338,9 @@ class _MeditationScreenState extends State<MeditationScreen>
                 prompt,
                 key: ValueKey(prompt),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 17,
-                  color: Brand.ink,
+                  color: c.ink,
                   height: 1.6,
                   fontWeight: FontWeight.w500,
                 ),
@@ -347,7 +363,7 @@ class _MeditationScreenState extends State<MeditationScreen>
         Padding(
           padding: const EdgeInsets.only(bottom: 26),
           child: Material(
-            color: meditation.accent,
+            color: inkButton ? c.ink : meditation.accent,
             shape: const CircleBorder(),
             child: InkWell(
               customBorder: const CircleBorder(),
@@ -362,7 +378,7 @@ class _MeditationScreenState extends State<MeditationScreen>
                       ? Icons.pause_rounded
                       : Icons.play_arrow_rounded,
                   size: 36,
-                  color: Colors.white,
+                  color: inkButton ? c.onInk : Colors.white,
                 ),
               ),
             ),
@@ -404,10 +420,10 @@ class _MeditationScreenState extends State<MeditationScreen>
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Brand.ink,
+                                color: context.brand.ink,
                               ),
                             ),
                           ),
@@ -430,10 +446,15 @@ class _MeditationScreenState extends State<MeditationScreen>
 
 /// Progress ring: a faint full circle with the accent arc sweeping over it.
 class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.progress, required this.accent});
+  const _RingPainter({
+    required this.progress,
+    required this.accent,
+    required this.track,
+  });
 
   final double progress;
   final Color accent;
+  final Color track;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -442,7 +463,7 @@ class _RingPainter extends CustomPainter {
     final track = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7
-      ..color = accent.withValues(alpha: 0.14);
+      ..color = this.track;
     canvas.drawCircle(center, radius, track);
 
     final arc = Paint()
@@ -461,5 +482,7 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_RingPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.accent != accent;
+      oldDelegate.progress != progress ||
+      oldDelegate.accent != accent ||
+      oldDelegate.track != track;
 }

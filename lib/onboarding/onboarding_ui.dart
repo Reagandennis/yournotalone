@@ -30,6 +30,7 @@ class OnboardingScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -44,7 +45,7 @@ class OnboardingScaffold extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 8, right: 12),
                       child: IconButton(
                         icon: const Icon(Icons.close_rounded),
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         tooltip: 'Close',
                         onPressed: () => Navigator.of(context).maybePop(),
                       ),
@@ -82,10 +83,11 @@ class OnboardingDots extends StatelessWidget {
 
   final int step;
 
-  static const _accents = [Brand.red, Brand.blue, Brand.yellow];
+  static const _accents = [Pillars.red, Pillars.blue, Pillars.yellow];
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -97,7 +99,7 @@ class OnboardingDots extends StatelessWidget {
               width: i == step ? 26 : 7,
               height: 7,
               decoration: BoxDecoration(
-                color: i == step ? _accents[i] : Brand.border,
+                color: i == step ? c.art(_accents[i]) : c.border,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),

@@ -106,6 +106,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
   }
 
   Widget _slider(double value, ValueChanged<double> onChanged) {
+    final c = context.brand;
     return Column(
       children: [
         Slider(
@@ -113,15 +114,15 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
           min: 0,
           max: 100,
           divisions: 20,
-          activeColor: cbtAccent,
+          activeColor: c.accent(cbtAccent),
           onChanged: onChanged,
         ),
         Text(
           '${value.round()} out of 100',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
           ),
         ),
       ],
@@ -129,6 +130,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
   }
 
   List<Widget> _body() {
+    final c = context.brand;
     switch (_step) {
       case 1:
         return [
@@ -193,9 +195,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Material(
-                color: _traps.contains(trap.name)
-                    ? Brand.ink
-                    : toolkitCardColor,
+                color: _traps.contains(trap.name) ? c.ink : c.card,
                 borderRadius: BorderRadius.circular(14),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(14),
@@ -215,8 +215,8 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                           trap.icon,
                           size: 18,
                           color: _traps.contains(trap.name)
-                              ? Colors.white
-                              : cbtAccent,
+                              ? c.onInk
+                              : c.accent(cbtAccent),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -229,8 +229,8 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: _traps.contains(trap.name)
-                                      ? Colors.white
-                                      : Brand.ink,
+                                      ? c.onInk
+                                      : c.ink,
                                 ),
                               ),
                               Text(
@@ -238,8 +238,8 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: _traps.contains(trap.name)
-                                      ? Colors.white70
-                                      : Brand.textMuted,
+                                      ? c.onInk.withValues(alpha: 0.7)
+                                      : c.textMuted,
                                 ),
                               ),
                             ],
@@ -269,12 +269,12 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Questions worth asking',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -285,9 +285,9 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
                         '• ${trap.ask}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.45,
                         ),
                       ),
@@ -309,10 +309,10 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
           ToolkitNote(
             child: Text(
               '“${_thought.text.trim()}”',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontStyle: FontStyle.italic,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.45,
               ),
             ),
@@ -335,9 +335,9 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
           ToolkitNote(
             child: Text(
               _summary,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.5,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.55,
               ),
             ),

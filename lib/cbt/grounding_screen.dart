@@ -39,6 +39,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     if (_finished) {
       return ToolkitScaffold(
         accent: cbtAccent,
@@ -49,30 +50,34 @@ class _GroundingScreenState extends State<GroundingScreen> {
             child: Container(
               width: 96,
               height: 96,
-              decoration: const BoxDecoration(
-                color: Color(0x14C53C26),
+              decoration: BoxDecoration(
+                color: c.tint(cbtAccent, 0.08),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.spa_rounded, size: 42, color: cbtAccent),
+              child: Icon(
+                Icons.spa_rounded,
+                size: 42,
+                color: c.accent(cbtAccent),
+              ),
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'You\'re here',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             'Notice your breathing. Notice the weight of your body where '
             'you\'re sitting. Whatever was pulling at you is still there, '
             'but you\'re here, and here is manageable.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
+            style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
           const SizedBox(height: 28),
           ElevatedButton.icon(
@@ -112,30 +117,30 @@ class _GroundingScreenState extends State<GroundingScreen> {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: toolkitCardColor,
+                color: c.card,
                 shape: BoxShape.circle,
-                border: Border.all(color: cbtAccent, width: 6),
+                border: Border.all(color: c.accent(cbtAccent), width: 6),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(step.icon, size: 30, color: cbtAccent),
+                  Icon(step.icon, size: 30, color: c.accent(cbtAccent)),
                   const SizedBox(height: 6),
                   Text(
                     '$remaining',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 56,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                       height: 1,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     remaining == 1 ? 'to go' : 'to go',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                 ],
@@ -153,7 +158,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
                 height: 12,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: i < _found ? cbtAccent : Brand.border,
+                  color: i < _found ? c.accent(cbtAccent) : c.border,
                   shape: BoxShape.circle,
                 ),
               ),

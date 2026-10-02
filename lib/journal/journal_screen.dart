@@ -80,12 +80,13 @@ class _JournalScreenState extends State<JournalScreen> {
   }
 
   Widget _entryCard(JournalEntry entry) {
+    final c = context.brand;
     final snippet = entry.content.trim().replaceAll(RegExp(r'\s+'), ' ');
     return Material(
-      color: Colors.white,
+      color: c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Brand.border, width: 1.2),
+        side: BorderSide(color: c.border, width: 1.2),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -104,19 +105,19 @@ class _JournalScreenState extends State<JournalScreen> {
                           : 'Untitled',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
                   Text(
                     _dateLabel(entry.createdAt),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11.5,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
                 ],
@@ -126,9 +127,9 @@ class _JournalScreenState extends State<JournalScreen> {
                 snippet,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
-                  color: Brand.textMuted,
+                  color: c.textMuted,
                   height: 1.45,
                 ),
               ),
@@ -140,17 +141,18 @@ class _JournalScreenState extends State<JournalScreen> {
   }
 
   Widget _body() {
+    final c = context.brand;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 40),
-          const Icon(Icons.cloud_off_rounded, size: 40, color: Brand.border),
+          Icon(Icons.cloud_off_rounded, size: 40, color: c.border),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'Couldn\'t load your journal.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 18),
           Center(
@@ -164,24 +166,24 @@ class _JournalScreenState extends State<JournalScreen> {
     }
     final entries = _entries;
     if (entries == null) {
-      return const Padding(
-        padding: EdgeInsets.only(top: 60),
+      return Padding(
+        padding: const EdgeInsets.only(top: 60),
         child: Center(
-          child: CircularProgressIndicator(color: Brand.ink, strokeWidth: 2.6),
+          child: CircularProgressIndicator(color: c.ink, strokeWidth: 2.6),
         ),
       );
     }
     if (entries.isEmpty) {
-      return const Column(
+      return Column(
         children: [
-          SizedBox(height: 40),
-          Icon(Icons.edit_note_rounded, size: 40, color: Brand.border),
-          SizedBox(height: 14),
+          const SizedBox(height: 40),
+          Icon(Icons.edit_note_rounded, size: 40, color: c.border),
+          const SizedBox(height: 14),
           Text(
             'Your space is ready.\nWrite your first entry whenever you like.',
             textAlign: TextAlign.center,
             style:
-                TextStyle(fontSize: 14, color: Brand.textMuted, height: 1.6),
+                TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
         ],
       );
@@ -199,12 +201,13 @@ class _JournalScreenState extends State<JournalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final count = _entries?.length ?? 0;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: _newEntry,
-        backgroundColor: Brand.ink,
-        foregroundColor: Colors.white,
+        backgroundColor: c.ink,
+        foregroundColor: c.onInk,
         shape: const CircleBorder(),
         child: const Icon(Icons.add_rounded),
       ),
@@ -220,12 +223,12 @@ class _JournalScreenState extends State<JournalScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Journal',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
@@ -237,9 +240,9 @@ class _JournalScreenState extends State<JournalScreen> {
                       ? 'A private place for whatever\'s on your mind.'
                       : 'A private place for whatever\'s on your mind · '
                           '$count/$freeJournalEntryLimit free entries used.',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),

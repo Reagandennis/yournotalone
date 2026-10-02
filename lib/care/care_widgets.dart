@@ -12,6 +12,7 @@ class LoadFailed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(28),
@@ -21,7 +22,7 @@ class LoadFailed extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: Brand.textMuted),
+              style: TextStyle(fontSize: 14, color: c.textMuted),
             ),
             const SizedBox(height: 10),
             TextButton(onPressed: onRetry, child: const Text('Try again')),
@@ -34,17 +35,24 @@ class LoadFailed extends StatelessWidget {
 
 /// A small rounded label: a payment state, a status, "Inactive".
 class StatusBadge extends StatelessWidget {
-  const StatusBadge(this.label, {super.key, this.color = Brand.textMuted});
+  const StatusBadge(this.label, {super.key, this.color});
 
   final String label;
-  final Color color;
+
+  /// A declared colour (`Pillars.*`), drawn in this mode's shade. None
+  /// gives a quiet grey badge.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
+    final color = this.color;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: color == null
+            ? c.tint(Pillars.black, 0.06)
+            : c.tint(color, 0.10),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
@@ -52,7 +60,7 @@ class StatusBadge extends StatelessWidget {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w600,
-          color: color,
+          color: color == null ? c.textMuted : c.accent(color),
         ),
       ),
     );
@@ -60,13 +68,15 @@ class StatusBadge extends StatelessWidget {
 }
 
 StatusBadge paymentBadge(TherapyRequest request, {bool refunded = false}) {
-  if (request.isFreeSession) return const StatusBadge('Free', color: Brand.blue);
+  if (request.isFreeSession) {
+    return const StatusBadge('Free', color: Pillars.blue);
+  }
   return switch (request.paymentStatus) {
-    'unpaid' when refunded => const StatusBadge('Refunded', color: Brand.red),
-    'unpaid' => const StatusBadge('Unpaid', color: Brand.red),
-    'paid' => const StatusBadge('Paid', color: Brand.ink),
+    'unpaid' when refunded => const StatusBadge('Refunded', color: Pillars.red),
+    'unpaid' => const StatusBadge('Unpaid', color: Pillars.red),
+    'paid' => const StatusBadge('Paid', color: Pillars.black),
     'waived' => const StatusBadge('Waived'),
-    _ => const StatusBadge('Free', color: Brand.blue),
+    _ => const StatusBadge('Free', color: Pillars.blue),
   };
 }
 
@@ -79,6 +89,7 @@ class CareSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 22),
       child: Column(
@@ -86,11 +97,11 @@ class CareSection extends StatelessWidget {
         children: [
           Text(
             title.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.8,
-              color: Brand.textMuted,
+              color: c.textMuted,
             ),
           ),
           const SizedBox(height: 10),
@@ -108,10 +119,13 @@ class InfoLine extends StatelessWidget {
   final IconData icon;
   final String text;
   final Widget? trailing;
+
+  /// Overrides the icon and text colour; pass a `context.brand` colour.
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -119,7 +133,7 @@ class InfoLine extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 1),
-            child: Icon(icon, size: 17, color: color ?? Brand.textMuted),
+            child: Icon(icon, size: 17, color: color ?? c.textMuted),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -127,7 +141,7 @@ class InfoLine extends StatelessWidget {
               text,
               style: TextStyle(
                 fontSize: 13.5,
-                color: color ?? Brand.ink,
+                color: color ?? c.ink,
                 height: 1.45,
               ),
             ),
@@ -154,12 +168,13 @@ class ChoicePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Material(
-      color: selected ? const Color(0x0A191919) : Colors.white,
+      color: selected ? c.tint(Pillars.black, 0.04) : c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(999),
         side: BorderSide(
-          color: selected ? Brand.ink : Brand.border,
+          color: selected ? c.ink : c.border,
           width: selected ? 1.6 : 1.2,
         ),
       ),
@@ -173,7 +188,7 @@ class ChoicePill extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-              color: selected ? Brand.ink : Brand.textMuted,
+              color: selected ? c.ink : c.textMuted,
             ),
           ),
         ),

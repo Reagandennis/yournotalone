@@ -17,7 +17,6 @@ import 'crisis_screen.dart';
 Future<void> showHeavyDaySheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: Colors.white,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
@@ -62,13 +61,14 @@ class _HeavyDaySheet extends StatelessWidget {
     required String name,
     required String number,
   }) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: SizedBox(
         width: double.infinity,
         child: OutlinedButton.icon(
           onPressed: () => _call(context, number),
-          icon: const Icon(Icons.call_rounded, size: 18, color: Brand.red),
+          icon: Icon(Icons.call_rounded, size: 18, color: c.red),
           label: Text.rich(
             TextSpan(
               children: [
@@ -78,7 +78,7 @@ class _HeavyDaySheet extends StatelessWidget {
                 ),
                 TextSpan(
                   text: '  ·  $number',
-                  style: const TextStyle(color: Brand.textMuted),
+                  style: TextStyle(color: c.textMuted),
                 ),
               ],
             ),
@@ -86,10 +86,10 @@ class _HeavyDaySheet extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           style: OutlinedButton.styleFrom(
-            foregroundColor: Brand.ink,
+            foregroundColor: c.ink,
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-            side: const BorderSide(color: Brand.border, width: 1.3),
+            side: BorderSide(color: c.border, width: 1.3),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
             ),
@@ -101,6 +101,7 @@ class _HeavyDaySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final region = defaultCrisisRegion();
     final lines = [
       for (final line in region.lines)
@@ -115,24 +116,24 @@ class _HeavyDaySheet extends StatelessWidget {
           children: [
             Center(child: MoodFace(level: moodLevels.first, size: 56)),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'That sounds like a heavy day.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 19,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
                 height: 1.25,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'You don\'t have to carry it on your own. A licensed therapist '
               'here will listen — \$20 a session, booked in a minute.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.5,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.5,
               ),
             ),
@@ -147,14 +148,14 @@ class _HeavyDaySheet extends StatelessWidget {
               child: const Text('Not now'),
             ),
             const SizedBox(height: 10),
-            const Divider(height: 1, color: Brand.border),
+            Divider(height: 1, color: c.border),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'If you need someone right now',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
             const SizedBox(height: 10),
@@ -171,7 +172,7 @@ class _HeavyDaySheet extends StatelessWidget {
                 onPressed: onMoreHelp,
                 style: TextButton.styleFrom(
                   padding: EdgeInsets.zero,
-                  foregroundColor: Brand.red,
+                  foregroundColor: c.red,
                 ),
                 child: const Text('More ways to get help'),
               ),

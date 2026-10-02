@@ -101,6 +101,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     if (_awaitingConfirm) {
       return AuthScaffold(
         title: 'Confirm your email',
@@ -111,14 +112,14 @@ class _SignupScreenState extends State<SignupScreen> {
             child: Container(
               width: 96,
               height: 96,
-              decoration: const BoxDecoration(
-                color: Color(0x143764CD),
+              decoration: BoxDecoration(
+                color: c.tint(Pillars.blue, 0.08),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.mark_email_unread_outlined,
                 size: 40,
-                color: Brand.blue,
+                color: c.blue,
               ),
             ),
           ),
@@ -126,10 +127,10 @@ class _SignupScreenState extends State<SignupScreen> {
           Center(
             child: Text(
               _email.text.trim(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
           ),
@@ -147,9 +148,9 @@ class _SignupScreenState extends State<SignupScreen> {
         alignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          const Text(
+          Text(
             'Already have an account?',
-            style: TextStyle(fontSize: 14, color: Brand.textMuted),
+            style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).maybePop(),
@@ -228,27 +229,27 @@ class _SignupScreenState extends State<SignupScreen> {
               TextSpan(
                 text: 'Terms of Service',
                 recognizer: _termsTap,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Brand.blue,
+                  color: c.blue,
                 ),
               ),
               const TextSpan(text: ' and '),
               TextSpan(
                 text: 'Privacy Policy',
                 recognizer: _privacyTap,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Brand.blue,
+                  color: c.blue,
                 ),
               ),
               const TextSpan(text: '.'),
             ],
           ),
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.5,
           ),
         ),

@@ -344,6 +344,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _trust() {
+    final c = context.brand;
     const items = ['Licensed therapists', 'Private by design', 'Cancel anytime'];
     return Wrap(
       spacing: 8,
@@ -353,20 +354,21 @@ class _PaywallScreenState extends State<PaywallScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
             decoration: BoxDecoration(
-              border: Border.all(color: Brand.border, width: 1.2),
+              color: c.card,
+              border: Border.all(color: c.border, width: 1.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.check_rounded, size: 14, color: Brand.blue),
+                Icon(Icons.check_rounded, size: 14, color: c.blue),
                 const SizedBox(width: 5),
                 Text(
                   item,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ],
@@ -377,6 +379,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _planPicker() {
+    final c = context.brand;
     final savings = _savingsPercent;
     return IntrinsicHeight(
       child: Row(
@@ -386,12 +389,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
             if (i != 0) const SizedBox(width: 10),
             Expanded(
               child: Material(
-                color:
-                    _selected == p ? const Color(0x0A191919) : Colors.white,
+                color: _selected == p ? c.tint(Pillars.black, 0.04) : c.card,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(
-                    color: _selected == p ? Brand.ink : Brand.border,
+                    color: _selected == p ? c.ink : c.border,
                     width: _selected == p ? 1.6 : 1.2,
                   ),
                 ),
@@ -408,10 +410,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       children: [
                         Text(
                           _packageName(p),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.5,
                             fontWeight: FontWeight.w600,
-                            color: Brand.ink,
+                            color: c.ink,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -419,10 +421,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           p.storeProduct.priceString,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14.5,
                             fontWeight: FontWeight.w700,
-                            color: Brand.ink,
+                            color: c.ink,
                           ),
                         ),
                         const SizedBox(height: 3),
@@ -432,9 +434,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                               : _packageNote(p),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 10.5,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ),
                         if (p.packageType == PackageType.annual &&
@@ -446,16 +448,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0x33FAB414),
+                              color: c.tint(Pillars.yellow, 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               'SAVE $savings%',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
-                                color: Brand.ink,
+                                color: c.ink,
                               ),
                             ),
                           ),
@@ -481,11 +483,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
       p.storeProduct.priceString,
       _periodSuffix(p),
     );
-    const accents = [Brand.red, Brand.blue, Brand.yellow];
+    final c = context.brand;
+    const accents = [Pillars.red, Pillars.blue, Pillars.yellow];
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       decoration: BoxDecoration(
-        color: const Color(0x0A191919),
+        color: c.tint(Pillars.black, 0.04),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -504,7 +507,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                           height: 12,
                           margin: const EdgeInsets.only(top: 3),
                           decoration: BoxDecoration(
-                            color: accents[i % accents.length],
+                            color: c.art(accents[i % accents.length]),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -513,7 +516,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                             child: Container(
                               width: 2,
                               margin: const EdgeInsets.symmetric(vertical: 3),
-                              color: Brand.border,
+                              color: c.border,
                             ),
                           ),
                       ],
@@ -528,18 +531,18 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         children: [
                           Text(
                             step.day,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
-                              color: Brand.ink,
+                              color: c.ink,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             step.detail,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12.5,
-                              color: Brand.textMuted,
+                              color: c.textMuted,
                               height: 1.4,
                             ),
                           ),
@@ -556,9 +559,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _cell(String? value, {required bool premium}) {
-    final color = premium ? Brand.ink : Brand.textMuted;
+    final c = context.brand;
+    final color = premium ? c.ink : c.textMuted;
     if (value == null) {
-      return Icon(Icons.remove_rounded, size: 18, color: Brand.border);
+      return Icon(Icons.remove_rounded, size: 18, color: c.border);
     }
     if (value == _PlanRow.included) {
       return Icon(Icons.check_rounded, size: 19, color: color);
@@ -576,12 +580,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   List<Widget> _table() {
+    final c = context.brand;
     final rows = _expanded ? _rows : _rows.take(_rowsShownFolded).toList();
     return [
       Row(
         children: [
           const Expanded(child: SizedBox()),
-          const SizedBox(
+          SizedBox(
             width: 64,
             child: Text(
               'Free',
@@ -589,7 +594,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Brand.textMuted,
+                color: c.textMuted,
               ),
             ),
           ),
@@ -597,16 +602,16 @@ class _PaywallScreenState extends State<PaywallScreen> {
             width: 76,
             padding: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
-              color: const Color(0x14191919),
+              color: c.tint(Pillars.black, 0.08),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
+            child: Text(
               'Premium',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
           ),
@@ -614,7 +619,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       ),
       const SizedBox(height: 6),
       for (final (i, row) in rows.indexed) ...[
-        if (i != 0) const Divider(height: 1, color: Brand.border),
+        if (i != 0) Divider(height: 1, color: c.border),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 13),
           child: Row(
@@ -622,9 +627,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
               Expanded(
                 child: Text(
                   row.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.35,
                   ),
                 ),
@@ -660,6 +665,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final copy = paywallCopy(widget.checkin);
     final selected = _selected;
     final trial = selected == null ? null : trialLabel(selected);
@@ -685,7 +691,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     '${selected.storeProduct.priceString}'
                     '${_periodSuffix(selected)} · cancel anytime'
                 : 'Cancel anytime',
-            style: const TextStyle(fontSize: 12, color: Brand.textMuted),
+            style: TextStyle(fontSize: 12, color: c.textMuted),
           ),
           const SizedBox(height: 2),
           Wrap(
@@ -698,9 +704,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     ? 'Continue with Free'
                     : 'Maybe later'),
               ),
-              const Text(
+              Text(
                 '·',
-                style: TextStyle(color: Brand.textMuted),
+                style: TextStyle(color: c.textMuted),
               ),
               TextButton(
                 onPressed: _loading ? null : _restore,
@@ -715,10 +721,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
         const SizedBox(height: 18),
         Text(
           copy.headline,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
-            color: Brand.ink,
+            color: c.ink,
             height: 1.2,
           ),
         ),
@@ -727,9 +733,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
         const SizedBox(height: 14),
         Text(
           copy.detail,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: Brand.textMuted,
+            color: c.textMuted,
             height: 1.55,
           ),
         ),
@@ -742,10 +748,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           const SizedBox(height: 22),
           Text(
             introOfferSentence,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13.5,
               fontWeight: FontWeight.w600,
-              color: Brand.ink,
+              color: c.ink,
             ),
           ),
         ],
@@ -756,9 +762,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
         const SizedBox(height: 24),
         ..._table(),
         const SizedBox(height: 4),
-        const Text(
+        Text(
           'Therapy sessions are available to everyone and booked separately.',
-          style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
+          style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.5),
         ),
       ],
     );

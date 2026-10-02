@@ -57,15 +57,16 @@ class _SoundsScreenState extends State<SoundsScreen> {
   }
 
   Widget _chip(String label, SoundCategory? value) {
+    final c = context.brand;
     final selected = _filter == value;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? Brand.ink : Colors.white,
+        color: selected ? c.ink : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: selected ? Brand.ink : Brand.border,
+            color: selected ? c.ink : c.border,
             width: 1.2,
           ),
         ),
@@ -79,7 +80,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: selected ? Colors.white : Brand.textMuted,
+                color: selected ? c.onInk : c.textMuted,
               ),
             ),
           ),
@@ -89,16 +90,20 @@ class _SoundsScreenState extends State<SoundsScreen> {
   }
 
   Widget _soundCard(Sound sound, {required bool active}) {
+    final c = context.brand;
     final locked = sound.premium && !isPremiumUser();
     final accent = sound.category.accent;
+    // An ink button turns off-white in the dark, like the logo's black
+    // pillar; a coloured one keeps its white icon in both modes.
+    final inkButton = !active || accent == Pillars.black;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: accent.withValues(alpha: active ? 0.12 : 0.06),
+        color: c.tint(accent, active ? 0.12 : 0.06),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: active
-              ? BorderSide(color: accent, width: 1.4)
+              ? BorderSide(color: c.accent(accent), width: 1.4)
               : BorderSide.none,
         ),
         child: InkWell(
@@ -111,11 +116,11 @@ class _SoundsScreenState extends State<SoundsScreen> {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: c.chip,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(sound.icon, size: 21, color: accent),
+                  child: Icon(sound.icon, size: 21, color: c.accent(accent)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -129,10 +134,10 @@ class _SoundsScreenState extends State<SoundsScreen> {
                               sound.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
-                                color: Brand.ink,
+                                color: c.ink,
                               ),
                             ),
                           ),
@@ -151,7 +156,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 12.5,
-                          color: active ? accent : Brand.textMuted,
+                          color: active ? c.accent(accent) : c.textMuted,
                           fontWeight:
                               active ? FontWeight.w500 : FontWeight.w400,
                         ),
@@ -161,7 +166,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                 ),
                 const SizedBox(width: 10),
                 Material(
-                  color: active ? accent : Brand.ink,
+                  color: inkButton ? c.ink : accent,
                   shape: const CircleBorder(),
                   child: InkWell(
                     customBorder: const CircleBorder(),
@@ -174,7 +179,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                             ? Icons.pause_rounded
                             : Icons.play_arrow_rounded,
                         size: 24,
-                        color: Colors.white,
+                        color: inkButton ? c.onInk : Colors.white,
                       ),
                     ),
                   ),
@@ -200,6 +205,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
         ? soundsCatalog
         : [for (final s in soundsCatalog) if (s.category == _filter) s];
     final player = SoundPlayer.instance;
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -215,24 +221,24 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     child: BackChip(),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Wellbeing sounds',
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                       height: 1.2,
                     ),
                   ),
                   const SizedBox(height: 12),
                   const PillarStripe(),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     'Loops that stay with you — pick one and let it run '
                     'while you focus, drift off, or settle down.',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                       height: 1.55,
                     ),
                   ),
@@ -244,8 +250,8 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     child: Row(
                       children: [
                         _chip('All', null),
-                        for (final c in SoundCategory.values)
-                          _chip(c.label, c),
+                        for (final category in SoundCategory.values)
+                          _chip(category.label, category),
                       ],
                     ),
                   ),

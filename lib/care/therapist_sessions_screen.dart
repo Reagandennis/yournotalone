@@ -104,7 +104,6 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
     final saved = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -141,6 +140,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
   }
 
   Widget _list(List<TherapistSession> sessions) {
+    final c = context.brand;
     final now = _now();
     final upcoming = [
       for (final s in sessions)
@@ -154,15 +154,15 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
       children: [
         if (sessions.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: 60),
+          Padding(
+            padding: const EdgeInsets.only(top: 60),
             child: Text(
               'No sessions yet. When the care team books one with you, it '
               'shows up here and you\'ll get an email.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: Brand.textMuted,
+                color: c.textMuted,
                 height: 1.55,
               ),
             ),
@@ -183,6 +183,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
   }
 
   Widget _upcomingCard(TherapistSession session, DateTime now) {
+    final c = context.brand;
     final state = session.joinStateAt(now);
     final canJoin = state == JoinState.open && session.paymentSettled;
     final hint = switch (state) {
@@ -200,7 +201,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0x0F3764CD),
+        color: c.tint(Pillars.blue, 0.06),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -216,26 +217,26 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                   children: [
                     Text(
                       session.clientLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Brand.ink,
+                        color: c.ink,
                       ),
                     ),
                     Text(
                       session.topic,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                       ),
                     ),
                   ],
                 ),
               ),
               if (session.isFreeSession)
-                const StatusBadge('Free', color: Brand.blue)
+                const StatusBadge('Free', color: Pillars.blue)
               else if (!session.paymentSettled)
-                const StatusBadge('Unpaid', color: Brand.red),
+                const StatusBadge('Unpaid', color: Pillars.red),
             ],
           ),
           const SizedBox(height: 12),
@@ -257,7 +258,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
           Text(
             hint,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 12.5, color: c.textMuted),
           ),
           if (session.canFinishAt(now)) ...[
             const SizedBox(height: 4),
@@ -272,15 +273,16 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
   }
 
   Widget _pastCard(TherapistSession session) {
+    final c = context.brand;
     final when = session.scheduledAt ?? session.completedAt;
     final summary = session.clientSummary;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
-        color: Colors.white,
+        color: c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Brand.border, width: 1.2),
+          side: BorderSide(color: c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
@@ -295,27 +297,27 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                     children: [
                       Text(
                         session.clientLabel,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       Text(
                         [session.topic, if (when != null) formatDate(when)]
                             .join(' · '),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                       if (session.clientMissed) ...[
                         const SizedBox(height: 4),
-                        const Text(
+                        Text(
                           'The client didn\'t join the call.',
                           style: TextStyle(
                             fontSize: 12.5,
-                            color: Brand.red,
+                            color: c.red,
                             height: 1.4,
                           ),
                         ),
@@ -326,9 +328,9 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                           summary,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12.5,
-                            color: Brand.ink,
+                            color: c.ink,
                             height: 1.4,
                           ),
                         ),
@@ -340,16 +342,16 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                 if (session.isCancelled)
                   Text(
                     session.didNotHappen ? 'Didn\'t happen' : 'Cancelled',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   )
                 else if (session.myRating != null)
                   StarRow(rating: session.myRating!.toDouble())
                 else
-                  const StatusBadge('Rate', color: Brand.blue),
+                  const StatusBadge('Rate', color: Pillars.blue),
               ],
             ),
           ),
@@ -423,6 +425,7 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final name = widget.session.clientLabel;
     final done = widget.session.isCompleted;
     return Padding(
@@ -436,10 +439,10 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
             Text(
               done ? 'Session with $name' : 'Finish your session with $name',
               textAlign: TextAlign.center,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
             const SizedBox(height: 18),
@@ -457,13 +460,13 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'How did it go?',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: Brand.ink,
+                color: c.ink,
               ),
             ),
             const SizedBox(height: 4),
@@ -500,16 +503,16 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Only the care team sees your rating, flags and private note. '
               'Flagging a safety concern emails them straight away.',
-              style: TextStyle(fontSize: 12, color: Brand.textMuted, height: 1.5),
+              style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.5),
             ),
             if (_error != null) ...[
               const SizedBox(height: 10),
               Text(
                 _error!,
-                style: const TextStyle(fontSize: 13, color: Brand.red),
+                style: TextStyle(fontSize: 13, color: c.red),
               ),
             ],
             const SizedBox(height: 18),

@@ -69,15 +69,16 @@ class JournalHubScreen extends StatelessWidget {
     bool locked = false,
     bool tinted = false,
   }) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: tinted ? accent.withValues(alpha: 0.06) : Colors.white,
+        color: tinted ? c.tint(accent, 0.06) : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
           side: tinted
               ? BorderSide.none
-              : const BorderSide(color: Brand.border, width: 1.2),
+              : BorderSide(color: c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
@@ -90,12 +91,10 @@ class JournalHubScreen extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: tinted
-                        ? Colors.white
-                        : accent.withValues(alpha: 0.10),
+                    color: tinted ? c.chip : c.tint(accent, 0.10),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(icon, size: 21, color: accent),
+                  child: Icon(icon, size: 21, color: c.accent(accent)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -106,10 +105,10 @@ class JournalHubScreen extends StatelessWidget {
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -117,9 +116,9 @@ class JournalHubScreen extends StatelessWidget {
                         detail,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                         ),
                       ),
                     ],
@@ -134,7 +133,7 @@ class JournalHubScreen extends StatelessWidget {
                   Icon(
                     Icons.arrow_forward_ios_rounded,
                     size: 14,
-                    color: accent,
+                    color: c.accent(accent),
                   ),
               ],
             ),
@@ -153,6 +152,7 @@ class JournalHubScreen extends StatelessWidget {
   /// entitlement changes — buying from inside the app used to leave the
   /// screen you bought from still locked.
   Widget _buildContent(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -166,24 +166,24 @@ class JournalHubScreen extends StatelessWidget {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Journal & mood',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Put the day into words — start from a blank page or let '
                   'a prompt do the opening line.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
@@ -193,7 +193,7 @@ class JournalHubScreen extends StatelessWidget {
                 _card(
                   context,
                   icon: Icons.menu_book_rounded,
-                  accent: Brand.red,
+                  accent: Pillars.red,
                   title: 'My journal',
                   detail: 'Every entry you\'ve written, newest first.',
                   tinted: true,
@@ -204,7 +204,7 @@ class JournalHubScreen extends StatelessWidget {
                 _card(
                   context,
                   icon: Icons.edit_note_rounded,
-                  accent: Brand.blue,
+                  accent: Pillars.blue,
                   title: 'Free write',
                   detail: 'A blank page, no prompt, no rules.',
                   tinted: true,
@@ -239,7 +239,7 @@ class JournalHubScreen extends StatelessWidget {
                 _card(
                   context,
                   icon: Icons.insights_rounded,
-                  accent: Brand.yellow,
+                  accent: Pillars.yellow,
                   title: 'Mood history',
                   detail: 'Every check-in, and how the weeks actually went.',
                   locked: !isPremiumUser(),

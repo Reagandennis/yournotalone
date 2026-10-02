@@ -21,7 +21,7 @@ const urgeSurfMeditation = Meditation(
   'Urges are waves — ride this one until it breaks.',
   8,
   Icons.surfing_rounded,
-  Brand.blue,
+  Pillars.blue,
   premium: false,
   prompts: [
     (0.0, 'You\'re here — that\'s the strongest move you could make.'),
@@ -119,12 +119,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   // ── Commitments ────────────────────────────────────────────────
 
   Future<void> _addHabitSheet() async {
+    final c = context.brand;
     final controller = TextEditingController();
     var dayOne = DateTime.now();
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -140,12 +140,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
+              Text(
                 'What are you leaving behind?',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Brand.ink,
+                  color: c.ink,
                 ),
               ),
               const SizedBox(height: 16),
@@ -158,9 +158,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 'Counting from',
-                style: TextStyle(fontSize: 13, color: Brand.textMuted),
+                style: TextStyle(fontSize: 13, color: c.textMuted),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -298,7 +298,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Brand.red),
+            style: TextButton.styleFrom(foregroundColor: context.brand.red),
             child: const Text('Remove'),
           ),
         ],
@@ -320,12 +320,14 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   }
 
   Widget _habitCard(RecoveryHabit habit) {
+    final c = context.brand;
     final next = habit.nextMilestone;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.fromLTRB(16, 14, 8, 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Brand.border, width: 1.2),
+        color: c.card,
+        border: Border.all(color: c.border, width: 1.2),
         borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
@@ -338,24 +340,24 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   habit.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
               ),
               Text(
                 'Day ${habit.daysIn}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: Brand.blue,
+                  color: c.blue,
                 ),
               ),
               PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert_rounded,
-                    size: 20, color: Brand.textMuted),
+                icon: Icon(Icons.more_vert_rounded,
+                    size: 20, color: c.textMuted),
                 onSelected: (value) => value == 'reset'
                     ? _confirmReset(habit)
                     : _confirmDelete(habit),
@@ -377,8 +379,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   child: LinearProgressIndicator(
                     value: habit.milestoneProgress,
                     minHeight: 5,
-                    backgroundColor: Brand.border,
-                    color: Brand.blue,
+                    backgroundColor: c.border,
+                    color: c.blue,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -389,9 +391,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                           '(${next.$1 - habit.daysIn} day'
                           '${next.$1 - habit.daysIn == 1 ? '' : 's'} to go)'
                           '${habit.bestStreakDays > 0 ? ' · best ${habit.bestStreakDays}' : ''}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                 ),
               ],
@@ -399,17 +401,17 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           ),
           const SizedBox(height: 10),
           habit.pledgedToday
-              ? const Row(
+              ? Row(
                   children: [
                     Icon(Icons.check_circle_rounded,
-                        size: 18, color: Brand.blue),
-                    SizedBox(width: 6),
+                        size: 18, color: c.blue),
+                    const SizedBox(width: 6),
                     Text(
                       'Pledged for today',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: Brand.blue,
+                        color: c.blue,
                       ),
                     ),
                   ],
@@ -417,8 +419,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
               : OutlinedButton(
                   onPressed: () => _pledge(habit),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Brand.ink,
-                    side: const BorderSide(color: Brand.ink, width: 1.3),
+                    foregroundColor: c.ink,
+                    side: BorderSide(color: c.ink, width: 1.3),
                     minimumSize: const Size(0, 40),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -442,10 +444,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     var intensity = 3;
     String trigger = _triggerKinds.first;
     final note = TextEditingController();
+    final c = context.brand;
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -462,24 +464,24 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
+                Text(
                   'Log a craving',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Noticing is progress — patterns lose power once you '
                   'can see them.',
-                  style: TextStyle(fontSize: 13, color: Brand.textMuted),
+                  style: TextStyle(fontSize: 13, color: c.textMuted),
                 ),
                 const SizedBox(height: 18),
-                const Text(
+                Text(
                   'How strong was it?',
-                  style: TextStyle(fontSize: 13, color: Brand.textMuted),
+                  style: TextStyle(fontSize: 13, color: c.textMuted),
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -496,8 +498,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                             shape: BoxShape.circle,
                             color: i <= intensity
                                 ? Color.lerp(
-                                    Brand.yellow, Brand.red, (i - 1) / 4)
-                                : Brand.border.withValues(alpha: 0.5),
+                                    Pillars.yellow, Pillars.red, (i - 1) / 4)
+                                : c.tint(Pillars.black, 0.06),
                           ),
                           child: Center(
                             child: Text(
@@ -507,7 +509,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                                 fontWeight: FontWeight.w600,
                                 color: i <= intensity
                                     ? Colors.white
-                                    : Brand.textMuted,
+                                    : c.textMuted,
                               ),
                             ),
                           ),
@@ -516,9 +518,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   ],
                 ),
                 const SizedBox(height: 18),
-                const Text(
+                Text(
                   'What set it off?',
-                  style: TextStyle(fontSize: 13, color: Brand.textMuted),
+                  style: TextStyle(fontSize: 13, color: c.textMuted),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
@@ -601,6 +603,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   }
 
   Widget _cravingRow(CravingLog log) {
+    final c = context.brand;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 9),
       child: Row(
@@ -612,8 +615,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
             margin: const EdgeInsets.only(top: 3),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color:
-                  Color.lerp(Brand.yellow, Brand.red, (log.intensity - 1) / 4),
+              color: Color.lerp(
+                c.art(Pillars.yellow),
+                c.art(Pillars.red),
+                (log.intensity - 1) / 4,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -623,10 +629,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
               children: [
                 Text(
                   log.trigger,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                   ),
                 ),
                 if (log.note?.isNotEmpty == true)
@@ -634,9 +640,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     log.note!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12.5,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                     ),
                   ),
               ],
@@ -644,7 +650,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           ),
           Text(
             _relativeTime(log.createdAt),
-            style: const TextStyle(fontSize: 11.5, color: Brand.textMuted),
+            style: TextStyle(fontSize: 11.5, color: c.textMuted),
           ),
         ],
       ),
@@ -661,11 +667,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     required String detail,
     required WidgetBuilder open,
   }) {
+    final c = context.brand;
     final locked = !_premium;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
-        color: locked ? const Color(0x0A191919) : accent.withValues(alpha: 0.06),
+        color: locked ? c.tint(Pillars.black, 0.04) : c.tint(accent, 0.06),
         borderRadius: BorderRadius.circular(18),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
@@ -680,12 +687,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: c.chip,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(icon,
-                      size: 21, color: locked ? Brand.textMuted : accent),
+                      size: 21, color: locked ? c.textMuted : c.accent(accent)),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -696,10 +703,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: Brand.ink,
+                          color: c.ink,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -707,9 +714,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                         detail,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12.5,
-                          color: Brand.textMuted,
+                          color: c.textMuted,
                           height: 1.4,
                         ),
                       ),
@@ -721,7 +728,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   const PremiumChip()
                 else
                   Icon(Icons.arrow_forward_ios_rounded,
-                      size: 14, color: accent),
+                      size: 14, color: c.accent(accent)),
               ],
             ),
           ),
@@ -731,8 +738,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   }
 
   Widget _lockedCard(String text) {
+    final c = context.brand;
     return Material(
-      color: const Color(0x0A191919),
+      color: c.tint(Pillars.black, 0.04),
       borderRadius: BorderRadius.circular(18),
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
@@ -741,14 +749,14 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              const Icon(Icons.lock_rounded, size: 20, color: Brand.textMuted),
+              Icon(Icons.lock_rounded, size: 20, color: c.textMuted),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   text,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.45,
                   ),
                 ),
@@ -763,6 +771,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     final habits = _habits;
     final cravings = _cravings;
     return Scaffold(
@@ -778,30 +787,30 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   child: BackChip(),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Recovery',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.2,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const PillarStripe(),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'One day at a time — with tools for the hard minutes.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                     height: 1.55,
                   ),
                 ),
                 const SizedBox(height: 24),
                 // SOS — free for everyone.
                 Material(
-                  color: const Color(0x14E12D23),
+                  color: c.tint(Pillars.red, 0.08),
                   borderRadius: BorderRadius.circular(18),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(18),
@@ -819,18 +828,18 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                           Container(
                             width: 44,
                             height: 44,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
+                            decoration: BoxDecoration(
+                              color: c.chip,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.surfing_rounded,
                               size: 22,
-                              color: Brand.red,
+                              color: c.red,
                             ),
                           ),
                           const SizedBox(width: 14),
-                          const Expanded(
+                          Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -839,25 +848,25 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
-                                    color: Brand.ink,
+                                    color: c.ink,
                                   ),
                                 ),
-                                SizedBox(height: 3),
+                                const SizedBox(height: 3),
                                 Text(
                                   'Urges pass. Surf this one — 8 guided '
                                   'minutes.',
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: Brand.textMuted,
+                                    color: c.textMuted,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          const Icon(
+                          Icon(
                             Icons.arrow_forward_ios_rounded,
                             size: 15,
-                            color: Brand.textMuted,
+                            color: c.textMuted,
                           ),
                         ],
                       ),
@@ -869,7 +878,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 const SizedBox(height: 10),
                 _toolCard(
                   icon: Icons.psychology_alt_rounded,
-                  accent: Brand.yellow,
+                  accent: Pillars.yellow,
                   title: 'HALT check',
                   detail: 'Hungry, angry, lonely, tired — find out what the '
                       'craving is standing in for.',
@@ -877,7 +886,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ),
                 _toolCard(
                   icon: Icons.movie_filter_rounded,
-                  accent: Brand.red,
+                  accent: Pillars.red,
                   title: 'Play the tape forward',
                   detail: 'Watch the rest of the film before you decide, '
                       'then keep it in your journal.',
@@ -905,34 +914,34 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 else if (_error)
                   Column(
                     children: [
-                      const Text(
+                      Text(
                         'Couldn\'t load your recovery data.',
                         style:
-                            TextStyle(fontSize: 13.5, color: Brand.textMuted),
+                            TextStyle(fontSize: 13.5, color: c.textMuted),
                       ),
                       TextButton(
                           onPressed: _load, child: const Text('Try again')),
                     ],
                   )
                 else if (habits == null)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Center(
                       child: CircularProgressIndicator(
-                        color: Brand.ink,
+                        color: c.ink,
                         strokeWidth: 2.6,
                       ),
                     ),
                   )
                 else if (habits.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
                       'What are you leaving behind? Add it — we\'ll count '
                       'every day with you.',
                       style: TextStyle(
                         fontSize: 13.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.5,
                       ),
                     ),
@@ -942,7 +951,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 const SizedBox(height: 4),
                 _toolCard(
                   icon: Icons.emoji_events_rounded,
-                  accent: Brand.blue,
+                  accent: Pillars.blue,
                   title: 'Milestones',
                   detail: 'Every marker, reached and ahead, for each '
                       'commitment.',
@@ -973,22 +982,22 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                       margin: const EdgeInsets.only(bottom: 8),
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0x1FFAB414),
+                        color: c.tint(Pillars.yellow, 0.12),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.insights_rounded,
-                              size: 18, color: Brand.ink),
+                          Icon(Icons.insights_rounded,
+                              size: 18, color: c.ink),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
                               'Your most common trigger lately: '
                               '${_topTrigger!.toLowerCase()}. Naming it is '
                               'half the battle.',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12.5,
-                                color: Brand.ink,
+                                color: c.ink,
                                 height: 1.45,
                               ),
                             ),
@@ -997,12 +1006,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                       ),
                     ),
                   if (cravings.isEmpty)
-                    const Text(
+                    Text(
                       'Nothing logged yet. Next time a craving hits, ride '
                       'it out and note it here.',
                       style: TextStyle(
                         fontSize: 13.5,
-                        color: Brand.textMuted,
+                        color: c.textMuted,
                         height: 1.5,
                       ),
                     )
@@ -1012,7 +1021,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 const SizedBox(height: 16),
                 _toolCard(
                   icon: Icons.query_stats_rounded,
-                  accent: Brand.ink,
+                  accent: Pillars.black,
                   title: 'Trigger insights',
                   detail: 'What sets them off, when they land, and how hard '
                       '— over the last 90 days.',

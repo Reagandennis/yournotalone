@@ -12,6 +12,7 @@ class LegalScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.brand;
     return Scaffold(
       appBar: AppBar(title: Text(doc.title)),
       body: SafeArea(
@@ -25,17 +26,17 @@ class LegalScreen extends StatelessWidget {
                 const SizedBox(height: 14),
                 Text(
                   'Last updated: $legalLastUpdated',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12.5,
-                    color: Brand.textMuted,
+                    color: c.textMuted,
                   ),
                 ),
                 const SizedBox(height: 18),
                 Text(
                   doc.intro,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Brand.ink,
+                    color: c.ink,
                     height: 1.6,
                   ),
                 ),
@@ -43,19 +44,19 @@ class LegalScreen extends StatelessWidget {
                   const SizedBox(height: 26),
                   Text(
                     '${i + 1}. ${section.heading}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15.5,
                       fontWeight: FontWeight.w600,
-                      color: Brand.ink,
+                      color: c.ink,
                       height: 1.35,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     section.body,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13.5,
-                      color: Brand.textMuted,
+                      color: c.textMuted,
                       height: 1.6,
                     ),
                   ),
