@@ -61,3 +61,5 @@ android/play-service-account.json
 # Security scan output lives in build/security (already covered by /build/)
 
 sentry.properties
+# Widget Preview related
+.widget_preview/
