@@ -219,7 +219,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // get a RouteSettings name.
         navigatorObservers: [SentryNavigatorObserver(), appRoutes],
         debugShowCheckedModeBanner: false,
-        title: 'Δεν είσαι μόνος',
+        title: 'yournotalone',
         theme: buildAppTheme(Brightness.light),
         darkTheme: buildAppTheme(Brightness.dark),
         themeMode: themeMode,

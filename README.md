@@ -1,4 +1,4 @@
-# Δεν είσαι μόνος
+# yournotalone
 
 *"You're not alone"* — a mental-wellness app: daily mood check-ins, journaling,
 guided meditation and breathing, calming sounds, addiction-recovery tools, and

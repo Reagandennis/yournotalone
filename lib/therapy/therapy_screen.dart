@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../billing/session_payments.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
@@ -739,9 +740,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
           icon: Icons.payments_outlined,
           iconColor: c.blue,
           title: 'Sessions are $price, paid when you book',
-          detail: 'Pay securely by card, M-Pesa or Apple Pay through Paystack '
-              'and your request goes straight to our care team. You get a '
-              'receipt by email. No subscription.',
+          detail: 'Pay securely by $therapyPaymentMethods through Paystack '
+              '(charged as $therapySessionChargeLabel) and your request goes '
+              'straight to our care team. You get a receipt by email. No '
+              'subscription.',
         ),
         const SizedBox(height: 26),
         const SectionHeader(title: 'What would you like to focus on?'),
@@ -1012,12 +1014,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 ? 'Paystack has your payment. Don\'t pay again — your '
                     'request goes through as soon as it\'s found.'
                 : request.isAwaitingPayment
-                    ? 'Pay securely by card, M-Pesa or Apple Pay through '
-                        'Paystack and your request goes '
+                    ? 'Pay securely by $therapyPaymentMethods through '
+                        'Paystack (charged as $therapySessionChargeLabel) '
+                        'and your request goes '
                         'straight to our care team, with a receipt by '
                         'email. $therapyCancellationPolicy'
-                    : 'Pay securely by card, M-Pesa or Apple Pay through '
-                        'Paystack. The Join button unlocks as '
+                    : 'Pay securely by $therapyPaymentMethods through '
+                        'Paystack (charged as $therapySessionChargeLabel). '
+                        'The Join button unlocks as '
                         'soon as it\'s paid.',
             style: TextStyle(
               fontSize: 12.5,
@@ -1199,7 +1203,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
               )
             : requests == null
                 ? const Center(child: CircularProgressIndicator())
-                : _body(requests),
+                : ReadableWidth(child: _body(requests)),
       ),
     );
   }
@@ -1328,8 +1332,9 @@ class _CheckoutWaitDialogState extends State<_CheckoutWaitDialog> {
         : _notFoundYet
             ? 'We haven\'t seen your payment yet. If you\'ve just paid, give '
                 'it a few seconds.'
-            : 'Finish paying on the Paystack page — by card, M-Pesa or '
-                'Apple Pay. This closes by itself once your payment is in.';
+            : 'Finish paying on the Paystack page — by '
+                '$therapyPaymentMethods. This closes by itself once your '
+                'payment is in.';
     return AlertDialog(
       title: const Text('Waiting for your payment'),
       content: Column(

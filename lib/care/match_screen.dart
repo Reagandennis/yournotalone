@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
@@ -159,134 +160,136 @@ class _MatchScreenState extends State<MatchScreen> {
                   },
                 )
               : const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-              children: [
-                Container(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  decoration: BoxDecoration(
-                    color: c.tint(Pillars.blue, 0.06),
-                    borderRadius: BorderRadius.circular(16),
+          : ReadableWidth(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    decoration: BoxDecoration(
+                      color: c.tint(Pillars.blue, 0.06),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.item.clientLabel,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: c.ink,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        InfoLine(Icons.chat_bubble_outline_rounded, request.topic),
+                        InfoLine(
+                          Icons.calendar_month_rounded,
+                          request.availability.isEmpty
+                              ? 'Flexible'
+                              : request.availability.join(' · '),
+                        ),
+                        if (note.isNotEmpty) InfoLine(Icons.notes_rounded, note),
+                      ],
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 24),
+                  const SectionHeader(title: 'Therapist'),
+                  const SizedBox(height: 10),
+                  if (therapists.isEmpty)
+                    Text(
+                      'No active therapists yet. Add one from the Therapists '
+                      'tab first.',
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: c.textMuted,
+                        height: 1.5,
+                      ),
+                    )
+                  else
+                    for (final therapist in therapists)
+                      _TherapistOption(
+                        therapist: therapist,
+                        selected: therapist.profile.id == _therapistId,
+                        fitsTopic:
+                            therapist.profile.specialties.contains(request.topic),
+                        onTap: () =>
+                            setState(() => _therapistId = therapist.profile.id),
+                      ),
+                  const SizedBox(height: 18),
+                  const SectionHeader(title: 'When'),
+                  const SizedBox(height: 10),
+                  Row(
                     children: [
-                      Text(
-                        widget.item.clientLabel,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: c.ink,
+                      Expanded(
+                        child: _PickerButton(
+                          icon: Icons.event_rounded,
+                          label: _date == null ? 'Pick a date' : formatDate(_date!),
+                          onTap: _pickDate,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      InfoLine(Icons.chat_bubble_outline_rounded, request.topic),
-                      InfoLine(
-                        Icons.calendar_month_rounded,
-                        request.availability.isEmpty
-                            ? 'Flexible'
-                            : request.availability.join(' · '),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _PickerButton(
+                          icon: Icons.schedule_rounded,
+                          label: _time == null
+                              ? 'Pick a time'
+                              : _time!.format(context),
+                          onTap: _pickTime,
+                        ),
                       ),
-                      if (note.isNotEmpty) InfoLine(Icons.notes_rounded, note),
                     ],
                   ),
-                ),
-                const SizedBox(height: 24),
-                const SectionHeader(title: 'Therapist'),
-                const SizedBox(height: 10),
-                if (therapists.isEmpty)
+                  const SizedBox(height: 8),
                   Text(
-                    'No active therapists yet. Add one from the Therapists '
-                    'tab first.',
+                    'In this phone\'s time zone. The client and therapist see '
+                    'it in theirs.',
+                    style: TextStyle(fontSize: 12, color: c.textMuted),
+                  ),
+                  const SizedBox(height: 18),
+                  const SectionHeader(title: 'Length'),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final minutes in _durations)
+                        ChoicePill(
+                          label: '$minutes min',
+                          selected: _duration == minutes,
+                          onTap: () => setState(() => _duration = minutes),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 28),
+                  ElevatedButton(
+                    onPressed: _therapistId == null ||
+                            _scheduledAt == null ||
+                            _saving
+                        ? null
+                        : _book,
+                    child: _saving
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.4,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(request.isPending ? 'Book session' : 'Save changes'),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'The client and therapist are emailed the details. $payment',
                     style: TextStyle(
-                      fontSize: 13.5,
+                      fontSize: 12.5,
                       color: c.textMuted,
                       height: 1.5,
                     ),
-                  )
-                else
-                  for (final therapist in therapists)
-                    _TherapistOption(
-                      therapist: therapist,
-                      selected: therapist.profile.id == _therapistId,
-                      fitsTopic:
-                          therapist.profile.specialties.contains(request.topic),
-                      onTap: () =>
-                          setState(() => _therapistId = therapist.profile.id),
-                    ),
-                const SizedBox(height: 18),
-                const SectionHeader(title: 'When'),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _PickerButton(
-                        icon: Icons.event_rounded,
-                        label: _date == null ? 'Pick a date' : formatDate(_date!),
-                        onTap: _pickDate,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _PickerButton(
-                        icon: Icons.schedule_rounded,
-                        label: _time == null
-                            ? 'Pick a time'
-                            : _time!.format(context),
-                        onTap: _pickTime,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'In this phone\'s time zone. The client and therapist see '
-                  'it in theirs.',
-                  style: TextStyle(fontSize: 12, color: c.textMuted),
-                ),
-                const SizedBox(height: 18),
-                const SectionHeader(title: 'Length'),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    for (final minutes in _durations)
-                      ChoicePill(
-                        label: '$minutes min',
-                        selected: _duration == minutes,
-                        onTap: () => setState(() => _duration = minutes),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 28),
-                ElevatedButton(
-                  onPressed: _therapistId == null ||
-                          _scheduledAt == null ||
-                          _saving
-                      ? null
-                      : _book,
-                  child: _saving
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.4,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(request.isPending ? 'Book session' : 'Save changes'),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'The client and therapist are emailed the details. $payment',
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: c.textMuted,
-                    height: 1.5,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }

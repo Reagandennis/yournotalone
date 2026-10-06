@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
 import 'toolkit_art.dart';
@@ -88,17 +89,19 @@ class ToolkitScaffold extends StatelessWidget {
           actions: actions,
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(padding: padding, children: children),
-              ),
-              if (bottom != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                  child: bottom,
+          child: ReadableWidth(
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView(padding: padding, children: children),
                 ),
-            ],
+                if (bottom != null)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                    child: bottom,
+                  ),
+              ],
+            ),
           ),
         ),
       ),

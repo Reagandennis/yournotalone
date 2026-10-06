@@ -1,4 +1,4 @@
-# CI for Δεν είσαι μόνος (Android).
+# CI for yournotalone (Android).
 #
 #  - Every push / PR:       analyze + tests + security scans (secrets, CVEs, release-APK audit)
 #  - Tag  v*  (e.g. v1.0.3): everything above, then build a signed AAB and upload to Play "internal"

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
 import 'care_repository.dart';
@@ -211,143 +212,145 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
       },
       child: Scaffold(
         appBar: AppBar(title: Text(_item.clientLabel)),
-        body: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-          children: [
-            CareSection(
-              title: 'Client',
-              children: [
-                InfoLine(
-                  Icons.person_outline_rounded,
-                  _item.clientName ?? 'No name given',
-                ),
-                if (email != null)
-                  InfoLine(
-                    Icons.mail_outline_rounded,
-                    email,
-                    trailing: IconButton(
-                      tooltip: 'Copy email',
-                      visualDensity: VisualDensity.compact,
-                      icon: Icon(
-                        Icons.copy_rounded,
-                        size: 18,
-                        color: c.textMuted,
-                      ),
-                      onPressed: () async {
-                        await Clipboard.setData(ClipboardData(text: email));
-                        if (mounted) _say('Email copied.');
-                      },
-                    ),
-                  ),
-              ],
-            ),
-            CareSection(
-              title: 'Request',
-              children: [
-                InfoLine(Icons.chat_bubble_outline_rounded, request.topic),
-                InfoLine(
-                  Icons.calendar_month_rounded,
-                  request.availability.isEmpty
-                      ? 'Flexible'
-                      : request.availability.join(' · '),
-                ),
-                if (note.isNotEmpty) InfoLine(Icons.notes_rounded, note),
-                InfoLine(
-                  Icons.history_rounded,
-                  'Asked ${formatDateTime(request.createdAt)}',
-                ),
-              ],
-            ),
-            CareSection(
-              title: 'Session',
-              children: [
-                InfoLine(Icons.flag_outlined, _statusLabel),
-                if (_item.therapistName != null)
-                  InfoLine(Icons.psychology_outlined, _item.therapistName!),
-                if (request.scheduledAt != null)
-                  InfoLine(
-                    Icons.event_rounded,
-                    '${formatDateTime(request.scheduledAt!)} · '
-                    '${request.durationMinutes} min',
-                  ),
-                if (request.isActive) ...[
-                  const SizedBox(height: 6),
-                  ElevatedButton(
-                    onPressed: _busy ? null : _match,
-                    child: Text(request.isPending
-                        ? 'Match with a therapist'
-                        : 'Change therapist or time'),
-                  ),
-                ],
-              ],
-            ),
-            CareSection(
-              title: 'Payment',
-              children: [
-                InfoLine(Icons.payments_outlined, _paymentLabel),
-                if (!request.isFreeSession &&
-                    request.priceCents > 0 &&
-                    request.status != 'cancelled')
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      if (request.needsPayment) ...[
-                        TextButton(
-                          onPressed: _busy ? null : () => _setPayment('paid'),
-                          child: const Text('Mark as paid'),
-                        ),
-                        TextButton(
-                          onPressed:
-                              _busy ? null : () => _setPayment('waived'),
-                          child: const Text('Waive fee'),
-                        ),
-                      ] else
-                        TextButton(
-                          onPressed:
-                              _busy ? null : () => _setPayment('unpaid'),
-                          child: const Text('Mark as unpaid'),
-                        ),
-                    ],
-                  ),
-              ],
-            ),
-            if (request.isCompleted)
+        body: ReadableWidth(
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+            children: [
               CareSection(
-                title: 'After the session',
+                title: 'Client',
                 children: [
-                  _feedback(
-                    'Note to the client',
-                    text: request.clientSummary ?? 'No note written.',
+                  InfoLine(
+                    Icons.person_outline_rounded,
+                    _item.clientName ?? 'No name given',
                   ),
-                  _feedback(
-                    'Client\'s rating',
-                    rating: _item.clientRating,
-                    text: _item.clientComment ??
-                        (_item.clientRating == null ? 'Not rated yet.' : null),
+                  if (email != null)
+                    InfoLine(
+                      Icons.mail_outline_rounded,
+                      email,
+                      trailing: IconButton(
+                        tooltip: 'Copy email',
+                        visualDensity: VisualDensity.compact,
+                        icon: Icon(
+                          Icons.copy_rounded,
+                          size: 18,
+                          color: c.textMuted,
+                        ),
+                        onPressed: () async {
+                          await Clipboard.setData(ClipboardData(text: email));
+                          if (mounted) _say('Email copied.');
+                        },
+                      ),
+                    ),
+                ],
+              ),
+              CareSection(
+                title: 'Request',
+                children: [
+                  InfoLine(Icons.chat_bubble_outline_rounded, request.topic),
+                  InfoLine(
+                    Icons.calendar_month_rounded,
+                    request.availability.isEmpty
+                        ? 'Flexible'
+                        : request.availability.join(' · '),
                   ),
-                  _feedback(
-                    'Therapist\'s rating — private',
-                    rating: _item.therapistRating,
-                    text: _item.therapistComment ??
-                        (_item.therapistRating == null
-                            ? 'Not rated yet.'
-                            : null),
-                    flags: _item.therapistFlags,
+                  if (note.isNotEmpty) InfoLine(Icons.notes_rounded, note),
+                  InfoLine(
+                    Icons.history_rounded,
+                    'Asked ${formatDateTime(request.createdAt)}',
                   ),
                 ],
               ),
-            if (request.isActive)
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: _busy ? null : _cancel,
-                  style: TextButton.styleFrom(foregroundColor: c.red),
-                  child: Text(request.isConfirmed
-                      ? 'Cancel this session'
-                      : 'Cancel this request'),
-                ),
+              CareSection(
+                title: 'Session',
+                children: [
+                  InfoLine(Icons.flag_outlined, _statusLabel),
+                  if (_item.therapistName != null)
+                    InfoLine(Icons.psychology_outlined, _item.therapistName!),
+                  if (request.scheduledAt != null)
+                    InfoLine(
+                      Icons.event_rounded,
+                      '${formatDateTime(request.scheduledAt!)} · '
+                      '${request.durationMinutes} min',
+                    ),
+                  if (request.isActive) ...[
+                    const SizedBox(height: 6),
+                    ElevatedButton(
+                      onPressed: _busy ? null : _match,
+                      child: Text(request.isPending
+                          ? 'Match with a therapist'
+                          : 'Change therapist or time'),
+                    ),
+                  ],
+                ],
               ),
-          ],
+              CareSection(
+                title: 'Payment',
+                children: [
+                  InfoLine(Icons.payments_outlined, _paymentLabel),
+                  if (!request.isFreeSession &&
+                      request.priceCents > 0 &&
+                      request.status != 'cancelled')
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        if (request.needsPayment) ...[
+                          TextButton(
+                            onPressed: _busy ? null : () => _setPayment('paid'),
+                            child: const Text('Mark as paid'),
+                          ),
+                          TextButton(
+                            onPressed:
+                                _busy ? null : () => _setPayment('waived'),
+                            child: const Text('Waive fee'),
+                          ),
+                        ] else
+                          TextButton(
+                            onPressed:
+                                _busy ? null : () => _setPayment('unpaid'),
+                            child: const Text('Mark as unpaid'),
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+              if (request.isCompleted)
+                CareSection(
+                  title: 'After the session',
+                  children: [
+                    _feedback(
+                      'Note to the client',
+                      text: request.clientSummary ?? 'No note written.',
+                    ),
+                    _feedback(
+                      'Client\'s rating',
+                      rating: _item.clientRating,
+                      text: _item.clientComment ??
+                          (_item.clientRating == null ? 'Not rated yet.' : null),
+                    ),
+                    _feedback(
+                      'Therapist\'s rating — private',
+                      rating: _item.therapistRating,
+                      text: _item.therapistComment ??
+                          (_item.therapistRating == null
+                              ? 'Not rated yet.'
+                              : null),
+                      flags: _item.therapistFlags,
+                    ),
+                  ],
+                ),
+              if (request.isActive)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: _busy ? null : _cancel,
+                    style: TextButton.styleFrom(foregroundColor: c.red),
+                    child: Text(request.isConfirmed
+                        ? 'Cancel this session'
+                        : 'Cancel this request'),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

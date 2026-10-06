@@ -1,4 +1,4 @@
-# fastlane configuration for Δεν είσαι μόνος (Android / Google Play).
+# fastlane configuration for yournotalone (Android / Google Play).
 #
 # Run from the android/ directory:
 #   bundle exec fastlane test            # analyze + unit/widget tests

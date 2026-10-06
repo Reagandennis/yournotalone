@@ -34,7 +34,7 @@ class LegalSection {
 final privacyPolicy = LegalDoc(
   title: 'Privacy Policy',
   intro:
-      'Δεν είσαι μόνος ("You\'re not alone") is a mental-wellness app. The '
+      'yournotalone ("You\'re not alone") is a mental-wellness app. The '
       'nature of what you share with us — moods, journal entries, recovery '
       'progress — is deeply personal, and we treat it that way. This policy '
       'explains, in plain words, what we collect, why, and the rights you '
@@ -231,7 +231,7 @@ final termsOfService = LegalDoc(
   title: 'Terms of Service',
   intro:
       'These terms are the agreement between you and $legalEntityName '
-      '("we", "us") for using Δεν είσαι μόνος ("You\'re not alone", the '
+      '("we", "us") for using yournotalone ("You\'re not alone", the '
       '"app"). By creating an account or using the app you agree to them. '
       'Please also read our Privacy Policy — it explains how we handle '
       'your data and is part of this agreement.',

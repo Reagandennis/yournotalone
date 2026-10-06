@@ -81,7 +81,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
         const SizedBox(height: 16),
         Text(
           'Some seasons are too heavy to carry with an app alone — and '
-          'that\'s exactly why we work with real people. Δεν είσαι μόνος '
+          'that\'s exactly why we work with real people. yournotalone '
           'offers private one-on-one sessions with licensed therapists, '
           'right from here.',
           style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),

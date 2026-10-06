@@ -103,7 +103,7 @@ class _SettingsTabState extends State<SettingsTab> {
     final uri = Uri(
       scheme: 'mailto',
       path: legalContactEmail,
-      queryParameters: {'subject': 'Δεν είσαι μόνος — support'},
+      queryParameters: {'subject': 'yournotalone — support'},
     );
     try {
       final launched =
@@ -675,7 +675,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   ? ''
                   : ' · v${info.version} (${info.buildNumber})';
               return Text(
-                'Δεν είσαι μόνος$version',
+                'yournotalone$version',
                 style: TextStyle(fontSize: 12, color: c.textMuted),
               );
             },

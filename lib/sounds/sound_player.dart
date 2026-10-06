@@ -147,7 +147,7 @@ class SoundPlayer {
             tag: MediaItem(
               id: asset,
               title: title,
-              artist: 'Δεν είσαι μόνος',
+              artist: 'yournotalone',
             ),
           ),
         );

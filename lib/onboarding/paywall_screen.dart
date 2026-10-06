@@ -10,6 +10,8 @@ import '../brand.dart';
 import '../home/home_ui.dart';
 import '../home/mood_face.dart';
 import '../home/mood_scale.dart';
+import '../legal/legal_content.dart';
+import '../legal/legal_screen.dart';
 import 'onboarding_ui.dart';
 
 class _PlanRow {
@@ -363,12 +365,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
               children: [
                 Icon(Icons.check_rounded, size: 14, color: c.blue),
                 const SizedBox(width: 5),
-                Text(
-                  item,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: c.ink,
+                Flexible(
+                  child: Text(
+                    item,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: c.ink,
+                    ),
                   ),
                 ),
               ],
@@ -663,6 +667,37 @@ class _PaywallScreenState extends State<PaywallScreen> {
     ];
   }
 
+  /// The App Store requires the terms and privacy policy to be one tap
+  /// away wherever a subscription is sold (guideline 3.1.2).
+  Widget _legalLinks() {
+    final c = context.brand;
+    Widget link(String label, LegalDoc doc) => TextButton(
+          key: ValueKey('paywall-legal-${doc.title}'),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => LegalScreen(doc: doc)),
+          ),
+          style: TextButton.styleFrom(
+            minimumSize: const Size(0, 36),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            foregroundColor: c.textMuted,
+            textStyle: const TextStyle(
+              fontSize: 12,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+          child: Text(label),
+        );
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        link('Terms of Use', termsOfService),
+        Text('·', style: TextStyle(color: c.textMuted)),
+        link('Privacy Policy', privacyPolicy),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
@@ -714,6 +749,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               ),
             ],
           ),
+          _legalLinks(),
         ],
       ),
       children: [

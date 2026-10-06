@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import 'brand.dart';
@@ -100,6 +102,14 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
+  /// Most of a phone's width, as designed — but not most of an iPad's,
+  /// where it would be a poster, and never taller than the screen allows
+  /// in landscape.
+  static double _logoWidth(Size screen) => math.min(
+        math.min(screen.width * 0.72, 360),
+        screen.height * 0.6 * _layerAspect,
+      );
+
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
@@ -109,8 +119,8 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: c.background,
       body: Center(
-        child: FractionallySizedBox(
-          widthFactor: 0.72,
+        child: SizedBox(
+          width: _logoWidth(MediaQuery.sizeOf(context)),
           child: AspectRatio(
             aspectRatio: _layerAspect,
             child: Stack(

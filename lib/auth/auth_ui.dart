@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 
 /// Layout shared by all auth screens: the pillars mark up top, a heading
 /// underlined by the [PillarStripe], a muted subtitle, then the form.
@@ -32,9 +33,13 @@ class AuthScaffold extends StatelessWidget {
           ? null
           : SafeArea(
               top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 0, 28, 8),
-                child: footer,
+              // Lined up with the form above it on a tablet.
+              child: ReadableWidth(
+                maxWidth: 440,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 0, 28, 8),
+                  child: footer,
+                ),
               ),
             ),
       body: SafeArea(

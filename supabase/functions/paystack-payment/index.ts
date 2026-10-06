@@ -20,8 +20,12 @@
 //                                 (sk_test_… while testing, sk_live_… after)
 //          PAYSTACK_CALLBACK_URL  optional; where Paystack sends the browser
 //                                 after paying, e.g. a "return to the app" page
-// The session is charged its own price_cents in its own currency (USD), so
-// USD must be enabled on the Paystack account.
+// Prices are shown in USD (the session's price_cents), but the Paystack
+// account settles in Kenyan shillings, so every checkout charges
+// CHARGE_AMOUNT in CHARGE_CURRENCY instead. Optional secrets
+// PAYSTACK_CHARGE_AMOUNT (in cents, e.g. 260000) and PAYSTACK_CHARGE_CURRENCY
+// override them without a redeploy; change therapySessionChargeLabel in
+// lib/therapy/therapy_repository.dart to match.
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by the platform.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
@@ -36,6 +40,9 @@ import {
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const CALLBACK_URL = Deno.env.get('PAYSTACK_CALLBACK_URL');
+// Ksh 2,600, in cents.
+const CHARGE_AMOUNT = Number(Deno.env.get('PAYSTACK_CHARGE_AMOUNT') ?? 260000);
+const CHARGE_CURRENCY = (Deno.env.get('PAYSTACK_CHARGE_CURRENCY') ?? 'KES').toUpperCase();
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -128,9 +135,13 @@ Deno.serve(async (req: Request) => {
   if (action !== 'start') return json({ error: 'no_payment_found' }, 402);
 
   if (!user.email) return json({ error: 'email_required' }, 400);
-  const amount = Number(session.price_cents);
-  const currency = String(session.currency ?? 'USD').toUpperCase();
-  if (!(amount > 0)) return json({ error: 'not_payable' }, 409);
+  if (!(Number(session.price_cents) > 0)) return json({ error: 'not_payable' }, 409);
+  const amount = CHARGE_AMOUNT;
+  const currency = CHARGE_CURRENCY;
+  if (!(amount > 0)) {
+    console.error('paystack-payment: bad PAYSTACK_CHARGE_AMOUNT');
+    return json({ error: 'not_configured' }, 503);
+  }
 
   const reference = `therapy-${session.id.slice(0, 8)}-${crypto.randomUUID()}`;
   const { error: insertError } = await admin.from('paystack_checkouts').insert({
@@ -159,6 +170,11 @@ Deno.serve(async (req: Request) => {
           user_id: user.id,
           custom_fields: [
             { display_name: 'Item', variable_name: 'item', value: 'Therapy session' },
+            {
+              display_name: 'Price',
+              variable_name: 'price_usd',
+              value: `US$${(Number(session.price_cents) / 100).toFixed(2)}`,
+            },
           ],
         },
       }),

@@ -117,7 +117,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           begin: 0.50,
           end: 0.74,
           child: Text(
-            'Δεν είσαι μόνος',
+            'yournotalone',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 30,

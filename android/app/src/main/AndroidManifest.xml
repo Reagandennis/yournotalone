@@ -33,7 +33,7 @@
          foreground-service declaration for something the app never does. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SHORT_SERVICE" tools:node="remove" />
     <application
-        android:label="Δεν είσαι μόνος"
+        android:label="yournotalone"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:dataExtractionRules="@xml/data_extraction_rules"

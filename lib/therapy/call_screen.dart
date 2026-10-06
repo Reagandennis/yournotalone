@@ -6,6 +6,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import 'call_keep_alive.dart';
 import 'session_format.dart';
 import 'therapy_repository.dart';
@@ -308,60 +309,65 @@ class _CallScreenState extends State<CallScreen>
   }) {
     return SafeArea(
       child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(28),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (icon == null)
-                const SizedBox(
-                  width: 34,
-                  height: 34,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.6,
-                    color: Colors.white,
-                  ),
-                )
-              else
-                Icon(icon, size: 42, color: Colors.white70),
-              const SizedBox(height: 18),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-              if (detail != null) ...[
-                const SizedBox(height: 8),
+        // The button is full-width by theme; on a tablet, keep it and the
+        // message the width of a phone.
+        child: ReadableWidth(
+          maxWidth: 440,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon == null)
+                  const SizedBox(
+                    width: 34,
+                    height: 34,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.6,
+                      color: Colors.white,
+                    ),
+                  )
+                else
+                  Icon(icon, size: 42, color: Colors.white70),
+                const SizedBox(height: 18),
                 Text(
-                  detail,
+                  title,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                    height: 1.5,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
+                ),
+                if (detail != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    detail,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                if (primary != null)
+                  ElevatedButton(
+                    onPressed: primary.$2,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Pillars.black,
+                    ),
+                    child: Text(primary.$1),
+                  ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  style: TextButton.styleFrom(foregroundColor: Colors.white),
+                  child: const Text('Close'),
                 ),
               ],
-              const SizedBox(height: 24),
-              if (primary != null)
-                ElevatedButton(
-                  onPressed: primary.$2,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Pillars.black,
-                  ),
-                  child: Text(primary.$1),
-                ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                style: TextButton.styleFrom(foregroundColor: Colors.white),
-                child: const Text('Close'),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -374,6 +380,16 @@ class _CallScreenState extends State<CallScreen>
     final remoteVideo = _videoOf(remote);
     final localVideo = _cameraOn ? _videoOf(room?.localParticipant) : null;
     final endsAt = _endsAt;
+    // The self-view tile is phone-sized on a phone. On a tablet it grows
+    // with the screen, and in landscape it turns landscape too, matching
+    // the shape of the camera feed it shows.
+    final tablet = isTabletLayout(context);
+    final landscape =
+        MediaQuery.orientationOf(context) == Orientation.landscape;
+    final selfLong = tablet ? 220.0 : 150.0;
+    final selfShort = tablet ? 160.0 : 108.0;
+    final selfWidth = tablet && landscape ? selfLong : selfShort;
+    final selfHeight = tablet && landscape ? selfShort : selfLong;
     final status = remote == null
         ? 'Waiting for ${widget.counterpartName} to join…'
         : endsAt == null
@@ -389,7 +405,8 @@ class _CallScreenState extends State<CallScreen>
         ),
         SafeArea(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 14, 150, 0),
+            // Clear of the self-view tile in the top-right corner.
+            padding: EdgeInsets.fromLTRB(20, 14, selfWidth + 42, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -424,8 +441,8 @@ class _CallScreenState extends State<CallScreen>
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: SizedBox(
-                    width: 108,
-                    height: 150,
+                    width: selfWidth,
+                    height: selfHeight,
                     child: VideoTrackRenderer(
                       localVideo,
                       fit: VideoViewFit.cover,

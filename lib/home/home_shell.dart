@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../app_navigation.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../care/therapist_sessions_screen.dart';
 import '../notifications/local_notifications.dart';
 import '../notifications/notification_permission.dart';
@@ -96,28 +97,36 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          // The bar's own colour, edge to edge, so the narrower set of tabs
+          // on a tablet doesn't leave bare strips either side.
+          color: Theme.of(context).navigationBarTheme.backgroundColor,
           border: Border(top: BorderSide(color: context.brand.border, width: 1)),
         ),
-        child: NavigationBar(
-          selectedIndex: _index,
-          onDestinationSelected: (i) => setState(() => _index = i),
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home_rounded),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.explore_outlined),
-              selectedIcon: Icon(Icons.explore_rounded),
-              label: 'Explore',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings_rounded),
-              label: 'Settings',
-            ),
-          ],
+        // Three tabs spread across a 1366-point landscape iPad sit a hand's
+        // width apart; keep them grouped under the content column instead.
+        child: ReadableWidth(
+          maxWidth: 520,
+          child: NavigationBar(
+            selectedIndex: _index,
+            onDestinationSelected: (i) => setState(() => _index = i),
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home_rounded),
+                label: 'Home',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.explore_outlined),
+                selectedIcon: Icon(Icons.explore_rounded),
+                label: 'Explore',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.settings_outlined),
+                selectedIcon: Icon(Icons.settings_rounded),
+                label: 'Settings',
+              ),
+            ],
+          ),
         ),
       ),
     );

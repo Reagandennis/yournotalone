@@ -206,6 +206,11 @@ void main() {
 
   testWidgets('the planner keeps today\'s three and ticks them off',
       (tester) async {
+    // A phone: the default 800x600 test surface is wider than the tablet
+    // content cap, and this test is about the planner, not that layout.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(_wrap(const ActivityPlannerScreen()));
     await tester.pumpAndSettle();
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
@@ -153,204 +154,206 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
       appBar: AppBar(
         title: Text(existing == null ? 'Add a therapist' : 'Edit therapist'),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-          children: [
-            Center(
-              child: photo != null
-                  ? ClipOval(
-                      child: Image.memory(
-                        photo,
-                        width: 96,
-                        height: 96,
-                        fit: BoxFit.cover,
+      body: ReadableWidth(
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+            children: [
+              Center(
+                child: photo != null
+                    ? ClipOval(
+                        child: Image.memory(
+                          photo,
+                          width: 96,
+                          height: 96,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : TherapistAvatar(
+                        name: _name.text,
+                        photoUrl: photoUrl,
+                        size: 96,
                       ),
-                    )
-                  : TherapistAvatar(
-                      name: _name.text,
-                      photoUrl: photoUrl,
-                      size: 96,
-                    ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: _saving ? null : _pickPhoto,
-                  child: Text(hasPhoto ? 'Change photo' : 'Add a photo'),
-                ),
-                if (hasPhoto)
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
                   TextButton(
-                    onPressed: _saving
-                        ? null
-                        : () => setState(() {
-                              _photo = null;
-                              _removePhoto = true;
-                            }),
-                    style: TextButton.styleFrom(foregroundColor: c.red),
-                    child: const Text('Remove'),
+                    onPressed: _saving ? null : _pickPhoto,
+                    child: Text(hasPhoto ? 'Change photo' : 'Add a photo'),
                   ),
+                  if (hasPhoto)
+                    TextButton(
+                      onPressed: _saving
+                          ? null
+                          : () => setState(() {
+                                _photo = null;
+                                _removePhoto = true;
+                              }),
+                      style: TextButton.styleFrom(foregroundColor: c.red),
+                      child: const Text('Remove'),
+                    ),
+                ],
+              ),
+              if (existing != null) ...[
+                const SizedBox(height: 8),
+                _stats(existing),
               ],
-            ),
-            if (existing != null) ...[
-              const SizedBox(height: 8),
-              _stats(existing),
-            ],
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: _name,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(labelText: 'Full name'),
-              validator: (value) => (value ?? '').trim().length < 2
-                  ? 'Enter their full name'
-                  : null,
-              onChanged: (_) => setState(() {}),
-            ),
-            const SizedBox(height: 14),
-            TextFormField(
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                labelText: 'Sign-in email',
-                helperText: 'They sign in to the app with this address.',
-                helperMaxLines: 2,
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _name,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(labelText: 'Full name'),
+                validator: (value) => (value ?? '').trim().length < 2
+                    ? 'Enter their full name'
+                    : null,
+                onChanged: (_) => setState(() {}),
               ),
-              validator: (value) => _emailPattern.hasMatch((value ?? '').trim())
-                  ? null
-                  : 'Enter a valid email',
-            ),
-            const SizedBox(height: 14),
-            TextFormField(
-              controller: _title,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                hintText: 'Counselling psychologist',
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _email,
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                decoration: const InputDecoration(
+                  labelText: 'Sign-in email',
+                  helperText: 'They sign in to the app with this address.',
+                  helperMaxLines: 2,
+                ),
+                validator: (value) => _emailPattern.hasMatch((value ?? '').trim())
+                    ? null
+                    : 'Enter a valid email',
               ),
-            ),
-            const SizedBox(height: 14),
-            TextFormField(
-              controller: _credentials,
-              decoration: const InputDecoration(
-                labelText: 'Licence or registration',
-                hintText: 'Body and registration number',
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _title,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  hintText: 'Counselling psychologist',
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            TextFormField(
-              controller: _years,
-              keyboardType: TextInputType.number,
-              decoration:
-                  const InputDecoration(labelText: 'Years of experience'),
-              validator: (value) {
-                final text = (value ?? '').trim();
-                if (text.isEmpty) return null;
-                final years = int.tryParse(text);
-                return years == null || years < 0 || years > 70
-                    ? 'A number from 0 to 70'
-                    : null;
-              },
-            ),
-            const SizedBox(height: 14),
-            TextFormField(
-              controller: _languages,
-              decoration: const InputDecoration(
-                labelText: 'Languages',
-                hintText: 'English, Swahili',
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _credentials,
+                decoration: const InputDecoration(
+                  labelText: 'Licence or registration',
+                  hintText: 'Body and registration number',
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            TextFormField(
-              controller: _bio,
-              maxLines: 5,
-              maxLength: 2000,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                labelText: 'About them',
-                helperText: 'Clients read this on their profile.',
-                alignLabelWithHint: true,
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _years,
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'Years of experience'),
+                validator: (value) {
+                  final text = (value ?? '').trim();
+                  if (text.isEmpty) return null;
+                  final years = int.tryParse(text);
+                  return years == null || years < 0 || years > 70
+                      ? 'A number from 0 to 70'
+                      : null;
+                },
               ),
-            ),
-            const SizedBox(height: 18),
-            const SectionHeader(title: 'Specialties'),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final specialty in {..._specialtyOptions, ..._specialties})
-                  ChoicePill(
-                    label: specialty,
-                    selected: _specialties.contains(specialty),
-                    onTap: () => setState(() {
-                      if (!_specialties.remove(specialty)) {
-                        _specialties.add(specialty);
-                      }
-                    }),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              value: _active,
-              onChanged: (value) => setState(() => _active = value),
-              title: Text(
-                'Taking new clients',
-                style: TextStyle(fontSize: 14.5, color: c.ink),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _languages,
+                decoration: const InputDecoration(
+                  labelText: 'Languages',
+                  hintText: 'English, Swahili',
+                ),
               ),
-              subtitle: Text(
-                'When off, they can\'t be matched. Their booked and past '
-                'sessions stay.',
-                style: TextStyle(fontSize: 12.5, color: c.textMuted),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _bio,
+                maxLines: 5,
+                maxLength: 2000,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: const InputDecoration(
+                  labelText: 'About them',
+                  helperText: 'Clients read this on their profile.',
+                  alignLabelWithHint: true,
+                ),
               ),
-            ),
-            const SizedBox(height: 18),
-            ElevatedButton(
-              onPressed: _saving ? null : _save,
-              child: _saving
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2.4,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(existing == null ? 'Add therapist' : 'Save'),
-            ),
-            if (existing == null) ...[
+              const SizedBox(height: 18),
+              const SectionHeader(title: 'Specialties'),
               const SizedBox(height: 10),
-              Text(
-                'They\'ll get an email explaining how to sign in and find '
-                'their sessions.',
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: c.textMuted,
-                  height: 1.5,
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final specialty in {..._specialtyOptions, ..._specialties})
+                    ChoicePill(
+                      label: specialty,
+                      selected: _specialties.contains(specialty),
+                      onTap: () => setState(() {
+                        if (!_specialties.remove(specialty)) {
+                          _specialties.add(specialty);
+                        }
+                      }),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _active,
+                onChanged: (value) => setState(() => _active = value),
+                title: Text(
+                  'Taking new clients',
+                  style: TextStyle(fontSize: 14.5, color: c.ink),
+                ),
+                subtitle: Text(
+                  'When off, they can\'t be matched. Their booked and past '
+                  'sessions stay.',
+                  style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
               ),
-            ],
-            if (widget.feedback.isNotEmpty) ...[
-              const SizedBox(height: 30),
-              const SectionHeader(title: 'Client feedback'),
-              const SizedBox(height: 4),
-              Text(
-                'Only the care team sees individual ratings. Clients see an '
-                'average once there are three.',
-                style: TextStyle(
-                  fontSize: 12.5,
-                  color: c.textMuted,
-                  height: 1.5,
-                ),
+              const SizedBox(height: 18),
+              ElevatedButton(
+                onPressed: _saving ? null : _save,
+                child: _saving
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(existing == null ? 'Add therapist' : 'Save'),
               ),
-              const SizedBox(height: 12),
-              for (final item in widget.feedback) _feedbackRow(item),
+              if (existing == null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  'They\'ll get an email explaining how to sign in and find '
+                  'their sessions.',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: c.textMuted,
+                    height: 1.5,
+                  ),
+                ),
+              ],
+              if (widget.feedback.isNotEmpty) ...[
+                const SizedBox(height: 30),
+                const SectionHeader(title: 'Client feedback'),
+                const SizedBox(height: 4),
+                Text(
+                  'Only the care team sees individual ratings. Clients see an '
+                  'average once there are three.',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: c.textMuted,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                for (final item in widget.feedback) _feedbackRow(item),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

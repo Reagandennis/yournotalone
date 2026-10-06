@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
@@ -135,7 +136,10 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                   },
                 )
               : const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(onRefresh: _load, child: _list(sessions)),
+          : RefreshIndicator(
+              onRefresh: _load,
+              child: ReadableWidth(child: _list(sessions)),
+            ),
     );
   }
 

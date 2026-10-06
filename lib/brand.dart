@@ -459,6 +459,10 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
     dialogTheme: DialogThemeData(
       backgroundColor: c.sheet,
       surfaceTintColor: Colors.transparent,
+      // An AlertDialog is as wide as its longest line of text, up to the
+      // screen less 40pt either side: fine on a phone, a 1300pt banner on
+      // a landscape iPad. Phones never reach the cap.
+      constraints: const BoxConstraints(minWidth: 280, maxWidth: 560),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       titleTextStyle: TextStyle(
         fontFamily: 'Poppins',
@@ -474,6 +478,9 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       ),
     ),
     bottomSheetTheme: BottomSheetThemeData(
+      // Material 3's default, stated here because the tablet layout relies
+      // on it: sheets stay a phone-like column on an iPad.
+      constraints: const BoxConstraints(maxWidth: 640),
       backgroundColor: c.sheet,
       modalBackgroundColor: c.sheet,
       surfaceTintColor: Colors.transparent,

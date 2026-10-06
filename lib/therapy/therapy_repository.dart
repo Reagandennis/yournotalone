@@ -8,6 +8,17 @@ import 'session_format.dart';
 /// request; this is only for copy shown before a request exists.
 const therapySessionPriceCents = 2000;
 
+/// What Paystack actually charges for a session: prices are shown in USD,
+/// but the Paystack account settles in Kenyan shillings, so its page shows
+/// this. Keep in step with CHARGE_AMOUNT in supabase/functions/
+/// paystack-payment.
+const therapySessionChargeLabel = 'Ksh 2,600';
+
+/// How a session can be paid for on the Paystack page — only the channels
+/// switched on for the Paystack account (Settings → Preferences → Payment
+/// channels). Add card and Apple Pay here once Paystack activates them.
+const therapyPaymentMethods = 'M-Pesa or Airtel Money';
+
 /// How far ahead a session can still be cancelled from the app, with a
 /// refund. Later than this — or not joining at all — isn't refunded. The
 /// database enforces the same cutoff (`therapy_cancel_notice()`, 0019).

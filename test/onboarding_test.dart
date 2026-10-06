@@ -53,7 +53,7 @@ void main() {
 
     // No signed-in user in tests, so the fallback greeting shows.
     expect(find.text('Welcome, friend'), findsOneWidget);
-    expect(find.text('Δεν είσαι μόνος'), findsOneWidget);
+    expect(find.text('yournotalone'), findsOneWidget);
 
     await tester.tap(find.text('Continue'));
     await tester.pumpAndSettle();

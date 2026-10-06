@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
 import '../therapy/therapy_repository.dart';
@@ -116,7 +117,10 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
                   )
                 : const Center(child: CircularProgressIndicator())
             : TabBarView(
-                children: [_requestsTab(requests), _therapistsTab()],
+                children: [
+                  ReadableWidth(child: _requestsTab(requests)),
+                  ReadableWidth(child: _therapistsTab()),
+                ],
               ),
       ),
     );

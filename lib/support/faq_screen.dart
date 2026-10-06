@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -18,11 +19,19 @@ class _FaqSection {
   final List<_FaqItem> items;
 }
 
-const _sections = [
+/// Only the store this device buys from: App Review rejects iPhone apps
+/// that point people at Google Play, and the reverse reads oddly too.
+bool get _onApple =>
+    defaultTargetPlatform == TargetPlatform.iOS ||
+    defaultTargetPlatform == TargetPlatform.macOS;
+String get _storeBiller => _onApple ? 'Apple' : 'Google';
+
+List<_FaqSection> get _sections => [
   _FaqSection('Using the app', [
     _FaqItem(
-      'What is Δεν είσαι μόνος?',
-      'It\'s Greek for "You\'re not alone" — a wellbeing companion for the '
+      'What is yournotalone?',
+      'You\'re not alone — that\'s the name and the idea. It\'s a '
+          'wellbeing companion for the '
           'moments between the hard ones. Check in with your mood, keep a '
           'private journal, follow guided meditations and breathing '
           'exercises, unwind with calming sounds, track your recovery, and '
@@ -53,23 +62,26 @@ const _sections = [
     ),
     _FaqItem(
       'How do I cancel my subscription?',
-      'Subscriptions are billed by Apple or Google, so you cancel in your '
-          'App Store or Google Play subscription settings — deleting the '
+      'Subscriptions are billed by $_storeBiller, so you cancel in your '
+          '${_onApple ? 'App Store' : 'Google Play'} subscription settings '
+          '— deleting the '
           'app doesn\'t cancel it. You keep Premium until the end of the '
           'period you\'ve paid for.',
     ),
     _FaqItem(
       'I\'m a subscriber, but the app says I\'m on the Free plan.',
-      'Make sure you\'re signed in to the same App Store or Google Play '
-          'account you subscribed with, then tap Settings → Restore '
+      'Make sure you\'re signed in to the same '
+          '${_onApple ? 'Apple Account' : 'Google account'} you subscribed '
+          'with, then tap Settings → Restore '
           'purchases. If it still doesn\'t unlock, email us and we\'ll '
           'sort it out.',
     ),
     _FaqItem(
       'Can I get a refund?',
-      'Refunds for subscriptions are handled by Apple and Google under '
-          'their policies — request one from your App Store purchase '
-          'history or the Google Play order history. If you get stuck, '
+      'Refunds for subscriptions are handled by $_storeBiller under its '
+          'policies — request one from your '
+          '${_onApple ? 'App Store purchase history' : 'Google Play order history'}. '
+          'If you get stuck, '
           'write to us and we\'ll point you the right way.',
     ),
   ]),
