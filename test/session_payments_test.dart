@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,18 +11,18 @@ import 'package:yournotalone/therapy/therapy_screen.dart';
 final _now = DateTime(2026, 9, 14, 12);
 
 TherapyRequest _request() => TherapyRequest(
-      id: 'r1',
-      topic: 'Anxiety & stress',
-      availability: const ['Weekends'],
-      note: null,
-      status: 'confirmed',
-      isFreeSession: false,
-      scheduledAt: _now.add(const Duration(hours: 2)),
-      createdAt: _now.subtract(const Duration(days: 1)),
-      therapistId: 't1',
-      priceCents: 2000,
-      paymentStatus: 'unpaid',
-    );
+  id: 'r1',
+  topic: 'Anxiety & stress',
+  availability: const ['Weekends'],
+  note: null,
+  status: 'confirmed',
+  isFreeSession: false,
+  scheduledAt: _now.add(const Duration(hours: 2)),
+  createdAt: _now.subtract(const Duration(days: 1)),
+  therapistId: 't1',
+  priceCents: 2000,
+  paymentStatus: 'unpaid',
+);
 
 const _therapist = TherapistProfile(
   id: 't1',
@@ -48,11 +46,19 @@ class _ScriptedServer extends TherapyRepository {
 
   @override
   Future<Map<String, TherapistProfile>> fetchTherapists(
-          Iterable<String> ids) async =>
-      const {'t1': _therapist};
+    Iterable<String> ids,
+  ) async => const {'t1': _therapist};
 
   @override
   Future<Map<String, int>> fetchMyRatings() async => const {};
+
+  var checkouts = 0;
+
+  @override
+  Future<Uri?> startCheckout(String requestId) async {
+    checkouts++;
+    return Uri.parse('https://checkout.paystack.com/abc');
+  }
 
   @override
   Future<void> confirmPayment(String requestId) async {
@@ -62,48 +68,39 @@ class _ScriptedServer extends TherapyRepository {
   }
 }
 
-class _FakeStore implements SessionStore {
-  _FakeStore({
-    this.available = true,
-    this.identityError,
-    this.buyError,
-    this.forSale = true,
-  });
+class _FakeBrowser implements CheckoutBrowser {
+  _FakeBrowser({this.opens = true});
 
-  final bool available;
-  final Object? identityError;
-  final Object? buyError;
-  final bool forSale;
-  final identities = <String>[];
-  var buys = 0;
+  final bool opens;
+  final opened = <Uri>[];
+  var closes = 0;
 
   @override
-  bool get isAvailable => available;
-
-  @override
-  Future<void> ensureIdentity(String userId) async {
-    if (identityError != null) throw identityError!;
-    identities.add(userId);
+  Future<bool> open(Uri url) async {
+    opened.add(url);
+    return opens;
   }
 
   @override
-  Future<bool> buy() async {
-    if (buyError != null) throw buyError!;
-    buys++;
-    return forSale;
-  }
+  Future<void> close() async => closes++;
 }
 
-PlatformException _storeError(PurchasesErrorCode code) =>
-    PlatformException(code: '${code.index}', message: code.name);
-
-SessionPayments _payments(_ScriptedServer server, _FakeStore store) =>
+SessionPayments _payments(_ScriptedServer server, _FakeBrowser browser) =>
     SessionPayments(
       repository: server,
-      store: store,
+      browser: browser,
       currentUserId: () => 'user-1',
       wait: (_) async {},
     );
+
+/// Stands in for the waiting dialog: asks the server [checks] times, then
+/// gives up unless one of them found the payment.
+CheckoutWaiter _waiter(int checks) => (checkPaid) async {
+  for (var i = 0; i < checks; i++) {
+    if (await checkPaid()) return true;
+  }
+  return false;
+};
 
 class _FixedPayments extends SessionPayments {
   _FixedPayments(this.outcome, {required super.repository});
@@ -112,16 +109,19 @@ class _FixedPayments extends SessionPayments {
   var calls = 0;
 
   @override
-  Future<SessionPaymentOutcome> pay(TherapyRequest request) async {
+  Future<SessionPaymentOutcome> pay(
+    TherapyRequest request, {
+    CheckoutWaiter? waitForCheckout,
+  }) async {
     calls++;
     return outcome;
   }
 }
 
 Finder _button(String label) => find.ancestor(
-      of: find.text(label),
-      matching: find.byWidgetPredicate((w) => w is ButtonStyleButton),
-    );
+  of: find.text(label),
+  matching: find.byWidgetPredicate((w) => w is ButtonStyleButton),
+);
 
 Future<void> _settle(WidgetTester tester) async {
   await tester.pump();
@@ -144,100 +144,99 @@ void main() {
   });
 
   group('paying for a session', () {
-    test('ties the store customer to the signed-in user before buying',
-        () async {
-      final server = _ScriptedServer(['no_payment_found', null]);
-      final store = _FakeStore();
-      final outcome = await _payments(server, store).pay(_request());
+    test('opens the Paystack checkout and finds the payment', () async {
+      final server = _ScriptedServer([
+        'no_payment_found',
+        'no_payment_found',
+        null,
+      ]);
+      final browser = _FakeBrowser();
+      final outcome = await _payments(
+        server,
+        browser,
+      ).pay(_request(), waitForCheckout: _waiter(5));
       expect(outcome, SessionPaymentOutcome.paid);
-      expect(store.identities, ['user-1']);
-      expect(store.buys, 1);
+      expect(browser.opened.single.host, 'checkout.paystack.com');
+      expect(browser.closes, 1);
+      // One check before opening, two while waiting.
+      expect(server.confirms, 3);
     });
 
-    test('never buys when the store identity can\'t be set', () async {
+    test('never opens a checkout when nobody is signed in', () async {
       final server = _ScriptedServer([]);
-      final store = _FakeStore(
-        identityError: _storeError(PurchasesErrorCode.networkError),
-      );
-      await expectLater(
-        _payments(server, store).pay(_request()),
-        throwsA(isA<PlatformException>()),
-      );
-      expect(store.buys, 0);
-      expect(server.confirms, 0);
-    });
-
-    test('never buys when nobody is signed in', () async {
-      final server = _ScriptedServer([]);
-      final store = _FakeStore();
+      final browser = _FakeBrowser();
       final payments = SessionPayments(
         repository: server,
-        store: store,
+        browser: browser,
         currentUserId: () => null,
         wait: (_) async {},
       );
       await expectLater(
         payments.pay(_request()),
-        throwsA(isA<SessionAccessException>()
-            .having((e) => e.code, 'code', 'invalid_token')),
+        throwsA(
+          isA<SessionAccessException>().having(
+            (e) => e.code,
+            'code',
+            'invalid_token',
+          ),
+        ),
       );
-      expect(store.buys, 0);
+      expect(server.checkouts, 0);
     });
 
-    test('uses a purchase that is already waiting instead of charging again',
-        () async {
-      final server = _ScriptedServer([null]);
-      final store = _FakeStore();
-      final outcome = await _payments(server, store).pay(_request());
-      expect(outcome, SessionPaymentOutcome.paid);
-      expect(store.buys, 0);
-      expect(server.confirms, 1);
-    });
+    test(
+      'uses a payment that is already waiting instead of charging again',
+      () async {
+        final server = _ScriptedServer([null]);
+        final browser = _FakeBrowser();
+        final outcome = await _payments(server, browser).pay(_request());
+        expect(outcome, SessionPaymentOutcome.paid);
+        expect(server.checkouts, 0);
+        expect(browser.opened, isEmpty);
+      },
+    );
 
-    test('doesn\'t buy when the server can\'t be asked first', () async {
-      final server = _ScriptedServer(['unavailable']);
-      final store = _FakeStore();
-      await expectLater(
-        _payments(server, store).pay(_request()),
-        throwsA(isA<SessionAccessException>()),
-      );
-      expect(store.buys, 0);
-    });
+    test(
+      'doesn\'t open a checkout when the server can\'t be asked first',
+      () async {
+        final server = _ScriptedServer(['unavailable']);
+        final browser = _FakeBrowser();
+        await expectLater(
+          _payments(server, browser).pay(_request()),
+          throwsA(isA<SessionAccessException>()),
+        );
+        expect(server.checkouts, 0);
+      },
+    );
 
-    test('backing out of the store sheet is not an error', () async {
-      final server = _ScriptedServer(['no_payment_found']);
-      final store = _FakeStore(
-        buyError: _storeError(PurchasesErrorCode.purchaseCancelledError),
-      );
-      final outcome = await _payments(server, store).pay(_request());
-      expect(outcome, SessionPaymentOutcome.cancelled);
-      expect(server.confirms, 1);
-    });
-
-    test('reports a payment the server hasn\'t seen after retrying',
-        () async {
+    test('leaving the checkout without paying is not an error', () async {
       final server = _ScriptedServer([]);
-      final store = _FakeStore();
-      final outcome = await _payments(server, store).pay(_request());
-      expect(outcome, SessionPaymentOutcome.pendingVerification);
-      expect(store.buys, 1);
-      // One check before buying, three after.
+      final browser = _FakeBrowser();
+      final outcome = await _payments(
+        server,
+        browser,
+      ).pay(_request(), waitForCheckout: _waiter(2));
+      expect(outcome, SessionPaymentOutcome.cancelled);
+      expect(browser.closes, 1);
+      // Before, twice while waiting, and once more after giving up.
       expect(server.confirms, 4);
     });
 
-    test('unavailable when the product isn\'t for sale or the store is off',
-        () async {
+    test('a payment that lands as they give up still counts', () async {
+      final server = _ScriptedServer(['no_payment_found', null]);
+      final outcome = await _payments(
+        server,
+        _FakeBrowser(),
+      ).pay(_request(), waitForCheckout: _waiter(0));
+      expect(outcome, SessionPaymentOutcome.paid);
+    });
+
+    test('unavailable when the checkout page can\'t be opened', () async {
+      final server = _ScriptedServer([]);
       expect(
-        await _payments(_ScriptedServer([]), _FakeStore(forSale: false))
-            .pay(_request()),
+        await _payments(server, _FakeBrowser(opens: false)).pay(_request()),
         SessionPaymentOutcome.unavailable,
       );
-      final off = _FakeStore(available: false);
-      expect(
-        await _payments(_ScriptedServer([]), off).pay(_request()),
-        SessionPaymentOutcome.unavailable,
-      );
-      expect(off.identities, isEmpty);
     });
   });
 
@@ -253,14 +252,16 @@ void main() {
         SessionPaymentOutcome.pendingVerification,
         repository: server,
       );
-      await tester.pumpWidget(MaterialApp(
-        theme: buildAppTheme(),
-        home: TherapyScreen(
-          repository: server,
-          payments: payments,
-          clock: () => _now,
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          home: TherapyScreen(
+            repository: server,
+            payments: payments,
+            clock: () => _now,
+          ),
         ),
-      ));
+      );
       await _settle(tester);
 
       expect(_button('Pay \$20'), findsOneWidget);

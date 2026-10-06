@@ -293,6 +293,11 @@ class SessionAccessException implements Exception {
               'again in a minute.',
         'not_payable' =>
           'This request can\'t be paid for any more — start a new one.',
+        'checkout_failed' =>
+          'We couldn\'t open the payment page — please try again in a '
+              'moment.',
+        'email_required' =>
+          'Add an email address to your account to pay for a session.',
         'not_configured' =>
           'This isn\'t switched on yet. Please contact us.',
         'invalid_token' ||
@@ -411,9 +416,22 @@ class TherapyRepository {
   Future<SessionCredentials> joinSession(String requestId) =>
       fetchSessionCredentials(_client, requestId);
 
-  /// Asks the server to find the in-app purchase for this session.
+  /// Opens a Paystack checkout for this session and returns the page to
+  /// pay on, or null when the session turns out to be paid already.
+  Future<Uri?> startCheckout(String requestId) async {
+    final data = await invokeSessionFunction(
+      _client,
+      'paystack-payment',
+      requestId,
+      extra: {'action': 'start'},
+    );
+    final url = data['authorization_url'];
+    return url is String ? Uri.parse(url) : null;
+  }
+
+  /// Asks the server to find the Paystack payment for this session.
   Future<void> confirmPayment(String requestId) async {
-    await invokeSessionFunction(_client, 'confirm-session-payment', requestId);
+    await invokeSessionFunction(_client, 'paystack-payment', requestId);
     Sentry.metrics.count('therapy.payment_confirmed', 1);
   }
 }
@@ -438,12 +456,13 @@ Future<SessionCredentials> fetchSessionCredentials(
 Future<Map<String, dynamic>> invokeSessionFunction(
   SupabaseClient client,
   String function,
-  String requestId,
-) async {
+  String requestId, {
+  Map<String, Object?> extra = const {},
+}) async {
   if (client.auth.currentUser == null) throw StateError('Not signed in');
   try {
     final response = await client.functions
-        .invoke(function, body: {'request_id': requestId});
+        .invoke(function, body: {'request_id': requestId, ...extra});
     return Map<String, dynamic>.from(response.data as Map);
   } on FunctionException catch (e) {
     final details = e.details;

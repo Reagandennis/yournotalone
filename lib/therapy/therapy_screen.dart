@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
-import '../billing/purchases_service.dart';
 import '../billing/session_payments.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
@@ -78,7 +77,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   bool _submitting = false;
   bool _paying = false;
 
-  /// Sessions whose store payment went through but the server hasn't seen
+  /// Sessions whose Paystack payment went through but the server hasn't seen
   /// yet. Their card offers "Check payment" instead of "Pay", so a slow
   /// RevenueCat record can't be paid for twice.
   final _awaitingVerification = <String>{};
@@ -148,9 +147,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  /// Saves the request as a draft and goes straight to the store. The
+  /// Saves the request as a draft and goes straight to Paystack. The
   /// draft stays on screen (with Pay and Check payment) if the payment
-  /// doesn't settle there and then; backing out of the store discards it
+  /// doesn't settle there and then; leaving the checkout discards it
   /// and leaves the form as it was.
   Future<void> _submit() async {
     final topic = _topic;
@@ -183,8 +182,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
           await _discardQuietly(draft);
         case SessionPaymentOutcome.pendingVerification:
         case null:
-          // The store may have taken the money: keep the draft so the
-          // purchase can be attached to it.
+          // Paystack may have taken the money: keep the draft so the
+          // payment can be attached to it.
           await _load(quiet: true);
       }
     } catch (e) {
@@ -298,7 +297,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }) async {
     setState(() => _paying = true);
     try {
-      final outcome = await _payments.pay(request);
+      final outcome =
+          await _payments.pay(request, waitForCheckout: _waitForCheckout);
       if (!mounted) return outcome;
       switch (outcome) {
         case SessionPaymentOutcome.paid:
@@ -313,8 +313,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
               'minute, tap "Check payment".');
           if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.unavailable:
-          _say('Paying in the app isn\'t available on this device yet, so '
-              'we can\'t take your request — please try again later.');
+          _say('We couldn\'t open the payment page on this device — please '
+              'try again later.');
         case SessionPaymentOutcome.cancelled:
           break;
       }
@@ -323,12 +323,23 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (!mounted) return null;
       final message = e is SessionAccessException
           ? e.message
-          : purchaseErrorMessage(e);
-      if (message != null) _say(message);
+          : errorMessage(e, 'The payment didn\'t go through. Please try again.');
+      _say(message);
       return null;
     } finally {
       if (mounted) setState(() => _paying = false);
     }
+  }
+
+  /// Shown over the screen while Paystack's page is open, until the
+  /// payment is found or the person gives up.
+  Future<bool> _waitForCheckout(Future<bool> Function() checkPaid) async {
+    final paid = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _CheckoutWaitDialog(checkPaid: checkPaid),
+    );
+    return paid ?? false;
   }
 
   Future<void> _checkPayment(TherapyRequest request) async {
@@ -728,8 +739,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
           icon: Icons.payments_outlined,
           iconColor: c.blue,
           title: 'Sessions are $price, paid when you book',
-          detail: 'Pay securely in the app and your request goes straight to '
-              'our care team. You get a receipt by email. No subscription.',
+          detail: 'Pay securely by card, M-Pesa or Apple Pay through Paystack '
+              'and your request goes straight to our care team. You get a '
+              'receipt by email. No subscription.',
         ),
         const SizedBox(height: 26),
         const SectionHeader(title: 'What would you like to focus on?'),
@@ -997,13 +1009,15 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const SizedBox(height: 4),
           Text(
             awaiting
-                ? 'The store has your payment. Don\'t pay again — your '
+                ? 'Paystack has your payment. Don\'t pay again — your '
                     'request goes through as soon as it\'s found.'
                 : request.isAwaitingPayment
-                    ? 'Pay securely in the app and your request goes '
+                    ? 'Pay securely by card, M-Pesa or Apple Pay through '
+                        'Paystack and your request goes '
                         'straight to our care team, with a receipt by '
                         'email. $therapyCancellationPolicy'
-                    : 'Pay securely in the app. The Join button unlocks as '
+                    : 'Pay securely by card, M-Pesa or Apple Pay through '
+                        'Paystack. The Join button unlocks as '
                         'soon as it\'s paid.',
             style: TextStyle(
               fontSize: 12.5,
@@ -1247,6 +1261,99 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// While Paystack's page is open: checks for the payment every few seconds
+/// and as soon as the app comes back to the front, and closes itself once
+/// it's found. "Cancel" gives up; the draft is discarded only if one last
+/// check still finds nothing.
+class _CheckoutWaitDialog extends StatefulWidget {
+  const _CheckoutWaitDialog({required this.checkPaid});
+
+  final Future<bool> Function() checkPaid;
+
+  @override
+  State<_CheckoutWaitDialog> createState() => _CheckoutWaitDialogState();
+}
+
+class _CheckoutWaitDialogState extends State<_CheckoutWaitDialog> {
+  Timer? _timer;
+  late final AppLifecycleListener _lifecycle;
+  bool _checking = false;
+  bool _notFoundYet = false;
+  bool _offline = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 4), (_) => _check());
+    _lifecycle = AppLifecycleListener(onResume: _check);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  Future<void> _check({bool asked = false}) async {
+    if (_checking) return;
+    setState(() => _checking = true);
+    try {
+      final paid = await widget.checkPaid();
+      if (!mounted) return;
+      if (paid) {
+        Navigator.of(context).pop(true);
+        return;
+      }
+      setState(() {
+        _offline = false;
+        if (asked) _notFoundYet = true;
+      });
+    } catch (_) {
+      if (mounted) setState(() => _offline = true);
+    } finally {
+      if (mounted) setState(() => _checking = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.brand;
+    final hint = _offline
+        ? 'We can\'t reach our server right now — we\'ll keep checking.'
+        : _notFoundYet
+            ? 'We haven\'t seen your payment yet. If you\'ve just paid, give '
+                'it a few seconds.'
+            : 'Finish paying on the Paystack page — by card, M-Pesa or '
+                'Apple Pay. This closes by itself once your payment is in.';
+    return AlertDialog(
+      title: const Text('Waiting for your payment'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const LinearProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(
+            hint,
+            style: TextStyle(fontSize: 13.5, color: c.textMuted, height: 1.45),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: _checking ? null : () => _check(asked: true),
+          child: const Text('I\'ve paid'),
+        ),
+      ],
     );
   }
 }

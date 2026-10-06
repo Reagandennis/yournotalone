@@ -49,11 +49,17 @@ explains who can see and do what.
     LIVEKIT_API_KEY=<key> LIVEKIT_API_SECRET=<secret>
   ```
 
-- **Payments** ($20 per session, taken before the request is sent) are the
-  consumable Google Play product `therapy`, sold through RevenueCat. `confirm-session-payment`
-  checks purchases with RevenueCat API v2 and needs `REVENUECAT_SECRET_KEY` (a
-  v2 secret key) and `REVENUECAT_PROJECT_ID`. The care team can also mark a
-  session paid or waive the fee from the dashboard.
+- **Payments** ($20 per session, taken before the request is sent) go through
+  Paystack (migration 0021): card, M-Pesa / mobile money and Apple Pay, on
+  Paystack's page in an in-app browser. `paystack-payment` opens the checkout
+  and confirms it with Paystack's verify API; `paystack-webhook` (deployed
+  `--no-verify-jwt`, registered as the Paystack webhook URL) records
+  `charge.success` and `refund.processed`. Both need `PAYSTACK_SECRET_KEY`;
+  `PAYSTACK_CALLBACK_URL` is optional. Sessions are charged in USD, so USD
+  must be enabled on the Paystack account. Sessions paid before the switch
+  went through the Google Play product `therapy` and `confirm-session-payment`
+  (RevenueCat). The care team can also mark a session paid or waive the fee
+  from the dashboard.
 - **Refunds** (migration 0012) come in through `revenuecat-webhook`, which
   needs `REVENUECAT_WEBHOOK_SECRET` and is registered in RevenueCat →
   Integrations → Webhooks with the Authorization header value

@@ -10,7 +10,7 @@ const legalEntityAddress = '179 Runda Drive, Nairobi, Kenya';
 const legalContactEmail = 'reaganprezzo@gmail.com';
 const legalGoverningCountry = 'Kenya';
 
-const legalLastUpdated = '30 September 2026';
+const legalLastUpdated = '6 October 2026';
 
 class LegalDoc {
   const LegalDoc({
@@ -132,8 +132,12 @@ final privacyPolicy = LegalDoc(
           '•  RevenueCat — manages subscriptions and in-app purchases. '
           'Receives an app user ID and store receipt data; never your name '
           'or journal.\n'
-          '•  Apple App Store / Google Play — process payments under their '
-          'own terms and privacy policies.\n'
+          '•  Apple App Store / Google Play — process subscription payments '
+          'under their own terms and privacy policies.\n'
+          '•  Paystack — processes payments for therapy sessions (card, '
+          'mobile money, Apple Pay). Receives your email address and the '
+          'payment details you enter on its page; never your journal or '
+          'what you discuss in a session.\n'
           '•  LiveKit — carries the audio and video of therapy sessions in '
           'real time. Nothing is recorded or stored.\n'
           '•  Resend — delivers the emails about your therapy requests and '

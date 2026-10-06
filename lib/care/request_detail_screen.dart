@@ -113,7 +113,8 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
     final request = _item.request;
     final session = request.isConfirmed;
     final refund = request.paymentStatus == 'paid'
-        ? ' They\'ve paid, so refund them in Google Play Console.'
+        ? ' They\'ve paid, so refund them in the Paystack dashboard '
+            '(Play Console for older in-app payments).'
         : '';
     final ok = await _confirm(
       session ? 'Cancel this session?' : 'Cancel this request?',
@@ -191,7 +192,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
       'paid' => '${request.priceLabel} · paid$paidOn',
       'waived' => '${request.priceLabel} · waived',
       _ when refunded != null =>
-        '${request.priceLabel} · refunded by Google Play on '
+        '${request.priceLabel} · refunded on '
             '${formatDate(refunded)}, not paid',
       _ => '${request.priceLabel} · not paid yet',
     };

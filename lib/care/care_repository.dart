@@ -72,7 +72,8 @@ class AdminTherapyRequest {
   final String? therapistName;
   final DateTime? paidAt;
 
-  /// When Google Play refunded an in-app payment for this session. The
+  /// When Paystack (or, for older sessions, Google Play) refunded the
+  /// payment for this session. The
   /// session is unpaid again from then, unless the care team changed it.
   final DateTime? refundedAt;
 

@@ -124,7 +124,10 @@ class _FixedPayments extends SessionPayments {
   final paidFor = <String>[];
 
   @override
-  Future<SessionPaymentOutcome> pay(TherapyRequest request) async {
+  Future<SessionPaymentOutcome> pay(
+    TherapyRequest request, {
+    CheckoutWaiter? waitForCheckout,
+  }) async {
     paidFor.add(request.id);
     return outcome;
   }
