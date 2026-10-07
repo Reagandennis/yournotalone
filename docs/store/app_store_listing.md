@@ -1,5 +1,9 @@
 # App Store listing — yournotalone
 
+## Subtitle (30 max)
+
+Mood journal & real therapists
+
 ## Promotional Text (170 max)
 
 Check in with your mood, write it out, breathe, and unwind with calming sounds — with a licensed therapist a tap away when you want more than an app.
@@ -47,7 +51,7 @@ You don't have to do this alone.
 
 ## Keywords (100 max, comma-separated, no spaces after commas)
 
-mental health,anxiety,journal,mood tracker,therapy,therapist,meditation,sleep,stress,CBT,breathing
+mental health,anxiety,mood tracker,therapy,meditation,sleep,stress,CBT,breathing,self care,diary
 
 ## Support URL
 
