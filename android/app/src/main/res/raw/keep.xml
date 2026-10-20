@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- audio_service looks up its media-control icons by name (getIdentifier),
+     so release resource shrinking can't see them and strips them. Without
+     them the media notification can't be built and sleep sounds lose their
+     foreground service when the screen locks. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/audio_service_*" />
