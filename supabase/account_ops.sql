@@ -81,3 +81,22 @@
 -- update public.deletion_requests
 --    set status = 'failed', completed_at = now()
 --  where id = '<request id>';
+
+-- ── 5. Therapy sessions free for an account ──────────────────────
+-- Needs migration 0023. Every request the account sends skips payment and
+-- reaches the care team marked "Fee waived". For one session only, use
+-- "Waive fee" on the request in the care team dashboard instead.
+--
+-- update auth.users
+--    set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb)
+--                            || '{"therapy_fee_waived": true}'::jsonb
+--  where email = 'you@example.com';
+--
+-- Take it away again:
+-- update auth.users
+--    set raw_app_meta_data = raw_app_meta_data - 'therapy_fee_waived'
+--  where email = 'you@example.com';
+--
+-- Who currently has it:
+-- select email from auth.users
+--  where raw_app_meta_data ->> 'therapy_fee_waived' = 'true';

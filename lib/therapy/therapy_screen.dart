@@ -166,7 +166,15 @@ class _TherapyScreenState extends State<TherapyScreen> {
         note: _noteController.text.trim(),
       );
       if (!mounted) return;
-      final outcome = await _pay(draft, fromForm: true);
+      // An account the care team has waived the fee for: the request is
+      // already with them, so there's nothing to pay (migration 0023).
+      final outcome = draft.needsPayment
+          ? await _pay(draft, fromForm: true)
+          : SessionPaymentOutcome.paid;
+      if (!draft.needsPayment) {
+        _say('Your request is with our care team — there\'s no charge for '
+            'your sessions.');
+      }
       if (!mounted) return;
       switch (outcome) {
         case SessionPaymentOutcome.paid:
