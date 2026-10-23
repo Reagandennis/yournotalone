@@ -36,6 +36,10 @@ class SoundPlayer {
   /// allows exactly one just_audio player, and that one has to be the
   /// ambient loop that keeps going with the screen off.
   sfx.AudioPlayer? _oneShot;
+
+  /// A recorded voice guide, on its own player so it can run over the
+  /// ambient loop and under the chimes.
+  sfx.AudioPlayer? _voice;
   double _volume = 1.0;
 
   /// When the current sound started playing, so a real listen can be told
@@ -217,6 +221,45 @@ class SoundPlayer {
       await player.play(sfx.AssetSource(asset.replaceFirst('assets/', '')));
     } catch (e) {
       debugPrint('One-shot playback failed for $asset: $e');
+    }
+  }
+
+  /// Starts a meditation's recorded voice guide from the beginning.
+  Future<void> narrate(String asset) async {
+    if (_silent) return;
+    try {
+      final player = _voice ??= sfx.AudioPlayer();
+      await player.stop();
+      await player.play(sfx.AssetSource(asset.replaceFirst('assets/', '')));
+    } catch (e) {
+      debugPrint('Voice guide failed for $asset: $e');
+    }
+  }
+
+  Future<void> pauseNarration() async {
+    if (_silent) return;
+    try {
+      await _voice?.pause();
+    } catch (e) {
+      debugPrint('Voice guide pause failed: $e');
+    }
+  }
+
+  Future<void> resumeNarration() async {
+    if (_silent) return;
+    try {
+      await _voice?.resume();
+    } catch (e) {
+      debugPrint('Voice guide resume failed: $e');
+    }
+  }
+
+  Future<void> stopNarration() async {
+    if (_silent) return;
+    try {
+      await _voice?.stop();
+    } catch (e) {
+      debugPrint('Voice guide stop failed: $e');
     }
   }
 }

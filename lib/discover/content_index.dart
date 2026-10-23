@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
@@ -169,12 +170,27 @@ class ContentItem {
 /// Checks Premium, notes the visit, then opens [item]. Every card that
 /// opens content from the index comes through here, so none can slip
 /// past the paywall.
-void openContent(
+///
+/// Returns whether it opened, so a course can tick off a day only when the
+/// day was actually started.
+bool openContent(
   BuildContext context,
   ContentItem item, {
   required String source,
 }) {
-  if (item.premium && !isPremiumUser()) {
+  final locked = item.premium && !isPremiumUser();
+  // Which cards get tapped, from where: shows whether the suggestions,
+  // needs and courses earn their place.
+  Sentry.metrics.count(
+    'content.opened',
+    1,
+    attributes: {
+      'source': SentryAttribute.string(source),
+      'kind': SentryAttribute.string(item.kind.name),
+      'locked': SentryAttribute.string('$locked'),
+    },
+  );
+  if (locked) {
     showUpgradeSheet(
       context,
       item: item.title,
@@ -184,10 +200,11 @@ void openContent(
           'Free includes a taste of everything. Premium unlocks every '
           'session, tool and read — and $introOffer.',
     );
-    return;
+    return false;
   }
   UsageStore.instance.recordOpen(item.kind);
   item.open(context);
+  return true;
 }
 
 void _push(BuildContext context, WidgetBuilder builder) =>
@@ -464,14 +481,23 @@ List<ContentItem> recommend({
   required bool premium,
   Set<String> exclude = const {},
   List<ContentItem>? from,
+  Set<Need> goals = const {},
+  Map<ContentKind, double> kindBoost = const {},
 }) {
   final day = dayNumber(now);
-  int score(ContentItem item) =>
+  // What makes an item eligible: the needs asked for, or the time of day.
+  int match(ContentItem item) =>
       item.needs.intersection(needs).length * 2 +
       (dayPart != null && item.dayParts.contains(dayPart) ? 3 : 0);
+  // What breaks ties among eligible items: the person's own goals, and
+  // the kinds of practice they've said leave them feeling better.
+  double score(ContentItem item) =>
+      match(item) +
+      item.needs.intersection(goals).length +
+      (kindBoost[item.kind] ?? 0) * 2;
   final scored = [
     for (final item in from ?? contentIndex)
-      if (!exclude.contains(item.id) && score(item) > 0) (item, score(item)),
+      if (!exclude.contains(item.id) && match(item) > 0) (item, score(item)),
   ];
   scored.sort((a, b) {
     if (!premium && a.$1.premium != b.$1.premium) {
@@ -485,6 +511,17 @@ List<ContentItem> recommend({
   });
   return [for (final (item, _) in scored.take(count)) item];
 }
+
+/// [FeelingStore.helpByKind] in index terms: a meditation that helps
+/// boosts meditations (and the urge-surfing session, which is one).
+Map<ContentKind, double> kindBoostFrom(Map<PracticeKind, double> help) => {
+  if (help[PracticeKind.meditation] case final m?) ...{
+    ContentKind.meditation: m,
+    ContentKind.recovery: m / 2,
+  },
+  ContentKind.breathing: ?help[PracticeKind.breathing],
+  ContentKind.sound: ?help[PracticeKind.sound],
+};
 
 /// Today's prompt or short read: the same all day, different tomorrow.
 /// Free users rotate through what they can open.

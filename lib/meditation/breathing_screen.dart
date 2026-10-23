@@ -356,7 +356,11 @@ class _BreathingScreenState extends State<BreathingScreen>
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 20),
-          child: SessionCloseOut(title: pattern.title, accent: pattern.accent),
+          child: SessionCloseOut(
+            title: pattern.title,
+            accent: pattern.accent,
+            kind: PracticeKind.breathing,
+          ),
         ),
       ],
     );

@@ -4,6 +4,7 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import 'content_index.dart';
+import 'saved_store.dart';
 
 /// Small "New" badge for content that shipped in the last few weeks.
 class NewChip extends StatelessWidget {
@@ -26,6 +27,34 @@ class NewChip extends StatelessWidget {
           color: c.accent(Pillars.red),
         ),
       ),
+    );
+  }
+}
+
+/// The heart that saves an item to the Home "Saved" row.
+class SaveButton extends StatelessWidget {
+  const SaveButton({super.key, required this.item});
+
+  final ContentItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.brand;
+    return ValueListenableBuilder<Set<String>>(
+      valueListenable: SavedStore.instance,
+      builder: (context, saved, _) {
+        final on = saved.contains(item.id);
+        return IconButton(
+          visualDensity: VisualDensity.compact,
+          tooltip: on ? 'Remove from saved' : 'Save',
+          onPressed: () => SavedStore.instance.toggle(item),
+          icon: Icon(
+            on ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            size: 20,
+            color: on ? c.accent(Pillars.red) : c.textMuted,
+          ),
+        );
+      },
     );
   }
 }
@@ -109,6 +138,7 @@ class ContentRow extends StatelessWidget {
                     ],
                   ),
                 ),
+                SaveButton(item: item),
               ],
             ),
           ),

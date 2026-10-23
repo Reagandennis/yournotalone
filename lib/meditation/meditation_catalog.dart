@@ -111,6 +111,7 @@ class Meditation {
     this.accent, {
     this.premium = true,
     required this.prompts,
+    this.narration,
   });
 
   final String title;
@@ -120,6 +121,11 @@ class Meditation {
   final Color accent;
   final bool premium;
   final List<(double, String)> prompts;
+
+  /// A recorded voice guide, e.g. `assets/narration/body_scan.m4a`, timed
+  /// to run the length of the session. The on-screen lines still show, so
+  /// it works with the sound off too. Null until a recording exists.
+  final String? narration;
 }
 
 const meditations = [

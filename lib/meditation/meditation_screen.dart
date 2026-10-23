@@ -35,6 +35,10 @@ class _MeditationScreenState extends State<MeditationScreen>
   bool _done = false;
   String? _ambient; // asset of the chosen background sound
 
+  /// Whether the recorded voice guide plays, when the session has one.
+  bool _voice = true;
+  bool get _hasVoice => meditation.narration != null;
+
   Meditation get meditation => widget.meditation;
 
   // A small, calm subset of the sound library to sit underneath.
@@ -64,10 +68,14 @@ class _MeditationScreenState extends State<MeditationScreen>
       if (!mounted) return;
       SoundPlayer.instance.playOnce(chimeAsset);
       _session.forward();
+      if (_hasVoice && _voice) {
+        SoundPlayer.instance.narrate(meditation.narration!);
+      }
     });
   }
 
   void _finish() {
+    if (_hasVoice) SoundPlayer.instance.stopNarration();
     // The screen moves on at once; the write and the audio follow. Waiting
     // on the network here froze the timer at 0:00 on a poor connection.
     if (mounted) setState(() => _done = true);
@@ -95,6 +103,7 @@ class _MeditationScreenState extends State<MeditationScreen>
     _promptShown.dispose();
     _session.dispose();
     if (_ambient != null) SoundPlayer.instance.stop();
+    if (_hasVoice) SoundPlayer.instance.stopNarration();
     super.dispose();
   }
 
@@ -140,6 +149,57 @@ class _MeditationScreenState extends State<MeditationScreen>
     } catch (e) {
       debugPrint('Ambient failed: $e');
     }
+  }
+
+  /// Voice guide on or off. Turning it back on picks up where the voice
+  /// was paused, so it stays roughly in step with the clock.
+  Widget _voiceChip() {
+    final c = context.brand;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
+        color: _voice ? c.ink : c.card,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: _voice ? c.ink : c.border, width: 1.2),
+        ),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () {
+            setState(() => _voice = !_voice);
+            if (!_voice) {
+              SoundPlayer.instance.pauseNarration();
+            } else if (_session.isAnimating) {
+              SoundPlayer.instance.resumeNarration();
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _voice
+                      ? Icons.record_voice_over_rounded
+                      : Icons.voice_over_off_rounded,
+                  size: 14,
+                  color: _voice ? c.onInk : c.textMuted,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'Voice',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w500,
+                    color: _voice ? c.onInk : c.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _ambientChip(String label, Sound? sound) {
@@ -241,6 +301,7 @@ class _MeditationScreenState extends State<MeditationScreen>
           child: SessionCloseOut(
             title: meditation.title,
             accent: meditation.accent,
+            kind: PracticeKind.meditation,
           ),
         ),
       ],
@@ -354,6 +415,7 @@ class _MeditationScreenState extends State<MeditationScreen>
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Row(
             children: [
+              if (_hasVoice) _voiceChip(),
               _ambientChip('No sound', null),
               for (final s in _ambientChoices) _ambientChip(s.title, s),
             ],
@@ -368,7 +430,17 @@ class _MeditationScreenState extends State<MeditationScreen>
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: () => setState(() {
-                _session.isAnimating ? _session.stop() : _session.forward();
+                if (_session.isAnimating) {
+                  _session.stop();
+                  if (_hasVoice && _voice) {
+                    SoundPlayer.instance.pauseNarration();
+                  }
+                } else {
+                  _session.forward();
+                  if (_hasVoice && _voice) {
+                    SoundPlayer.instance.resumeNarration();
+                  }
+                }
               }),
               child: SizedBox(
                 width: 68,

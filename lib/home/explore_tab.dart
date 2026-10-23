@@ -4,8 +4,11 @@ import '../brand.dart';
 import '../cbt/cbt_catalog.dart';
 import '../cbt/cbt_content.dart';
 import '../cbt/cbt_screen.dart';
+import '../courses/course_catalog.dart';
+import '../courses/course_screen.dart';
 import '../discover/content_index.dart';
 import '../discover/content_widgets.dart';
+import '../discover/goals.dart';
 import '../discover/usage_store.dart';
 import '../journal/journal_hub_screen.dart';
 import '../meditation/meditations_screen.dart';
@@ -188,6 +191,8 @@ class ExploreTab extends StatelessWidget {
   /// everything tagged for it.
   Widget _needs(BuildContext context) {
     final c = context.brand;
+    // Their own reasons for being here come first.
+    final needs = needsInGoalOrder(userGoals());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,10 +212,10 @@ class ExploreTab extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             clipBehavior: Clip.none,
-            itemCount: Need.values.length,
+            itemCount: needs.length,
             separatorBuilder: (_, _) => const SizedBox(width: 8),
             itemBuilder: (context, i) {
-              final need = Need.values[i];
+              final need = needs[i];
               return FilterPill(
                 label: need.label,
                 icon: need.icon,
@@ -566,7 +571,31 @@ class ExploreTab extends StatelessWidget {
         _needs(context),
         const SizedBox(height: 22),
         _pillarGrid(context),
-        const SizedBox(height: 20),
+        const SizedBox(height: 22),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 4),
+          child: Text(
+            '7-day courses',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: context.brand.ink,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Text(
+            'One step a day, in an order that builds.',
+            style: TextStyle(fontSize: 12.5, color: context.brand.textMuted),
+          ),
+        ),
+        for (final course in courses)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: CourseCard(course: course),
+          ),
+        const SizedBox(height: 12),
         _featuredPanel(context),
         const SizedBox(height: 22),
         Padding(

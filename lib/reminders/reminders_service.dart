@@ -8,12 +8,16 @@ import 'package:timezone/timezone.dart' as tz;
 import '../brand.dart';
 import '../notifications/local_notifications.dart';
 
+/// Marks a notification payload as a daily reminder, followed by the
+/// [ReminderKind] name.
+const reminderPayloadPrefix = 'reminder:';
+
 /// The four daily nudges the app can send.
 enum ReminderKind {
   checkin(
     1,
     'Morning check-in',
-    'A ten-second pulse on how you\'re doing.',
+    'A ten-second pulse on how you\'re doing. Opens the check-in.',
     Icons.sentiment_satisfied_alt_rounded,
     Pillars.yellow,
     TimeOfDay(hour: 9, minute: 0),
@@ -33,7 +37,7 @@ enum ReminderKind {
   journal(
     3,
     'Evening pages',
-    'A quiet minute for your journal.',
+    'A quiet minute for your journal. Opens your prompts.',
     Icons.edit_note_rounded,
     Pillars.red,
     TimeOfDay(hour: 20, minute: 0),
@@ -43,12 +47,12 @@ enum ReminderKind {
   windDown(
     4,
     'Wind-down',
-    'A nudge to start slowing down.',
+    'A nudge to slow down. Opens your wind-down plan.',
     Icons.bedtime_rounded,
     Pillars.blue,
     TimeOfDay(hour: 22, minute: 0),
     'Time to slow down',
-    'A sleep meditation or some rain can carry you off.',
+    'Your wind-down plan is ready — tap to start.',
   );
 
   const ReminderKind(
@@ -166,7 +170,21 @@ class RemindersService {
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time, // repeat daily
+      // Tapping it opens what it's about (see openReminderTarget).
+      payload: '$reminderPayloadPrefix${kind.name}',
     );
+  }
+
+  /// Schedules every enabled reminder again, so ones set up before
+  /// reminders carried a payload open the right screen too. Never throws.
+  Future<void> refreshScheduled() async {
+    for (final kind in ReminderKind.values) {
+      try {
+        if (await isEnabled(kind)) await enable(kind, await timeOf(kind));
+      } catch (e) {
+        debugPrint('Couldn\'t refresh the ${kind.name} reminder: $e');
+      }
+    }
   }
 
   Future<void> disable(ReminderKind kind) async {

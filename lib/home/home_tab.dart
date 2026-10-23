@@ -1,19 +1,28 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../billing/nudges.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../courses/course_catalog.dart';
+import '../courses/course_progress.dart';
+import '../courses/course_screen.dart';
 import '../discover/content_index.dart';
 import '../discover/content_widgets.dart';
+import '../discover/goals.dart';
+import '../discover/saved_store.dart';
 import '../discover/usage_store.dart';
 import '../journal/journal_screen.dart';
+import '../journal/new_entry.dart';
 import '../meditation/meditations_screen.dart';
+import '../practice/feeling_store.dart';
 import '../practice/practice_repository.dart';
 import '../practice/practice_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../sounds/sounds_screen.dart';
+import '../support/crisis_screen.dart';
 import '../support/heavy_day_sheet.dart';
 import '../therapy/session_format.dart';
 import '../therapy/therapy_repository.dart';
@@ -21,6 +30,7 @@ import '../therapy/therapy_screen.dart';
 import 'home_ui.dart';
 import 'mood_face.dart';
 import 'mood_history_screen.dart';
+import 'mood_insights_screen.dart';
 import 'mood_repository.dart';
 import 'mood_scale.dart';
 
@@ -108,6 +118,14 @@ class _HomeTabState extends State<HomeTab> {
   /// Check-ins from the last seven days; null until loaded.
   List<MoodEntry>? _week;
   TherapyRequest? _session;
+
+  /// The most recent finished session with a note from the therapist,
+  /// within the last fortnight.
+  TherapyRequest? _lastSession;
+
+  /// How much each kind of practice has helped, from the post-session
+  /// answers; suggestions lean towards what works.
+  Map<ContentKind, double> _kindBoost = const {};
   List<_QuickItem> _quick = _quickItems;
 
   @override
@@ -139,13 +157,24 @@ class _HomeTabState extends State<HomeTab> {
     (widget.therapyRequests ?? () => TherapyRepository().fetchRequests())()
         .then((requests) {
           if (mounted) {
-            setState(() => _session = _upcoming(requests, DateTime.now()));
+            final now = DateTime.now();
+            setState(() {
+              _session = _upcoming(requests, now);
+              _lastSession = _recentSummary(requests, now);
+            });
           }
         })
         .catchError((_) {
           // No session to show; the plain banner stays.
         });
     unawaited(_orderQuickAccess());
+    FeelingStore.instance.recent().then((records) {
+      if (mounted) {
+        setState(
+          () => _kindBoost = kindBoostFrom(FeelingStore.helpByKind(records)),
+        );
+      }
+    });
   }
 
   /// Puts the tiles people actually open first. A stable sort, so with no
@@ -183,6 +212,21 @@ class _HomeTabState extends State<HomeTab> {
       if (r.isPending) return r;
     }
     return null;
+  }
+
+  static TherapyRequest? _recentSummary(
+    List<TherapyRequest> requests,
+    DateTime now,
+  ) {
+    TherapyRequest? best;
+    for (final r in requests) {
+      final at = r.completedAt;
+      final note = r.clientSummary?.trim() ?? '';
+      if (!r.isCompleted || at == null || note.isEmpty) continue;
+      if (now.difference(at) > const Duration(days: 14)) continue;
+      if (best == null || at.isAfter(best.completedAt!)) best = r;
+    }
+    return best;
   }
 
   Future<void> _selectMood(int index) async {
@@ -385,6 +429,8 @@ class _HomeTabState extends State<HomeTab> {
       count: 1,
       now: DateTime.now(),
       premium: isPremiumUser(),
+      goals: userGoals(),
+      kindBoost: _kindBoost,
     );
     if (picks.isEmpty) return const SizedBox.shrink();
     final need = needs.first;
@@ -770,6 +816,262 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
+  /// Help, one tap away, on the screen people open first.
+  Widget _crisisLink() {
+    final c = context.brand;
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton.icon(
+        style: TextButton.styleFrom(
+          foregroundColor: c.accent(Pillars.red),
+          visualDensity: VisualDensity.compact,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+        ),
+        onPressed: () {
+          Sentry.metrics.count(
+            'crisis.opened',
+            1,
+            attributes: {'source': SentryAttribute.string('home')},
+          );
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const CrisisScreen()));
+        },
+        icon: const Icon(Icons.health_and_safety_outlined, size: 18),
+        label: const Text(
+          'Need help now?',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
+      ),
+    );
+  }
+
+  /// What they've hearted, newest first. Hidden until there's something.
+  Widget _savedStrip() => ValueListenableBuilder<Set<String>>(
+    valueListenable: SavedStore.instance,
+    builder: (context, _, _) {
+      final items = SavedStore.instance.items;
+      if (items.isEmpty) return const SizedBox.shrink();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SectionHeader(title: 'Saved'),
+          const SizedBox(height: 12),
+          ContentStrip(items: items, source: 'home:saved'),
+          const SizedBox(height: 28),
+        ],
+      );
+    },
+  );
+
+  /// A way into the insights: an invitation for Premium members, a locked
+  /// teaser for everyone else.
+  Widget _insightsTeaser(bool premium) {
+    final c = context.brand;
+    final week = _week;
+    // Not worth showing before there's a check-in to talk about.
+    if (week == null || week.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 28),
+      child: Material(
+        color: c.tint(Pillars.yellow, 0.08),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => openMoodInsights(context, source: 'home:insights'),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: c.chip,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.insights_rounded,
+                    size: 22,
+                    color: c.accent(Pillars.yellow),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'Your insights',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: c.ink,
+                              ),
+                            ),
+                          ),
+                          if (!premium) ...[
+                            const SizedBox(width: 8),
+                            const PremiumChip(),
+                          ],
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'How practice, your week and your moods connect.',
+                        style: TextStyle(fontSize: 13, color: c.textMuted),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: c.textMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// A suggestion that fits what the session was about.
+  static Set<Need> _needsForTopic(String topic) => switch (topic) {
+    'Anxiety & stress' => const {Need.anxious, Need.stressed},
+    'Low mood' || 'Grief & loss' => const {Need.low},
+    'Addiction & recovery' => const {Need.urges},
+    _ => const {Need.reflect},
+  };
+
+  /// Before a booked session, a prompt to gather thoughts; after one, the
+  /// therapist's note and something to practise until next time.
+  List<Widget> _therapyNotes() {
+    final c = context.brand;
+    final upcoming = _session;
+    final last = _lastSession;
+    final cards = <Widget>[];
+    if (upcoming != null && upcoming.isConfirmed) {
+      cards.add(
+        Material(
+          color: c.card,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+            side: BorderSide(color: c.border, width: 1.2),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () => openNewJournalEntry(
+              context,
+              title: 'Before my session',
+              content: 'In my session, I\'d like to talk about ',
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(Icons.edit_note_rounded, size: 24, color: c.blue),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Before your session',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: c.ink,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Jot down what you want to talk about, so nothing '
+                          'slips away when the call starts.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: c.textMuted,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    if (last != null) {
+      final practise = recommend(
+        needs: _needsForTopic(last.topic),
+        count: 1,
+        now: DateTime.now(),
+        premium: isPremiumUser(),
+        kindBoost: _kindBoost,
+      );
+      if (cards.isNotEmpty) cards.add(const SizedBox(height: 12));
+      cards.add(
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: c.tint(Pillars.blue, 0.06),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'FROM YOUR LAST SESSION',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.8,
+                  color: c.blue,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                last.clientSummary!.trim(),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 13.5, color: c.ink, height: 1.5),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () =>
+                      Navigator.of(context).push(TherapyScreen.route()),
+                  child: const Text('Read it all'),
+                ),
+              ),
+              if (practise.isNotEmpty) ...[
+                Text(
+                  'Something to practise until next time',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: c.textMuted,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ContentRow(item: practise.first, source: 'home:after_session'),
+              ],
+            ],
+          ),
+        ),
+      );
+    }
+    if (cards.isNotEmpty) cards.add(const SizedBox(height: 12));
+    return cards;
+  }
+
   /// "Today, 17:00", "Tomorrow, 9:30", else "Thu 30 Oct, 17:00".
   static String _when(DateTime at, DateTime now) {
     final today = DateTime(now.year, now.month, now.day);
@@ -868,13 +1170,25 @@ class _HomeTabState extends State<HomeTab> {
     final now = DateTime.now();
     final today = dailyPick(now: now, premium: premium);
     final dayPart = DayPart.of(now);
+    final goals = userGoals();
     final forNow = recommend(
       dayPart: dayPart,
       count: 5,
       now: now,
       premium: premium,
       exclude: {today.id},
+      goals: goals,
+      kindBoost: _kindBoost,
     );
+    // The course they're in, else the one that fits their goals if they
+    // haven't started it.
+    final active = CourseStore.instance.active;
+    final suggested = courseForGoals(goals);
+    final course =
+        active ??
+        (suggested != null && !CourseStore.instance.of(suggested).started
+            ? suggested
+            : null);
     return ListView(
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       children: [
@@ -908,10 +1222,15 @@ class _HomeTabState extends State<HomeTab> {
         ),
         const SizedBox(height: 12),
         const PillarStripe(),
-        const SizedBox(height: 24),
+        _crisisLink(),
+        const SizedBox(height: 12),
         _moodCard(),
         const SizedBox(height: 20),
         _todayCard(today),
+        if (course != null) ...[
+          const SizedBox(height: 12),
+          CourseCard(course: course, suggested: active == null),
+        ],
         const SizedBox(height: 28),
         if (forNow.isNotEmpty) ...[
           SectionHeader(title: dayPart.heading),
@@ -919,7 +1238,9 @@ class _HomeTabState extends State<HomeTab> {
           ContentStrip(items: forNow, source: 'home:${dayPart.name}'),
           const SizedBox(height: 28),
         ],
+        _savedStrip(),
         _practiceCard(),
+        _insightsTeaser(premium),
         const SectionHeader(title: 'Quick access'),
         const SizedBox(height: 12),
         // A fixed aspect ratio ties tile height to screen width, so the
@@ -937,6 +1258,7 @@ class _HomeTabState extends State<HomeTab> {
           children: [for (final item in _quick) _quickCard(item)],
         ),
         const SizedBox(height: 24),
+        ..._therapyNotes(),
         _therapyBanner(),
       ],
     );

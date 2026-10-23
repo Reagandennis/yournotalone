@@ -16,6 +16,8 @@ import '../brand.dart';
 import '../care/care_dashboard_screen.dart';
 import '../care/care_repository.dart';
 import '../care/therapist_sessions_screen.dart';
+import '../discover/content_widgets.dart';
+import '../discover/goals.dart';
 import '../legal/legal_content.dart';
 import '../notifications/session_notifications.dart';
 import '../legal/legal_screen.dart';
@@ -457,6 +459,81 @@ class _SettingsTabState extends State<SettingsTab> {
     );
   }
 
+  /// "Sleep, Anxious", or "+3" past two, for the settings row.
+  String? _goalsSummary() {
+    final goals = userGoals();
+    if (goals.isEmpty) return null;
+    final names = [for (final g in goals) g.label];
+    return names.length <= 2
+        ? names.join(', ')
+        : '${names.take(2).join(', ')} +${names.length - 2}';
+  }
+
+  /// The reasons asked at onboarding, editable: they put matching
+  /// suggestions, needs and courses first.
+  Future<void> _chooseGoals(BuildContext context) async {
+    final picked = {...userGoals()};
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setSheet) {
+          final c = sheetContext.brand;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'What would help most?',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: c.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'We\'ll put these first in your suggestions.',
+                    style: TextStyle(fontSize: 13, color: c.textMuted),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final need in goalChoices)
+                        FilterPill(
+                          label: need.label,
+                          icon: need.icon,
+                          color: need.color,
+                          selected: picked.contains(need),
+                          onTap: () => setSheet(() {
+                            if (!picked.remove(need)) picked.add(need);
+                          }),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.of(sheetContext).pop();
+                      await saveGoals(picked);
+                      if (mounted) setState(() {});
+                    },
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   /// Match my phone, Light or Dark. The app changes as soon as one is
   /// picked, so the sheet stays open long enough to see it.
   Future<void> _chooseAppearance(BuildContext context) {
@@ -588,6 +665,13 @@ class _SettingsTabState extends State<SettingsTab> {
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const RemindersScreen()),
           ),
+        ),
+        _row(
+          context,
+          Icons.flag_outlined,
+          'What would help most',
+          value: _goalsSummary(),
+          onTap: () => _chooseGoals(context),
         ),
         ValueListenableBuilder<ThemeMode>(
           valueListenable: AppearanceSetting.instance,

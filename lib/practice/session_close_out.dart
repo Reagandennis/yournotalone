@@ -6,38 +6,46 @@ import '../billing/nudges.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
-import '../home/mood_face.dart';
-import '../home/mood_repository.dart';
-import '../home/mood_scale.dart';
 import '../journal/new_entry.dart';
+import 'feeling_store.dart';
 import 'practice_repository.dart';
 
 /// What a finished session ends with.
 ///
 /// Sessions used to end on a single "Done" button and evaporate: nothing
 /// recorded, nothing asked, nowhere to go. This closes the loop — it says
-/// the session was kept, asks how the person feels *now* (the one moment
-/// that answer is most informative), and offers to write about it.
+/// the session was kept, asks how the person feels *now* compared with
+/// when they started (the one moment that answer is most informative),
+/// and offers to write about it.
+///
+/// It used to ask with the five mood faces and save the answer as the
+/// day's mood, which overwrote the morning's check-in with a post-session
+/// mood. Better / same / worse is the question that's actually being
+/// answered, and it's kept separately ([FeelingStore]).
 class SessionCloseOut extends StatefulWidget {
   const SessionCloseOut({
     super.key,
     required this.title,
     required this.accent,
-    this.moodRepository,
+    required this.kind,
+    this.feelings,
   });
 
-  /// The session just finished — seeds the journal entry.
+  /// The session just finished — seeds the journal entry, and is the slug
+  /// the feeling is kept against.
   final String title;
   final Color accent;
-  final MoodRepository? moodRepository;
+  final PracticeKind kind;
+
+  /// Injectable for tests.
+  final FeelingStore? feelings;
 
   @override
   State<SessionCloseOut> createState() => _SessionCloseOutState();
 }
 
 class _SessionCloseOutState extends State<SessionCloseOut> {
-  late final _moods = widget.moodRepository ?? MoodRepository();
-  int? _picked;
+  Feeling? _picked;
 
   @override
   void initState() {
@@ -65,13 +73,59 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
     }
   }
 
-  Future<void> _pick(int index) async {
-    setState(() => _picked = index);
-    try {
-      await _moods.saveMood(index);
-    } catch (_) {
-      // The session still counted; a missed mood isn't worth an error here.
-    }
+  Future<void> _pick(Feeling feeling) async {
+    if (_picked != null) return;
+    setState(() => _picked = feeling);
+    // Never throws; the session still counted either way.
+    await (widget.feelings ?? FeelingStore.instance).record(
+      kind: widget.kind,
+      slug: widget.title,
+      feeling: feeling,
+    );
+  }
+
+  Widget _choice(Feeling feeling, IconData icon) {
+    final c = context.brand;
+    final picked = _picked == feeling;
+    return Expanded(
+      child: AnimatedOpacity(
+        opacity: _picked != null && !picked ? 0.4 : 1,
+        duration: const Duration(milliseconds: 220),
+        child: Material(
+          color: picked ? c.tint(widget.accent, 0.16) : c.card,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+            side: BorderSide(
+              color: picked ? c.accent(widget.accent) : c.border,
+              width: 1.2,
+            ),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => _pick(feeling),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+              child: Column(
+                children: [
+                  Icon(icon, size: 22, color: c.accent(widget.accent)),
+                  const SizedBox(height: 4),
+                  Text(
+                    feeling.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: c.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -88,31 +142,19 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
             color: c.ink,
           ),
         ),
+        const SizedBox(height: 2),
+        Text(
+          'Compared with when you started.',
+          style: TextStyle(fontSize: 12.5, color: c.textMuted),
+        ),
         const SizedBox(height: 10),
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (final (i, mood) in moodLevels.indexed)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(24),
-                  onTap: () => _pick(i),
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: AnimatedScale(
-                      scale: _picked == i ? 1.14 : 1.0,
-                      duration: const Duration(milliseconds: 260),
-                      curve: Curves.easeOutBack,
-                      child: MoodFace(
-                        level: mood,
-                        size: 36,
-                        dimmed: _picked != null && _picked != i,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            _choice(Feeling.worse, Icons.south_rounded),
+            const SizedBox(width: 8),
+            _choice(Feeling.same, Icons.east_rounded),
+            const SizedBox(width: 8),
+            _choice(Feeling.better, Icons.north_rounded),
           ],
         ),
         const SizedBox(height: 20),

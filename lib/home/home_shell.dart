@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../app_navigation.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../care/therapist_sessions_screen.dart';
+import '../courses/course_progress.dart';
+import '../discover/content_index.dart';
+import '../discover/saved_store.dart';
+import '../journal/journal_hub_screen.dart';
 import '../notifications/local_notifications.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
+import '../recovery/recovery_screen.dart';
+import '../reminders/reminders_service.dart';
 import '../therapy/call_screen.dart';
 import '../therapy/therapy_screen.dart';
 import 'explore_tab.dart';
@@ -26,6 +33,13 @@ void openSessionScreen(String payload) {
       Supabase.instance.client.auth.currentUser == null) {
     return;
   }
+  if (payload.startsWith(reminderPayloadPrefix)) {
+    openReminderTarget(
+      navigator,
+      payload.substring(reminderPayloadPrefix.length),
+    );
+    return;
+  }
   if (appRoutes.isOpen(CallScreen.routeName)) return;
   final name = payload == 'therapist'
       ? TherapistSessionsScreen.routeName
@@ -37,6 +51,40 @@ void openSessionScreen(String payload) {
   navigator.push(payload == 'therapist'
       ? TherapistSessionsScreen.route()
       : TherapyScreen.route());
+}
+
+/// Asks the shell to switch tab (0 Home, 1 Explore, 2 Settings), for
+/// taps that arrive from outside it, like a notification.
+final homeTabRequest = ValueNotifier<int?>(null);
+
+/// Where a tapped daily reminder leads: the morning check-in to the mood
+/// card on Home, the pledge to recovery, evening pages to the journal, and
+/// wind-down straight into the wind-down plan.
+void openReminderTarget(NavigatorState navigator, String kindName) {
+  final kind = ReminderKind.values.asNameMap()[kindName];
+  if (kind == null) return;
+  Sentry.metrics.count('reminder.opened', 1, attributes: {
+    'kind': SentryAttribute.string(kind.name),
+  });
+  if (appRoutes.isOpen(CallScreen.routeName)) return;
+  navigator.popUntil((route) => route.isFirst);
+  switch (kind) {
+    case ReminderKind.checkin:
+      homeTabRequest.value = 0;
+    case ReminderKind.pledge:
+      navigator.push(
+        MaterialPageRoute(builder: (_) => const RecoveryScreen()),
+      );
+    case ReminderKind.journal:
+      navigator.push(
+        MaterialPageRoute(builder: (_) => const JournalHubScreen()),
+      );
+    case ReminderKind.windDown:
+      final plan = contentIndex.firstWhere(
+        (i) => i.id == 'tool:Wind-down plan',
+      );
+      openContent(navigator.context, plan, source: 'reminder:windDown');
+  }
 }
 
 /// The signed-in shell: bottom navigation between Home, Explore, and
@@ -61,6 +109,11 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     // People who signed up before the app asked, or who skipped the step:
     // the system prompt once, then never again from here.
     NotificationPermission.instance.promptIfNeverAsked();
+    // Reminders set before they carried a payload learn where to lead.
+    RemindersService.instance.refreshScheduled();
+    SavedStore.instance.load();
+    CourseStore.instance.load();
+    homeTabRequest.addListener(_onTabRequest);
     final payload = LocalNotifications.takeLaunchPayload();
     if (payload != null) {
       WidgetsBinding.instance
@@ -68,8 +121,16 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     }
   }
 
+  void _onTabRequest() {
+    final index = homeTabRequest.value;
+    if (index == null || !mounted) return;
+    homeTabRequest.value = null;
+    setState(() => _index = index);
+  }
+
   @override
   void dispose() {
+    homeTabRequest.removeListener(_onTabRequest);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }

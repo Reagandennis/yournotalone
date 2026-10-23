@@ -5,6 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/courses/course_catalog.dart';
+import 'package:yournotalone/courses/course_screen.dart';
+import 'package:yournotalone/discover/content_index.dart';
+import 'package:yournotalone/discover/content_widgets.dart';
+import 'package:yournotalone/home/mood_insights_screen.dart';
 import 'package:yournotalone/auth/login_screen.dart';
 import 'package:yournotalone/auth/signup_screen.dart';
 import 'package:yournotalone/brand.dart';
@@ -283,6 +288,13 @@ void main() {
     'CbtScreen': () => const CbtScreen(),
     'ThoughtRecordScreen': () => const ThoughtRecordScreen(),
     'SighScreen': () => const SighScreen(),
+    'CourseScreen': () => CourseScreen(course: courses.first),
+    'ContentListScreen': () => ContentListScreen.forNeed(Need.sleep),
+    'MoodInsightsScreen': () => MoodInsightsScreen(
+          moods: _Moods(),
+          practice: _Practice(),
+          feelings: () async => const [],
+        ),
   };
 
   for (final (label, size, textScale) in _devices) {

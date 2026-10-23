@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import 'feeling_store.dart';
 import 'practice_repository.dart';
 
 /// Everything you've actually done in the app: minutes practised, the run
@@ -24,10 +25,19 @@ class _PracticeScreenState extends State<PracticeScreen> {
   List<PracticeSession>? _sessions;
   bool _error = false;
 
+  /// "You felt better after 8 of your last 10 sessions", once there are
+  /// enough answers to say it.
+  String? _feelingLine;
+
   @override
   void initState() {
     super.initState();
     _load();
+    FeelingStore.instance.recent().then((records) {
+      if (mounted) {
+        setState(() => _feelingLine = FeelingStore.summarise(records).line);
+      }
+    });
   }
 
   Future<void> _load() async {
@@ -247,6 +257,28 @@ class _PracticeScreenState extends State<PracticeScreen> {
             ],
           ),
         ),
+        if (_feelingLine != null) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: c.tint(Pillars.red, 0.06),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.favorite_rounded, size: 18, color: c.red),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    _feelingLine!,
+                    style: TextStyle(fontSize: 13.5, color: c.ink, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
         const SizedBox(height: 24),
         const SectionHeader(title: 'Every session'),
         const SizedBox(height: 12),

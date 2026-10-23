@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../discover/content_index.dart';
+import '../discover/content_widgets.dart';
+import '../discover/goals.dart';
 import 'onboarding_ui.dart';
 import 'paywall_screen.dart';
 import 'therapy_offer_screen.dart';
@@ -58,10 +61,15 @@ class CheckinScreen extends StatefulWidget {
 
 class _CheckinScreenState extends State<CheckinScreen> {
   _CheckinOption? _selected;
+  final _goals = <Need>{};
 
   void _continue() {
     final choice = _selected;
     if (choice == null) return;
+    // Shapes Home's suggestions and Explore's order from the first visit.
+    if (_goals.isNotEmpty) {
+      saveOnboardingAnswers({goalKey: [for (final g in _goals) g.name]});
+    }
     final next = choice.needsSupport
         ? TherapyOfferScreen(checkin: choice.key)
         : PaywallScreen(
@@ -160,6 +168,37 @@ class _CheckinScreenState extends State<CheckinScreen> {
         ),
         const SizedBox(height: 26),
         for (final option in _options) _optionCard(option),
+        const SizedBox(height: 18),
+        Text(
+          'What would help most?',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: c.ink,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Pick any. We\'ll put these first for you.',
+          style: TextStyle(fontSize: 13, color: c.textMuted),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final need in goalChoices)
+              FilterPill(
+                label: need.label,
+                icon: need.icon,
+                color: need.color,
+                selected: _goals.contains(need),
+                onTap: () => setState(() {
+                  if (!_goals.remove(need)) _goals.add(need);
+                }),
+              ),
+          ],
+        ),
       ],
     );
   }
