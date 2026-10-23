@@ -29,14 +29,24 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Home tab is up first: mood check-in and quick access.
+    // Home tab is up first: mood check-in, then quick access further down.
     expect(find.text('How are you feeling today?'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Quick access'),
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(HomeTab),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     expect(find.text('Quick access'), findsOneWidget);
 
     await tester.tap(find.text('Explore'));
     await tester.pumpAndSettle();
-    expect(find.text('Meditations & breathing'), findsOneWidget);
-    expect(find.text('Wellbeing sounds'), findsOneWidget);
+    expect(find.text('What do you need right now?'), findsOneWidget);
+    expect(find.text('Search'), findsOneWidget);
 
     await tester.tap(find.text('Settings'));
     await tester.pumpAndSettle();
@@ -62,14 +72,17 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Only the faces on the card: an Awful pick opens a sheet with its own.
+    // Only the faces in the check-in row: an Awful pick opens a sheet with
+    // its own, and the week strip below repeats today's pick.
     MoodFace face(String label) => tester.widget<MoodFace>(
-          find.descendant(
-            of: find.byType(HomeTab),
-            matching: find.byWidgetPredicate(
-              (w) => w is MoodFace && w.level.label == label,
-            ),
-          ),
+          find
+              .descendant(
+                of: find.byType(HomeTab),
+                matching: find.byWidgetPredicate(
+                  (w) => w is MoodFace && w.level.label == label,
+                ),
+              )
+              .first,
         );
     // Nothing picked yet: every face is in full colour.
     expect(face('Great').dimmed, isFalse);

@@ -286,8 +286,15 @@ void main() {
     )));
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(
+      find.text('2 days in a row'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(find.text('2 days in a row'), findsOneWidget);
     expect(find.textContaining('18 minutes this week'), findsOneWidget);
     expect(find.text('Last time: Body scan'), findsOneWidget);
+    // And one tap back into it.
+    expect(find.text('Continue'), findsOneWidget);
   });
 }

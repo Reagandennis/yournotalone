@@ -4,21 +4,22 @@ import '../brand.dart';
 import '../cbt/cbt_catalog.dart';
 import '../cbt/cbt_content.dart';
 import '../cbt/cbt_screen.dart';
+import '../discover/content_index.dart';
+import '../discover/content_widgets.dart';
+import '../discover/usage_store.dart';
 import '../journal/journal_hub_screen.dart';
-import '../journal/journal_prompts.dart';
-import '../meditation/meditation_catalog.dart';
 import '../meditation/meditations_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../sleep/sleep_catalog.dart';
 import '../sleep/sleep_content.dart';
 import '../sleep/sleep_screen.dart';
-import '../sounds/sounds_catalog.dart';
 import '../sounds/sounds_screen.dart';
 import '../stress/stress_catalog.dart';
 import '../stress/stress_content.dart';
 import '../stress/stress_screen.dart';
 import '../therapy/therapy_screen.dart';
 import '../toolkit/toolkit_hub.dart';
+import 'home_ui.dart';
 
 /// Soft grey used for the tiles and panels on this tab: a wash of ink over
 /// the page, made opaque so the floating card hides what scrolls under it.
@@ -114,18 +115,31 @@ final _programs = <_Program>[
   ),
 ];
 
-/// A collection: everything of one kind, counted from the real catalogues
-/// so the number can never drift from what the destination offers.
+/// A collection: everything of some kinds in the index, so the count can
+/// never drift from what the list it opens offers.
 class _Collection {
-  const _Collection(this.title, this.count, this.unit, this.color, this.open);
+  const _Collection(
+    this.title,
+    this.unit,
+    this.color,
+    this.kinds,
+    this.subtitle,
+  );
 
   final String title;
-  final int count;
   final String unit;
 
   /// The pillar colour of whatever the collection holds.
   final Color color;
-  final WidgetBuilder open;
+  final Set<ContentKind> kinds;
+
+  /// The intro on the list it opens.
+  final String subtitle;
+
+  List<ContentItem> get items => [
+    for (final item in contentIndex)
+      if (kinds.contains(item.kind)) item,
+  ];
 
   /// The card's fill. Ink flips to off-white in the dark, like the logo's
   /// black pillar; the coloured cards look the same in both modes.
@@ -134,50 +148,84 @@ class _Collection {
   /// Ink on yellow (in both modes), white on the other colours, and the
   /// reverse of the ink card on it: keeps the text readable.
   Color foreground(BrandColors c) => switch (color) {
-        _cardYellow => BrandColors.light.ink,
-        Pillars.black => c.onInk,
-        _ => Colors.white,
-      };
+    _cardYellow => BrandColors.light.ink,
+    Pillars.black => c.onInk,
+    _ => Colors.white,
+  };
 }
 
-final _collections = <_Collection>[
-  _Collection(
-    'Breathing exercises',
-    breathPatterns.length,
-    'rhythms',
-    _cardBlue,
-    (_) => const MeditationsScreen(),
-  ),
-  _Collection(
-    'Guided meditations',
-    meditations.length,
-    'sessions',
-    Pillars.black,
-    (_) => const MeditationsScreen(),
-  ),
-  _Collection(
-    'Wellbeing sounds',
-    soundsCatalog.length,
-    'loops',
-    _cardYellow,
-    (_) => const SoundsScreen(),
-  ),
-  _Collection(
-    'Journal prompts',
-    journalPrompts.length,
-    'prompts',
-    _cardRed,
-    (_) => const JournalHubScreen(),
-  ),
+const _collections = <_Collection>[
+  _Collection('Breathing exercises', 'rhythms', _cardBlue, {
+    ContentKind.breathing,
+  }, 'A few minutes of paced breathing, each with its own rhythm.'),
+  _Collection('Guided meditations', 'sessions', Pillars.black, {
+    ContentKind.meditation,
+  }, 'Timed sessions with gentle guidance on screen.'),
+  _Collection('Wellbeing sounds', 'loops', _cardYellow, {
+    ContentKind.sound,
+  }, 'Ambient sound for focus, sleep and calm. Plays on with the screen off.'),
+  _Collection('Journal prompts', 'prompts', _cardRed, {
+    ContentKind.prompt,
+  }, 'A first line to get you writing, so the page is never blank.'),
+  _Collection('Short reads', 'reads', _cardBlue, {
+    ContentKind.lesson,
+  }, 'The ideas behind the tools, a few minutes each.'),
+  _Collection('Recovery tools', 'tools', Pillars.black, {
+    ContentKind.recovery,
+  }, 'For cravings and the commitments you\'re keeping.'),
 ];
 
-/// Explore tab: search, the four pillars as tiles, featured programmes,
-/// the collections, and a way to book a human therapist.
+/// Explore tab: search, browse by need, the four pillars as tiles,
+/// featured programmes, the collections, and a way to book a human
+/// therapist.
 class ExploreTab extends StatelessWidget {
   const ExploreTab({super.key});
 
   void _push(BuildContext context, WidgetBuilder builder) =>
       Navigator.of(context).push(MaterialPageRoute(builder: builder));
+
+  /// "What do you need right now?": one chip per need, each opening
+  /// everything tagged for it.
+  Widget _needs(BuildContext context) {
+    final c = context.brand;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 10),
+          child: Text(
+            'What do you need right now?',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: c.ink,
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 18 + 22 * MediaQuery.textScalerOf(context).scale(1),
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            clipBehavior: Clip.none,
+            itemCount: Need.values.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 8),
+            itemBuilder: (context, i) {
+              final need = Need.values[i];
+              return FilterPill(
+                label: need.label,
+                icon: need.icon,
+                color: need.color,
+                selected: false,
+                onTap: () => Navigator.of(context).push(
+                  ContentListScreen.route(ContentListScreen.forNeed(need)),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _searchBar(BuildContext context) {
     final c = context.brand;
@@ -355,8 +403,8 @@ class ExploreTab extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              'A list of our featured content to get the most of your day '
-              'started',
+              'Step-by-step tools and short reads, each built around one '
+              'thing.',
               style: TextStyle(fontSize: 12, color: c.ink, height: 1.4),
             ),
           ),
@@ -370,6 +418,8 @@ class ExploreTab extends StatelessWidget {
   Widget _collectionCard(BuildContext context, _Collection collection) {
     final c = context.brand;
     final foreground = collection.foreground(c);
+    final items = collection.items;
+    final fresh = items.any((i) => i.isNewAt(DateTime.now()));
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
@@ -377,7 +427,16 @@ class ExploreTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(_radius),
         child: InkWell(
           borderRadius: BorderRadius.circular(_radius),
-          onTap: () => _push(context, collection.open),
+          onTap: () => Navigator.of(context).push(
+            ContentListScreen.route(
+              ContentListScreen(
+                title: collection.title,
+                subtitle: collection.subtitle,
+                items: items,
+                source: 'collection:${collection.unit}',
+              ),
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 16, 14, 16),
             child: Row(
@@ -386,19 +445,30 @@ class ExploreTab extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        collection.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 15.5,
-                          fontWeight: FontWeight.w600,
-                          color: foreground,
-                        ),
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              collection.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 15.5,
+                                fontWeight: FontWeight.w600,
+                                color: foreground,
+                              ),
+                            ),
+                          ),
+                          if (fresh) ...[
+                            const SizedBox(width: 8),
+                            const NewChip(),
+                          ],
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${collection.count} ${collection.unit}',
+                        '${items.length} ${collection.unit} · '
+                        '${countLine(items)}',
                         style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
@@ -492,7 +562,9 @@ class ExploreTab extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(18, 16, 18, _floatingCardClearance),
       children: [
         _searchBar(context),
-        const SizedBox(height: 18),
+        const SizedBox(height: 20),
+        _needs(context),
+        const SizedBox(height: 22),
         _pillarGrid(context),
         const SizedBox(height: 20),
         _featuredPanel(context),
@@ -515,107 +587,16 @@ class ExploreTab extends StatelessWidget {
   }
 }
 
-/// One thing the search can find, and where opening it leads.
-class _SearchItem {
-  const _SearchItem(this.title, this.meta, this.icon, this.open);
+/// Whether [item] matches [query]: title, meta, blurb, or a need it's
+/// tagged for ("sleep", "anxious").
+bool _matches(ContentItem item, String query) =>
+    item.title.toLowerCase().contains(query) ||
+    item.meta.toLowerCase().contains(query) ||
+    item.blurb.toLowerCase().contains(query) ||
+    item.needs.any((n) => n.label.toLowerCase().contains(query));
 
-  final String title;
-  final String meta;
-  final IconData icon;
-  final WidgetBuilder open;
-}
-
-/// Built from the real catalogues, so the search covers exactly what the
-/// app offers today. Results open the list the item lives in, which keeps
-/// the usual Premium gating in place.
-final _searchItems = <_SearchItem>[
-  for (final p in breathPatterns)
-    _SearchItem(
-      p.title,
-      'Breathing · ${p.rhythmLabel}',
-      Icons.air_rounded,
-      (_) => const MeditationsScreen(),
-    ),
-  for (final m in meditations)
-    _SearchItem(
-      m.title,
-      'Meditation · ${m.minutes} min',
-      m.icon,
-      (_) => const MeditationsScreen(),
-    ),
-  for (final s in soundsCatalog)
-    _SearchItem(
-      s.title,
-      'Sound · ${s.category.label}',
-      s.icon,
-      (_) => const SoundsScreen(),
-    ),
-  for (final p in journalPrompts)
-    _SearchItem(
-      p.title,
-      'Journal prompt',
-      p.icon,
-      (_) => const JournalHubScreen(),
-    ),
-  for (final t in cbtTools)
-    _SearchItem(
-      t.title,
-      'CBT · ${t.minutes} min',
-      t.icon,
-      (_) => const CbtScreen(),
-    ),
-  for (final t in sleepTools)
-    _SearchItem(
-      t.title,
-      'Sleep · ${t.meta ?? '${t.minutes} min'}',
-      t.icon,
-      (_) => const SleepScreen(),
-    ),
-  for (final t in stressTools)
-    _SearchItem(
-      t.title,
-      'Stress · ${t.meta ?? '${t.minutes} min'}',
-      t.icon,
-      (_) => const StressScreen(),
-    ),
-  _SearchItem(
-    'Urge surfing',
-    'Recovery · 8 min',
-    Icons.surfing_rounded,
-    (_) => const RecoveryScreen(),
-  ),
-  _SearchItem(
-    'HALT check',
-    'Recovery',
-    Icons.psychology_alt_rounded,
-    (_) => const RecoveryScreen(),
-  ),
-  _SearchItem(
-    'Play the tape forward',
-    'Recovery',
-    Icons.movie_filter_rounded,
-    (_) => const RecoveryScreen(),
-  ),
-  _SearchItem(
-    'My commitments',
-    'Recovery · streaks',
-    Icons.verified_rounded,
-    (_) => const RecoveryScreen(),
-  ),
-  _SearchItem(
-    'Milestones',
-    'Recovery',
-    Icons.emoji_events_rounded,
-    (_) => const RecoveryScreen(),
-  ),
-  _SearchItem(
-    'Trigger tracker',
-    'Recovery',
-    Icons.bolt_rounded,
-    (_) => const RecoveryScreen(),
-  ),
-];
-
+/// Searches the whole index. A result opens the item itself (through the
+/// usual Premium check), not the list it lives in.
 class _ExploreSearchDelegate extends SearchDelegate<void> {
   _ExploreSearchDelegate() : super(searchFieldLabel: 'Search');
 
@@ -654,23 +635,106 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
   );
 
   @override
-  Widget buildResults(BuildContext context) => _list(context);
+  Widget buildResults(BuildContext context) => _body(context);
 
   @override
-  Widget buildSuggestions(BuildContext context) => _list(context);
+  Widget buildSuggestions(BuildContext context) => _body(context);
+
+  Widget _body(BuildContext context) =>
+      query.trim().isEmpty ? _start(context) : _list(context);
+
+  Widget _heading(BuildContext context, String text, {Widget? trailing}) =>
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 18, 12, 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: context.brand.ink,
+                ),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
+      );
+
+  /// Before anything is typed: recent searches, then a nudge by need.
+  Widget _start(BuildContext context) {
+    final c = context.brand;
+    return FutureBuilder<List<String>>(
+      future: UsageStore.instance.recentSearches(),
+      builder: (context, snapshot) {
+        final recent = snapshot.data ?? const <String>[];
+        return ListView(
+          padding: const EdgeInsets.only(bottom: 24),
+          children: [
+            if (recent.isNotEmpty) ...[
+              _heading(
+                context,
+                'Recent',
+                trailing: TextButton(
+                  onPressed: () async {
+                    await UsageStore.instance.clearSearches();
+                    // Rebuild the suggestions with the list gone.
+                    query = '';
+                    if (context.mounted) showSuggestions(context);
+                  },
+                  child: const Text('Clear', style: TextStyle(fontSize: 13)),
+                ),
+              ),
+              for (final r in recent)
+                ListTile(
+                  leading: Icon(Icons.history_rounded, color: c.textMuted),
+                  title: Text(r, style: TextStyle(fontSize: 15, color: c.ink)),
+                  onTap: () {
+                    query = r;
+                    showResults(context);
+                  },
+                ),
+            ],
+            _heading(context, 'Try searching for'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final need in Need.values)
+                    FilterPill(
+                      label: need.label,
+                      icon: need.icon,
+                      color: need.color,
+                      selected: false,
+                      onTap: () {
+                        close(context, null);
+                        Navigator.of(context).push(
+                          ContentListScreen.route(
+                            ContentListScreen.forNeed(need),
+                          ),
+                        );
+                      },
+                    ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _list(BuildContext context) {
     final c = context.brand;
     final q = query.trim().toLowerCase();
-    final hits = q.isEmpty
-        ? _searchItems
-        : _searchItems
-              .where(
-                (i) =>
-                    i.title.toLowerCase().contains(q) ||
-                    i.meta.toLowerCase().contains(q),
-              )
-              .toList();
+    final hits = [
+      for (final item in contentIndex)
+        if (_matches(item, q)) item,
+    ];
     if (hits.isEmpty) {
       return Center(
         child: Padding(
@@ -687,6 +751,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
       itemCount: hits.length,
       itemBuilder: (context, i) {
         final item = hits[i];
+        final locked = item.premium && !isPremiumUser();
         return ListTile(
           leading: Container(
             width: 40,
@@ -697,21 +762,31 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
             ),
             child: Icon(item.icon, size: 20, color: c.ink),
           ),
-          title: Text(
-            item.title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: c.ink,
-            ),
+          title: Row(
+            children: [
+              Flexible(
+                child: Text(
+                  item.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: c.ink,
+                  ),
+                ),
+              ),
+              if (locked) ...[const SizedBox(width: 6), const PremiumChip()],
+            ],
           ),
           subtitle: Text(
             item.meta,
             style: TextStyle(fontSize: 12.5, color: c.textMuted),
           ),
           onTap: () {
+            UsageStore.instance.recordSearch(query);
             close(context, null);
-            Navigator.of(context).push(MaterialPageRoute(builder: item.open));
+            openContent(context, item, source: 'search');
           },
         );
       },

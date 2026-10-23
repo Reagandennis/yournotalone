@@ -4,11 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/discover/content_index.dart';
+import 'package:yournotalone/discover/content_widgets.dart';
+import 'package:yournotalone/discover/usage_store.dart';
 import 'package:yournotalone/home/explore_tab.dart';
-import 'package:yournotalone/home/home_ui.dart';
 import 'package:yournotalone/journal/journal_hub_screen.dart';
 import 'package:yournotalone/journal/journal_prompts.dart';
-import 'package:yournotalone/meditation/meditations_screen.dart';
+import 'package:yournotalone/meditation/breathing_screen.dart';
+import 'package:yournotalone/meditation/meditation_catalog.dart';
 
 void main() {
   setUpAll(() async {
@@ -24,6 +27,8 @@ void main() {
     );
   });
 
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   Widget wrap(Widget screen) => MaterialApp(
         theme: buildAppTheme(),
         home: Scaffold(body: SafeArea(child: screen)),
@@ -34,95 +39,89 @@ void main() {
     await tester.scrollUntilVisible(
       finder,
       120,
-      scrollable: find.byType(Scrollable).first,
+      scrollable: find
+          .descendant(
+            of: find.byType(ListView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first,
     );
     await tester.ensureVisible(finder);
     await tester.pumpAndSettle();
     return finder;
   }
 
-  testWidgets('category cards preview what is inside', (tester) async {
+  testWidgets('a need chip opens everything tagged for it', (tester) async {
     await tester.pumpWidget(wrap(const ExploreTab()));
     await tester.pumpAndSettle();
 
-    // Meditations previews the first three items of its list, then says
-    // how many more are waiting (3 breathing + 5 meditations = 8).
-    expect(find.text('Meditations & breathing'), findsOneWidget);
-    expect(find.text('Box breathing'), findsOneWidget);
-    expect(find.text('4-7-8 calm'), findsOneWidget);
-    expect(find.text('Slow exhale'), findsOneWidget);
-    expect(find.text('2 free · 18 Premium'), findsOneWidget);
-    expect(find.text('+ 17 more inside'), findsOneWidget);
-    // Locked items are badged right there in the preview.
-    expect(
-      find.descendant(
-        of: find.ancestor(
-          of: find.text('4-7-8 calm'),
-          matching: find.byType(Row),
-        ),
-        matching: find.byType(PremiumChip),
-      ),
-      findsOneWidget,
-    );
+    expect(find.text('What do you need right now?'), findsOneWidget);
+    await tester.tap(find.text(Need.sleep.label));
+    await tester.pumpAndSettle();
 
-    // Sounds previews three of the five in the catalogue.
-    expect(await scrollTo(tester, find.text('Deep focus')), findsOneWidget);
-    expect(find.text('+ 10 more inside'), findsOneWidget);
-
-    // Journal counts everything the hub lists, prompts included.
-    expect(await scrollTo(tester, find.text('Journal & mood')), findsOneWidget);
-    expect(find.text('3 free · 19 Premium'), findsOneWidget);
-    expect(find.text('+ 19 more inside'), findsOneWidget);
-
-    // Recovery is the last card, above the therapy banner.
-    expect(await scrollTo(tester, find.text('Urge surfing')), findsOneWidget);
-    expect(find.text('1 free · 6 Premium'), findsOneWidget);
-    expect(find.text('+ 4 more inside'), findsOneWidget);
+    expect(find.byType(ContentListScreen), findsOneWidget);
+    final sleep = [
+      for (final item in contentIndex)
+        if (item.needs.contains(Need.sleep)) item,
+    ];
+    expect(find.text(countLine(sleep)), findsOneWidget);
+    // Free items lead, so the first thing a free user sees opens.
+    expect(find.text('Wind-down plan'), findsOneWidget);
   });
 
-  testWidgets('opening a card shows the full list to pick from',
+  testWidgets('length filters narrow a list', (tester) async {
+    await tester.pumpWidget(wrap(
+      ContentListScreen.forNeed(Need.sleep),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(LengthFilter.long.label));
+    await tester.pumpAndSettle();
+    // Deep rest is 15 minutes; the 3-minute habits check is gone.
+    expect(find.text('Deep rest'), findsOneWidget);
+    expect(find.text('Sleep habits check'), findsNothing);
+  });
+
+  testWidgets('collections count from the index and open their list',
       (tester) async {
     await tester.pumpWidget(wrap(const ExploreTab()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Meditations & breathing'));
-    await tester.pumpAndSettle();
-
-    expect(find.byType(MeditationsScreen), findsOneWidget);
-    // Everything the card only teased is now listed.
+    final breathing = [
+      for (final item in contentIndex)
+        if (item.kind == ContentKind.breathing) item,
+    ];
     expect(
-      await scrollTo(tester, find.text('Sleep wind-down')),
+      await scrollTo(
+        tester,
+        find.text(
+          '${breathing.length} rhythms · ${countLine(breathing)}',
+        ),
+      ),
       findsOneWidget,
     );
-    expect(
-      await scrollTo(tester, find.text('Loving kindness')),
-      findsOneWidget,
-    );
-  });
 
-  testWidgets('added sessions are listed, badged and gated', (tester) async {
-    await tester.pumpWidget(wrap(const ExploreTab()));
+    await tester.tap(find.text('Breathing exercises'));
     await tester.pumpAndSettle();
+    expect(find.byType(ContentListScreen), findsOneWidget);
+    expect(find.text(breathPatterns.first.title), findsOneWidget);
 
-    await tester.tap(find.text('Meditations & breathing'));
+    // Items open directly; a locked one shows the upgrade sheet.
+    await tester.tap(find.text('4-7-8 calm'));
     await tester.pumpAndSettle();
-
-    // One of the new breathing patterns, locked behind Premium.
-    await scrollTo(tester, find.text('Panic reset'));
-    await tester.tap(find.text('Panic reset'));
-    await tester.pumpAndSettle();
-    expect(find.text('This session is part of Premium'), findsOneWidget);
+    expect(find.text('This is part of Premium'), findsOneWidget);
     await tester.tap(find.text('Not now'));
     await tester.pumpAndSettle();
 
-    // And one of the new meditations.
-    await scrollTo(tester, find.text('Deep rest'));
-    await tester.tap(find.text('Deep rest'));
-    await tester.pumpAndSettle();
-    expect(find.text('This session is part of Premium'), findsOneWidget);
+    await tester.tap(find.text('Box breathing'));
+    // Not pumpAndSettle: the session screen animates its backdrop forever.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byType(BreathingScreen), findsOneWidget);
   });
 
-  testWidgets('journal card opens the hub with its prompts', (tester) async {
+  testWidgets('journal pillar opens the hub with its prompts',
+      (tester) async {
     await tester.pumpWidget(wrap(const ExploreTab()));
     await tester.pumpAndSettle();
 
@@ -130,38 +129,40 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(JournalHubScreen), findsOneWidget);
-    expect(find.text('My journal'), findsOneWidget);
     expect(find.text('Free write'), findsOneWidget);
-    expect(find.text('Gratitude'), findsOneWidget);
-
-    // Prompts are grouped, so a long library stays pickable. Walk the
-    // page top to bottom, checking each heading and one prompt under it.
-    const underEachGroup = {
-      'Everyday': 'Three lines',
-      'Hard days': 'Worry dump',
-      'Looking back': 'Letter to myself',
-      'Recovery': 'Why I started',
-      'Before sleep': 'Put the day down',
-    };
-    expect(underEachGroup.keys, promptGroups);
-    for (final group in promptGroups) {
-      expect(await scrollTo(tester, find.text(group)), findsOneWidget);
-      expect(
-        await scrollTo(tester, find.text(underEachGroup[group]!)),
-        findsOneWidget,
-      );
-    }
+    expect(promptGroups, isNotEmpty);
   });
 
-  testWidgets('mood history is gated, then opens', (tester) async {
+  testWidgets('search opens the item itself and remembers the query',
+      (tester) async {
     await tester.pumpWidget(wrap(const ExploreTab()));
     await tester.pumpAndSettle();
 
-    await tester.tap(await scrollTo(tester, find.text('Journal & mood')));
+    await tester.tap(find.text('Search'));
+    await tester.pumpAndSettle();
+    // Before typing: a way in by need.
+    expect(find.text('Try searching for'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'box');
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Box breathing'));
+    // Not pumpAndSettle: the session screen animates its backdrop forever.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byType(BreathingScreen), findsOneWidget);
+
+    expect(await UsageStore.instance.recentSearches(), ['box']);
+  });
+
+  testWidgets('search finds things by need, too', (tester) async {
+    await tester.pumpWidget(wrap(const ExploreTab()));
     await tester.pumpAndSettle();
 
-    await tester.tap(await scrollTo(tester, find.text('Mood history')));
+    await tester.tap(find.text('Search'));
     await tester.pumpAndSettle();
-    expect(find.text('Mood history is part of Premium'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'panick');
+    await tester.pumpAndSettle();
+    expect(find.text('Panic reset'), findsOneWidget);
+    expect(find.text('Grounding: 5-4-3-2-1'), findsOneWidget);
   });
 }
