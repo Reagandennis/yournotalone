@@ -21,6 +21,9 @@ import '../practice/feeling_store.dart';
 import '../practice/practice_repository.dart';
 import '../practice/practice_screen.dart';
 import '../recovery/recovery_screen.dart';
+import '../rhythm/rhythm.dart';
+import '../rhythm/rhythm_card.dart';
+import '../rhythm/rhythm_screen.dart';
 import '../sounds/sounds_screen.dart';
 import '../support/crisis_screen.dart';
 import '../support/heavy_day_sheet.dart';
@@ -93,8 +96,8 @@ const _quickItems = [
 ];
 
 /// Home tab: greeting, a one-tap mood check-in that answers with
-/// something to try, the week's moods, today's prompt, suggestions for the
-/// time of day, the practice streak, quick access ordered by use, and the
+/// something to try, the week's moods, the week's sunrise, today's prompt,
+/// suggestions for the time of day, practice so far, quick access ordered by use, and the
 /// therapy banner (or the next booked session).
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key, this.practice, this.therapyRequests});
@@ -114,6 +117,10 @@ class _HomeTabState extends State<HomeTab> {
   late final _practiceRepo = widget.practice ?? PracticeRepository();
   int? _mood;
   PracticeSummary? _practice;
+  late final _rhythmRepo = RhythmRepository(practice: _practiceRepo);
+
+  /// The week's sunrise; null until loaded.
+  Rhythm? _rhythm;
 
   /// Check-ins from the last seven days; null until loaded.
   List<MoodEntry>? _week;
@@ -154,6 +161,7 @@ class _HomeTabState extends State<HomeTab> {
         .catchError((_) {
           // The strip just stays hidden; it's not worth an error here.
         });
+    _loadRhythm();
     (widget.therapyRequests ?? () => TherapyRepository().fetchRequests())()
         .then((requests) {
           if (mounted) {
@@ -175,6 +183,26 @@ class _HomeTabState extends State<HomeTab> {
         );
       }
     });
+  }
+
+  void _loadRhythm() {
+    _rhythmRepo
+        .fetch()
+        .then((rhythm) {
+          if (mounted) setState(() => _rhythm = rhythm);
+        })
+        .catchError((_) {
+          // The card just stays hidden.
+        });
+  }
+
+  Future<void> _openRhythm(Rhythm rhythm) async {
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => RhythmScreen(rhythm: rhythm)));
+    // The goal may have changed there.
+    final goal = await RhythmGoal.read();
+    if (mounted) setState(() => _rhythm = _rhythm?.withGoal(goal));
   }
 
   /// Puts the tiles people actually open first. A stable sort, so with no
@@ -234,6 +262,8 @@ class _HomeTabState extends State<HomeTab> {
     setState(() {
       _mood = index;
       _week = _withToday(index);
+      // A check-in counts: today's sun lights as it's made.
+      _rhythm = _rhythm?.withToday();
     });
     // An "Awful" day is the one moment the app knows someone is
     // struggling. Offer the door straight away — before the save, which
@@ -351,9 +381,9 @@ class _HomeTabState extends State<HomeTab> {
                   children: [
                     Expanded(
                       child: Text(
-                        summary.dayStreak > 1
-                            ? '${summary.dayStreak} days in a row'
-                            : 'Your practice',
+                        // The day-by-day count lives in the rhythm card,
+                        // which doesn't break on a rest day.
+                        'Your practice',
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -1225,6 +1255,10 @@ class _HomeTabState extends State<HomeTab> {
         _crisisLink(),
         const SizedBox(height: 12),
         _moodCard(),
+        if (_rhythm case final rhythm?) ...[
+          const SizedBox(height: 16),
+          RhythmCard(rhythm: rhythm, onTap: () => _openRhythm(rhythm)),
+        ],
         const SizedBox(height: 20),
         _todayCard(today),
         if (course != null) ...[

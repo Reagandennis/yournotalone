@@ -29,19 +29,20 @@ class _FakePractice extends PracticeRepository {
     required String title,
     required double minutes,
   }) async {
-    logged.add(PracticeSession(
-      kind: kind,
-      slug: slug,
-      title: title,
-      minutes: minutes,
-      completedAt: DateTime.now(),
-    ));
+    logged.add(
+      PracticeSession(
+        kind: kind,
+        slug: slug,
+        title: title,
+        minutes: minutes,
+        completedAt: DateTime.now(),
+      ),
+    );
     await stuck?.future;
   }
 
   @override
-  Future<List<PracticeSession>> fetchRecent({int days = 120}) async =>
-      sessions;
+  Future<List<PracticeSession>> fetchRecent({int days = 120}) async => sessions;
 }
 
 void main() {
@@ -61,15 +62,17 @@ void main() {
   Widget wrap(Widget screen) =>
       MaterialApp(theme: buildAppTheme(), home: screen);
 
-  PracticeSession session(int daysAgo, double minutes,
-          [PracticeKind kind = PracticeKind.meditation]) =>
-      PracticeSession(
-        kind: kind,
-        slug: 'Body scan',
-        title: 'Body scan',
-        minutes: minutes,
-        completedAt: DateTime.now().subtract(Duration(days: daysAgo)),
-      );
+  PracticeSession session(
+    int daysAgo,
+    double minutes, [
+    PracticeKind kind = PracticeKind.meditation,
+  ]) => PracticeSession(
+    kind: kind,
+    slug: 'Body scan',
+    title: 'Body scan',
+    minutes: minutes,
+    completedAt: DateTime.now().subtract(Duration(days: daysAgo)),
+  );
 
   // ── The maths ───────────────────────────────────────────────────
 
@@ -89,12 +92,18 @@ void main() {
   });
 
   test('a streak survives today not being practised yet', () {
-    final summary = PracticeRepository.summarise([session(1, 5), session(2, 5)]);
+    final summary = PracticeRepository.summarise([
+      session(1, 5),
+      session(2, 5),
+    ]);
     expect(summary.dayStreak, 2);
   });
 
   test('a gap ends the streak', () {
-    final summary = PracticeRepository.summarise([session(1, 5), session(3, 5)]);
+    final summary = PracticeRepository.summarise([
+      session(1, 5),
+      session(3, 5),
+    ]);
     expect(summary.dayStreak, 1);
   });
 
@@ -112,9 +121,9 @@ void main() {
 
     final practice = _FakePractice();
     final meditation = meditations.firstWhere((m) => m.minutes == 5);
-    await tester.pumpWidget(wrap(
-      MeditationScreen(meditation: meditation, practice: practice),
-    ));
+    await tester.pumpWidget(
+      wrap(MeditationScreen(meditation: meditation, practice: practice)),
+    );
     await tester.pump();
     await tester.pump(Duration(minutes: meditation.minutes));
     await tester.pump(const Duration(seconds: 1));
@@ -130,17 +139,18 @@ void main() {
     expect(find.text('Write about it'), findsOneWidget);
   });
 
-  testWidgets('a finished meditation doesn\'t wait on the network',
-      (tester) async {
+  testWidgets('a finished meditation doesn\'t wait on the network', (
+    tester,
+  ) async {
     tester.view.devicePixelRatio = 1;
     tester.view.physicalSize = const Size(400, 1400);
     addTearDown(tester.view.reset);
 
     final practice = _FakePractice()..stuck = Completer<void>();
     final meditation = meditations.firstWhere((m) => m.minutes == 5);
-    await tester.pumpWidget(wrap(
-      MeditationScreen(meditation: meditation, practice: practice),
-    ));
+    await tester.pumpWidget(
+      wrap(MeditationScreen(meditation: meditation, practice: practice)),
+    );
     await tester.pump();
     await tester.pump(Duration(minutes: meditation.minutes));
     await tester.pump(const Duration(seconds: 1));
@@ -160,41 +170,42 @@ void main() {
     PracticeRepository repo({
       required Future<void> Function(Map<String, dynamic>) insert,
       String user = 'u1',
-    }) =>
-        PracticeRepository(
-          currentUserId: () => user,
-          insert: insert,
-          fetchRows: (_, _) async => const [],
-        );
+    }) => PracticeRepository(
+      currentUserId: () => user,
+      insert: insert,
+      fetchRows: (_, _) async => const [],
+    );
 
     Future<void> offline(Map<String, dynamic> _) async =>
         throw Exception('no route to host');
 
-    test('a session that can\'t be sent is kept, shown, and sent later',
-        () async {
-      await repo(insert: offline).logSession(
-        kind: PracticeKind.breathing,
-        slug: 'Box breathing',
-        title: 'Box breathing',
-        minutes: 3,
-      );
-      expect(await PendingPracticeStore().all(), hasLength(1));
+    test(
+      'a session that can\'t be sent is kept, shown, and sent later',
+      () async {
+        await repo(insert: offline).logSession(
+          kind: PracticeKind.breathing,
+          slug: 'Box breathing',
+          title: 'Box breathing',
+          minutes: 3,
+        );
+        expect(await PendingPracticeStore().all(), hasLength(1));
 
-      // History already includes it, so the person sees their practice.
-      final shown = await repo(insert: offline).fetchRecent();
-      expect(shown.single.title, 'Box breathing');
-      expect(shown.single.kind, PracticeKind.breathing);
+        // History already includes it, so the person sees their practice.
+        final shown = await repo(insert: offline).fetchRecent();
+        expect(shown.single.title, 'Box breathing');
+        expect(shown.single.kind, PracticeKind.breathing);
 
-      // Back online: the same row goes up, with its own id and time.
-      final sent = <Map<String, dynamic>>[];
-      final online = repo(insert: (row) async => sent.add(row));
-      expect(await online.flushPending(), 1);
-      expect(await PendingPracticeStore().all(), isEmpty);
-      expect(sent.single['user_id'], 'u1');
-      expect(sent.single['minutes'], 3.0);
-      expect(sent.single['id'], matches(RegExp(r'^[0-9a-f-]{36}$')));
-      expect(sent.single['completed_at'], isA<String>());
-    });
+        // Back online: the same row goes up, with its own id and time.
+        final sent = <Map<String, dynamic>>[];
+        final online = repo(insert: (row) async => sent.add(row));
+        expect(await online.flushPending(), 1);
+        expect(await PendingPracticeStore().all(), isEmpty);
+        expect(sent.single['user_id'], 'u1');
+        expect(sent.single['minutes'], 3.0);
+        expect(sent.single['id'], matches(RegExp(r'^[0-9a-f-]{36}$')));
+        expect(sent.single['completed_at'], isA<String>());
+      },
+    );
 
     test('a row the server already has counts as sent', () async {
       await repo(insert: offline).logSession(
@@ -205,14 +216,15 @@ void main() {
       );
       final dup = repo(
         insert: (_) async => throw const PostgrestException(
-            message: 'duplicate key', code: '23505'),
+          message: 'duplicate key',
+          code: '23505',
+        ),
       );
       expect(await dup.flushPending(), 1);
       expect(await PendingPracticeStore().all(), isEmpty);
     });
 
-    test('the queue stops at the first failure and keeps everything',
-        () async {
+    test('the queue stops at the first failure and keeps everything', () async {
       final r = repo(insert: offline);
       for (var i = 0; i < 2; i++) {
         await r.logSession(
@@ -223,10 +235,12 @@ void main() {
         );
       }
       var attempts = 0;
-      final still = repo(insert: (_) async {
-        attempts++;
-        throw Exception('still offline');
-      });
+      final still = repo(
+        insert: (_) async {
+          attempts++;
+          throw Exception('still offline');
+        },
+      );
       expect(await still.flushPending(), 0);
       expect(attempts, 1);
       expect(await PendingPracticeStore().all(), hasLength(2));
@@ -251,9 +265,13 @@ void main() {
   // ── The screens ─────────────────────────────────────────────────
 
   testWidgets('practice history shows what has been done', (tester) async {
-    await tester.pumpWidget(wrap(PracticeScreen(
-      repository: _FakePractice([session(0, 10), session(1, 8)]),
-    )));
+    await tester.pumpWidget(
+      wrap(
+        PracticeScreen(
+          repository: _FakePractice([session(0, 10), session(1, 8)]),
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Your practice'), findsOneWidget);
@@ -269,8 +287,9 @@ void main() {
     expect(find.textContaining('Nothing here yet'), findsOneWidget);
   });
 
-  testWidgets('home stays quiet until there is practice to show',
-      (tester) async {
+  testWidgets('home stays quiet until there is practice to show', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       wrap(Scaffold(body: HomeTab(practice: _FakePractice()))),
     );
@@ -278,20 +297,27 @@ void main() {
     expect(find.textContaining('minutes this week'), findsNothing);
   });
 
-  testWidgets('home shows the streak once there is one', (tester) async {
-    await tester.pumpWidget(wrap(Scaffold(
-      body: HomeTab(
-        practice: _FakePractice([session(0, 10), session(1, 8)]),
+  testWidgets('home shows practice and the week\'s sunrise', (tester) async {
+    await tester.pumpWidget(
+      wrap(
+        Scaffold(
+          body: HomeTab(
+            practice: _FakePractice([session(0, 10), session(1, 8)]),
+          ),
+        ),
       ),
-    )));
-    await tester.pumpAndSettle();
+    );
+    await tester.pump(const Duration(seconds: 2));
+
+    // Both days count towards the rhythm, whatever day of the week it is.
+    expect(find.textContaining('2 days in total'), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('2 days in a row'),
+      find.text('Your practice'),
       200,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('2 days in a row'), findsOneWidget);
+    expect(find.text('Your practice'), findsOneWidget);
     expect(find.textContaining('18 minutes this week'), findsOneWidget);
     expect(find.text('Last time: Body scan'), findsOneWidget);
     // And one tap back into it.

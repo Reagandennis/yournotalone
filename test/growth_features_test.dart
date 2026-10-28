@@ -324,6 +324,11 @@ void main() {
       await CourseStore.instance.completeDay(courses[2], 0);
       await tester.pumpWidget(home());
       await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text(courses[2].title),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
       expect(find.text(courses[2].title), findsOneWidget);
     });
 
