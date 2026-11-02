@@ -242,8 +242,11 @@ void main() {
     final missing = _byId.keys.where((id) => !exported.contains(id)).toList();
     expect(missing, isEmpty, reason: 'index items with no export');
 
-    final root = Directory('content');
-    if (root.existsSync()) root.deleteSync(recursive: true);
+    // Only what this writes: README and anything else in content/ stays.
+    for (final dir in ['content/items', 'content/courses']) {
+      final d = Directory(dir);
+      if (d.existsSync()) d.deleteSync(recursive: true);
+    }
 
     final names = <String>{};
     for (final item in items) {

@@ -22,7 +22,21 @@ function reviewedText<T extends Localised>(text: T): T {
 const byOrder = (a: { order: number; id: string }, b: { order: number; id: string }) =>
   a.order - b.order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
-export function snapshot(items: Item[], courses: Course[], version: number) {
+/// A published audio file. `key` is the object key in the bucket that
+/// `access` implies: the public bucket for "public", the private bucket
+/// (signed URLs from the Worker) for "premium".
+export type MediaRef = {
+  key: string;
+  sha256: string;
+  bytes: number;
+  access: 'public' | 'premium';
+};
+
+/// Media per item id. Only `npm run publish` adds it; the bundled snapshot
+/// has none, because the app plays bundled audio from its assets.
+export type MediaMap = Record<string, { audio?: MediaRef; narration?: MediaRef }>;
+
+export function snapshot(items: Item[], courses: Course[], version: number, media?: MediaMap) {
   const body = {
     items: items
       .filter((i) => i.status === 'published')
@@ -33,6 +47,12 @@ export function snapshot(items: Item[], courses: Course[], version: number) {
       .sort(byOrder)
       .map(({ status: _, ...c }) => ({ ...c, text: reviewedText(c.text) })),
   };
-  const hash = createHash('sha256').update(JSON.stringify(body)).digest('hex').slice(0, 16);
-  return { format: snapshotFormat, version, hash, ...body };
+  // With media, the hash covers it too, so a re-recorded file publishes a
+  // new version even when the YAML didn't change. Without it, the hash and
+  // output are exactly what they were before media existed.
+  const hashed = media === undefined ? body : { ...body, media };
+  const hash = createHash('sha256').update(JSON.stringify(hashed)).digest('hex').slice(0, 16);
+  return media === undefined
+    ? { format: snapshotFormat, version, hash, ...body }
+    : { format: snapshotFormat, version, hash, ...body, media };
 }
