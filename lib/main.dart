@@ -16,6 +16,7 @@ import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
 import 'content/content_catalog.dart';
+import 'discover/saved_store.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
 import 'notifications/local_notifications.dart';
@@ -159,6 +160,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // once there's a signed-in user to write it for.
         case AuthChangeEvent.initialSession || AuthChangeEvent.signedIn:
           unawaited(PracticeRepository().flushPending());
+          unawaited(SavedStore.instance.sync());
         // A password-recovery email deep-links back into the app and signs
         // the user in; from there they still need to choose the new password.
         case AuthChangeEvent.passwordRecovery:
@@ -200,6 +202,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       unawaited(PracticeRepository().flushPending());
+      unawaited(SavedStore.instance.syncIfStale());
     }
   }
 
