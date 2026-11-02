@@ -6,6 +6,9 @@ import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
+import '../media/download_store.dart';
+import '../media/media_source.dart';
+import '../media/narration_stream.dart';
 import '../practice/practice_repository.dart';
 import 'sounds_catalog.dart';
 
@@ -126,11 +129,17 @@ class SoundPlayer {
   /// True when a sound is loaded but paused.
   final ValueNotifier<bool> paused = ValueNotifier(false);
 
+  /// The sound being fetched before it can play, if any. A loop that isn't
+  /// in the app is downloaded whole first, so it can loop without a gap.
+  final ValueNotifier<String?> preparing = ValueNotifier(null);
+
   double get volume => _volume;
 
   bool isActive(String asset) => nowPlaying.value == asset && !paused.value;
 
-  /// Starts [asset] looping from the beginning.
+  /// Starts [asset] looping from the beginning. [asset] is the content
+  /// path that names the sound; one that isn't in the app is played from
+  /// its download, fetching it first if need be.
   Future<void> play(String asset) async {
     _logElapsed(); // whatever was playing before
     nowPlaying.value = asset;
@@ -140,24 +149,41 @@ class SoundPlayer {
     try {
       final player = _player ??= AudioPlayer();
       await player.stop();
+      final origin = await MediaResolver.instance.resolve(asset);
+      String? file;
+      String? title;
+      switch (origin) {
+        case BundledAudio() || null:
+          break;
+        case LocalAudio(file: final f, :final entry):
+          file = f.path;
+          title = entry.title;
+        case RemoteAudio(:final entry):
+          preparing.value = asset;
+          try {
+            file = (await DownloadStore.instance.fetchNow(entry)).path;
+          } finally {
+            if (preparing.value == asset) preparing.value = null;
+          }
+          title = entry.title;
+          // Another sound was chosen while this one was fetched.
+          if (nowPlaying.value != asset) return;
+      }
       if (backgroundAudioReady) {
         final matches = soundsCatalog.where((s) => s.asset == asset);
-        final title =
-            matches.isEmpty ? 'Wellbeing sound' : matches.first.title;
+        title ??= matches.isEmpty ? 'Wellbeing sound' : matches.first.title;
+        // What the lock screen and notification show while it plays.
+        final tag = MediaItem(id: asset, title: title, artist: 'yournotalone');
         await player.setAudioSource(
-          AudioSource.asset(
-            asset,
-            // What the lock screen and notification show while it plays.
-            tag: MediaItem(
-              id: asset,
-              title: title,
-              artist: 'yournotalone',
-            ),
-          ),
+          file == null
+              ? AudioSource.asset(asset, tag: tag)
+              : AudioSource.file(file, tag: tag),
         );
-      } else {
+      } else if (file == null) {
         // No media session available — a MediaItem tag would throw here.
         await player.setAsset(asset);
+      } else {
+        await player.setFilePath(file);
       }
       await player.setLoopMode(LoopMode.one);
       await player.setVolume(_volume);
@@ -224,13 +250,27 @@ class SoundPlayer {
     }
   }
 
-  /// Starts a meditation's recorded voice guide from the beginning.
+  /// Starts a meditation's recorded voice guide from the beginning: from
+  /// the app, a download, or streamed (and cached) when it's neither.
   Future<void> narrate(String asset) async {
     if (_silent) return;
     try {
       final player = _voice ??= sfx.AudioPlayer();
       await player.stop();
-      await player.play(sfx.AssetSource(asset.replaceFirst('assets/', '')));
+      final origin = await MediaResolver.instance.resolve(asset);
+      final sfx.Source source = switch (origin) {
+        BundledAudio() || null => sfx.AssetSource(
+          asset.replaceFirst('assets/', ''),
+        ),
+        LocalAudio(:final file) => sfx.DeviceFileSource(file.path),
+        RemoteAudio(:final entry) => switch (await narrationUrl(entry)) {
+          final url when url.isScheme('file') => sfx.DeviceFileSource(
+            url.toFilePath(),
+          ),
+          final url => sfx.UrlSource(url.toString()),
+        },
+      };
+      await player.play(source);
     } catch (e) {
       debugPrint('Voice guide failed for $asset: $e');
     }
