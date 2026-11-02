@@ -137,10 +137,8 @@ class _MeditationScreenState extends State<MeditationScreen>
         context,
         item: sound.title,
         source: 'sheet:ambient',
-        title: 'This sound is part of Premium',
-        message:
-            'Free includes one sound to try. Premium unlocks the whole '
-            'library — and $introOffer.',
+        title: context.l10n.meditationSoundPremiumTitle,
+        message: context.l10n.meditationSoundPremiumMessage(introOffer),
       );
       return;
     }

@@ -8041,12 +8041,6 @@ abstract class AppLocalizations {
   /// **'Wellbeing sound'**
   String get soundPlayerFallbackTitle;
 
-  /// Snackbar on the sound player when a sound fails to start.
-  ///
-  /// In en, this message translates to:
-  /// **'Couldn\'t play that sound.'**
-  String get playerCouldNotPlay;
-
   /// Sound player button while a sleep timer runs: time left as mm:ss; tapping it cancels the timer. Keep short.
   ///
   /// In en, this message translates to:
@@ -8094,6 +8088,1044 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No sound'**
   String get meditationNoSound;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): sleeplessness. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t sleep'**
+  String get needSleep;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): anxiety. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Anxious'**
+  String get needAnxious;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): a panic attack happening now. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Panicking'**
+  String get needPanic;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): low mood. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeling low'**
+  String get needLow;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): stress. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Stressed'**
+  String get needStressed;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): anger. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Angry'**
+  String get needAngry;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): cravings/urges (addiction recovery). Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Urges'**
+  String get needUrges;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): wanting to concentrate. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus'**
+  String get needFocus;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): wanting to reflect, make sense of things. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflect'**
+  String get needReflect;
+
+  /// A 'need' chip on Explore, Home and in Settings ('What would help most'): feeling good, wanting to keep it. Short, fits on a chip; also used as a list title.
+  ///
+  /// In en, this message translates to:
+  /// **'Feeling good'**
+  String get needGood;
+
+  /// Intro under the title of the list for the needSleep chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'For the evening before, and the hours you\'re lying awake.'**
+  String get needSleepIntro;
+
+  /// Intro under the title of the list for the needAnxious chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Ways to bring a racing mind back to what\'s in front of you.'**
+  String get needAnxiousIntro;
+
+  /// Intro under the title of the list for the needPanic chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick and simple first. These work best started straight away.'**
+  String get needPanicIntro;
+
+  /// Intro under the title of the list for the needLow chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Small, kind things for heavy days. Start with whichever feels doable.'**
+  String get needLowIntro;
+
+  /// Intro under the title of the list for the needStressed chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring the body down first, then sort what\'s on your plate.'**
+  String get needStressedIntro;
+
+  /// Intro under the title of the list for the needAngry chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Let it cool before you act on it.'**
+  String get needAngryIntro;
+
+  /// Intro under the title of the list for the needUrges chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Ride it out: urges peak and pass, usually within minutes.'**
+  String get needUrgesIntro;
+
+  /// Intro under the title of the list for the needFocus chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear your head and settle into one thing.'**
+  String get needFocusIntro;
+
+  /// Intro under the title of the list for the needReflect chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompts and reads for making sense of things.'**
+  String get needReflectIntro;
+
+  /// Intro under the title of the list for the needGood chip. Gentle, one sentence.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice what\'s going right, so it stays with you.'**
+  String get needGoodIntro;
+
+  /// Section heading on Home above suggestions that fit the time of day.
+  ///
+  /// In en, this message translates to:
+  /// **'For this morning'**
+  String get dayPartMorning;
+
+  /// Section heading on Home above suggestions that fit the time of day.
+  ///
+  /// In en, this message translates to:
+  /// **'For this afternoon'**
+  String get dayPartAfternoon;
+
+  /// Section heading on Home above suggestions that fit the time of day.
+  ///
+  /// In en, this message translates to:
+  /// **'For this evening'**
+  String get dayPartEvening;
+
+  /// Section heading on Home above suggestions that fit the time of day.
+  ///
+  /// In en, this message translates to:
+  /// **'For tonight'**
+  String get dayPartNight;
+
+  /// Kind of item, shown small on content cards: a breathing exercise. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing'**
+  String get contentKindBreathing;
+
+  /// Kind of item, shown small on content cards: a guided meditation. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditation'**
+  String get contentKindMeditation;
+
+  /// Kind of item, shown small on content cards: a calming sound. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get contentKindSound;
+
+  /// Kind of item, shown small on content cards: a writing prompt. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal prompt'**
+  String get contentKindPrompt;
+
+  /// Kind of item, shown small on content cards: an interactive exercise. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Tool'**
+  String get contentKindTool;
+
+  /// Kind of item, shown small on content cards: a short article to read (noun). One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get contentKindLesson;
+
+  /// Kind of item, shown small on content cards: an addiction-recovery tool. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get contentKindRecovery;
+
+  /// Filter chip on a content list: how long items take. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Any length'**
+  String get lengthAny;
+
+  /// Filter chip on a content list: how long items take. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Under 5 min'**
+  String get lengthShort;
+
+  /// Filter chip on a content list: how long items take. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'5–10 min'**
+  String get lengthMedium;
+
+  /// Filter chip on a content list: how long items take. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Over 10 min'**
+  String get lengthLong;
+
+  /// Small line on a content card: the programme or kind, then minutes, e.g. 'CBT · 5 min'.
+  ///
+  /// In en, this message translates to:
+  /// **'{what} · {minutes} min'**
+  String contentMeta(String what, int minutes);
+
+  /// Title of the sheet shown when someone taps a Premium item on the free plan. 'Premium' is the plan name.
+  ///
+  /// In en, this message translates to:
+  /// **'This is part of Premium'**
+  String get contentPremiumTitle;
+
+  /// Body of the Premium sheet. {offer} is a phrase about the trial, e.g. 'you can try it free for 7 days'.
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes a taste of everything. Premium unlocks every session, tool and read — and {offer}.'**
+  String contentPremiumMessage(String offer);
+
+  /// Small badge on content added in the last few weeks. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get contentNewBadge;
+
+  /// Tooltip/accessibility label of the heart button that saves an item to Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get contentSaveTooltip;
+
+  /// Tooltip/accessibility label of the heart button when the item is already saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from saved'**
+  String get contentUnsaveTooltip;
+
+  /// Accessibility label of the lock icon on a Premium card. Plan name; usually not translated.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get contentPremiumLabel;
+
+  /// Empty state on a content list when the chosen length filter matches nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing that length yet.'**
+  String get contentNothingThatLength;
+
+  /// Sheet title when a free user picks a Premium background sound during a meditation.
+  ///
+  /// In en, this message translates to:
+  /// **'This sound is part of Premium'**
+  String get meditationSoundPremiumTitle;
+
+  /// Sheet body. {offer} is a phrase about the trial.
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes one sound to try. Premium unlocks the whole library — and {offer}.'**
+  String meditationSoundPremiumMessage(String offer);
+
+  /// Home 'Quick access' tile title: opens meditations and breathing. One short word.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditate'**
+  String get homeQuickMeditate;
+
+  /// Home 'Quick access' tile subtitle under 'Meditate'. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe & settle'**
+  String get homeQuickMeditateSub;
+
+  /// Home 'Quick access' tile title: opens the journal. One short word.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get homeQuickJournal;
+
+  /// Home 'Quick access' tile subtitle under 'Journal'. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'Write it out'**
+  String get homeQuickJournalSub;
+
+  /// Home 'Quick access' tile title: opens calming sounds. One short word.
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds'**
+  String get homeQuickSounds;
+
+  /// Home 'Quick access' tile subtitle under 'Sounds': three uses of the sounds. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus · sleep · calm'**
+  String get homeQuickSoundsSub;
+
+  /// Home 'Quick access' tile title: opens addiction-recovery tools. One short word.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get homeQuickRecovery;
+
+  /// Home 'Quick access' tile subtitle under 'Recovery': the recovery saying. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'One day at a time'**
+  String get homeQuickRecoverySub;
+
+  /// Snackbar after the first mood check-in of the day.
+  ///
+  /// In en, this message translates to:
+  /// **'Thanks for checking in.'**
+  String get homeThanksForCheckingIn;
+
+  /// Error snackbar when saving a mood check-in fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your mood — check your connection.'**
+  String get homeMoodSaveFailed;
+
+  /// Title of the gentle Premium offer shown after someone's third mood check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Three check-ins in'**
+  String get homeNudgeCheckinsTitle;
+
+  /// Body of the offer after the third check-in. {offer} is a phrase about the trial.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re building a habit. Premium keeps every check-in and shows you how the weeks are actually going — and {offer}.'**
+  String homeNudgeCheckinsMessage(String offer);
+
+  /// Sheet title when a free user taps their mood week on Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood history is part of Premium'**
+  String get homeMoodHistoryPremiumTitle;
+
+  /// Sheet body. {offer} is a phrase about the trial.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking in is always free. Premium keeps the record and shows you the pattern — and {offer}.'**
+  String homeMoodHistoryPremiumMessage(String offer);
+
+  /// Greeting at the top of Home before noon; the person's first name follows on the next line.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning,'**
+  String get homeGreetingMorning;
+
+  /// Greeting at the top of Home from noon to 6pm; the first name follows on the next line.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon,'**
+  String get homeGreetingAfternoon;
+
+  /// Greeting at the top of Home after 6pm; the first name follows on the next line.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening,'**
+  String get homeGreetingEvening;
+
+  /// Title of the Home card summarising meditation/breathing practice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your practice'**
+  String get homeYourPractice;
+
+  /// Under 'Your practice': minutes practised this week, and total sessions ever.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} minutes}} this week · {sessions, plural, other{{sessions} sessions}} in all'**
+  String homePracticeSummary(int minutes, int sessions);
+
+  /// On the practice card: the last thing practised. {title} is a content title.
+  ///
+  /// In en, this message translates to:
+  /// **'Last time: {title}'**
+  String homeLastTime(String title);
+
+  /// Heading above one suggestion after picking a low mood (awful/bad).
+  ///
+  /// In en, this message translates to:
+  /// **'Something that might help'**
+  String get homeSuggestionLow;
+
+  /// Heading above one suggestion after picking 'okay'.
+  ///
+  /// In en, this message translates to:
+  /// **'Something for right now'**
+  String get homeSuggestionOkay;
+
+  /// Heading above one suggestion after picking a good mood.
+  ///
+  /// In en, this message translates to:
+  /// **'Something to keep it going'**
+  String get homeSuggestionGood;
+
+  /// Link under the mood suggestion to the full list for that need. {need} is a need chip label, lower-cased in English (e.g. “feeling low”).
+  ///
+  /// In en, this message translates to:
+  /// **'More for “{need}”'**
+  String homeMoreForNeed(String need);
+
+  /// Label above the last seven days of mood faces on Home.
+  ///
+  /// In en, this message translates to:
+  /// **'Your week'**
+  String get homeYourWeek;
+
+  /// Link to the mood history, beside 'Your week'.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get homeHistory;
+
+  /// The mood check-in question on Home.
+  ///
+  /// In en, this message translates to:
+  /// **'How are you feeling today?'**
+  String get homeHowAreYouFeeling;
+
+  /// Small upper-case label on the card with today's journal prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'TODAY\'S PROMPT'**
+  String get homeTodaysPrompt;
+
+  /// Small upper-case label on the card with today's short read.
+  ///
+  /// In en, this message translates to:
+  /// **'TODAY\'S READ'**
+  String get homeTodaysRead;
+
+  /// Button on Home that opens the crisis resources. Needs a fluent, careful review.
+  ///
+  /// In en, this message translates to:
+  /// **'Need help now?'**
+  String get homeNeedHelpNow;
+
+  /// Section heading on Home for items the person has saved (hearted).
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get homeSaved;
+
+  /// Title of the Home card that opens mood/practice insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Your insights'**
+  String get homeYourInsights;
+
+  /// Subtitle on the insights card.
+  ///
+  /// In en, this message translates to:
+  /// **'How practice, your week and your moods connect.'**
+  String get homeInsightsSub;
+
+  /// Title of a new journal entry started from Home before a therapy session. Written in first person; it's saved in the journal.
+  ///
+  /// In en, this message translates to:
+  /// **'Before my session'**
+  String get homeBeforeSessionJournalTitle;
+
+  /// Opening words of that journal entry; the person continues the sentence. Keep the trailing space.
+  ///
+  /// In en, this message translates to:
+  /// **'In my session, I\'d like to talk about '**
+  String get homeBeforeSessionJournalSeed;
+
+  /// Card title on Home when a therapy session is booked.
+  ///
+  /// In en, this message translates to:
+  /// **'Before your session'**
+  String get homeBeforeSessionTitle;
+
+  /// Card subtitle: invites writing notes before the session.
+  ///
+  /// In en, this message translates to:
+  /// **'Jot down what you want to talk about, so nothing slips away when the call starts.'**
+  String get homeBeforeSessionSub;
+
+  /// Small upper-case label above the therapist's summary of the last session.
+  ///
+  /// In en, this message translates to:
+  /// **'FROM YOUR LAST SESSION'**
+  String get homeFromLastSession;
+
+  /// Button: open the full session summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Read it all'**
+  String get homeReadItAll;
+
+  /// Heading above one suggestion related to the last therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Something to practise until next time'**
+  String get homePractiseUntilNext;
+
+  /// When a session is today. {time} is a formatted time like 17:00.
+  ///
+  /// In en, this message translates to:
+  /// **'Today, {time}'**
+  String homeToday(String time);
+
+  /// When a session is tomorrow. {time} is a formatted time.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow, {time}'**
+  String homeTomorrow(String time);
+
+  /// Therapy banner title on Home for a booked session. {when} is e.g. 'Today, 17:00'.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session · {when}'**
+  String homeYourSession(String when);
+
+  /// Therapy banner subtitle when the session room is open.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s open now — tap to join.'**
+  String get homeSessionOpen;
+
+  /// Therapy banner subtitle before the session opens.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap for the details, or to join when it opens.'**
+  String get homeSessionDetails;
+
+  /// Therapy banner title while a request is being matched with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding your therapist'**
+  String get homeFindingTherapist;
+
+  /// Therapy banner subtitle while matching.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let you know as soon as your session is booked.'**
+  String get homeFindingTherapistSub;
+
+  /// Therapy banner title inviting someone to book a session.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to a real therapist'**
+  String get homeTalkToTherapist;
+
+  /// Therapy banner subtitle. {price} is the session price, e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} a session, paid when you book.'**
+  String homeTalkToTherapistSub(String price);
+
+  /// Section heading on Home above four shortcut tiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick access'**
+  String get homeQuickAccess;
+
+  /// Download button on a sound, meditation or the Downloads screen: download it to play without internet.
+  ///
+  /// In en, this message translates to:
+  /// **'Download for offline'**
+  String get downloadAction;
+
+  /// Download button on a sound, meditation or the Downloads screen: it is on the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded'**
+  String get downloadDone;
+
+  /// Download button on a sound, meditation or the Downloads screen: queued; tapping cancels. Keep short.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to download · tap to cancel'**
+  String get downloadQueued;
+
+  /// Download button on a sound, meditation or the Downloads screen: waiting for Wi-Fi (Wi-Fi-only setting is on); tapping cancels.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Wi-Fi · tap to cancel'**
+  String get downloadWaitingWifi;
+
+  /// Download button on a sound, meditation or the Downloads screen: download in progress. {percent} is 0–100.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading {percent}% · tap to cancel'**
+  String downloadProgress(int percent);
+
+  /// Download button on a sound, meditation or the Downloads screen: the download failed; tapping retries.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed · tap to try again'**
+  String get downloadFailed;
+
+  /// Title of the dialog/action that deletes a downloaded item from the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove download'**
+  String get downloadRemove;
+
+  /// Button on a course: download all its audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Download course'**
+  String get downloadCourse;
+
+  /// Course download button when everything is on the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Course downloaded'**
+  String get downloadCourseDone;
+
+  /// Course download button during download.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading · {done} of {total} ready'**
+  String downloadCourseProgress(int done, int total);
+
+  /// Course download button while waiting for Wi-Fi.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for Wi-Fi to download'**
+  String get downloadCourseWaiting;
+
+  /// Shown on the sound player while a sound streams/downloads before it first plays.
+  ///
+  /// In en, this message translates to:
+  /// **'Getting this sound ready…'**
+  String get downloadPreparing;
+
+  /// Snackbar when a sound isn't on the phone and there's no connection.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get that sound. Connect to the internet to play it the first time.'**
+  String get downloadNeedsConnection;
+
+  /// Snackbar when a free user tries to play a Premium sound.
+  ///
+  /// In en, this message translates to:
+  /// **'This sound is part of Premium.'**
+  String get downloadPremiumNeeded;
+
+  /// Snackbar when a sound fails to play for another reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t play that sound.'**
+  String get downloadCouldNotPlay;
+
+  /// Settings row and screen title for managing downloaded audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads & storage'**
+  String get downloadsTitle;
+
+  /// Intro on the Downloads & storage screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds and meditations you\'ve downloaded play without a connection. Delete them here to free up space.'**
+  String get downloadsIntro;
+
+  /// Switch on the Downloads screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Download on Wi-Fi only'**
+  String get downloadsWifiOnly;
+
+  /// Explanation under the Wi-Fi-only switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads wait for Wi-Fi, so they don\'t use your mobile data.'**
+  String get downloadsWifiOnlyDetail;
+
+  /// How much storage downloads use. {size} is formatted, e.g. '24.3 MB'.
+  ///
+  /// In en, this message translates to:
+  /// **'Using {size} on this phone'**
+  String downloadsUsing(String size);
+
+  /// Section label on the Downloads screen: downloads under way.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get downloadsInProgress;
+
+  /// Section label on the Downloads screen: finished downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'On this phone'**
+  String get downloadsOnPhone;
+
+  /// Empty state on the Downloads screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing downloaded yet. Tap the download button on a sound, meditation or course to keep it for when you\'re offline.'**
+  String get downloadsEmpty;
+
+  /// Button on the Downloads screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all downloads'**
+  String get downloadsDeleteAll;
+
+  /// Confirmation dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all downloads?'**
+  String get downloadsDeleteAllTitle;
+
+  /// Confirmation dialog body.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll be removed from this phone. You can download them again any time.'**
+  String get downloadsDeleteAllBody;
+
+  /// Tooltip on the delete button of one downloaded item. {title} is its title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {title}'**
+  String downloadsDeleteOne(String title);
+
+  /// Settings switch and picker option: slowly moving backgrounds behind sounds and sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm visuals'**
+  String get backgroundCalmVisuals;
+
+  /// Explanation under the Calm visuals switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Slowly moving backgrounds behind sounds and sessions. Off holds them still.'**
+  String get backgroundCalmVisualsHint;
+
+  /// Shown instead of the hint when the phone's reduce-motion setting is on.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone is set to reduce motion, so backgrounds stay still.'**
+  String get backgroundReduceMotionNote;
+
+  /// Title of the sheet for choosing the animated background of a sound or session.
+  ///
+  /// In en, this message translates to:
+  /// **'Background'**
+  String get backgroundPickerTitle;
+
+  /// Tooltip of the button that opens the background picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Change background'**
+  String get backgroundPickerTooltip;
+
+  /// Name of a feature shown in a 'coming soon' message from Settings when the store isn't set up.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription management'**
+  String get settingsSubscriptionManagement;
+
+  /// Name of a feature shown in a 'coming soon' message from Settings when the store isn't set up.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring purchases'**
+  String get settingsRestoringPurchases;
+
+  /// Snackbar after restoring purchases found a Premium subscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium restored — welcome back.'**
+  String get settingsPremiumRestored;
+
+  /// Snackbar after restoring purchases found nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous purchases found.'**
+  String get settingsNoPurchasesFound;
+
+  /// Log-out confirmation dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out?'**
+  String get settingsLogOutTitle;
+
+  /// Log-out confirmation dialog body: reassuring.
+  ///
+  /// In en, this message translates to:
+  /// **'You can always come back — your progress stays safe.'**
+  String get settingsLogOutBody;
+
+  /// Settings row and dialog button: sign out of the account.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get settingsLogOut;
+
+  /// Progress dialog while the account is being deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting your account…'**
+  String get settingsDeleting;
+
+  /// Snackbar when account deletion fails partway.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t finish deleting your account. Your request is on file and we\'ll complete it — or try again.'**
+  String get settingsDeleteFailed;
+
+  /// Shown on the profile card in Settings when the person has no name set.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account'**
+  String get settingsYourAccount;
+
+  /// Plan name on the Settings plan card for subscribers. Usually not translated.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get settingsPremiumPlan;
+
+  /// Plan name on the Settings plan card for free users.
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan'**
+  String get settingsFreePlan;
+
+  /// Under 'Premium' on the plan card: everything is unlocked (a gentle metaphor).
+  ///
+  /// In en, this message translates to:
+  /// **'Every room in the house is open.'**
+  String get settingsPremiumTagline;
+
+  /// Button on the plan card: manage the subscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get settingsManage;
+
+  /// Button on the plan card: open the paywall.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get settingsUpgrade;
+
+  /// Section label in Settings, only for care-team staff and therapists. Shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Care team'**
+  String get settingsCareTeam;
+
+  /// Settings row for care-team staff.
+  ///
+  /// In en, this message translates to:
+  /// **'Care team dashboard'**
+  String get settingsCareDashboard;
+
+  /// Settings row for therapists: their sessions with clients.
+  ///
+  /// In en, this message translates to:
+  /// **'My therapy sessions'**
+  String get settingsMyTherapySessions;
+
+  /// Title of the sheet for choosing what the person wants help with (the 'need' chips).
+  ///
+  /// In en, this message translates to:
+  /// **'What would help most?'**
+  String get settingsGoalsTitle;
+
+  /// Under the goals sheet title.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll put these first in your suggestions.'**
+  String get settingsGoalsSub;
+
+  /// Settings row and sheet title: light/dark theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// Subtitle under 'Match my phone' in the appearance sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Light by day, dark when your phone is.'**
+  String get settingsAppearanceSystemHint;
+
+  /// Title of the Settings tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// Section label in Settings. Shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get settingsAccount;
+
+  /// Settings row.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get settingsEditProfile;
+
+  /// Settings row: sends a password reset email.
+  ///
+  /// In en, this message translates to:
+  /// **'Change password'**
+  String get settingsChangePassword;
+
+  /// Settings row.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders & notifications'**
+  String get settingsReminders;
+
+  /// Settings row: choose what the person wants help with; the current picks are shown on the right.
+  ///
+  /// In en, this message translates to:
+  /// **'What would help most'**
+  String get settingsGoals;
+
+  /// Settings row: restore a subscription bought on another phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get settingsRestorePurchases;
+
+  /// Section label in Settings. Shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get settingsSupport;
+
+  /// Settings row: opens helplines. Needs a careful, fluent review.
+  ///
+  /// In en, this message translates to:
+  /// **'Crisis resources'**
+  String get settingsCrisisResources;
+
+  /// Settings row: email support.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact us'**
+  String get settingsContactUs;
+
+  /// Settings row: frequently asked questions.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get settingsFaq;
+
+  /// Section label in Settings. Shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Legal'**
+  String get settingsLegal;
+
+  /// Settings row.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get settingsPrivacyPolicy;
+
+  /// Settings row.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service'**
+  String get settingsTerms;
+
+  /// Section label in Settings above Log out and Delete account. Shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Account actions'**
+  String get settingsAccountActions;
+
+  /// Settings row: permanently delete the account.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get settingsDeleteAccount;
+
+  /// Delete-account confirmation dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get settingsDeleteTitle;
+
+  /// Delete-account dialog body: plain and complete about what is deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, therapy requests and photo. It happens straight away and it can\'t be undone.'**
+  String get settingsDeleteBody;
+
+  /// Dialog button: cancel deleting the account.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep my account'**
+  String get settingsKeepAccount;
+
+  /// Dialog button: confirm permanent deletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for good'**
+  String get settingsDeleteForGood;
+
+  /// Snackbar after requesting a password reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link sent to {email}'**
+  String settingsPasswordResetSent(String email);
+
+  /// Snackbar when no mail app is available and the support address was copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address copied: {email}'**
+  String settingsEmailCopied(String email);
+
+  /// Label of the text field in the delete-account dialog. {word} is DELETE, which must be typed exactly as shown — don't translate it.
+  ///
+  /// In en, this message translates to:
+  /// **'Type {word} to confirm'**
+  String settingsTypeToConfirm(String word);
+
+  /// Value on the 'What would help most' row when more than two are picked: two names, then how many more.
+  ///
+  /// In en, this message translates to:
+  /// **'{first} +{more}'**
+  String settingsGoalsMore(String first, int more);
 }
 
 class _AppLocalizationsDelegate

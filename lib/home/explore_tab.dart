@@ -242,7 +242,7 @@ class ExploreTab extends StatelessWidget {
             itemBuilder: (context, i) {
               final need = needs[i];
               return FilterPill(
-                label: need.label,
+                label: need.label(context.l10n),
                 icon: need.icon,
                 color: need.color,
                 selected: false,
@@ -649,9 +649,9 @@ class ExploreTab extends StatelessWidget {
 /// tagged for ("sleep", "anxious").
 bool _matches(ContentItem item, String query) =>
     item.title.toLowerCase().contains(query) ||
-    item.meta.toLowerCase().contains(query) ||
+    item.meta().toLowerCase().contains(query) ||
     item.blurb.toLowerCase().contains(query) ||
-    item.needs.any((n) => n.label.toLowerCase().contains(query));
+    item.needs.any((n) => n.label(currentL10n()).toLowerCase().contains(query));
 
 /// Searches the whole index. A result opens the item itself (through the
 /// usual Premium check), not the list it lives in.
@@ -768,7 +768,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
                 children: [
                   for (final need in Need.values)
                     FilterPill(
-                      label: need.label,
+                      label: need.label(context.l10n),
                       icon: need.icon,
                       color: need.color,
                       selected: false,
@@ -842,7 +842,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
             ],
           ),
           subtitle: Text(
-            item.meta,
+            item.meta(context.l10n),
             style: TextStyle(fontSize: 12.5, color: c.textMuted),
           ),
           onTap: () {

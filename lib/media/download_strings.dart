@@ -1,50 +1,45 @@
-/// Everything the download buttons and the storage screen say, in one
-/// place so it can move to the translation files in one go.
+import '../l10n/l10n.dart';
+
+/// Everything the download buttons and the storage screen say, from the
+/// ARB files (`download*` keys) in the app's current language.
 abstract final class DownloadStrings {
-  static const download = 'Download for offline';
-  static const downloaded = 'Downloaded';
-  static const queued = 'Waiting to download · tap to cancel';
-  static const waiting = 'Waiting for Wi-Fi · tap to cancel';
+  static AppLocalizations get _l => currentL10n();
+
+  static String get download => _l.downloadAction;
+  static String get downloaded => _l.downloadDone;
+  static String get queued => _l.downloadQueued;
+  static String get waiting => _l.downloadWaitingWifi;
   static String downloading(double progress) =>
-      'Downloading ${(progress * 100).round()}% · tap to cancel';
-  static const failed = 'Download failed · tap to try again';
-  static const remove = 'Remove download';
+      _l.downloadProgress((progress * 100).round());
+  static String get failed => _l.downloadFailed;
+  static String get remove => _l.downloadRemove;
 
-  static const downloadCourse = 'Download course';
-  static const courseDownloaded = 'Course downloaded';
+  static String get downloadCourse => _l.downloadCourse;
+  static String get courseDownloaded => _l.downloadCourseDone;
   static String courseDownloading(int done, int total) =>
-      'Downloading · $done of $total ready';
-  static const courseWaiting = 'Waiting for Wi-Fi to download';
+      _l.downloadCourseProgress(done, total);
+  static String get courseWaiting => _l.downloadCourseWaiting;
 
-  static const preparing = 'Getting this sound ready…';
-  static const needsConnection =
-      'Couldn\'t get that sound. Connect to the internet to play it the '
-      'first time.';
-  static const premiumNeeded = 'This sound is part of Premium.';
-  static const couldNotPlay = 'Couldn\'t play that sound.';
+  static String get preparing => _l.downloadPreparing;
+  static String get needsConnection => _l.downloadNeedsConnection;
+  static String get premiumNeeded => _l.downloadPremiumNeeded;
+  static String get couldNotPlay => _l.downloadCouldNotPlay;
 
-  static const settingsRow = 'Downloads & storage';
-  static const title = 'Downloads & storage';
-  static const intro =
-      'Sounds and meditations you\'ve downloaded play without a '
-      'connection. Delete them here to free up space.';
-  static const wifiOnly = 'Download on Wi-Fi only';
-  static const wifiOnlyDetail =
-      'Downloads wait for Wi-Fi, so they don\'t use your mobile data.';
-  static String using(String size) => 'Using $size on this phone';
-  static const inProgress = 'In progress';
-  static const onPhone = 'On this phone';
-  static const empty =
-      'Nothing downloaded yet. Tap the download button on a sound, '
-      'meditation or course to keep it for when you\'re offline.';
-  static const deleteAll = 'Delete all downloads';
-  static const deleteAllTitle = 'Delete all downloads?';
-  static const deleteAllBody =
-      'They\'ll be removed from this phone. You can download them again '
-      'any time.';
-  static const cancel = 'Cancel';
-  static const delete = 'Delete';
-  static String deleteOne(String title) => 'Delete $title';
+  static String get settingsRow => _l.downloadsTitle;
+  static String get title => _l.downloadsTitle;
+  static String get intro => _l.downloadsIntro;
+  static String get wifiOnly => _l.downloadsWifiOnly;
+  static String get wifiOnlyDetail => _l.downloadsWifiOnlyDetail;
+  static String using(String size) => _l.downloadsUsing(size);
+  static String get inProgress => _l.downloadsInProgress;
+  static String get onPhone => _l.downloadsOnPhone;
+  static String get empty => _l.downloadsEmpty;
+  static String get deleteAll => _l.downloadsDeleteAll;
+  static String get deleteAllTitle => _l.downloadsDeleteAllTitle;
+  static String get deleteAllBody => _l.downloadsDeleteAllBody;
+  static String get cancel => _l.commonCancel;
+  static String get delete => _l.commonDelete;
+  static String deleteOne(String title) => _l.downloadsDeleteOne(title);
 }
 
 /// A size for people: "820 KB", "2.4 MB".

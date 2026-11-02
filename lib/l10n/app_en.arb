@@ -6909,10 +6909,6 @@
   "@soundPlayerFallbackTitle": {
     "description": "Title on the lock screen / media notification for a sound with no name."
   },
-  "playerCouldNotPlay": "Couldn't play that sound.",
-  "@playerCouldNotPlay": {
-    "description": "Snackbar on the sound player when a sound fails to start."
-  },
   "playerSleepTimerStopsIn": "Stops in {time} · cancel",
   "@playerSleepTimerStopsIn": {
     "description": "Sound player button while a sleep timer runs: time left as mm:ss; tapping it cancels the timer. Keep short.",
@@ -6962,5 +6958,833 @@
   "meditationNoSound": "No sound",
   "@meditationNoSound": {
     "description": "Chip during a meditation: play no background sound."
+  },
+  "needSleep": "Can't sleep",
+  "@needSleep": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): sleeplessness. Short, fits on a chip; also used as a list title."
+  },
+  "needAnxious": "Anxious",
+  "@needAnxious": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): anxiety. Short, fits on a chip; also used as a list title."
+  },
+  "needPanic": "Panicking",
+  "@needPanic": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): a panic attack happening now. Short, fits on a chip; also used as a list title."
+  },
+  "needLow": "Feeling low",
+  "@needLow": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): low mood. Short, fits on a chip; also used as a list title."
+  },
+  "needStressed": "Stressed",
+  "@needStressed": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): stress. Short, fits on a chip; also used as a list title."
+  },
+  "needAngry": "Angry",
+  "@needAngry": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): anger. Short, fits on a chip; also used as a list title."
+  },
+  "needUrges": "Urges",
+  "@needUrges": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): cravings/urges (addiction recovery). Short, fits on a chip; also used as a list title."
+  },
+  "needFocus": "Focus",
+  "@needFocus": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): wanting to concentrate. Short, fits on a chip; also used as a list title."
+  },
+  "needReflect": "Reflect",
+  "@needReflect": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): wanting to reflect, make sense of things. Short, fits on a chip; also used as a list title."
+  },
+  "needGood": "Feeling good",
+  "@needGood": {
+    "description": "A 'need' chip on Explore, Home and in Settings ('What would help most'): feeling good, wanting to keep it. Short, fits on a chip; also used as a list title."
+  },
+  "needSleepIntro": "For the evening before, and the hours you're lying awake.",
+  "@needSleepIntro": {
+    "description": "Intro under the title of the list for the needSleep chip. Gentle, one sentence."
+  },
+  "needAnxiousIntro": "Ways to bring a racing mind back to what's in front of you.",
+  "@needAnxiousIntro": {
+    "description": "Intro under the title of the list for the needAnxious chip. Gentle, one sentence."
+  },
+  "needPanicIntro": "Quick and simple first. These work best started straight away.",
+  "@needPanicIntro": {
+    "description": "Intro under the title of the list for the needPanic chip. Gentle, one sentence."
+  },
+  "needLowIntro": "Small, kind things for heavy days. Start with whichever feels doable.",
+  "@needLowIntro": {
+    "description": "Intro under the title of the list for the needLow chip. Gentle, one sentence."
+  },
+  "needStressedIntro": "Bring the body down first, then sort what's on your plate.",
+  "@needStressedIntro": {
+    "description": "Intro under the title of the list for the needStressed chip. Gentle, one sentence."
+  },
+  "needAngryIntro": "Let it cool before you act on it.",
+  "@needAngryIntro": {
+    "description": "Intro under the title of the list for the needAngry chip. Gentle, one sentence."
+  },
+  "needUrgesIntro": "Ride it out: urges peak and pass, usually within minutes.",
+  "@needUrgesIntro": {
+    "description": "Intro under the title of the list for the needUrges chip. Gentle, one sentence."
+  },
+  "needFocusIntro": "Clear your head and settle into one thing.",
+  "@needFocusIntro": {
+    "description": "Intro under the title of the list for the needFocus chip. Gentle, one sentence."
+  },
+  "needReflectIntro": "Prompts and reads for making sense of things.",
+  "@needReflectIntro": {
+    "description": "Intro under the title of the list for the needReflect chip. Gentle, one sentence."
+  },
+  "needGoodIntro": "Notice what's going right, so it stays with you.",
+  "@needGoodIntro": {
+    "description": "Intro under the title of the list for the needGood chip. Gentle, one sentence."
+  },
+  "dayPartMorning": "For this morning",
+  "@dayPartMorning": {
+    "description": "Section heading on Home above suggestions that fit the time of day."
+  },
+  "dayPartAfternoon": "For this afternoon",
+  "@dayPartAfternoon": {
+    "description": "Section heading on Home above suggestions that fit the time of day."
+  },
+  "dayPartEvening": "For this evening",
+  "@dayPartEvening": {
+    "description": "Section heading on Home above suggestions that fit the time of day."
+  },
+  "dayPartNight": "For tonight",
+  "@dayPartNight": {
+    "description": "Section heading on Home above suggestions that fit the time of day."
+  },
+  "contentKindBreathing": "Breathing",
+  "@contentKindBreathing": {
+    "description": "Kind of item, shown small on content cards: a breathing exercise. One or two words."
+  },
+  "contentKindMeditation": "Meditation",
+  "@contentKindMeditation": {
+    "description": "Kind of item, shown small on content cards: a guided meditation. One or two words."
+  },
+  "contentKindSound": "Sound",
+  "@contentKindSound": {
+    "description": "Kind of item, shown small on content cards: a calming sound. One or two words."
+  },
+  "contentKindPrompt": "Journal prompt",
+  "@contentKindPrompt": {
+    "description": "Kind of item, shown small on content cards: a writing prompt. One or two words."
+  },
+  "contentKindTool": "Tool",
+  "@contentKindTool": {
+    "description": "Kind of item, shown small on content cards: an interactive exercise. One or two words."
+  },
+  "contentKindLesson": "Read",
+  "@contentKindLesson": {
+    "description": "Kind of item, shown small on content cards: a short article to read (noun). One or two words."
+  },
+  "contentKindRecovery": "Recovery",
+  "@contentKindRecovery": {
+    "description": "Kind of item, shown small on content cards: an addiction-recovery tool. One or two words."
+  },
+  "lengthAny": "Any length",
+  "@lengthAny": {
+    "description": "Filter chip on a content list: how long items take. Short."
+  },
+  "lengthShort": "Under 5 min",
+  "@lengthShort": {
+    "description": "Filter chip on a content list: how long items take. Short."
+  },
+  "lengthMedium": "5–10 min",
+  "@lengthMedium": {
+    "description": "Filter chip on a content list: how long items take. Short."
+  },
+  "lengthLong": "Over 10 min",
+  "@lengthLong": {
+    "description": "Filter chip on a content list: how long items take. Short."
+  },
+  "contentMeta": "{what} · {minutes} min",
+  "@contentMeta": {
+    "description": "Small line on a content card: the programme or kind, then minutes, e.g. 'CBT · 5 min'.",
+    "placeholders": {
+      "what": {
+        "type": "String",
+        "example": "Meditation"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "contentPremiumTitle": "This is part of Premium",
+  "@contentPremiumTitle": {
+    "description": "Title of the sheet shown when someone taps a Premium item on the free plan. 'Premium' is the plan name."
+  },
+  "contentPremiumMessage": "Free includes a taste of everything. Premium unlocks every session, tool and read — and {offer}.",
+  "@contentPremiumMessage": {
+    "description": "Body of the Premium sheet. {offer} is a phrase about the trial, e.g. 'you can try it free for 7 days'.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free for 7 days"
+      }
+    }
+  },
+  "contentNewBadge": "New",
+  "@contentNewBadge": {
+    "description": "Small badge on content added in the last few weeks. Very short."
+  },
+  "contentSaveTooltip": "Save",
+  "@contentSaveTooltip": {
+    "description": "Tooltip/accessibility label of the heart button that saves an item to Home."
+  },
+  "contentUnsaveTooltip": "Remove from saved",
+  "@contentUnsaveTooltip": {
+    "description": "Tooltip/accessibility label of the heart button when the item is already saved."
+  },
+  "contentPremiumLabel": "Premium",
+  "@contentPremiumLabel": {
+    "description": "Accessibility label of the lock icon on a Premium card. Plan name; usually not translated."
+  },
+  "contentNothingThatLength": "Nothing that length yet.",
+  "@contentNothingThatLength": {
+    "description": "Empty state on a content list when the chosen length filter matches nothing."
+  },
+  "meditationSoundPremiumTitle": "This sound is part of Premium",
+  "@meditationSoundPremiumTitle": {
+    "description": "Sheet title when a free user picks a Premium background sound during a meditation."
+  },
+  "meditationSoundPremiumMessage": "Free includes one sound to try. Premium unlocks the whole library — and {offer}.",
+  "@meditationSoundPremiumMessage": {
+    "description": "Sheet body. {offer} is a phrase about the trial.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free for 7 days"
+      }
+    }
+  },
+  "homeQuickMeditate": "Meditate",
+  "@homeQuickMeditate": {
+    "description": "Home 'Quick access' tile title: opens meditations and breathing. One short word."
+  },
+  "homeQuickMeditateSub": "Breathe & settle",
+  "@homeQuickMeditateSub": {
+    "description": "Home 'Quick access' tile subtitle under 'Meditate'. Very short."
+  },
+  "homeQuickJournal": "Journal",
+  "@homeQuickJournal": {
+    "description": "Home 'Quick access' tile title: opens the journal. One short word."
+  },
+  "homeQuickJournalSub": "Write it out",
+  "@homeQuickJournalSub": {
+    "description": "Home 'Quick access' tile subtitle under 'Journal'. Very short."
+  },
+  "homeQuickSounds": "Sounds",
+  "@homeQuickSounds": {
+    "description": "Home 'Quick access' tile title: opens calming sounds. One short word."
+  },
+  "homeQuickSoundsSub": "Focus · sleep · calm",
+  "@homeQuickSoundsSub": {
+    "description": "Home 'Quick access' tile subtitle under 'Sounds': three uses of the sounds. Very short."
+  },
+  "homeQuickRecovery": "Recovery",
+  "@homeQuickRecovery": {
+    "description": "Home 'Quick access' tile title: opens addiction-recovery tools. One short word."
+  },
+  "homeQuickRecoverySub": "One day at a time",
+  "@homeQuickRecoverySub": {
+    "description": "Home 'Quick access' tile subtitle under 'Recovery': the recovery saying. Very short."
+  },
+  "homeThanksForCheckingIn": "Thanks for checking in.",
+  "@homeThanksForCheckingIn": {
+    "description": "Snackbar after the first mood check-in of the day."
+  },
+  "homeMoodSaveFailed": "Couldn't save your mood — check your connection.",
+  "@homeMoodSaveFailed": {
+    "description": "Error snackbar when saving a mood check-in fails."
+  },
+  "homeNudgeCheckinsTitle": "Three check-ins in",
+  "@homeNudgeCheckinsTitle": {
+    "description": "Title of the gentle Premium offer shown after someone's third mood check-in."
+  },
+  "homeNudgeCheckinsMessage": "You're building a habit. Premium keeps every check-in and shows you how the weeks are actually going — and {offer}.",
+  "@homeNudgeCheckinsMessage": {
+    "description": "Body of the offer after the third check-in. {offer} is a phrase about the trial.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free for 7 days"
+      }
+    }
+  },
+  "homeMoodHistoryPremiumTitle": "Mood history is part of Premium",
+  "@homeMoodHistoryPremiumTitle": {
+    "description": "Sheet title when a free user taps their mood week on Home."
+  },
+  "homeMoodHistoryPremiumMessage": "Checking in is always free. Premium keeps the record and shows you the pattern — and {offer}.",
+  "@homeMoodHistoryPremiumMessage": {
+    "description": "Sheet body. {offer} is a phrase about the trial.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free for 7 days"
+      }
+    }
+  },
+  "homeGreetingMorning": "Good morning,",
+  "@homeGreetingMorning": {
+    "description": "Greeting at the top of Home before noon; the person's first name follows on the next line."
+  },
+  "homeGreetingAfternoon": "Good afternoon,",
+  "@homeGreetingAfternoon": {
+    "description": "Greeting at the top of Home from noon to 6pm; the first name follows on the next line."
+  },
+  "homeGreetingEvening": "Good evening,",
+  "@homeGreetingEvening": {
+    "description": "Greeting at the top of Home after 6pm; the first name follows on the next line."
+  },
+  "homeYourPractice": "Your practice",
+  "@homeYourPractice": {
+    "description": "Title of the Home card summarising meditation/breathing practice."
+  },
+  "homePracticeSummary": "{minutes, plural, other{{minutes} minutes}} this week · {sessions, plural, other{{sessions} sessions}} in all",
+  "@homePracticeSummary": {
+    "description": "Under 'Your practice': minutes practised this week, and total sessions ever.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "25"
+      },
+      "sessions": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "homeLastTime": "Last time: {title}",
+  "@homeLastTime": {
+    "description": "On the practice card: the last thing practised. {title} is a content title.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Body scan"
+      }
+    }
+  },
+  "homeSuggestionLow": "Something that might help",
+  "@homeSuggestionLow": {
+    "description": "Heading above one suggestion after picking a low mood (awful/bad)."
+  },
+  "homeSuggestionOkay": "Something for right now",
+  "@homeSuggestionOkay": {
+    "description": "Heading above one suggestion after picking 'okay'."
+  },
+  "homeSuggestionGood": "Something to keep it going",
+  "@homeSuggestionGood": {
+    "description": "Heading above one suggestion after picking a good mood."
+  },
+  "homeMoreForNeed": "More for “{need}”",
+  "@homeMoreForNeed": {
+    "description": "Link under the mood suggestion to the full list for that need. {need} is a need chip label, lower-cased in English (e.g. “feeling low”).",
+    "placeholders": {
+      "need": {
+        "type": "String",
+        "example": "feeling low"
+      }
+    }
+  },
+  "homeYourWeek": "Your week",
+  "@homeYourWeek": {
+    "description": "Label above the last seven days of mood faces on Home."
+  },
+  "homeHistory": "History",
+  "@homeHistory": {
+    "description": "Link to the mood history, beside 'Your week'."
+  },
+  "homeHowAreYouFeeling": "How are you feeling today?",
+  "@homeHowAreYouFeeling": {
+    "description": "The mood check-in question on Home."
+  },
+  "homeTodaysPrompt": "TODAY'S PROMPT",
+  "@homeTodaysPrompt": {
+    "description": "Small upper-case label on the card with today's journal prompt."
+  },
+  "homeTodaysRead": "TODAY'S READ",
+  "@homeTodaysRead": {
+    "description": "Small upper-case label on the card with today's short read."
+  },
+  "homeNeedHelpNow": "Need help now?",
+  "@homeNeedHelpNow": {
+    "description": "Button on Home that opens the crisis resources. Needs a fluent, careful review."
+  },
+  "homeSaved": "Saved",
+  "@homeSaved": {
+    "description": "Section heading on Home for items the person has saved (hearted)."
+  },
+  "homeYourInsights": "Your insights",
+  "@homeYourInsights": {
+    "description": "Title of the Home card that opens mood/practice insights."
+  },
+  "homeInsightsSub": "How practice, your week and your moods connect.",
+  "@homeInsightsSub": {
+    "description": "Subtitle on the insights card."
+  },
+  "homeBeforeSessionJournalTitle": "Before my session",
+  "@homeBeforeSessionJournalTitle": {
+    "description": "Title of a new journal entry started from Home before a therapy session. Written in first person; it's saved in the journal."
+  },
+  "homeBeforeSessionJournalSeed": "In my session, I'd like to talk about ",
+  "@homeBeforeSessionJournalSeed": {
+    "description": "Opening words of that journal entry; the person continues the sentence. Keep the trailing space."
+  },
+  "homeBeforeSessionTitle": "Before your session",
+  "@homeBeforeSessionTitle": {
+    "description": "Card title on Home when a therapy session is booked."
+  },
+  "homeBeforeSessionSub": "Jot down what you want to talk about, so nothing slips away when the call starts.",
+  "@homeBeforeSessionSub": {
+    "description": "Card subtitle: invites writing notes before the session."
+  },
+  "homeFromLastSession": "FROM YOUR LAST SESSION",
+  "@homeFromLastSession": {
+    "description": "Small upper-case label above the therapist's summary of the last session."
+  },
+  "homeReadItAll": "Read it all",
+  "@homeReadItAll": {
+    "description": "Button: open the full session summary."
+  },
+  "homePractiseUntilNext": "Something to practise until next time",
+  "@homePractiseUntilNext": {
+    "description": "Heading above one suggestion related to the last therapy session."
+  },
+  "homeToday": "Today, {time}",
+  "@homeToday": {
+    "description": "When a session is today. {time} is a formatted time like 17:00.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "17:00"
+      }
+    }
+  },
+  "homeTomorrow": "Tomorrow, {time}",
+  "@homeTomorrow": {
+    "description": "When a session is tomorrow. {time} is a formatted time.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "9:30"
+      }
+    }
+  },
+  "homeYourSession": "Your session · {when}",
+  "@homeYourSession": {
+    "description": "Therapy banner title on Home for a booked session. {when} is e.g. 'Today, 17:00'.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Today, 17:00"
+      }
+    }
+  },
+  "homeSessionOpen": "It's open now — tap to join.",
+  "@homeSessionOpen": {
+    "description": "Therapy banner subtitle when the session room is open."
+  },
+  "homeSessionDetails": "Tap for the details, or to join when it opens.",
+  "@homeSessionDetails": {
+    "description": "Therapy banner subtitle before the session opens."
+  },
+  "homeFindingTherapist": "Finding your therapist",
+  "@homeFindingTherapist": {
+    "description": "Therapy banner title while a request is being matched with a therapist."
+  },
+  "homeFindingTherapistSub": "We'll let you know as soon as your session is booked.",
+  "@homeFindingTherapistSub": {
+    "description": "Therapy banner subtitle while matching."
+  },
+  "homeTalkToTherapist": "Talk to a real therapist",
+  "@homeTalkToTherapist": {
+    "description": "Therapy banner title inviting someone to book a session."
+  },
+  "homeTalkToTherapistSub": "{price} a session, paid when you book.",
+  "@homeTalkToTherapistSub": {
+    "description": "Therapy banner subtitle. {price} is the session price, e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "homeQuickAccess": "Quick access",
+  "@homeQuickAccess": {
+    "description": "Section heading on Home above four shortcut tiles."
+  },
+  "downloadAction": "Download for offline",
+  "@downloadAction": {
+    "description": "Download button on a sound, meditation or the Downloads screen: download it to play without internet."
+  },
+  "downloadDone": "Downloaded",
+  "@downloadDone": {
+    "description": "Download button on a sound, meditation or the Downloads screen: it is on the phone."
+  },
+  "downloadQueued": "Waiting to download · tap to cancel",
+  "@downloadQueued": {
+    "description": "Download button on a sound, meditation or the Downloads screen: queued; tapping cancels. Keep short."
+  },
+  "downloadWaitingWifi": "Waiting for Wi-Fi · tap to cancel",
+  "@downloadWaitingWifi": {
+    "description": "Download button on a sound, meditation or the Downloads screen: waiting for Wi-Fi (Wi-Fi-only setting is on); tapping cancels."
+  },
+  "downloadProgress": "Downloading {percent}% · tap to cancel",
+  "@downloadProgress": {
+    "description": "Download button on a sound, meditation or the Downloads screen: download in progress. {percent} is 0–100.",
+    "placeholders": {
+      "percent": {
+        "type": "int",
+        "example": "42"
+      }
+    }
+  },
+  "downloadFailed": "Download failed · tap to try again",
+  "@downloadFailed": {
+    "description": "Download button on a sound, meditation or the Downloads screen: the download failed; tapping retries."
+  },
+  "downloadRemove": "Remove download",
+  "@downloadRemove": {
+    "description": "Title of the dialog/action that deletes a downloaded item from the phone."
+  },
+  "downloadCourse": "Download course",
+  "@downloadCourse": {
+    "description": "Button on a course: download all its audio."
+  },
+  "downloadCourseDone": "Course downloaded",
+  "@downloadCourseDone": {
+    "description": "Course download button when everything is on the phone."
+  },
+  "downloadCourseProgress": "Downloading · {done} of {total} ready",
+  "@downloadCourseProgress": {
+    "description": "Course download button during download.",
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "downloadCourseWaiting": "Waiting for Wi-Fi to download",
+  "@downloadCourseWaiting": {
+    "description": "Course download button while waiting for Wi-Fi."
+  },
+  "downloadPreparing": "Getting this sound ready…",
+  "@downloadPreparing": {
+    "description": "Shown on the sound player while a sound streams/downloads before it first plays."
+  },
+  "downloadNeedsConnection": "Couldn't get that sound. Connect to the internet to play it the first time.",
+  "@downloadNeedsConnection": {
+    "description": "Snackbar when a sound isn't on the phone and there's no connection."
+  },
+  "downloadPremiumNeeded": "This sound is part of Premium.",
+  "@downloadPremiumNeeded": {
+    "description": "Snackbar when a free user tries to play a Premium sound."
+  },
+  "downloadCouldNotPlay": "Couldn't play that sound.",
+  "@downloadCouldNotPlay": {
+    "description": "Snackbar when a sound fails to play for another reason."
+  },
+  "downloadsTitle": "Downloads & storage",
+  "@downloadsTitle": {
+    "description": "Settings row and screen title for managing downloaded audio."
+  },
+  "downloadsIntro": "Sounds and meditations you've downloaded play without a connection. Delete them here to free up space.",
+  "@downloadsIntro": {
+    "description": "Intro on the Downloads & storage screen."
+  },
+  "downloadsWifiOnly": "Download on Wi-Fi only",
+  "@downloadsWifiOnly": {
+    "description": "Switch on the Downloads screen."
+  },
+  "downloadsWifiOnlyDetail": "Downloads wait for Wi-Fi, so they don't use your mobile data.",
+  "@downloadsWifiOnlyDetail": {
+    "description": "Explanation under the Wi-Fi-only switch."
+  },
+  "downloadsUsing": "Using {size} on this phone",
+  "@downloadsUsing": {
+    "description": "How much storage downloads use. {size} is formatted, e.g. '24.3 MB'.",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "24.3 MB"
+      }
+    }
+  },
+  "downloadsInProgress": "In progress",
+  "@downloadsInProgress": {
+    "description": "Section label on the Downloads screen: downloads under way."
+  },
+  "downloadsOnPhone": "On this phone",
+  "@downloadsOnPhone": {
+    "description": "Section label on the Downloads screen: finished downloads."
+  },
+  "downloadsEmpty": "Nothing downloaded yet. Tap the download button on a sound, meditation or course to keep it for when you're offline.",
+  "@downloadsEmpty": {
+    "description": "Empty state on the Downloads screen."
+  },
+  "downloadsDeleteAll": "Delete all downloads",
+  "@downloadsDeleteAll": {
+    "description": "Button on the Downloads screen."
+  },
+  "downloadsDeleteAllTitle": "Delete all downloads?",
+  "@downloadsDeleteAllTitle": {
+    "description": "Confirmation dialog title."
+  },
+  "downloadsDeleteAllBody": "They'll be removed from this phone. You can download them again any time.",
+  "@downloadsDeleteAllBody": {
+    "description": "Confirmation dialog body."
+  },
+  "downloadsDeleteOne": "Delete {title}",
+  "@downloadsDeleteOne": {
+    "description": "Tooltip on the delete button of one downloaded item. {title} is its title.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Rainfall"
+      }
+    }
+  },
+  "backgroundCalmVisuals": "Calm visuals",
+  "@backgroundCalmVisuals": {
+    "description": "Settings switch and picker option: slowly moving backgrounds behind sounds and sessions."
+  },
+  "backgroundCalmVisualsHint": "Slowly moving backgrounds behind sounds and sessions. Off holds them still.",
+  "@backgroundCalmVisualsHint": {
+    "description": "Explanation under the Calm visuals switch."
+  },
+  "backgroundReduceMotionNote": "Your phone is set to reduce motion, so backgrounds stay still.",
+  "@backgroundReduceMotionNote": {
+    "description": "Shown instead of the hint when the phone's reduce-motion setting is on."
+  },
+  "backgroundPickerTitle": "Background",
+  "@backgroundPickerTitle": {
+    "description": "Title of the sheet for choosing the animated background of a sound or session."
+  },
+  "backgroundPickerTooltip": "Change background",
+  "@backgroundPickerTooltip": {
+    "description": "Tooltip of the button that opens the background picker."
+  },
+  "settingsSubscriptionManagement": "Subscription management",
+  "@settingsSubscriptionManagement": {
+    "description": "Name of a feature shown in a 'coming soon' message from Settings when the store isn't set up."
+  },
+  "settingsRestoringPurchases": "Restoring purchases",
+  "@settingsRestoringPurchases": {
+    "description": "Name of a feature shown in a 'coming soon' message from Settings when the store isn't set up."
+  },
+  "settingsPremiumRestored": "Premium restored — welcome back.",
+  "@settingsPremiumRestored": {
+    "description": "Snackbar after restoring purchases found a Premium subscription."
+  },
+  "settingsNoPurchasesFound": "No previous purchases found.",
+  "@settingsNoPurchasesFound": {
+    "description": "Snackbar after restoring purchases found nothing."
+  },
+  "settingsLogOutTitle": "Log out?",
+  "@settingsLogOutTitle": {
+    "description": "Log-out confirmation dialog title."
+  },
+  "settingsLogOutBody": "You can always come back — your progress stays safe.",
+  "@settingsLogOutBody": {
+    "description": "Log-out confirmation dialog body: reassuring."
+  },
+  "settingsLogOut": "Log out",
+  "@settingsLogOut": {
+    "description": "Settings row and dialog button: sign out of the account."
+  },
+  "settingsDeleting": "Deleting your account…",
+  "@settingsDeleting": {
+    "description": "Progress dialog while the account is being deleted."
+  },
+  "settingsDeleteFailed": "Couldn't finish deleting your account. Your request is on file and we'll complete it — or try again.",
+  "@settingsDeleteFailed": {
+    "description": "Snackbar when account deletion fails partway."
+  },
+  "settingsYourAccount": "Your account",
+  "@settingsYourAccount": {
+    "description": "Shown on the profile card in Settings when the person has no name set."
+  },
+  "settingsPremiumPlan": "Premium",
+  "@settingsPremiumPlan": {
+    "description": "Plan name on the Settings plan card for subscribers. Usually not translated."
+  },
+  "settingsFreePlan": "Free plan",
+  "@settingsFreePlan": {
+    "description": "Plan name on the Settings plan card for free users."
+  },
+  "settingsPremiumTagline": "Every room in the house is open.",
+  "@settingsPremiumTagline": {
+    "description": "Under 'Premium' on the plan card: everything is unlocked (a gentle metaphor)."
+  },
+  "settingsManage": "Manage",
+  "@settingsManage": {
+    "description": "Button on the plan card: manage the subscription."
+  },
+  "settingsUpgrade": "Upgrade",
+  "@settingsUpgrade": {
+    "description": "Button on the plan card: open the paywall."
+  },
+  "settingsCareTeam": "Care team",
+  "@settingsCareTeam": {
+    "description": "Section label in Settings, only for care-team staff and therapists. Shown in capitals."
+  },
+  "settingsCareDashboard": "Care team dashboard",
+  "@settingsCareDashboard": {
+    "description": "Settings row for care-team staff."
+  },
+  "settingsMyTherapySessions": "My therapy sessions",
+  "@settingsMyTherapySessions": {
+    "description": "Settings row for therapists: their sessions with clients."
+  },
+  "settingsGoalsTitle": "What would help most?",
+  "@settingsGoalsTitle": {
+    "description": "Title of the sheet for choosing what the person wants help with (the 'need' chips)."
+  },
+  "settingsGoalsSub": "We'll put these first in your suggestions.",
+  "@settingsGoalsSub": {
+    "description": "Under the goals sheet title."
+  },
+  "settingsAppearance": "Appearance",
+  "@settingsAppearance": {
+    "description": "Settings row and sheet title: light/dark theme."
+  },
+  "settingsAppearanceSystemHint": "Light by day, dark when your phone is.",
+  "@settingsAppearanceSystemHint": {
+    "description": "Subtitle under 'Match my phone' in the appearance sheet."
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the Settings tab."
+  },
+  "settingsAccount": "Account",
+  "@settingsAccount": {
+    "description": "Section label in Settings. Shown in capitals."
+  },
+  "settingsEditProfile": "Edit profile",
+  "@settingsEditProfile": {
+    "description": "Settings row."
+  },
+  "settingsChangePassword": "Change password",
+  "@settingsChangePassword": {
+    "description": "Settings row: sends a password reset email."
+  },
+  "settingsReminders": "Reminders & notifications",
+  "@settingsReminders": {
+    "description": "Settings row."
+  },
+  "settingsGoals": "What would help most",
+  "@settingsGoals": {
+    "description": "Settings row: choose what the person wants help with; the current picks are shown on the right."
+  },
+  "settingsRestorePurchases": "Restore purchases",
+  "@settingsRestorePurchases": {
+    "description": "Settings row: restore a subscription bought on another phone."
+  },
+  "settingsSupport": "Support",
+  "@settingsSupport": {
+    "description": "Section label in Settings. Shown in capitals."
+  },
+  "settingsCrisisResources": "Crisis resources",
+  "@settingsCrisisResources": {
+    "description": "Settings row: opens helplines. Needs a careful, fluent review."
+  },
+  "settingsContactUs": "Contact us",
+  "@settingsContactUs": {
+    "description": "Settings row: email support."
+  },
+  "settingsFaq": "FAQ",
+  "@settingsFaq": {
+    "description": "Settings row: frequently asked questions."
+  },
+  "settingsLegal": "Legal",
+  "@settingsLegal": {
+    "description": "Section label in Settings. Shown in capitals."
+  },
+  "settingsPrivacyPolicy": "Privacy policy",
+  "@settingsPrivacyPolicy": {
+    "description": "Settings row."
+  },
+  "settingsTerms": "Terms of service",
+  "@settingsTerms": {
+    "description": "Settings row."
+  },
+  "settingsAccountActions": "Account actions",
+  "@settingsAccountActions": {
+    "description": "Section label in Settings above Log out and Delete account. Shown in capitals."
+  },
+  "settingsDeleteAccount": "Delete account",
+  "@settingsDeleteAccount": {
+    "description": "Settings row: permanently delete the account."
+  },
+  "settingsDeleteTitle": "Delete your account?",
+  "@settingsDeleteTitle": {
+    "description": "Delete-account confirmation dialog title."
+  },
+  "settingsDeleteBody": "This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, therapy requests and photo. It happens straight away and it can't be undone.",
+  "@settingsDeleteBody": {
+    "description": "Delete-account dialog body: plain and complete about what is deleted."
+  },
+  "settingsKeepAccount": "Keep my account",
+  "@settingsKeepAccount": {
+    "description": "Dialog button: cancel deleting the account."
+  },
+  "settingsDeleteForGood": "Delete for good",
+  "@settingsDeleteForGood": {
+    "description": "Dialog button: confirm permanent deletion."
+  },
+  "settingsPasswordResetSent": "Password reset link sent to {email}",
+  "@settingsPasswordResetSent": {
+    "description": "Snackbar after requesting a password reset.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "amina@example.com"
+      }
+    }
+  },
+  "settingsEmailCopied": "Email address copied: {email}",
+  "@settingsEmailCopied": {
+    "description": "Snackbar when no mail app is available and the support address was copied.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "support@example.com"
+      }
+    }
+  },
+  "settingsTypeToConfirm": "Type {word} to confirm",
+  "@settingsTypeToConfirm": {
+    "description": "Label of the text field in the delete-account dialog. {word} is DELETE, which must be typed exactly as shown — don't translate it.",
+    "placeholders": {
+      "word": {
+        "type": "String",
+        "example": "DELETE"
+      }
+    }
+  },
+  "settingsGoalsMore": "{first} +{more}",
+  "@settingsGoalsMore": {
+    "description": "Value on the 'What would help most' row when more than two are picked: two names, then how many more.",
+    "placeholders": {
+      "first": {
+        "type": "String",
+        "example": "Can't sleep, Anxious"
+      },
+      "more": {
+        "type": "int",
+        "example": "2"
+      }
+    }
   }
 }

@@ -61,7 +61,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
   Future<void> _manageSubscription(BuildContext context) async {
     if (!PurchasesService.instance.isConfigured) {
-      showComingSoon(context, 'Subscription management');
+      showComingSoon(context, context.l10n.settingsSubscriptionManagement);
       return;
     }
     await PurchasesService.instance.presentCustomerCenter();
@@ -69,7 +69,7 @@ class _SettingsTabState extends State<SettingsTab> {
 
   Future<void> _restorePurchases(BuildContext context) async {
     if (!PurchasesService.instance.isConfigured) {
-      showComingSoon(context, 'Restoring purchases');
+      showComingSoon(context, context.l10n.settingsRestoringPurchases);
       return;
     }
     try {
@@ -79,8 +79,8 @@ class _SettingsTabState extends State<SettingsTab> {
           SnackBar(
             content: Text(
               pro
-                  ? 'Premium restored — welcome back.'
-                  : 'No previous purchases found.',
+                  ? context.l10n.settingsPremiumRestored
+                  : context.l10n.settingsNoPurchasesFound,
             ),
           ),
         );
@@ -105,7 +105,7 @@ class _SettingsTabState extends State<SettingsTab> {
       );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Password reset link sent to $email')),
+          SnackBar(content: Text(context.l10n.settingsPasswordResetSent(email))),
         );
       }
     } catch (e) {
@@ -132,8 +132,8 @@ class _SettingsTabState extends State<SettingsTab> {
       await Clipboard.setData(const ClipboardData(text: legalContactEmail));
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email address copied: $legalContactEmail'),
+        SnackBar(
+          content: Text(context.l10n.settingsEmailCopied(legalContactEmail)),
         ),
       );
     }
@@ -143,19 +143,17 @@ class _SettingsTabState extends State<SettingsTab> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Log out?'),
-        content: const Text(
-          'You can always come back — your progress stays safe.',
-        ),
+        title: Text(context.l10n.settingsLogOutTitle),
+        content: Text(context.l10n.settingsLogOutBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: context.brand.red),
-            child: const Text('Log out'),
+            child: Text(context.l10n.settingsLogOut),
           ),
         ],
       ),
@@ -188,16 +186,16 @@ class _SettingsTabState extends State<SettingsTab> {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const AlertDialog(
+      builder: (_) => AlertDialog(
         content: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 22,
               height: 22,
               child: CircularProgressIndicator(strokeWidth: 2.4),
             ),
-            SizedBox(width: 16),
-            Expanded(child: Text('Deleting your account…')),
+            const SizedBox(width: 16),
+            Expanded(child: Text(context.l10n.settingsDeleting)),
           ],
         ),
       ),
@@ -209,12 +207,7 @@ class _SettingsTabState extends State<SettingsTab> {
       if (!context.mounted) return;
       Navigator.of(context).pop(); // the progress dialog
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Couldn\'t finish deleting your account. Your request is on '
-            'file and we\'ll complete it — or try again.',
-          ),
-        ),
+        SnackBar(content: Text(context.l10n.settingsDeleteFailed)),
       );
       return;
     }
@@ -241,7 +234,7 @@ class _SettingsTabState extends State<SettingsTab> {
     final c = context.brand;
     final user = Supabase.instance.client.auth.currentUser;
     final name = (_meta?['full_name'] as String?)?.trim();
-    final displayName = (name == null || name.isEmpty) ? 'Your account' : name;
+    final displayName = (name == null || name.isEmpty) ? context.l10n.settingsYourAccount : name;
     final initial = displayName.characters.first.toUpperCase();
     final avatarUrl = (_meta?['avatar_url'] as String?) ?? '';
     final initialAvatar = Center(
@@ -343,7 +336,7 @@ class _SettingsTabState extends State<SettingsTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  premium ? 'Premium' : 'Free plan',
+                  premium ? context.l10n.settingsPremiumPlan : context.l10n.settingsFreePlan,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -353,7 +346,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 const SizedBox(height: 2),
                 Text(
                   premium
-                      ? 'Every room in the house is open.'
+                      ? context.l10n.settingsPremiumTagline
                       : introOfferSentence,
                   style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
@@ -363,7 +356,7 @@ class _SettingsTabState extends State<SettingsTab> {
           if (premium)
             TextButton(
               onPressed: () => _manageSubscription(context),
-              child: const Text('Manage'),
+              child: Text(context.l10n.settingsManage),
             )
           else
             TextButton(
@@ -373,7 +366,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       PaywallScreen(checkin: checkin, source: 'settings'),
                 ),
               ),
-              child: const Text('Upgrade'),
+              child: Text(context.l10n.settingsUpgrade),
             ),
         ],
       ),
@@ -394,12 +387,12 @@ class _SettingsTabState extends State<SettingsTab> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 28),
-            _sectionLabel('Care team'),
+            _sectionLabel(context.l10n.settingsCareTeam),
             if (roles.isAdmin)
               _row(
                 context,
                 Icons.space_dashboard_outlined,
-                'Care team dashboard',
+                context.l10n.settingsCareDashboard,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => const CareDashboardScreen(),
@@ -410,7 +403,7 @@ class _SettingsTabState extends State<SettingsTab> {
               _row(
                 context,
                 Icons.video_call_outlined,
-                'My therapy sessions',
+                context.l10n.settingsMyTherapySessions,
                 onTap: () =>
                     Navigator.of(context).push(TherapistSessionsScreen.route()),
               ),
@@ -496,10 +489,13 @@ class _SettingsTabState extends State<SettingsTab> {
   String? _goalsSummary() {
     final goals = userGoals();
     if (goals.isEmpty) return null;
-    final names = [for (final g in goals) g.label];
+    final names = [for (final g in goals) g.label(context.l10n)];
     return names.length <= 2
         ? names.join(', ')
-        : '${names.take(2).join(', ')} +${names.length - 2}';
+        : context.l10n.settingsGoalsMore(
+            names.take(2).join(', '),
+            names.length - 2,
+          );
   }
 
   /// The reasons asked at onboarding, editable: they put matching
@@ -520,7 +516,7 @@ class _SettingsTabState extends State<SettingsTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'What would help most?',
+                    sheetContext.l10n.settingsGoalsTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -529,7 +525,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'We\'ll put these first in your suggestions.',
+                    sheetContext.l10n.settingsGoalsSub,
                     style: TextStyle(fontSize: 13, color: c.textMuted),
                   ),
                   const SizedBox(height: 16),
@@ -539,7 +535,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     children: [
                       for (final need in goalChoices)
                         FilterPill(
-                          label: need.label,
+                          label: need.label(sheetContext.l10n),
                           icon: need.icon,
                           color: need.color,
                           selected: picked.contains(need),
@@ -556,7 +552,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       await saveGoals(picked);
                       if (mounted) setState(() {});
                     },
-                    child: const Text('Save'),
+                    child: Text(sheetContext.l10n.commonSave),
                   ),
                 ],
               ),
@@ -587,7 +583,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
                     child: Text(
-                      'Appearance',
+                      sheetContext.l10n.settingsAppearance,
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -611,7 +607,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       ),
                       subtitle: mode == ThemeMode.system
                           ? Text(
-                              'Light by day, dark when your phone is.',
+                              sheetContext.l10n.settingsAppearanceSystemHint,
                               style: TextStyle(
                                 fontSize: 12.5,
                                 color: c.textMuted,
@@ -661,7 +657,7 @@ class _SettingsTabState extends State<SettingsTab> {
       padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
       children: [
         Text(
-          'Settings',
+          context.l10n.settingsTitle,
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
@@ -677,23 +673,23 @@ class _SettingsTabState extends State<SettingsTab> {
         _planCard(context),
         _careSection(context),
         const SizedBox(height: 28),
-        _sectionLabel('Account'),
+        _sectionLabel(context.l10n.settingsAccount),
         _row(
           context,
           Icons.person_outline_rounded,
-          'Edit profile',
+          context.l10n.settingsEditProfile,
           onTap: () => _openEditProfile(context),
         ),
         _row(
           context,
           Icons.lock_outline_rounded,
-          'Change password',
+          context.l10n.settingsChangePassword,
           onTap: () => _sendPasswordReset(context),
         ),
         _row(
           context,
           Icons.notifications_none_rounded,
-          'Reminders & notifications',
+          context.l10n.settingsReminders,
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const RemindersScreen())),
@@ -701,7 +697,7 @@ class _SettingsTabState extends State<SettingsTab> {
         _row(
           context,
           Icons.flag_outlined,
-          'What would help most',
+          context.l10n.settingsGoals,
           value: _goalsSummary(),
           onTap: () => _chooseGoals(context),
         ),
@@ -710,7 +706,7 @@ class _SettingsTabState extends State<SettingsTab> {
           builder: (context, mode, _) => _row(
             context,
             Icons.contrast_rounded,
-            'Appearance',
+            context.l10n.settingsAppearance,
             value: appearanceLabel(context.l10n, mode),
             onTap: () => _chooseAppearance(context),
           ),
@@ -738,15 +734,15 @@ class _SettingsTabState extends State<SettingsTab> {
         _row(
           context,
           Icons.restore_rounded,
-          'Restore purchases',
+          context.l10n.settingsRestorePurchases,
           onTap: () => _restorePurchases(context),
         ),
         const SizedBox(height: 22),
-        _sectionLabel('Support'),
+        _sectionLabel(context.l10n.settingsSupport),
         _row(
           context,
           Icons.health_and_safety_outlined,
-          'Crisis resources',
+          context.l10n.settingsCrisisResources,
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const CrisisScreen())),
@@ -754,23 +750,23 @@ class _SettingsTabState extends State<SettingsTab> {
         _row(
           context,
           Icons.mail_outline_rounded,
-          'Contact us',
+          context.l10n.settingsContactUs,
           onTap: () => _contactSupport(context),
         ),
         _row(
           context,
           Icons.help_outline_rounded,
-          'FAQ',
+          context.l10n.settingsFaq,
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const FaqScreen())),
         ),
         const SizedBox(height: 22),
-        _sectionLabel('Legal'),
+        _sectionLabel(context.l10n.settingsLegal),
         _row(
           context,
           Icons.privacy_tip_outlined,
-          'Privacy policy',
+          context.l10n.settingsPrivacyPolicy,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => LegalScreen(doc: privacyPolicy)),
           ),
@@ -778,24 +774,24 @@ class _SettingsTabState extends State<SettingsTab> {
         _row(
           context,
           Icons.description_outlined,
-          'Terms of service',
+          context.l10n.settingsTerms,
           onTap: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => LegalScreen(doc: termsOfService)),
           ),
         ),
         const SizedBox(height: 22),
-        _sectionLabel('Account actions'),
+        _sectionLabel(context.l10n.settingsAccountActions),
         _row(
           context,
           Icons.logout_rounded,
-          'Log out',
+          context.l10n.settingsLogOut,
           color: c.red,
           onTap: () => _confirmLogout(context),
         ),
         _row(
           context,
           Icons.delete_outline_rounded,
-          'Delete account',
+          context.l10n.settingsDeleteAccount,
           color: c.red,
           onTap: () => _confirmDelete(context),
         ),
@@ -845,22 +841,18 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
   Widget build(BuildContext context) {
     final armed = _controller.text.trim().toUpperCase() == 'DELETE';
     return AlertDialog(
-      title: const Text('Delete your account?'),
+      title: Text(context.l10n.settingsDeleteTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'This removes your profile, journal entries, mood check-ins, '
-            'recovery streaks, craving logs, therapy requests and photo. '
-            'It happens straight away and it can\'t be undone.',
-          ),
+          Text(context.l10n.settingsDeleteBody),
           const SizedBox(height: 16),
           TextField(
             controller: _controller,
             autocorrect: false,
-            decoration: const InputDecoration(
-              labelText: 'Type DELETE to confirm',
+            decoration: InputDecoration(
+              labelText: context.l10n.settingsTypeToConfirm('DELETE'),
             ),
             onChanged: (_) => setState(() {}),
           ),
@@ -869,12 +861,12 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Keep my account'),
+          child: Text(context.l10n.settingsKeepAccount),
         ),
         TextButton(
           onPressed: armed ? () => Navigator.of(context).pop(true) : null,
           style: TextButton.styleFrom(foregroundColor: context.brand.red),
-          child: const Text('Delete for good'),
+          child: Text(context.l10n.settingsDeleteForGood),
         ),
       ],
     );

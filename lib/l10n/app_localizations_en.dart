@@ -5161,9 +5161,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundPlayerFallbackTitle => 'Wellbeing sound';
 
   @override
-  String get playerCouldNotPlay => 'Couldn\'t play that sound.';
-
-  @override
   String playerSleepTimerStopsIn(String time) {
     return 'Stops in $time · cancel';
   }
@@ -5198,4 +5195,598 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get meditationNoSound => 'No sound';
+
+  @override
+  String get needSleep => 'Can\'t sleep';
+
+  @override
+  String get needAnxious => 'Anxious';
+
+  @override
+  String get needPanic => 'Panicking';
+
+  @override
+  String get needLow => 'Feeling low';
+
+  @override
+  String get needStressed => 'Stressed';
+
+  @override
+  String get needAngry => 'Angry';
+
+  @override
+  String get needUrges => 'Urges';
+
+  @override
+  String get needFocus => 'Focus';
+
+  @override
+  String get needReflect => 'Reflect';
+
+  @override
+  String get needGood => 'Feeling good';
+
+  @override
+  String get needSleepIntro =>
+      'For the evening before, and the hours you\'re lying awake.';
+
+  @override
+  String get needAnxiousIntro =>
+      'Ways to bring a racing mind back to what\'s in front of you.';
+
+  @override
+  String get needPanicIntro =>
+      'Quick and simple first. These work best started straight away.';
+
+  @override
+  String get needLowIntro =>
+      'Small, kind things for heavy days. Start with whichever feels doable.';
+
+  @override
+  String get needStressedIntro =>
+      'Bring the body down first, then sort what\'s on your plate.';
+
+  @override
+  String get needAngryIntro => 'Let it cool before you act on it.';
+
+  @override
+  String get needUrgesIntro =>
+      'Ride it out: urges peak and pass, usually within minutes.';
+
+  @override
+  String get needFocusIntro => 'Clear your head and settle into one thing.';
+
+  @override
+  String get needReflectIntro =>
+      'Prompts and reads for making sense of things.';
+
+  @override
+  String get needGoodIntro =>
+      'Notice what\'s going right, so it stays with you.';
+
+  @override
+  String get dayPartMorning => 'For this morning';
+
+  @override
+  String get dayPartAfternoon => 'For this afternoon';
+
+  @override
+  String get dayPartEvening => 'For this evening';
+
+  @override
+  String get dayPartNight => 'For tonight';
+
+  @override
+  String get contentKindBreathing => 'Breathing';
+
+  @override
+  String get contentKindMeditation => 'Meditation';
+
+  @override
+  String get contentKindSound => 'Sound';
+
+  @override
+  String get contentKindPrompt => 'Journal prompt';
+
+  @override
+  String get contentKindTool => 'Tool';
+
+  @override
+  String get contentKindLesson => 'Read';
+
+  @override
+  String get contentKindRecovery => 'Recovery';
+
+  @override
+  String get lengthAny => 'Any length';
+
+  @override
+  String get lengthShort => 'Under 5 min';
+
+  @override
+  String get lengthMedium => '5–10 min';
+
+  @override
+  String get lengthLong => 'Over 10 min';
+
+  @override
+  String contentMeta(String what, int minutes) {
+    return '$what · $minutes min';
+  }
+
+  @override
+  String get contentPremiumTitle => 'This is part of Premium';
+
+  @override
+  String contentPremiumMessage(String offer) {
+    return 'Free includes a taste of everything. Premium unlocks every session, tool and read — and $offer.';
+  }
+
+  @override
+  String get contentNewBadge => 'New';
+
+  @override
+  String get contentSaveTooltip => 'Save';
+
+  @override
+  String get contentUnsaveTooltip => 'Remove from saved';
+
+  @override
+  String get contentPremiumLabel => 'Premium';
+
+  @override
+  String get contentNothingThatLength => 'Nothing that length yet.';
+
+  @override
+  String get meditationSoundPremiumTitle => 'This sound is part of Premium';
+
+  @override
+  String meditationSoundPremiumMessage(String offer) {
+    return 'Free includes one sound to try. Premium unlocks the whole library — and $offer.';
+  }
+
+  @override
+  String get homeQuickMeditate => 'Meditate';
+
+  @override
+  String get homeQuickMeditateSub => 'Breathe & settle';
+
+  @override
+  String get homeQuickJournal => 'Journal';
+
+  @override
+  String get homeQuickJournalSub => 'Write it out';
+
+  @override
+  String get homeQuickSounds => 'Sounds';
+
+  @override
+  String get homeQuickSoundsSub => 'Focus · sleep · calm';
+
+  @override
+  String get homeQuickRecovery => 'Recovery';
+
+  @override
+  String get homeQuickRecoverySub => 'One day at a time';
+
+  @override
+  String get homeThanksForCheckingIn => 'Thanks for checking in.';
+
+  @override
+  String get homeMoodSaveFailed =>
+      'Couldn\'t save your mood — check your connection.';
+
+  @override
+  String get homeNudgeCheckinsTitle => 'Three check-ins in';
+
+  @override
+  String homeNudgeCheckinsMessage(String offer) {
+    return 'You\'re building a habit. Premium keeps every check-in and shows you how the weeks are actually going — and $offer.';
+  }
+
+  @override
+  String get homeMoodHistoryPremiumTitle => 'Mood history is part of Premium';
+
+  @override
+  String homeMoodHistoryPremiumMessage(String offer) {
+    return 'Checking in is always free. Premium keeps the record and shows you the pattern — and $offer.';
+  }
+
+  @override
+  String get homeGreetingMorning => 'Good morning,';
+
+  @override
+  String get homeGreetingAfternoon => 'Good afternoon,';
+
+  @override
+  String get homeGreetingEvening => 'Good evening,';
+
+  @override
+  String get homeYourPractice => 'Your practice';
+
+  @override
+  String homePracticeSummary(int minutes, int sessions) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      sessions,
+      locale: localeName,
+      other: '$sessions sessions',
+    );
+    return '$_temp0 this week · $_temp1 in all';
+  }
+
+  @override
+  String homeLastTime(String title) {
+    return 'Last time: $title';
+  }
+
+  @override
+  String get homeSuggestionLow => 'Something that might help';
+
+  @override
+  String get homeSuggestionOkay => 'Something for right now';
+
+  @override
+  String get homeSuggestionGood => 'Something to keep it going';
+
+  @override
+  String homeMoreForNeed(String need) {
+    return 'More for “$need”';
+  }
+
+  @override
+  String get homeYourWeek => 'Your week';
+
+  @override
+  String get homeHistory => 'History';
+
+  @override
+  String get homeHowAreYouFeeling => 'How are you feeling today?';
+
+  @override
+  String get homeTodaysPrompt => 'TODAY\'S PROMPT';
+
+  @override
+  String get homeTodaysRead => 'TODAY\'S READ';
+
+  @override
+  String get homeNeedHelpNow => 'Need help now?';
+
+  @override
+  String get homeSaved => 'Saved';
+
+  @override
+  String get homeYourInsights => 'Your insights';
+
+  @override
+  String get homeInsightsSub =>
+      'How practice, your week and your moods connect.';
+
+  @override
+  String get homeBeforeSessionJournalTitle => 'Before my session';
+
+  @override
+  String get homeBeforeSessionJournalSeed =>
+      'In my session, I\'d like to talk about ';
+
+  @override
+  String get homeBeforeSessionTitle => 'Before your session';
+
+  @override
+  String get homeBeforeSessionSub =>
+      'Jot down what you want to talk about, so nothing slips away when the call starts.';
+
+  @override
+  String get homeFromLastSession => 'FROM YOUR LAST SESSION';
+
+  @override
+  String get homeReadItAll => 'Read it all';
+
+  @override
+  String get homePractiseUntilNext => 'Something to practise until next time';
+
+  @override
+  String homeToday(String time) {
+    return 'Today, $time';
+  }
+
+  @override
+  String homeTomorrow(String time) {
+    return 'Tomorrow, $time';
+  }
+
+  @override
+  String homeYourSession(String when) {
+    return 'Your session · $when';
+  }
+
+  @override
+  String get homeSessionOpen => 'It\'s open now — tap to join.';
+
+  @override
+  String get homeSessionDetails =>
+      'Tap for the details, or to join when it opens.';
+
+  @override
+  String get homeFindingTherapist => 'Finding your therapist';
+
+  @override
+  String get homeFindingTherapistSub =>
+      'We\'ll let you know as soon as your session is booked.';
+
+  @override
+  String get homeTalkToTherapist => 'Talk to a real therapist';
+
+  @override
+  String homeTalkToTherapistSub(String price) {
+    return '$price a session, paid when you book.';
+  }
+
+  @override
+  String get homeQuickAccess => 'Quick access';
+
+  @override
+  String get downloadAction => 'Download for offline';
+
+  @override
+  String get downloadDone => 'Downloaded';
+
+  @override
+  String get downloadQueued => 'Waiting to download · tap to cancel';
+
+  @override
+  String get downloadWaitingWifi => 'Waiting for Wi-Fi · tap to cancel';
+
+  @override
+  String downloadProgress(int percent) {
+    return 'Downloading $percent% · tap to cancel';
+  }
+
+  @override
+  String get downloadFailed => 'Download failed · tap to try again';
+
+  @override
+  String get downloadRemove => 'Remove download';
+
+  @override
+  String get downloadCourse => 'Download course';
+
+  @override
+  String get downloadCourseDone => 'Course downloaded';
+
+  @override
+  String downloadCourseProgress(int done, int total) {
+    return 'Downloading · $done of $total ready';
+  }
+
+  @override
+  String get downloadCourseWaiting => 'Waiting for Wi-Fi to download';
+
+  @override
+  String get downloadPreparing => 'Getting this sound ready…';
+
+  @override
+  String get downloadNeedsConnection =>
+      'Couldn\'t get that sound. Connect to the internet to play it the first time.';
+
+  @override
+  String get downloadPremiumNeeded => 'This sound is part of Premium.';
+
+  @override
+  String get downloadCouldNotPlay => 'Couldn\'t play that sound.';
+
+  @override
+  String get downloadsTitle => 'Downloads & storage';
+
+  @override
+  String get downloadsIntro =>
+      'Sounds and meditations you\'ve downloaded play without a connection. Delete them here to free up space.';
+
+  @override
+  String get downloadsWifiOnly => 'Download on Wi-Fi only';
+
+  @override
+  String get downloadsWifiOnlyDetail =>
+      'Downloads wait for Wi-Fi, so they don\'t use your mobile data.';
+
+  @override
+  String downloadsUsing(String size) {
+    return 'Using $size on this phone';
+  }
+
+  @override
+  String get downloadsInProgress => 'In progress';
+
+  @override
+  String get downloadsOnPhone => 'On this phone';
+
+  @override
+  String get downloadsEmpty =>
+      'Nothing downloaded yet. Tap the download button on a sound, meditation or course to keep it for when you\'re offline.';
+
+  @override
+  String get downloadsDeleteAll => 'Delete all downloads';
+
+  @override
+  String get downloadsDeleteAllTitle => 'Delete all downloads?';
+
+  @override
+  String get downloadsDeleteAllBody =>
+      'They\'ll be removed from this phone. You can download them again any time.';
+
+  @override
+  String downloadsDeleteOne(String title) {
+    return 'Delete $title';
+  }
+
+  @override
+  String get backgroundCalmVisuals => 'Calm visuals';
+
+  @override
+  String get backgroundCalmVisualsHint =>
+      'Slowly moving backgrounds behind sounds and sessions. Off holds them still.';
+
+  @override
+  String get backgroundReduceMotionNote =>
+      'Your phone is set to reduce motion, so backgrounds stay still.';
+
+  @override
+  String get backgroundPickerTitle => 'Background';
+
+  @override
+  String get backgroundPickerTooltip => 'Change background';
+
+  @override
+  String get settingsSubscriptionManagement => 'Subscription management';
+
+  @override
+  String get settingsRestoringPurchases => 'Restoring purchases';
+
+  @override
+  String get settingsPremiumRestored => 'Premium restored — welcome back.';
+
+  @override
+  String get settingsNoPurchasesFound => 'No previous purchases found.';
+
+  @override
+  String get settingsLogOutTitle => 'Log out?';
+
+  @override
+  String get settingsLogOutBody =>
+      'You can always come back — your progress stays safe.';
+
+  @override
+  String get settingsLogOut => 'Log out';
+
+  @override
+  String get settingsDeleting => 'Deleting your account…';
+
+  @override
+  String get settingsDeleteFailed =>
+      'Couldn\'t finish deleting your account. Your request is on file and we\'ll complete it — or try again.';
+
+  @override
+  String get settingsYourAccount => 'Your account';
+
+  @override
+  String get settingsPremiumPlan => 'Premium';
+
+  @override
+  String get settingsFreePlan => 'Free plan';
+
+  @override
+  String get settingsPremiumTagline => 'Every room in the house is open.';
+
+  @override
+  String get settingsManage => 'Manage';
+
+  @override
+  String get settingsUpgrade => 'Upgrade';
+
+  @override
+  String get settingsCareTeam => 'Care team';
+
+  @override
+  String get settingsCareDashboard => 'Care team dashboard';
+
+  @override
+  String get settingsMyTherapySessions => 'My therapy sessions';
+
+  @override
+  String get settingsGoalsTitle => 'What would help most?';
+
+  @override
+  String get settingsGoalsSub => 'We\'ll put these first in your suggestions.';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingsAppearanceSystemHint =>
+      'Light by day, dark when your phone is.';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get settingsAccount => 'Account';
+
+  @override
+  String get settingsEditProfile => 'Edit profile';
+
+  @override
+  String get settingsChangePassword => 'Change password';
+
+  @override
+  String get settingsReminders => 'Reminders & notifications';
+
+  @override
+  String get settingsGoals => 'What would help most';
+
+  @override
+  String get settingsRestorePurchases => 'Restore purchases';
+
+  @override
+  String get settingsSupport => 'Support';
+
+  @override
+  String get settingsCrisisResources => 'Crisis resources';
+
+  @override
+  String get settingsContactUs => 'Contact us';
+
+  @override
+  String get settingsFaq => 'FAQ';
+
+  @override
+  String get settingsLegal => 'Legal';
+
+  @override
+  String get settingsPrivacyPolicy => 'Privacy policy';
+
+  @override
+  String get settingsTerms => 'Terms of service';
+
+  @override
+  String get settingsAccountActions => 'Account actions';
+
+  @override
+  String get settingsDeleteAccount => 'Delete account';
+
+  @override
+  String get settingsDeleteTitle => 'Delete your account?';
+
+  @override
+  String get settingsDeleteBody =>
+      'This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, therapy requests and photo. It happens straight away and it can\'t be undone.';
+
+  @override
+  String get settingsKeepAccount => 'Keep my account';
+
+  @override
+  String get settingsDeleteForGood => 'Delete for good';
+
+  @override
+  String settingsPasswordResetSent(String email) {
+    return 'Password reset link sent to $email';
+  }
+
+  @override
+  String settingsEmailCopied(String email) {
+    return 'Email address copied: $email';
+  }
+
+  @override
+  String settingsTypeToConfirm(String word) {
+    return 'Type $word to confirm';
+  }
+
+  @override
+  String settingsGoalsMore(String first, int more) {
+    return '$first +$more';
+  }
 }

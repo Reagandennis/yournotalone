@@ -189,7 +189,7 @@ class _CheckinScreenState extends State<CheckinScreen> {
           children: [
             for (final need in goalChoices)
               FilterPill(
-                label: need.label,
+                label: need.label(context.l10n),
                 icon: need.icon,
                 color: need.color,
                 selected: _goals.contains(need),
