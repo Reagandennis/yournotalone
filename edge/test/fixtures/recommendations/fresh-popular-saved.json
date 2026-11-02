@@ -1,0 +1,44 @@
+{
+  "description": "Reasons for new, popular and saved items.",
+  "signals": {
+    "now": "2026-11-02T05:00:00Z",
+    "localTime": "2026-11-02T08:00",
+    "premium": true,
+    "saved": [
+      "meditation:Self-compassion"
+    ],
+    "popularity": {
+      "sound:Deep focus": 120,
+      "breathing:Box breathing": 30
+    }
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "med-morning-reset",
+        "reason": "For this morning"
+      },
+      {
+        "id": "sound:Deep focus",
+        "reason": "Popular this month"
+      },
+      {
+        "id": "meditation:Self-compassion",
+        "reason": "One you saved"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "Popular this month"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "Something to try"
+      },
+      {
+        "id": "lesson:Why avoiding things keeps anxiety alive",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

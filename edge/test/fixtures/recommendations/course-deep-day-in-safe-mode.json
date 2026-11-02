@@ -1,0 +1,43 @@
+{
+  "description": "The next course day is deep, so after an awful check-in it is left out.",
+  "signals": {
+    "now": "2026-11-02T05:00:00Z",
+    "localTime": "2026-11-02T08:00",
+    "premium": true,
+    "course": {
+      "id": "anxiety7",
+      "day": 2
+    },
+    "lastMood": 0,
+    "lastMoodAt": "2026-11-02T04:30:00Z"
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "breathing:Panic reset",
+        "reason": "For right now"
+      },
+      {
+        "id": "support-crisis-lines",
+        "reason": "Here whenever you need it"
+      },
+      {
+        "id": "tool:Grounding: 5-4-3-2-1",
+        "reason": "For right now"
+      },
+      {
+        "id": "tool:Physiological sigh",
+        "reason": "For right now"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "For right now"
+      },
+      {
+        "id": "meditation:Self-compassion",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

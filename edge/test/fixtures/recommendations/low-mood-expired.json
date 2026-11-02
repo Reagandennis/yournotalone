@@ -1,0 +1,39 @@
+{
+  "description": "Low mood 3 hours ago: the safety rules no longer apply.",
+  "signals": {
+    "now": "2026-11-02T18:30:00Z",
+    "localTime": "2026-11-02T21:30",
+    "premium": true,
+    "lastMood": 1,
+    "lastMoodAt": "2026-11-02T15:30:00Z"
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight"
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "For tonight"
+      },
+      {
+        "id": "med-morning-reset",
+        "reason": "Just added"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "Something to try"
+      },
+      {
+        "id": "sound:Deep focus",
+        "reason": "Something to try"
+      },
+      {
+        "id": "lesson:Why avoiding things keeps anxiety alive",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

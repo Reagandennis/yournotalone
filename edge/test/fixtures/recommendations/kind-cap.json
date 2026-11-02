@@ -1,0 +1,62 @@
+{
+  "description": "Goals and habits favour meditations: at most 2 of one kind in the top 6.",
+  "signals": {
+    "now": "2026-11-02T05:00:00Z",
+    "localTime": "2026-11-02T08:00",
+    "premium": true,
+    "goals": [
+      "stressed",
+      "low"
+    ],
+    "opensByKind": {
+      "meditation": 20,
+      "sound": 2
+    },
+    "limit": 10
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "med-morning-reset",
+        "reason": "For this morning"
+      },
+      {
+        "id": "meditation:Self-compassion",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "sound:Heartbeat",
+        "reason": "Because you're working on stress"
+      },
+      {
+        "id": "prompt:Worst case",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "tool:Physiological sigh",
+        "reason": "Because you're working on stress"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "Because you're working on stress"
+      },
+      {
+        "id": "meditation:Loving kindness",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "support-crisis-lines",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "lesson:What CBT actually is",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "tool:Thought record",
+        "reason": "Because you're working on low moods"
+      }
+    ],
+    "rules": "v1"
+  }
+}
