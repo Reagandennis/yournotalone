@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../l10n/l10n.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
 import 'care_repository.dart';
@@ -54,7 +55,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
       if (mounted) _say(done);
     } catch (e) {
       if (mounted) {
-        _say(careErrorMessage(e, 'That didn\'t work — check your connection.'));
+        _say(careErrorMessage(e, context.l10n.careDetailFailed));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -75,7 +76,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Back'),
+            child: Text(context.l10n.commonBack),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -107,101 +108,99 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
     }
     if (!mounted) return;
     setState(() => _busy = false);
-    _say('Booked — the client and therapist have been emailed.');
+    _say(context.l10n.careDetailBooked);
   }
 
   Future<void> _cancel() async {
     final request = _item.request;
+    final l10n = context.l10n;
     final session = request.isConfirmed;
-    final refund = request.paymentStatus == 'paid'
-        ? ' They\'ve paid, so refund them in the Paystack dashboard '
-            '(Play Console for older in-app payments).'
-        : '';
     final ok = await _confirm(
-      session ? 'Cancel this session?' : 'Cancel this request?',
-      session
-          ? 'The client and therapist are emailed that it\'s cancelled.$refund'
-          : 'The client can request again whenever they like.',
-      session ? 'Cancel session' : 'Cancel request',
+      session ? l10n.careCancelSessionTitle : l10n.careCancelRequestTitle,
+      !session
+          ? l10n.careCancelRequestBody
+          : request.paymentStatus == 'paid'
+              ? l10n.careCancelSessionPaidBody
+              : l10n.careCancelSessionBody,
+      session ? l10n.careCancelSessionAction : l10n.careCancelRequestAction,
       destructive: true,
     );
     if (!ok) return;
     await _run(
       () => widget.repository.cancelRequest(request.id),
-      'Cancelled.',
+      l10n.careCancelled,
     );
   }
 
   Future<void> _setPayment(String status) async {
+    final l10n = context.l10n;
     final (title, body, action) = switch (status) {
       'paid' => (
-          'Record a payment?',
-          'Use this when they paid outside the app. The Join button '
-              'unlocks for them straight away.',
-          'Mark as paid',
+          l10n.carePayPaidTitle,
+          l10n.carePayPaidBody,
+          l10n.carePayMarkPaid,
         ),
       'waived' => (
-          'Waive the fee?',
-          'They won\'t be charged for this session, and can join straight '
-              'away.',
-          'Waive fee',
+          l10n.carePayWaiveTitle,
+          l10n.carePayWaiveBody,
+          l10n.carePayWaive,
         ),
       _ => (
-          'Mark as unpaid?',
-          'They\'ll need to pay before they can join.',
-          'Mark as unpaid',
+          l10n.carePayUnpaidTitle,
+          l10n.carePayUnpaidBody,
+          l10n.carePayMarkUnpaid,
         ),
     };
     if (!await _confirm(title, body, action)) return;
     await _run(
       () => widget.repository.setPayment(_item.request.id, status),
-      'Payment updated.',
+      l10n.carePaymentUpdated,
     );
   }
 
-  String get _statusLabel {
+  String _statusLabel(AppLocalizations l10n) {
     final request = _item.request;
     return switch (request.status) {
-      'awaiting_payment' => 'Not sent yet — the client hasn\'t paid',
-      'pending' => 'Waiting to be matched',
-      'confirmed' when request.needsPayment => 'Matched — waiting for payment',
-      'confirmed' => 'Booked',
-      'completed' when request.wasMissed => 'Completed — the client '
-          'didn\'t join, so the session counts as used',
+      'awaiting_payment' => l10n.careStatusAwaitingPayment,
+      'pending' => l10n.careStatusPending,
+      'confirmed' when request.needsPayment => l10n.careStatusMatchedUnpaid,
+      'confirmed' => l10n.careStatusBooked,
+      'completed' when request.wasMissed => l10n.careStatusMissed,
       'completed' => request.completedAt == null
-          ? 'Completed'
-          : 'Completed ${formatDate(request.completedAt!)}',
+          ? l10n.careStatusCompleted
+          : l10n.careStatusCompletedOn(formatDate(request.completedAt!)),
       'cancelled' when request.closeReason == 'therapist_no_show' =>
-        'Cancelled — the therapist didn\'t join the call',
+        l10n.careStatusTherapistNoShow,
       'cancelled' when request.closeReason == 'nobody_joined' =>
-        'Cancelled — nobody joined the call',
+        l10n.careStatusNobodyJoined,
       'cancelled' when request.closeReason == 'unpaid' =>
-        'Cancelled — never paid',
+        l10n.careStatusNeverPaid,
       'cancelled' when request.submittedAt == null =>
-        'Discarded before it was paid for',
-      _ => 'Cancelled',
+        l10n.careStatusDiscarded,
+      _ => l10n.careStatusCancelled,
     };
   }
 
-  String get _paymentLabel {
+  String _paymentLabel(AppLocalizations l10n) {
     final request = _item.request;
-    if (request.isFreeSession) return 'Free first session';
-    final paidOn =
-        _item.paidAt == null ? '' : ' on ${formatDate(_item.paidAt!)}';
+    if (request.isFreeSession) return l10n.careFreeFirstSession;
+    final price = request.priceLabel;
+    final paidAt = _item.paidAt;
     final refunded = _item.refundedAt;
     return switch (request.paymentStatus) {
-      'paid' => '${request.priceLabel} · paid$paidOn',
-      'waived' => '${request.priceLabel} · waived',
+      'paid' when paidAt != null => l10n.carePaidOn(price, formatDate(paidAt)),
+      'paid' => l10n.carePaid(price),
+      'waived' => l10n.careWaived(price),
       _ when refunded != null =>
-        '${request.priceLabel} · refunded on '
-            '${formatDate(refunded)}, not paid',
-      _ => '${request.priceLabel} · not paid yet',
+        l10n.careRefundedOn(price, formatDate(refunded)),
+      _ => l10n.careNotPaidYet(price),
     };
   }
 
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final request = _item.request;
     final email = _item.clientEmail;
     final note = request.note?.trim() ?? '';
@@ -211,24 +210,24 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
         if (!didPop) Navigator.of(context).pop(_changed);
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(_item.clientLabel)),
+        appBar: AppBar(title: Text(_item.clientLabel(l10n))),
         body: ReadableWidth(
           child: ListView(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
             children: [
               CareSection(
-                title: 'Client',
+                title: l10n.careSectionClient,
                 children: [
                   InfoLine(
                     Icons.person_outline_rounded,
-                    _item.clientName ?? 'No name given',
+                    _item.clientName ?? l10n.careNoName,
                   ),
                   if (email != null)
                     InfoLine(
                       Icons.mail_outline_rounded,
                       email,
                       trailing: IconButton(
-                        tooltip: 'Copy email',
+                        tooltip: l10n.careCopyEmail,
                         visualDensity: VisualDensity.compact,
                         icon: Icon(
                           Icons.copy_rounded,
@@ -237,56 +236,56 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                         ),
                         onPressed: () async {
                           await Clipboard.setData(ClipboardData(text: email));
-                          if (mounted) _say('Email copied.');
+                          if (mounted) _say(l10n.careEmailCopied);
                         },
                       ),
                     ),
                 ],
               ),
               CareSection(
-                title: 'Request',
+                title: l10n.careSectionRequest,
                 children: [
                   InfoLine(Icons.chat_bubble_outline_rounded, request.topic),
                   InfoLine(
                     Icons.calendar_month_rounded,
                     request.availability.isEmpty
-                        ? 'Flexible'
+                        ? l10n.careMatchFlexible
                         : request.availability.join(' · '),
                   ),
                   if (note.isNotEmpty) InfoLine(Icons.notes_rounded, note),
                   InfoLine(
                     Icons.history_rounded,
-                    'Asked ${formatDateTime(request.createdAt)}',
+                    l10n.careAsked(formatDateTime(request.createdAt)),
                   ),
                 ],
               ),
               CareSection(
-                title: 'Session',
+                title: l10n.careSectionSession,
                 children: [
-                  InfoLine(Icons.flag_outlined, _statusLabel),
+                  InfoLine(Icons.flag_outlined, _statusLabel(l10n)),
                   if (_item.therapistName != null)
                     InfoLine(Icons.psychology_outlined, _item.therapistName!),
                   if (request.scheduledAt != null)
                     InfoLine(
                       Icons.event_rounded,
-                      '${formatDateTime(request.scheduledAt!)} · '
-                      '${request.durationMinutes} min',
+                      l10n.careSessionWhen(formatDateTime(request.scheduledAt!),
+                          request.durationMinutes),
                     ),
                   if (request.isActive) ...[
                     const SizedBox(height: 6),
                     ElevatedButton(
                       onPressed: _busy ? null : _match,
                       child: Text(request.isPending
-                          ? 'Match with a therapist'
-                          : 'Change therapist or time'),
+                          ? l10n.careMatchWithTherapist
+                          : l10n.careChangeTherapistOrTime),
                     ),
                   ],
                 ],
               ),
               CareSection(
-                title: 'Payment',
+                title: l10n.careSectionPayment,
                 children: [
-                  InfoLine(Icons.payments_outlined, _paymentLabel),
+                  InfoLine(Icons.payments_outlined, _paymentLabel(l10n)),
                   if (!request.isFreeSession &&
                       request.priceCents > 0 &&
                       request.status != 'cancelled')
@@ -296,18 +295,18 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                         if (request.needsPayment) ...[
                           TextButton(
                             onPressed: _busy ? null : () => _setPayment('paid'),
-                            child: const Text('Mark as paid'),
+                            child: Text(l10n.carePayMarkPaid),
                           ),
                           TextButton(
                             onPressed:
                                 _busy ? null : () => _setPayment('waived'),
-                            child: const Text('Waive fee'),
+                            child: Text(l10n.carePayWaive),
                           ),
                         ] else
                           TextButton(
                             onPressed:
                                 _busy ? null : () => _setPayment('unpaid'),
-                            child: const Text('Mark as unpaid'),
+                            child: Text(l10n.carePayMarkUnpaid),
                           ),
                       ],
                     ),
@@ -315,24 +314,26 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
               ),
               if (request.isCompleted)
                 CareSection(
-                  title: 'After the session',
+                  title: l10n.careSectionAfter,
                   children: [
                     _feedback(
-                      'Note to the client',
-                      text: request.clientSummary ?? 'No note written.',
+                      l10n.careNoteToClient,
+                      text: request.clientSummary ?? l10n.careNoNote,
                     ),
                     _feedback(
-                      'Client\'s rating',
+                      l10n.careClientRating,
                       rating: _item.clientRating,
                       text: _item.clientComment ??
-                          (_item.clientRating == null ? 'Not rated yet.' : null),
+                          (_item.clientRating == null
+                              ? l10n.careNotRatedYet
+                              : null),
                     ),
                     _feedback(
-                      'Therapist\'s rating — private',
+                      l10n.careTherapistRating,
                       rating: _item.therapistRating,
                       text: _item.therapistComment ??
                           (_item.therapistRating == null
-                              ? 'Not rated yet.'
+                              ? l10n.careNotRatedYet
                               : null),
                       flags: _item.therapistFlags,
                     ),
@@ -345,8 +346,8 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
                     onPressed: _busy ? null : _cancel,
                     style: TextButton.styleFrom(foregroundColor: c.red),
                     child: Text(request.isConfirmed
-                        ? 'Cancel this session'
-                        : 'Cancel this request'),
+                        ? l10n.careCancelThisSession
+                        : l10n.careCancelThisRequest),
                   ),
                 ),
             ],
@@ -407,7 +408,7 @@ class _RequestDetailScreenState extends State<RequestDetailScreen> {
               children: [
                 for (final flag in flags)
                   StatusBadge(
-                    therapistFlagLabels[flag] ?? flag,
+                    therapistFlagLabels(context.l10n)[flag] ?? flag,
                     color: flag == 'safety_concern'
                         ? Pillars.red
                         : Pillars.black,

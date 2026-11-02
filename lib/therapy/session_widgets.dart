@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'therapy_repository.dart';
 
 /// A therapist's photo, or their initial when there isn't one.
@@ -61,7 +62,7 @@ class StarRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.brand;
     return Semantics(
-      label: '${rating.toStringAsFixed(1)} out of 5 stars',
+      label: context.l10n.sessionStarsSemantic(rating.toStringAsFixed(1)),
       child: ExcludeSemantics(
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -104,7 +105,7 @@ class StarRatingInput extends StatelessWidget {
       children: [
         for (var i = 1; i <= 5; i++)
           IconButton(
-            tooltip: '$i out of 5',
+            tooltip: context.l10n.sessionStarTooltip(i),
             onPressed: () => onChanged(i),
             icon: Icon(
               i <= value ? Icons.star_rounded : Icons.star_outline_rounded,
@@ -176,7 +177,8 @@ class TherapistCard extends StatelessWidget {
                           StarRow(rating: rating),
                           const SizedBox(width: 6),
                           Text(
-                            '${rating.toStringAsFixed(1)} · ${profile.ratingCount}',
+                            context.l10n.sessionRatingAndCount(
+                                rating.toStringAsFixed(1), profile.ratingCount),
                             style: TextStyle(
                               fontSize: 12,
                               color: c.textMuted,
@@ -253,8 +255,9 @@ Future<void> showTherapistProfile(
                 StarRow(rating: profile.ratingAverage!, size: 17),
                 const SizedBox(width: 6),
                 Text(
-                  '${profile.ratingAverage!.toStringAsFixed(1)} from '
-                  '${profile.ratingCount} ratings',
+                  context.l10n.sessionRatingFrom(
+                      profile.ratingAverage!.toStringAsFixed(1),
+                      profile.ratingCount),
                   style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
               ],
@@ -266,9 +269,7 @@ Future<void> showTherapistProfile(
           if (profile.yearsExperience != null)
             _ProfileLine(
               Icons.workspace_premium_outlined,
-              profile.yearsExperience == 1
-                  ? '1 year of experience'
-                  : '${profile.yearsExperience} years of experience',
+              context.l10n.sessionYearsExperience(profile.yearsExperience!),
             ),
           if (profile.languages.isNotEmpty)
             _ProfileLine(Icons.translate_rounded, profile.languages.join(', ')),
@@ -287,7 +288,7 @@ Future<void> showTherapistProfile(
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      specialty,
+                      therapyTopicLabel(context.l10n, specialty),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -493,7 +494,7 @@ class _RatingSheetState extends State<_RatingSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Send rating'),
+                  : Text(context.l10n.sessionSendRating),
             ),
           ],
         ),

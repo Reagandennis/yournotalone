@@ -11,6 +11,7 @@ import '../discover/content_index.dart';
 import '../media/download_buttons.dart';
 import '../media/download_strings.dart';
 import '../media/media_links.dart';
+import '../l10n/l10n.dart';
 import 'sound_player.dart';
 import 'sounds_catalog.dart';
 
@@ -100,14 +101,20 @@ class _PlayerScreenState extends State<PlayerScreen>
             onPressed: () => SoundPlayer.instance.setSleepTimer(null),
             icon: const Icon(Icons.bedtime_rounded, size: 17),
             label: Text(
-              'Stops in ${minutes.toString().padLeft(2, '0')}:'
-              '${seconds.toString().padLeft(2, '0')} · cancel',
+              context.l10n.playerSleepTimerStopsIn(
+                '${minutes.toString().padLeft(2, '0')}:'
+                '${seconds.toString().padLeft(2, '0')}',
+              ),
             ),
             style: TextButton.styleFrom(foregroundColor: accent),
           );
         }
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        // Wraps rather than overflows where "15 Min." runs longer than
+        // "15m" on a small phone.
+        return Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: 8,
           children: [
             Icon(Icons.bedtime_outlined, size: 16, color: c.textMuted),
             const SizedBox(width: 2),
@@ -131,7 +138,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                         vertical: 6,
                       ),
                       child: Text(
-                        '${minutes}m',
+                        context.l10n.playerSleepTimerOption(minutes),
                         style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
@@ -338,7 +345,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          tooltip: 'Stop',
+                          tooltip: context.l10n.commonStop,
                           onPressed: () async {
                             await player.stop();
                             if (context.mounted) {

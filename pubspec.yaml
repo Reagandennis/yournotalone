@@ -31,6 +31,9 @@ dependencies:
   sentry_flutter: ^9.30.0
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -98,6 +101,9 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
+  # App UI strings: lib/l10n/*.arb, generated into AppLocalizations
+  # (see lib/l10n/README.md).
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

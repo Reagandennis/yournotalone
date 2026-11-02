@@ -5,6 +5,7 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../home/mood_history_screen.dart';
+import '../l10n/l10n.dart';
 import 'journal_prompts.dart';
 import 'journal_repository.dart';
 import 'new_entry.dart';
@@ -52,9 +53,11 @@ class JournalHubScreen extends StatelessWidget {
       !prompt.premium ||
       _guardPremium(
         context,
-        'This prompt is part of Premium',
-        'Free includes a prompt to try. Premium unlocks all '
-            '${journalPrompts.length} — and $introOffer.',
+        context.l10n.journalHubPromptPremiumTitle,
+        context.l10n.journalHubPromptPremiumMessage(
+          journalPrompts.length,
+          introOffer,
+        ),
         item: prompt.title,
         source: 'sheet:prompts',
       );
@@ -153,6 +156,7 @@ class JournalHubScreen extends StatelessWidget {
   /// screen you bought from still locked.
   Widget _buildContent(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -167,7 +171,7 @@ class JournalHubScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Journal & mood',
+                  l10n.journalHubTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -179,8 +183,7 @@ class JournalHubScreen extends StatelessWidget {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'Put the day into words — start from a blank page or let '
-                  'a prompt do the opening line.',
+                  l10n.journalHubIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -188,14 +191,14 @@ class JournalHubScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const SectionHeader(title: 'Write'),
+                SectionHeader(title: l10n.journalHubWriteSection),
                 const SizedBox(height: 12),
                 _card(
                   context,
                   icon: Icons.menu_book_rounded,
                   accent: Pillars.red,
-                  title: 'My journal',
-                  detail: 'Every entry you\'ve written, newest first.',
+                  title: l10n.journalHubMyJournal,
+                  detail: l10n.journalHubMyJournalDetail,
                   tinted: true,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const JournalScreen()),
@@ -205,8 +208,8 @@ class JournalHubScreen extends StatelessWidget {
                   context,
                   icon: Icons.edit_note_rounded,
                   accent: Pillars.blue,
-                  title: 'Free write',
-                  detail: 'A blank page, no prompt, no rules.',
+                  title: l10n.journalHubFreeWrite,
+                  detail: l10n.journalHubFreeWriteDetail,
                   tinted: true,
                   onTap: () => _openEditor(context),
                 ),
@@ -234,21 +237,20 @@ class JournalHubScreen extends StatelessWidget {
                       ),
                 ],
                 const SizedBox(height: 14),
-                const SectionHeader(title: 'Mood'),
+                SectionHeader(title: l10n.journalHubMoodSection),
                 const SizedBox(height: 12),
                 _card(
                   context,
                   icon: Icons.insights_rounded,
                   accent: Pillars.yellow,
-                  title: 'Mood history',
-                  detail: 'Every check-in, and how the weeks actually went.',
+                  title: l10n.journalHubMoodHistory,
+                  detail: l10n.journalHubMoodHistoryDetail,
                   locked: !isPremiumUser(),
                   onTap: () {
                     if (!_guardPremium(
                       context,
-                      'Mood history is part of Premium',
-                      'Checking in is always free. Premium keeps the record '
-                          'and shows you the pattern — and $introOffer.',
+                      l10n.journalHubMoodPremiumTitle,
+                      l10n.journalHubMoodPremiumMessage(introOffer),
                       source: 'sheet:mood_history',
                     )) {
                       return;

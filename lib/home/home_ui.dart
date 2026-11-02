@@ -6,13 +6,16 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
 import '../journal/journal_repository.dart';
+import '../l10n/l10n.dart';
 import '../onboarding/paywall_screen.dart';
 
 /// First name of the signed-in user, from the signup metadata.
 String firstNameOf() {
   final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
   final fullName = (meta?['full_name'] as String?)?.trim();
-  if (fullName == null || fullName.isEmpty) return 'friend';
+  if (fullName == null || fullName.isEmpty) {
+    return currentL10n().homeUiFriendFallback;
+  }
   return fullName.split(RegExp(r'\s+')).first;
 }
 
@@ -82,6 +85,7 @@ void showUpgradeSheet(
     'source': SentryAttribute.string(source),
   });
   final c = context.brand;
+  final l10n = context.l10n;
   showModalBottomSheet<void>(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -103,7 +107,7 @@ void showUpgradeSheet(
           ),
           const SizedBox(height: 16),
           Text(
-            item == null ? title : 'Unlock “$item”',
+            item == null ? title : l10n.homeUiUnlockItem(item),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
@@ -144,12 +148,16 @@ void showUpgradeSheet(
                 ),
               );
             },
-            child: Text(item == null ? 'See Premium' : 'Unlock with Premium'),
+            child: Text(
+              item == null
+                  ? l10n.homeUiSeePremium
+                  : l10n.homeUiUnlockWithPremium,
+            ),
           ),
           const SizedBox(height: 4),
           TextButton(
             onPressed: () => Navigator.of(sheetContext).pop(),
-            child: const Text('Not now'),
+            child: Text(l10n.commonNotNow),
           ),
         ],
       ),
@@ -164,7 +172,7 @@ void showUpgradeSheet(
 /// someone to check their connection when the fix is to log in again sends
 /// them somewhere they can't get out of.
 String errorMessage(Object error, String ifOffline) => error is StateError
-    ? 'You\'ve been signed out. Please log in again.'
+    ? currentL10n().homeUiSignedOutError
     : ifOffline;
 
 /// Whether a free user still has room for another journal entry, showing
@@ -175,11 +183,11 @@ String errorMessage(Object error, String ifOffline) => error is StateError
 /// prompts handed out unlimited entries.
 bool journalCapAllows(BuildContext context, int entryCount) {
   if (isPremiumUser() || entryCount < freeJournalEntryLimit) return true;
+  final l10n = context.l10n;
   showUpgradeSheet(
     context,
-    title: 'You\'ve filled your free pages',
-    message: 'The free plan includes $freeJournalEntryLimit journal entries. '
-        'Premium unlocks unlimited journaling — and $introOffer.',
+    title: l10n.homeUiJournalCapTitle,
+    message: l10n.homeUiJournalCapMessage(freeJournalEntryLimit, introOffer),
   );
   return false;
 }
@@ -189,7 +197,7 @@ void showComingSoon(BuildContext context, String feature) {
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(
-      SnackBar(content: Text('$feature is coming soon — stay close.')),
+      SnackBar(content: Text(context.l10n.homeUiComingSoon(feature))),
     );
 }
 
@@ -217,7 +225,10 @@ class SectionHeader extends StatelessWidget {
         if (onSeeAll != null)
           TextButton(
             onPressed: onSeeAll,
-            child: const Text('See all', style: TextStyle(fontSize: 13)),
+            child: Text(
+              context.l10n.homeUiSeeAll,
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
       ],
     );
@@ -243,7 +254,7 @@ class PremiumChip extends StatelessWidget {
           Icon(Icons.lock_rounded, size: 10, color: c.ink),
           const SizedBox(width: 3),
           Text(
-            'Premium',
+            context.l10n.homeUiPremiumChip,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,

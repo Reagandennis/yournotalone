@@ -94,7 +94,7 @@ class DownloadButton extends StatelessWidget {
       builder: (sheetContext) => SafeArea(
         child: ListTile(
           leading: const Icon(Icons.delete_outline_rounded),
-          title: const Text(DownloadStrings.remove),
+          title: Text(DownloadStrings.remove),
           onTap: () => Navigator.of(sheetContext).pop(true),
         ),
       ),

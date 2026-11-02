@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../notifications/local_notifications.dart';
 
 /// Marks a notification payload as a daily reminder, followed by the
@@ -16,64 +17,68 @@ const reminderPayloadPrefix = 'reminder:';
 enum ReminderKind {
   checkin(
     1,
-    'Morning check-in',
-    'A ten-second pulse on how you\'re doing. Opens the check-in.',
     Icons.sentiment_satisfied_alt_rounded,
     Pillars.yellow,
     TimeOfDay(hour: 9, minute: 0),
-    'How are you feeling today?',
-    'Take ten seconds to check in with yourself.',
   ),
   pledge(
     2,
-    'Daily pledge',
-    'Start the day by claiming it.',
     Icons.healing_rounded,
     Pillars.black,
     TimeOfDay(hour: 8, minute: 0),
-    'A new day, on your terms',
-    'Make today\'s pledge — one day at a time.',
   ),
   journal(
     3,
-    'Evening pages',
-    'A quiet minute for your journal. Opens your prompts.',
     Icons.edit_note_rounded,
     Pillars.red,
     TimeOfDay(hour: 20, minute: 0),
-    'A quiet minute for your journal',
-    'Put today into words — even a few lines count.',
   ),
   windDown(
     4,
-    'Wind-down',
-    'A nudge to slow down. Opens your wind-down plan.',
     Icons.bedtime_rounded,
     Pillars.blue,
     TimeOfDay(hour: 22, minute: 0),
-    'Time to slow down',
-    'Your wind-down plan is ready — tap to start.',
   );
 
   const ReminderKind(
     this.id,
-    this.label,
-    this.description,
     this.icon,
     this.accent,
     this.defaultTime,
-    this.notificationTitle,
-    this.notificationBody,
   );
 
   final int id;
-  final String label;
-  final String description;
   final IconData icon;
   final Color accent;
   final TimeOfDay defaultTime;
-  final String notificationTitle;
-  final String notificationBody;
+
+  String label(AppLocalizations l10n) => switch (this) {
+        checkin => l10n.remindersCheckinLabel,
+        pledge => l10n.remindersPledgeLabel,
+        journal => l10n.remindersJournalLabel,
+        windDown => l10n.remindersWindDownLabel,
+      };
+
+  String description(AppLocalizations l10n) => switch (this) {
+        checkin => l10n.remindersCheckinDescription,
+        pledge => l10n.remindersPledgeDescription,
+        journal => l10n.remindersJournalDescription,
+        windDown => l10n.remindersWindDownDescription,
+      };
+
+  String notificationTitle(AppLocalizations l10n) => switch (this) {
+        checkin => l10n.remindersCheckinTitle,
+        pledge => l10n.remindersPledgeTitle,
+        journal => l10n.remindersJournalTitle,
+        windDown => l10n.remindersWindDownTitle,
+      };
+
+  String notificationBody(AppLocalizations l10n) => switch (this) {
+        checkin => l10n.remindersCheckinBody,
+        pledge => l10n.remindersPledgeBody,
+        journal => l10n.remindersJournalBody,
+        windDown => l10n.remindersWindDownBody,
+      };
 }
 
 /// Schedules the daily local notifications and remembers each reminder's
@@ -152,21 +157,24 @@ class RemindersService {
     await prefs.setInt(_key(kind, 'minute'), time.minute);
     if (_silent) return;
     await _init();
+    // Written now, in the app's language at the time; turning a reminder
+    // off and on again rewrites it.
+    final l10n = currentL10n();
     await _plugin.zonedSchedule(
       id: kind.id,
-      title: kind.notificationTitle,
-      body: kind.notificationBody,
+      title: kind.notificationTitle(l10n),
+      body: kind.notificationBody(l10n),
       scheduledDate: _nextInstance(time),
-      notificationDetails: const NotificationDetails(
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_reminders',
-          'Daily reminders',
-          channelDescription: 'Gentle daily nudges you asked for',
+          l10n.remindersChannelName,
+          channelDescription: l10n.remindersChannelDescription,
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
         ),
-        iOS: DarwinNotificationDetails(),
-        macOS: DarwinNotificationDetails(),
+        iOS: const DarwinNotificationDetails(),
+        macOS: const DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time, // repeat daily

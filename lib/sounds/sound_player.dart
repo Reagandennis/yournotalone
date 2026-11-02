@@ -9,6 +9,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import '../media/download_store.dart';
 import '../media/media_source.dart';
 import '../media/narration_stream.dart';
+import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
 import 'sounds_catalog.dart';
 
@@ -171,7 +172,7 @@ class SoundPlayer {
       }
       if (backgroundAudioReady) {
         final matches = soundsCatalog.where((s) => s.asset == asset);
-        title ??= matches.isEmpty ? 'Wellbeing sound' : matches.first.title;
+        title ??= matches.isEmpty ? currentL10n().soundPlayerFallbackTitle : matches.first.title;
         // What the lock screen and notification show while it plays.
         final tag = MediaItem(id: asset, title: title, artist: 'yournotalone');
         await player.setAudioSource(

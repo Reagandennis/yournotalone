@@ -8,10 +8,13 @@ import 'package:yournotalone/discover/content_index.dart';
 import 'package:yournotalone/discover/content_widgets.dart';
 import 'package:yournotalone/discover/usage_store.dart';
 import 'package:yournotalone/home/explore_tab.dart';
+import 'package:yournotalone/l10n/l10n.dart';
 import 'package:yournotalone/journal/journal_hub_screen.dart';
 import 'package:yournotalone/journal/journal_prompts.dart';
 import 'package:yournotalone/meditation/breathing_screen.dart';
 import 'package:yournotalone/meditation/meditation_catalog.dart';
+
+final _en = lookupAppLocalizations(const Locale('en'));
 
 void main() {
   setUpAll(() async {
@@ -56,7 +59,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('What do you need right now?'), findsOneWidget);
-    await tester.tap(find.text(Need.sleep.label));
+    await tester.tap(find.text(Need.sleep.label(_en)));
     await tester.pumpAndSettle();
 
     expect(find.byType(ContentListScreen), findsOneWidget);
@@ -75,7 +78,7 @@ void main() {
     ));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(LengthFilter.long.label));
+    await tester.tap(find.text(LengthFilter.long.label(_en)));
     await tester.pumpAndSettle();
     // Deep rest is 15 minutes; the 3-minute habits check is gone.
     expect(find.text('Deep rest'), findsOneWidget);

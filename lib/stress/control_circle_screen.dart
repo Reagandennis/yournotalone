@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../cbt/problem_solving_screen.dart';
 import '../toolkit/toolkit_links.dart';
 import '../toolkit/toolkit_ui.dart';
@@ -12,15 +13,25 @@ import 'stress_content.dart';
 /// Where a stressor sits: something you can change, something you can
 /// only lean on, or something to make peace with.
 enum Zone {
-  control('Control', 'I can change this', Icons.build_circle_rounded),
-  influence('Influence', 'I can lean on it', Icons.record_voice_over_rounded),
-  accept('Accept', 'Not mine to move', Icons.spa_rounded);
+  control(Icons.build_circle_rounded),
+  influence(Icons.record_voice_over_rounded),
+  accept(Icons.spa_rounded);
 
-  const Zone(this.label, this.hint, this.icon);
+  const Zone(this.icon);
 
-  final String label;
-  final String hint;
   final IconData icon;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    Zone.control => l10n.controlCircleZoneControl,
+    Zone.influence => l10n.controlCircleZoneInfluence,
+    Zone.accept => l10n.controlCircleZoneAccept,
+  };
+
+  String hint(AppLocalizations l10n) => switch (this) {
+    Zone.control => l10n.controlCircleZoneControlHint,
+    Zone.influence => l10n.controlCircleZoneInfluenceHint,
+    Zone.accept => l10n.controlCircleZoneAcceptHint,
+  };
 }
 
 class Stressor {
@@ -128,7 +139,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
                   IconButton(
                     icon: const Icon(Icons.close_rounded, size: 18),
                     color: c.textMuted,
-                    tooltip: 'Remove',
+                    tooltip: context.l10n.commonRemove,
                     onPressed: () => _remove(s),
                   ),
                 ],
@@ -140,7 +151,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
                 children: [
                   for (final z in Zone.values)
                     ToolkitPill(
-                      label: z.label,
+                      label: z.label(context.l10n),
                       icon: z.icon,
                       selected: s.zone == z,
                       onTap: () => _setZone(s, z),
@@ -157,26 +168,23 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
   Widget _zoneSummary(Zone z, List<Stressor> items) {
     if (items.isEmpty) return const SizedBox.shrink();
     final c = context.brand;
+    final l10n = context.l10n;
     final (advice, action, onTap) = switch (z) {
       Zone.control => (
-        'These are yours to move. Pick one — the smallest — and take '
-            'the first step this week.',
-        'Work one through',
+        l10n.controlCircleControlAdvice,
+        l10n.controlCircleControlAction,
         () => Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (_) => const ProblemSolvingScreen())),
       ),
       Zone.influence => (
-        'You can\'t decide these, but you can ask, say, or nudge. What '
-            'is the one conversation each of these needs?',
+        l10n.controlCircleInfluenceAdvice,
         null,
         null,
       ),
       Zone.accept => (
-        'Not yours to carry, and carrying them anyway is where a lot of '
-            'stress lives. Practise setting them down — it\'s a skill, '
-            'not a mood.',
-        'Breathe it out',
+        l10n.controlCircleAcceptAdvice,
+        l10n.controlCircleAcceptAction,
         () => openBreathing(context, 'Slow exhale', source: 'toolkit:stress'),
       ),
     };
@@ -191,7 +199,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
                 Icon(z.icon, size: 18, color: c.ink),
                 const SizedBox(width: 8),
                 Text(
-                  '${z.label} · ${items.length}',
+                  l10n.controlCircleZoneCount(z.label(l10n), items.length),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -203,7 +211,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
             const SizedBox(height: 6),
             for (final s in items)
               Text(
-                '• ${s.text}',
+                l10n.cbtBullet(s.text),
                 style: TextStyle(
                   fontSize: 13,
                   color: c.ink,
@@ -233,24 +241,22 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
   @override
   Widget build(BuildContext context) {
     final items = _items;
+    final l10n = context.l10n;
     if (items == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: stressAccent,
-        title: 'What\'s in your hands',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.controlCircleTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final sorted = items.where((s) => s.zone != null).length;
     return ToolkitScaffold(
       accent: stressAccent,
-      title: 'What\'s in your hands',
+      title: l10n.controlCircleTitle,
       children: [
-        const ToolkitSection(
-          title: 'Three circles',
-          subtitle:
-              'Write down everything that\'s weighing on you, then '
-              'sort each one. Most stress comes from spending effort in the '
-              'outer circles and neglecting the inner one.',
+        ToolkitSection(
+          title: l10n.controlCircleSectionTitle,
+          subtitle: l10n.controlCircleSectionBody,
         ),
         TextField(
           controller: _input,
@@ -258,7 +264,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
           textCapitalization: TextCapitalization.sentences,
           onSubmitted: (_) => _add(),
           decoration: InputDecoration(
-            labelText: 'Something on your mind',
+            labelText: l10n.controlCircleInputLabel,
             counterText: '',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_rounded),
@@ -270,7 +276,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
         for (final s in items) _tile(s),
         if (sorted > 0) ...[
           const SizedBox(height: 10),
-          const ToolkitSection(title: 'Where your effort goes'),
+          ToolkitSection(title: l10n.controlCircleEffortTitle),
           for (final z in Zone.values)
             _zoneSummary(z, items.where((s) => s.zone == z).toList()),
         ],
@@ -278,8 +284,7 @@ class _ControlCircleScreenState extends State<ControlCircleScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 6),
             child: Text(
-              'Start with whatever came to mind first. Vague is fine — '
-              '"work", "money", "mum" — you can sharpen it later.',
+              l10n.controlCircleEmpty,
               style: TextStyle(
                 fontSize: 13,
                 color: context.brand.textMuted,

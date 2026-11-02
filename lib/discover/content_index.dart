@@ -14,6 +14,7 @@ import '../cbt/cbt_catalog.dart';
 import '../content/content_catalog.dart';
 import '../cbt/cbt_content.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../journal/journal_prompts.dart';
 import '../journal/new_entry.dart';
 import '../meditation/breathing_screen.dart';
@@ -39,22 +40,49 @@ import 'usage_store.dart';
 /// What someone might come to the app for. The order is the order of the
 /// chips on Explore.
 enum Need {
-  sleep('Can\'t sleep', Icons.bedtime_rounded, Pillars.blue),
-  anxious('Anxious', Icons.spa_rounded, Pillars.blue),
-  panic('Panicking', Icons.air_rounded, Pillars.red),
-  low('Feeling low', Icons.cloud_rounded, Pillars.black),
-  stressed('Stressed', Icons.speed_rounded, Pillars.yellow),
-  angry('Angry', Icons.local_fire_department_rounded, Pillars.red),
-  urges('Urges', Icons.surfing_rounded, Pillars.black),
-  focus('Focus', Icons.center_focus_strong_rounded, Pillars.yellow),
-  reflect('Reflect', Icons.edit_note_rounded, Pillars.red),
-  good('Feeling good', Icons.wb_sunny_rounded, Pillars.yellow);
+  sleep(Icons.bedtime_rounded, Pillars.blue),
+  anxious(Icons.spa_rounded, Pillars.blue),
+  panic(Icons.air_rounded, Pillars.red),
+  low(Icons.cloud_rounded, Pillars.black),
+  stressed(Icons.speed_rounded, Pillars.yellow),
+  angry(Icons.local_fire_department_rounded, Pillars.red),
+  urges(Icons.surfing_rounded, Pillars.black),
+  focus(Icons.center_focus_strong_rounded, Pillars.yellow),
+  reflect(Icons.edit_note_rounded, Pillars.red),
+  good(Icons.wb_sunny_rounded, Pillars.yellow);
 
-  const Need(this.label, this.icon, this.color);
+  const Need(this.icon, this.color);
 
-  final String label;
   final IconData icon;
   final Color color;
+
+  /// The chip's words: "Can't sleep", "Feeling low".
+  String label(AppLocalizations l10n) => switch (this) {
+    sleep => l10n.needSleep,
+    anxious => l10n.needAnxious,
+    panic => l10n.needPanic,
+    low => l10n.needLow,
+    stressed => l10n.needStressed,
+    angry => l10n.needAngry,
+    urges => l10n.needUrges,
+    focus => l10n.needFocus,
+    reflect => l10n.needReflect,
+    good => l10n.needGood,
+  };
+
+  /// What a need's list opens with, under its name.
+  String intro(AppLocalizations l10n) => switch (this) {
+    sleep => l10n.needSleepIntro,
+    anxious => l10n.needAnxiousIntro,
+    panic => l10n.needPanicIntro,
+    low => l10n.needLowIntro,
+    stressed => l10n.needStressedIntro,
+    angry => l10n.needAngryIntro,
+    urges => l10n.needUrgesIntro,
+    focus => l10n.needFocusIntro,
+    reflect => l10n.needReflectIntro,
+    good => l10n.needGoodIntro,
+  };
 
   /// What the five check-in faces (awful → great) point towards.
   static Set<Need> forMood(int index) => switch (index) {
@@ -67,14 +95,17 @@ enum Need {
 
 /// Part of the day, for suggestions that fit the hour.
 enum DayPart {
-  morning('For this morning'),
-  afternoon('For this afternoon'),
-  evening('For this evening'),
-  night('For tonight');
+  morning,
+  afternoon,
+  evening,
+  night;
 
-  const DayPart(this.heading);
-
-  final String heading;
+  String heading(AppLocalizations l10n) => switch (this) {
+    morning => l10n.dayPartMorning,
+    afternoon => l10n.dayPartAfternoon,
+    evening => l10n.dayPartEvening,
+    night => l10n.dayPartNight,
+  };
 
   static DayPart of(DateTime time) => switch (time.hour) {
     < 5 => night,
@@ -86,30 +117,42 @@ enum DayPart {
 }
 
 enum ContentKind {
-  breathing('Breathing', Icons.air_rounded),
-  meditation('Meditation', Icons.self_improvement_rounded),
-  sound('Sound', Icons.graphic_eq_rounded),
-  prompt('Journal prompt', Icons.edit_note_rounded),
-  tool('Tool', Icons.handyman_rounded),
-  lesson('Read', Icons.menu_book_rounded),
-  recovery('Recovery', Icons.healing_rounded);
+  breathing(Icons.air_rounded),
+  meditation(Icons.self_improvement_rounded),
+  sound(Icons.graphic_eq_rounded),
+  prompt(Icons.edit_note_rounded),
+  tool(Icons.handyman_rounded),
+  lesson(Icons.menu_book_rounded),
+  recovery(Icons.healing_rounded);
 
-  const ContentKind(this.label, this.icon);
+  const ContentKind(this.icon);
 
-  final String label;
   final IconData icon;
+
+  String label(AppLocalizations l10n) => switch (this) {
+    breathing => l10n.contentKindBreathing,
+    meditation => l10n.contentKindMeditation,
+    sound => l10n.contentKindSound,
+    prompt => l10n.contentKindPrompt,
+    tool => l10n.contentKindTool,
+    lesson => l10n.contentKindLesson,
+    recovery => l10n.contentKindRecovery,
+  };
 }
 
 /// How long something takes, for the filter chips.
 enum LengthFilter {
-  any('Any length'),
-  short('Under 5 min'),
-  medium('5–10 min'),
-  long('Over 10 min');
+  any,
+  short,
+  medium,
+  long;
 
-  const LengthFilter(this.label);
-
-  final String label;
+  String label(AppLocalizations l10n) => switch (this) {
+    any => l10n.lengthAny,
+    short => l10n.lengthShort,
+    medium => l10n.lengthMedium,
+    long => l10n.lengthLong,
+  };
 
   /// Items with no set length (a prompt, a looping sound) only show under
   /// [any]: there's no honest way to sort them.
@@ -158,8 +201,13 @@ class ContentItem {
 
   String get id => '${kind.name}:$title';
 
-  String get meta =>
-      [area ?? kind.label, if (minutes != null) '$minutes min'].join(' · ');
+  /// "CBT · 5 min": the programme (or the kind), then the length. In the
+  /// app's current language unless [l10n] is given.
+  String meta([AppLocalizations? l10n]) {
+    final l = l10n ?? currentL10n();
+    final what = area ?? kind.label(l);
+    return minutes == null ? what : l.contentMeta(what, minutes!);
+  }
 
   /// How long an item is badged "New" after it ships.
   static const newFor = Duration(days: 21);
@@ -196,10 +244,8 @@ bool openContent(
       context,
       item: item.title,
       source: source,
-      title: 'This is part of Premium',
-      message:
-          'Free includes a taste of everything. Premium unlocks every '
-          'session, tool and read — and $introOffer.',
+      title: context.l10n.contentPremiumTitle,
+      message: context.l10n.contentPremiumMessage(introOffer),
     );
     return false;
   }
@@ -544,7 +590,10 @@ ContentItem dailyPick({required DateTime now, required bool premium}) {
 
 /// Free and Premium counts for a list of items: "1 free · 7 Premium", the
 /// way the programme cards count.
-String countLine(Iterable<ContentItem> items) {
+String countLine(Iterable<ContentItem> items, [AppLocalizations? l10n]) {
   final locked = items.where((i) => i.premium).length;
-  return '${items.length - locked} free · $locked Premium';
+  return (l10n ?? currentL10n()).toolkitCountLine(
+    items.length - locked,
+    locked,
+  );
 }

@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
 import '../journal/journal_repository.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'sleep_content.dart';
 
@@ -77,14 +78,16 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
     );
   }
 
-  String get _summary {
+  String _summary(AppLocalizations l10n) {
     final top = [
       for (final (i, c) in _top.indexed)
         if (c.text.trim().isNotEmpty) '${i + 1}. ${c.text.trim()}',
     ];
-    return 'Tomorrow:\n${top.isEmpty ? '—' : top.join('\n')}\n\n'
-        'Letting go tonight: ${_letGo.text.trim().isEmpty ? '—' : _letGo.text.trim()}\n'
-        'One good thing today: ${_good.text.trim().isEmpty ? '—' : _good.text.trim()}';
+    return l10n.tomorrowListSummary(
+      top.isEmpty ? '—' : top.join('\n'),
+      _letGo.text.trim().isEmpty ? '—' : _letGo.text.trim(),
+      _good.text.trim().isEmpty ? '—' : _good.text.trim(),
+    );
   }
 
   Future<void> _done({required bool toJournal}) async {
@@ -95,18 +98,14 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
     if (toJournal) {
       saved = await toolkitSaveToJournal(
         context,
-        title: 'Put the day down',
-        content: _summary,
+        title: context.l10n.tomorrowListTitle,
+        content: _summary(context.l10n),
         repository: widget.journal,
       );
     } else {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text('Written down. It\'ll keep till morning.'),
-          ),
-        );
+        ..showSnackBar(SnackBar(content: Text(context.l10n.tomorrowListSaved)));
     }
     if (!mounted) return;
     setState(() => _saving = false);
@@ -129,23 +128,24 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     if (!_loaded) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: sleepAccent,
-        title: 'Put the day down',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.tomorrowListTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     return ToolkitScaffold(
       accent: sleepAccent,
-      title: 'Put the day down',
+      title: l10n.tomorrowListTitle,
       bottom: Row(
         children: [
           TextButton(
             onPressed: !_hasSomething || _saving
                 ? null
                 : () => _done(toJournal: true),
-            child: const Text('Save to journal'),
+            child: Text(l10n.tomorrowListSaveToJournal),
           ),
           const Spacer(),
           Expanded(
@@ -154,28 +154,25 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
               onPressed: !_hasSomething || _saving
                   ? null
                   : () => _done(toJournal: false),
-              child: const Text('Done for tonight'),
+              child: Text(l10n.tomorrowListDoneForTonight),
             ),
           ),
         ],
       ),
       children: [
-        const ToolkitSection(
-          title: 'Out of your head, onto the page',
-          subtitle:
-              'The 2am mind is a to-do list with nowhere to go. Give '
-              'it somewhere. Three things for tomorrow — not ten — one '
-              'thing you\'re choosing not to carry tonight, and one thing '
-              'that was good today, however small.',
+        ToolkitSection(
+          title: l10n.tomorrowListIntroTitle,
+          subtitle: l10n.tomorrowListIntroHint,
         ),
-        const _Label('Tomorrow\'s three'),
-        for (final (i, c) in _top.indexed) _field(c, 'Thing ${i + 1}'),
+        _Label(l10n.tomorrowListTopThree),
+        for (final (i, c) in _top.indexed)
+          _field(c, l10n.tomorrowListThing(i + 1)),
         const SizedBox(height: 6),
-        const _Label('Tonight I\'m letting go of'),
-        _field(_letGo, 'A worry that can wait until daylight', lines: 2),
+        _Label(l10n.tomorrowListLetGo),
+        _field(_letGo, l10n.tomorrowListLetGoHint, lines: 2),
         const SizedBox(height: 6),
-        const _Label('One good thing today'),
-        _field(_good, 'Small counts', lines: 2),
+        _Label(l10n.tomorrowListGood),
+        _field(_good, l10n.tomorrowListGoodHint, lines: 2),
       ],
     );
   }

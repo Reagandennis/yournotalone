@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'features_screen.dart';
 import 'onboarding_ui.dart';
 
@@ -34,10 +35,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     super.dispose();
   }
 
-  String get _firstName {
+  String _firstName(AppLocalizations l10n) {
     final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
     final fullName = (meta?['full_name'] as String?)?.trim();
-    if (fullName == null || fullName.isEmpty) return 'friend';
+    if (fullName == null || fullName.isEmpty) {
+      return l10n.onboardingWelcomeFriend;
+    }
     return fullName.split(RegExp(r'\s+')).first;
   }
 
@@ -69,6 +72,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return OnboardingScaffold(
       step: 0,
       bottom: _reveal(
@@ -79,7 +83,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(builder: (_) => const FeaturesScreen()),
           ),
-          child: const Text('Continue'),
+          child: Text(l10n.commonContinue),
         ),
       ),
       children: [
@@ -97,7 +101,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           begin: 0.20,
           end: 0.45,
           child: Text(
-            'Welcome, $_firstName',
+            l10n.onboardingWelcomeTitle(_firstName(l10n)),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
@@ -132,10 +136,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           begin: 0.66,
           end: 0.92,
           child: Text(
-            'It\'s Greek for "you\'re not alone" — the promise this app is '
-            'built on. Like the four pillars in our logo, support stands '
-            'strongest side by side. Whatever you\'re carrying, from today '
-            'you don\'t carry it by yourself.',
+            l10n.onboardingWelcomeStory,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

@@ -8,22 +8,28 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'pending_practice.dart';
 
 /// What kind of practice a session was.
 enum PracticeKind {
-  meditation('meditation', 'Meditation', Icons.self_improvement_rounded,
-      Pillars.blue),
-  breathing('breathing', 'Breathing', Icons.air_rounded, Pillars.yellow),
-  sound('sound', 'Sound', Icons.graphic_eq_rounded, Pillars.black);
+  meditation('meditation', Icons.self_improvement_rounded, Pillars.blue),
+  breathing('breathing', Icons.air_rounded, Pillars.yellow),
+  sound('sound', Icons.graphic_eq_rounded, Pillars.black);
 
-  const PracticeKind(this.key, this.label, this.icon, this.color);
+  const PracticeKind(this.key, this.icon, this.color);
 
   /// Stored in the database — never change these.
   final String key;
-  final String label;
   final IconData icon;
   final Color color;
+
+  /// How the kind is named on screen.
+  String label(AppLocalizations l10n) => switch (this) {
+        meditation => l10n.practiceKindMeditation,
+        breathing => l10n.practiceKindBreathing,
+        sound => l10n.practiceKindSound,
+      };
 
   static PracticeKind fromKey(String key) =>
       values.firstWhere((k) => k.key == key, orElse: () => meditation);

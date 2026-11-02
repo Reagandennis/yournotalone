@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../home/home_shell.dart';
 import '../notifications/notification_permission.dart';
 import 'onboarding_ui.dart';
@@ -46,46 +47,46 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
     _done();
   }
 
-  static const _points = [
+  static List<(IconData, Color, String, String)> _points(
+    AppLocalizations l10n,
+  ) => [
     (
       Icons.favorite_rounded,
       Pillars.red,
-      'Your therapy sessions',
-      'When you\'re matched, if the time moves, and ten minutes before '
-          'the call — so a paid session is never missed.',
+      l10n.onboardingNotificationsSessionsTitle,
+      l10n.onboardingNotificationsSessionsDetail,
     ),
     (
       Icons.notifications_active_rounded,
       Pillars.blue,
-      'Reminders you choose',
-      'A morning check-in, evening pages, a wind-down. Each one is a '
-          'switch in Settings; none is on until you say.',
+      l10n.onboardingNotificationsRemindersTitle,
+      l10n.onboardingNotificationsRemindersDetail,
     ),
     (
       Icons.block_rounded,
       Pillars.black,
-      'Nothing else',
-      'No marketing, no streak guilt, no "we miss you". If it isn\'t '
-          'about your care, it isn\'t sent.',
+      l10n.onboardingNotificationsNothingElseTitle,
+      l10n.onboardingNotificationsNothingElseDetail,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return OnboardingScaffold(
       bottom: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           AuthSubmitButton(
-            label: 'Turn on notifications',
+            label: l10n.onboardingNotificationsTurnOn,
             loading: _loading,
             onPressed: _loading ? null : _allow,
           ),
           const SizedBox(height: 6),
           TextButton(
             onPressed: _loading ? null : _done,
-            child: const Text('Maybe later'),
+            child: Text(l10n.onboardingNotificationsMaybeLater),
           ),
         ],
       ),
@@ -108,7 +109,7 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
         ),
         const SizedBox(height: 26),
         Text(
-          'Don\'t miss what matters',
+          l10n.onboardingNotificationsTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 24,
@@ -121,12 +122,12 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
         const Center(child: PillarStripe()),
         const SizedBox(height: 18),
         Text(
-          'Your phone will ask once. Here\'s exactly what a yes means.',
+          l10n.onboardingNotificationsIntro,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 26),
-        for (final (icon, colour, title, detail) in _points)
+        for (final (icon, colour, title, detail) in _points(l10n))
           Padding(
             padding: const EdgeInsets.only(bottom: 14),
             child: Row(

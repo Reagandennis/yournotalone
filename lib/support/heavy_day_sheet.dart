@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../brand.dart';
 import '../home/mood_face.dart';
+import '../l10n/l10n.dart';
 import '../home/mood_scale.dart';
 import '../therapy/therapy_screen.dart';
 import 'crisis_resources.dart';
@@ -51,7 +52,7 @@ class _HeavyDaySheet extends StatelessWidget {
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Couldn\'t call $number')),
+        SnackBar(content: Text(context.l10n.heavyDayCouldNotCall(number))),
       );
     }
   }
@@ -102,6 +103,7 @@ class _HeavyDaySheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final region = defaultCrisisRegion();
     final lines = [
       for (final line in region.lines)
@@ -117,7 +119,7 @@ class _HeavyDaySheet extends StatelessWidget {
             Center(child: MoodFace(level: moodLevels.first, size: 56)),
             const SizedBox(height: 16),
             Text(
-              'That sounds like a heavy day.',
+              l10n.heavyDayTitle,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 19,
@@ -128,8 +130,7 @@ class _HeavyDaySheet extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'You don\'t have to carry it on your own. A licensed therapist '
-              'here will listen — \$20 a session, booked in a minute.',
+              l10n.heavyDayBody,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13.5,
@@ -140,18 +141,18 @@ class _HeavyDaySheet extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: onBook,
-              child: const Text('Book a session'),
+              child: Text(l10n.crisisBookSession),
             ),
             const SizedBox(height: 2),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Not now'),
+              child: Text(l10n.commonNotNow),
             ),
             const SizedBox(height: 10),
             Divider(height: 1, color: c.border),
             const SizedBox(height: 16),
             Text(
-              'If you need someone right now',
+              l10n.heavyDayRightNow,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -161,7 +162,7 @@ class _HeavyDaySheet extends StatelessWidget {
             const SizedBox(height: 10),
             _callButton(
               context,
-              name: 'Emergency',
+              name: l10n.heavyDayEmergency,
               number: region.emergency,
             ),
             for (final line in lines)
@@ -174,7 +175,7 @@ class _HeavyDaySheet extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   foregroundColor: c.red,
                 ),
-                child: const Text('More ways to get help'),
+                child: Text(l10n.heavyDayMoreHelp),
               ),
             ),
           ],

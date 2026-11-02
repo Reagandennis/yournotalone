@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'stress_content.dart';
 
@@ -83,27 +84,25 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
     final c = context.brand;
     final running = _index >= 0;
     final group = running ? muscleGroups[_index] : null;
+    final l10n = context.l10n;
     return ToolkitScaffold(
       accent: stressAccent,
-      title: 'Tense and release',
+      title: l10n.muscleRelaxTitle,
       bottom: running
-          ? OutlinedButton(onPressed: _stop, child: const Text('Stop'))
+          ? OutlinedButton(onPressed: _stop, child: Text(l10n.commonStop))
           : ElevatedButton(
               onPressed: _start,
-              child: Text(_done ? 'Go again' : 'Begin'),
+              child: Text(_done ? l10n.toolkitGoAgain : l10n.toolkitBegin),
             ),
       children: [
         if (!running)
           ToolkitSection(
-            title: _done ? 'Let it all stay loose' : 'Eight groups, once each',
+            title: _done
+                ? l10n.muscleRelaxDoneTitle
+                : l10n.muscleRelaxIntroTitle,
             subtitle: _done
-                ? 'Sit for a moment before you get up. Where was the most '
-                      'tension hiding? That\'s the place to check in on during '
-                      'the day.'
-                : 'Sit or lie somewhere you won\'t be disturbed for eight '
-                      'minutes. For each group: tense hard for five seconds — '
-                      'not to pain — then let go completely for ten, and notice '
-                      'the difference. That noticing is the exercise.',
+                ? l10n.muscleRelaxDoneBody
+                : l10n.muscleRelaxIntroBody,
           ),
         if (!running) ...[
           for (final g in muscleGroups)
@@ -119,9 +118,7 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
             step: _index + 1,
             of: muscleGroups.length,
             title: group!.name,
-            hint: _tensing
-                ? group.tense
-                : 'Let go all at once. Feel the difference.',
+            hint: _tensing ? group.tense : l10n.muscleRelaxReleaseHint,
           ),
           Center(
             child: AnimatedContainer(
@@ -138,7 +135,9 @@ class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _tensing ? 'Tense' : 'Release',
+                      _tensing
+                          ? l10n.muscleRelaxTense
+                          : l10n.muscleRelaxRelease,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

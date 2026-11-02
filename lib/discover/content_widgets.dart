@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'content_index.dart';
 import 'saved_store.dart';
 
@@ -20,7 +21,7 @@ class NewChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        'New',
+        context.l10n.contentNewBadge,
         style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.w600,
@@ -46,7 +47,9 @@ class SaveButton extends StatelessWidget {
         final on = saved.contains(item.id);
         return IconButton(
           visualDensity: VisualDensity.compact,
-          tooltip: on ? 'Remove from saved' : 'Save',
+          tooltip: on
+              ? context.l10n.contentUnsaveTooltip
+              : context.l10n.contentSaveTooltip,
           onPressed: () => SavedStore.instance.toggle(item),
           icon: Icon(
             on ? Icons.favorite_rounded : Icons.favorite_border_rounded,
@@ -130,7 +133,7 @@ class ContentRow extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        item.meta,
+                        item.meta(context.l10n),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 12.5, color: c.textMuted),
@@ -198,7 +201,7 @@ class ContentCard extends StatelessWidget {
                     // narrow card at larger text sizes; the lock does.
                     if (locked)
                       Semantics(
-                        label: 'Premium',
+                        label: context.l10n.contentPremiumLabel,
                         child: Container(
                           width: 24,
                           height: 24,
@@ -229,7 +232,7 @@ class ContentCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  item.meta,
+                  item.meta(context.l10n),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 11.5, color: c.textMuted),
@@ -332,12 +335,15 @@ class ContentListScreen extends StatefulWidget {
     required this.subtitle,
     required this.items,
     required this.source,
+    this.need,
   });
 
   /// Everything that answers [need], best match first.
   factory ContentListScreen.forNeed(Need need) => ContentListScreen(
-    title: need.label,
-    subtitle: _needIntro[need]!,
+    // Named in the app's language when built; see [need].
+    title: '',
+    subtitle: '',
+    need: need,
     // Free first, otherwise in catalogue order. Two passes rather than a
     // sort, which in Dart isn't guaranteed to keep that order.
     items: [
@@ -354,27 +360,16 @@ class ContentListScreen extends StatefulWidget {
   final List<ContentItem> items;
   final String source;
 
+  /// The need this lists, whose name and intro are shown in place of
+  /// [title] and [subtitle], in the app's language.
+  final Need? need;
+
   static Route<void> route(ContentListScreen screen) =>
       MaterialPageRoute(builder: (_) => screen);
 
   @override
   State<ContentListScreen> createState() => _ContentListScreenState();
 }
-
-const _needIntro = {
-  Need.sleep: 'For the evening before, and the hours you\'re lying awake.',
-  Need.anxious: 'Ways to bring a racing mind back to what\'s in front of you.',
-  Need.panic: 'Quick and simple first. These work best started straight away.',
-  Need.low:
-      'Small, kind things for heavy days. Start with whichever feels '
-      'doable.',
-  Need.stressed: 'Bring the body down first, then sort what\'s on your plate.',
-  Need.angry: 'Let it cool before you act on it.',
-  Need.urges: 'Ride it out: urges peak and pass, usually within minutes.',
-  Need.focus: 'Clear your head and settle into one thing.',
-  Need.reflect: 'Prompts and reads for making sense of things.',
-  Need.good: 'Notice what\'s going right, so it stays with you.',
-};
 
 class _ContentListScreenState extends State<ContentListScreen> {
   var _length = LengthFilter.any;
@@ -407,7 +402,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                 const Align(alignment: Alignment.centerLeft, child: BackChip()),
                 const SizedBox(height: 20),
                 Text(
-                  widget.title,
+                  widget.need?.label(context.l10n) ?? widget.title,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -419,7 +414,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 14),
                 Text(
-                  widget.subtitle,
+                  widget.need?.intro(context.l10n) ?? widget.subtitle,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -428,7 +423,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  countLine(widget.items),
+                  countLine(widget.items, context.l10n),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -443,7 +438,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                     children: [
                       for (final f in lengths)
                         FilterPill(
-                          label: f.label,
+                          label: f.label(context.l10n),
                           selected: _length == f,
                           onTap: () => setState(() => _length = f),
                         ),
@@ -455,7 +450,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Text(
-                      'Nothing that length yet.',
+                      context.l10n.contentNothingThatLength,
                       style: TextStyle(color: c.textMuted, fontSize: 14),
                     ),
                   )

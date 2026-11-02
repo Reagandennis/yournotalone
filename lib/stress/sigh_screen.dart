@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'stress_content.dart';
 
@@ -11,21 +12,24 @@ import 'stress_content.dart';
 class SighPhase {
   const SighPhase(this.label, this.hint, this.seconds, this.scale);
 
-  final String label;
-  final String hint;
+  /// What to do, and how: strings looked up in the app's language.
+  final String Function(AppLocalizations) label;
+  final String Function(AppLocalizations) hint;
   final int seconds;
   final double scale;
 }
 
+String _inLabel(AppLocalizations l10n) => l10n.sighPhaseIn;
+String _inHint(AppLocalizations l10n) => l10n.sighPhaseInHint;
+String _sipLabel(AppLocalizations l10n) => l10n.sighPhaseSip;
+String _sipHint(AppLocalizations l10n) => l10n.sighPhaseSipHint;
+String _outLabel(AppLocalizations l10n) => l10n.sighPhaseOut;
+String _outHint(AppLocalizations l10n) => l10n.sighPhaseOutHint;
+
 const sighPhases = <SighPhase>[
-  SighPhase('Breathe in', 'Through the nose, most of the way.', 2, 0.85),
-  SighPhase('One more sip', 'A short top-up, right to the top.', 1, 1.0),
-  SighPhase(
-    'Long breath out',
-    'Slowly, through the mouth, until you\'re empty.',
-    6,
-    0.45,
-  ),
+  SighPhase(_inLabel, _inHint, 2, 0.85),
+  SighPhase(_sipLabel, _sipHint, 1, 1.0),
+  SighPhase(_outLabel, _outHint, 6, 0.45),
 ];
 
 /// The physiological sigh: two inhales, one long exhale, a few times over.
@@ -107,29 +111,24 @@ class _SighScreenState extends State<SighScreen> {
     // The label runs past the inner circle as it shrinks, so in the dark it
     // stays light and the circle is a deep amber rather than bright yellow.
     final core = c.isDark ? const Color(0xFF946200) : stressAccent;
+    final l10n = context.l10n;
     return ToolkitScaffold(
       accent: stressAccent,
-      title: 'Physiological sigh',
+      title: l10n.sighTitle,
       bottom: _running
-          ? OutlinedButton(onPressed: _stop, child: const Text('Stop'))
+          ? OutlinedButton(onPressed: _stop, child: Text(l10n.commonStop))
           : ElevatedButton(
               onPressed: _start,
-              child: Text(_done ? 'Another round' : 'Start'),
+              child: Text(_done ? l10n.sighAnotherRound : l10n.sighStart),
             ),
       children: [
         ToolkitSection(
           title: _done
-              ? 'That\'s the round'
+              ? l10n.sighDoneTitle
               : _running
-              ? 'Round $_round of ${widget.rounds}'
-              : 'Two in, one long out',
-          subtitle: _done
-              ? 'Notice your shoulders and your jaw. Most people feel the '
-                    'drop within a round or two. Use it any time — in a '
-                    'meeting, in a queue, before a call.'
-              : 'Breathe in through your nose, then take one more short sip '
-                    'on top. Let it all out slowly through your mouth. That\'s '
-                    'one. Follow the circle.',
+              ? l10n.sighRoundOf(_round, widget.rounds)
+              : l10n.sighIntroTitle,
+          subtitle: _done ? l10n.sighDoneBody : l10n.sighIntroBody,
         ),
         const SizedBox(height: 18),
         Center(
@@ -164,10 +163,10 @@ class _SighScreenState extends State<SighScreen> {
                   children: [
                     Text(
                       _running
-                          ? phase.label
+                          ? phase.label(l10n)
                           : _done
-                          ? 'Done'
-                          : 'Ready',
+                          ? l10n.sighDone
+                          : l10n.sighReady,
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w600,
@@ -193,7 +192,7 @@ class _SighScreenState extends State<SighScreen> {
         const SizedBox(height: 18),
         if (_running)
           Text(
-            phase.hint,
+            phase.hint(l10n),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

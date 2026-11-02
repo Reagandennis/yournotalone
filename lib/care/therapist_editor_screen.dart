@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
 import '../therapy/therapy_repository.dart';
@@ -100,7 +101,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
         _removePhoto = false;
       });
     } catch (_) {
-      if (mounted) _say('Couldn\'t open your photo library.');
+      if (mounted) _say(context.l10n.careEditorPhotoFailed);
     }
   }
 
@@ -138,13 +139,14 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      _say(careErrorMessage(e, 'Couldn\'t save — check your connection.'));
+      _say(careErrorMessage(e, context.l10n.careCouldNotSave));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final existing = widget.therapist;
     final photoUrl = _removePhoto ? null : _existing?.photoUrl;
     final photo = _photo;
@@ -152,7 +154,9 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(existing == null ? 'Add a therapist' : 'Edit therapist'),
+        title: Text(existing == null
+            ? l10n.careEditorTitleAdd
+            : l10n.careEditorTitleEdit),
       ),
       body: ReadableWidth(
         child: Form(
@@ -181,7 +185,9 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 children: [
                   TextButton(
                     onPressed: _saving ? null : _pickPhoto,
-                    child: Text(hasPhoto ? 'Change photo' : 'Add a photo'),
+                    child: Text(hasPhoto
+                        ? l10n.careEditorChangePhoto
+                        : l10n.careEditorAddPhoto),
                   ),
                   if (hasPhoto)
                     TextButton(
@@ -192,7 +198,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                                 _removePhoto = true;
                               }),
                       style: TextButton.styleFrom(foregroundColor: c.red),
-                      child: const Text('Remove'),
+                      child: Text(l10n.commonRemove),
                     ),
                 ],
               ),
@@ -204,9 +210,10 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
               TextFormField(
                 controller: _name,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Full name'),
+                decoration:
+                    InputDecoration(labelText: l10n.careEditorFullName),
                 validator: (value) => (value ?? '').trim().length < 2
-                    ? 'Enter their full name'
+                    ? l10n.careEditorFullNameError
                     : null,
                 onChanged: (_) => setState(() {}),
               ),
@@ -215,30 +222,30 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 controller: _email,
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
-                decoration: const InputDecoration(
-                  labelText: 'Sign-in email',
-                  helperText: 'They sign in to the app with this address.',
+                decoration: InputDecoration(
+                  labelText: l10n.careEditorEmail,
+                  helperText: l10n.careEditorEmailHelp,
                   helperMaxLines: 2,
                 ),
                 validator: (value) => _emailPattern.hasMatch((value ?? '').trim())
                     ? null
-                    : 'Enter a valid email',
+                    : l10n.careEditorEmailError,
               ),
               const SizedBox(height: 14),
               TextFormField(
                 controller: _title,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  hintText: 'Counselling psychologist',
+                decoration: InputDecoration(
+                  labelText: l10n.careEditorTitleField,
+                  hintText: l10n.careEditorTitleHint,
                 ),
               ),
               const SizedBox(height: 14),
               TextFormField(
                 controller: _credentials,
-                decoration: const InputDecoration(
-                  labelText: 'Licence or registration',
-                  hintText: 'Body and registration number',
+                decoration: InputDecoration(
+                  labelText: l10n.careEditorLicence,
+                  hintText: l10n.careEditorLicenceHint,
                 ),
               ),
               const SizedBox(height: 14),
@@ -246,22 +253,22 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 controller: _years,
                 keyboardType: TextInputType.number,
                 decoration:
-                    const InputDecoration(labelText: 'Years of experience'),
+                    InputDecoration(labelText: l10n.careEditorYears),
                 validator: (value) {
                   final text = (value ?? '').trim();
                   if (text.isEmpty) return null;
                   final years = int.tryParse(text);
                   return years == null || years < 0 || years > 70
-                      ? 'A number from 0 to 70'
+                      ? l10n.careEditorYearsError
                       : null;
                 },
               ),
               const SizedBox(height: 14),
               TextFormField(
                 controller: _languages,
-                decoration: const InputDecoration(
-                  labelText: 'Languages',
-                  hintText: 'English, Swahili',
+                decoration: InputDecoration(
+                  labelText: l10n.careEditorLanguages,
+                  hintText: l10n.careEditorLanguagesHint,
                 ),
               ),
               const SizedBox(height: 14),
@@ -270,14 +277,14 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 maxLines: 5,
                 maxLength: 2000,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'About them',
-                  helperText: 'Clients read this on their profile.',
+                decoration: InputDecoration(
+                  labelText: l10n.careEditorAbout,
+                  helperText: l10n.careEditorAboutHelp,
                   alignLabelWithHint: true,
                 ),
               ),
               const SizedBox(height: 18),
-              const SectionHeader(title: 'Specialties'),
+              SectionHeader(title: l10n.careEditorSpecialties),
               const SizedBox(height: 10),
               Wrap(
                 spacing: 8,
@@ -301,12 +308,11 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 value: _active,
                 onChanged: (value) => setState(() => _active = value),
                 title: Text(
-                  'Taking new clients',
+                  l10n.careEditorTakingClients,
                   style: TextStyle(fontSize: 14.5, color: c.ink),
                 ),
                 subtitle: Text(
-                  'When off, they can\'t be matched. Their booked and past '
-                  'sessions stay.',
+                  l10n.careEditorTakingClientsHint,
                   style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
               ),
@@ -322,13 +328,14 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : Text(existing == null ? 'Add therapist' : 'Save'),
+                    : Text(existing == null
+                        ? l10n.careEditorAddButton
+                        : l10n.commonSave),
               ),
               if (existing == null) ...[
                 const SizedBox(height: 10),
                 Text(
-                  'They\'ll get an email explaining how to sign in and find '
-                  'their sessions.',
+                  l10n.careEditorInviteNote,
                   style: TextStyle(
                     fontSize: 12.5,
                     color: c.textMuted,
@@ -338,11 +345,10 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
               ],
               if (widget.feedback.isNotEmpty) ...[
                 const SizedBox(height: 30),
-                const SectionHeader(title: 'Client feedback'),
+                SectionHeader(title: l10n.careEditorFeedback),
                 const SizedBox(height: 4),
                 Text(
-                  'Only the care team sees individual ratings. Clients see an '
-                  'average once there are three.',
+                  l10n.careEditorFeedbackNote,
                   style: TextStyle(
                     fontSize: 12.5,
                     color: c.textMuted,
@@ -361,6 +367,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
 
   Widget _stats(AdminTherapist therapist) {
     final c = context.brand;
+    final l10n = context.l10n;
     final rating = therapist.profile.ratingAverage;
     return Container(
       padding: const EdgeInsets.all(14),
@@ -372,8 +379,8 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${therapist.upcomingSessions} upcoming · '
-            '${therapist.completedSessions} completed',
+            l10n.careEditorStats(
+                therapist.upcomingSessions, therapist.completedSessions),
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -387,8 +394,8 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
                 StarRow(rating: rating),
                 const SizedBox(width: 6),
                 Text(
-                  '${rating.toStringAsFixed(1)} from '
-                  '${therapist.profile.ratingCount}',
+                  l10n.careEditorRatingFrom(
+                      rating.toStringAsFixed(1), therapist.profile.ratingCount),
                   style: TextStyle(fontSize: 12, color: c.textMuted),
                 ),
               ],
@@ -397,9 +404,8 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
           const SizedBox(height: 6),
           Text(
             therapist.hasAccount
-                ? 'Signed in as ${therapist.email}'
-                : 'Hasn\'t signed in yet. They need to sign in to the app '
-                    'with ${therapist.email} to see and join sessions.',
+                ? l10n.careEditorSignedInAs(therapist.email)
+                : l10n.careEditorNotSignedIn(therapist.email),
             style: TextStyle(
               fontSize: 12.5,
               height: 1.45,
@@ -444,7 +450,7 @@ class _TherapistEditorScreenState extends State<TherapistEditorScreen> {
           ],
           const SizedBox(height: 4),
           Text(
-            item.clientLabel,
+            item.clientLabel(context.l10n),
             style: TextStyle(fontSize: 12, color: c.textMuted),
           ),
         ],

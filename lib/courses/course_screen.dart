@@ -5,6 +5,7 @@ import '../brand.dart';
 import '../discover/content_index.dart';
 import '../home/home_ui.dart';
 import '../media/download_buttons.dart';
+import '../l10n/l10n.dart';
 import 'course_catalog.dart';
 import 'course_progress.dart';
 
@@ -49,12 +50,13 @@ class _CourseScreenState extends State<CourseScreen> {
     final open = progress.isOpen(course, i, now);
     final isNext = progress.nextDay(course) == i;
     final locked = item.premium && !isPremiumUser();
+    final l10n = context.l10n;
     final status = done
-        ? 'Done'
+        ? l10n.courseDayDone
         : isNext && !open
-        ? 'Opens tomorrow'
+        ? l10n.courseDayOpensTomorrow
         : !open
-        ? 'Day ${i + 1}'
+        ? l10n.courseDayNumber(i + 1)
         : null;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -220,10 +222,11 @@ class _CourseScreenState extends State<CourseScreen> {
                 const SizedBox(height: 6),
                 Text(
                   finished
-                      ? 'All ${course.days.length} days done. Come back to '
-                            'any of them whenever you need.'
-                      : '${progress.done.length} of ${course.days.length} '
-                            'days done · one new step each day',
+                      ? context.l10n.courseAllDaysDone(course.days.length)
+                      : context.l10n.courseDaysDoneProgress(
+                          progress.done.length,
+                          course.days.length,
+                        ),
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
@@ -262,17 +265,19 @@ class CourseCard extends StatelessWidget {
         final progress = CourseStore.instance.of(course);
         final next = progress.nextDay(course);
         final now = DateTime.now();
+        final l10n = context.l10n;
+        final days = course.days.length;
         final String line;
         if (!progress.started) {
           line = suggested
-              ? 'Picked for you · ${course.days.length} days'
-              : '${course.days.length} days · a step a day';
+              ? l10n.courseCardPickedForYou(days)
+              : l10n.courseCardStepADay(days);
         } else if (next == null) {
-          line = 'Finished · all ${course.days.length} days';
+          line = l10n.courseCardFinished(days);
         } else if (progress.isOpen(course, next, now)) {
-          line = 'Day ${next + 1} of ${course.days.length} · ready today';
+          line = l10n.courseCardReadyToday(next + 1, days);
         } else {
-          line = 'Day ${next + 1} opens tomorrow';
+          line = l10n.courseCardOpensTomorrow(next + 1);
         }
         return Material(
           color: c.tint(course.accent, 0.08),

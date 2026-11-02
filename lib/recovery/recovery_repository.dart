@@ -2,18 +2,56 @@ import 'dart:math' as math;
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
+
 /// Milestones celebrated along a streak, in days.
-const recoveryMilestones = [
-  (1, 'Day one'),
-  (3, '3 days'),
-  (7, '1 week'),
-  (14, '2 weeks'),
-  (30, '1 month'),
-  (60, '2 months'),
-  (90, '90 days'),
-  (180, '6 months'),
-  (365, '1 year'),
+const recoveryMilestoneDays = [1, 3, 7, 14, 30, 60, 90, 180, 365];
+
+/// How a milestone is named: "Day one", "1 week", "6 months"…
+String recoveryMilestoneLabel(AppLocalizations l10n, int days) =>
+    switch (days) {
+      1 => l10n.recoveryMilestoneDayOne,
+      7 || 14 => l10n.recoveryMilestoneWeeks(days ~/ 7),
+      30 || 60 || 180 => l10n.recoveryMilestoneMonths(days ~/ 30),
+      365 => l10n.recoveryMilestoneYears(1),
+      _ => l10n.recoveryMilestoneDays(days),
+    };
+
+/// The milestones with their names in the language of [l10n].
+List<(int, String)> recoveryMilestonesIn(AppLocalizations l10n) => [
+      for (final days in recoveryMilestoneDays)
+        (days, recoveryMilestoneLabel(l10n, days)),
+    ];
+
+/// [recoveryMilestonesIn] the app's current language.
+List<(int, String)> get recoveryMilestones =>
+    recoveryMilestonesIn(currentL10n());
+
+/// What can set a craving off. Saved as is in `craving_logs.trigger_kind`,
+/// so never change these; [recoveryTriggerLabel] names them on screen.
+const recoveryTriggerKinds = [
+  'Stress',
+  'Boredom',
+  'Loneliness',
+  'Social pressure',
+  'Tiredness',
+  'Habit',
+  'Other',
 ];
+
+/// A saved trigger kind, named in the language of [l10n]. Anything not in
+/// [recoveryTriggerKinds] is shown as it was saved.
+String recoveryTriggerLabel(AppLocalizations l10n, String kind) =>
+    switch (kind) {
+      'Stress' => l10n.recoveryTriggerStress,
+      'Boredom' => l10n.recoveryTriggerBoredom,
+      'Loneliness' => l10n.recoveryTriggerLoneliness,
+      'Social pressure' => l10n.recoveryTriggerSocialPressure,
+      'Tiredness' => l10n.recoveryTriggerTiredness,
+      'Habit' => l10n.recoveryTriggerHabit,
+      'Other' => l10n.recoveryTriggerOther,
+      _ => kind,
+    };
 
 class RecoveryHabit {
   const RecoveryHabit({
@@ -39,23 +77,32 @@ class RecoveryHabit {
   }
 
   /// The next milestone ahead, or null when past them all.
-  (int, String)? get nextMilestone {
-    for (final m in recoveryMilestones) {
-      if (daysIn < m.$1) return m;
+  (int, String)? get nextMilestone => nextMilestoneIn(currentL10n());
+
+  /// [nextMilestone], named in the language of [l10n].
+  (int, String)? nextMilestoneIn(AppLocalizations l10n) {
+    for (final days in recoveryMilestoneDays) {
+      if (daysIn < days) return (days, recoveryMilestoneLabel(l10n, days));
     }
     return null;
   }
 
   /// Progress 0..1 from the previous milestone to the next.
   double get milestoneProgress {
-    final next = nextMilestone;
+    int? next;
+    for (final days in recoveryMilestoneDays) {
+      if (daysIn < days) {
+        next = days;
+        break;
+      }
+    }
     if (next == null) return 1;
     var previous = 0;
-    for (final m in recoveryMilestones) {
-      if (m.$1 >= next.$1) break;
-      previous = m.$1;
+    for (final days in recoveryMilestoneDays) {
+      if (days >= next) break;
+      previous = days;
     }
-    return (daysIn - previous) / (next.$1 - previous);
+    return (daysIn - previous) / (next - previous);
   }
 }
 
@@ -82,14 +129,26 @@ class CravingLog {
         createdAt: DateTime.parse(map['created_at'] as String).toLocal(),
       );
 
-  /// Rough part of the day, for spotting when cravings tend to land.
+  /// Rough part of the day, for spotting when cravings tend to land: one
+  /// of [partsOfDay], named on screen by [partOfDayLabel].
   String get partOfDay {
     final hour = createdAt.hour;
-    if (hour < 6) return 'Night';
-    if (hour < 12) return 'Morning';
-    if (hour < 18) return 'Afternoon';
-    return 'Evening';
+    if (hour < 6) return 'night';
+    if (hour < 12) return 'morning';
+    if (hour < 18) return 'afternoon';
+    return 'evening';
   }
+
+  static const partsOfDay = ['morning', 'afternoon', 'evening', 'night'];
+
+  /// A [partOfDay] in the language of [l10n]: "Morning", "Night"…
+  static String partOfDayLabel(AppLocalizations l10n, String part) =>
+      switch (part) {
+        'morning' => l10n.recoveryPartOfDayMorning,
+        'afternoon' => l10n.recoveryPartOfDayAfternoon,
+        'evening' => l10n.recoveryPartOfDayEvening,
+        _ => l10n.recoveryPartOfDayNight,
+      };
 }
 
 /// Supabase-backed storage for commitments, pledges, and craving logs.

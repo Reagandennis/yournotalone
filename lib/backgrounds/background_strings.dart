@@ -1,12 +1,13 @@
-/// Everything backgrounds say on screen, in one place for the move to ARB
-/// files.
+import '../l10n/l10n.dart';
+
+/// Everything backgrounds say on screen, from the ARB files (`background*`
+/// keys) in the app's current language.
 abstract final class BackgroundStrings {
-  static const calmVisuals = 'Calm visuals';
-  static const calmVisualsHint =
-      'Slowly moving backgrounds behind sounds and sessions. Off holds them '
-      'still.';
-  static const reduceMotionNote =
-      'Your phone is set to reduce motion, so backgrounds stay still.';
-  static const pickerTitle = 'Background';
-  static const pickerTooltip = 'Change background';
+  static AppLocalizations get _l => currentL10n();
+
+  static String get calmVisuals => _l.backgroundCalmVisuals;
+  static String get calmVisualsHint => _l.backgroundCalmVisualsHint;
+  static String get reduceMotionNote => _l.backgroundReduceMotionNote;
+  static String get pickerTitle => _l.backgroundPickerTitle;
+  static String get pickerTooltip => _l.backgroundPickerTooltip;
 }

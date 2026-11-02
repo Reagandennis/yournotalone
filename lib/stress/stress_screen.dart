@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../cbt/cbt_screen.dart';
 import '../therapy/therapy_screen.dart';
 import '../toolkit/toolkit_art.dart';
@@ -20,15 +21,12 @@ class StressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return ToolkitHub(
-      title: 'Manage stress',
+      title: l10n.stressTitle,
       accent: stressAccent,
-      headline: 'Down from the ceiling, then sort the load',
-      intro:
-          'Stress is a body state before it\'s a thought, so the fastest '
-          'tools work on the body: breath and muscles first, thinking '
-          'second. Then a check-in to see the trend, and two tools for '
-          'the load itself — what you can change, and what refills you.',
+      headline: l10n.stressHeadline,
+      intro: l10n.stressIntro,
       tools: stressTools,
       lessons: stressLessons,
       resources: stressResources,
@@ -40,28 +38,21 @@ class StressScreen extends StatelessWidget {
             icon: Icons.psychology_rounded,
             iconColor: c.red,
             tint: c.tint(const Color(0xFFC53C26), 0.08),
-            title: 'When the stress is in the thinking',
-            detail:
-                'Thought records, thinking traps and worry windows are '
-                'in the CBT toolkit.',
+            title: l10n.stressCbtBannerTitle,
+            detail: l10n.stressCbtBannerDetail,
             onTap: () => Navigator.of(context).push(CbtScreen.route()),
           ),
           const SizedBox(height: 12),
           ToolkitBanner(
             icon: Icons.favorite_rounded,
             iconColor: c.red,
-            title: 'Been like this for months?',
-            detail:
-                'That\'s worth a real conversation. Book a private '
-                'session with a licensed therapist.',
+            title: l10n.stressTherapistBannerTitle,
+            detail: l10n.stressTherapistBannerDetail,
             onTap: () => Navigator.of(context).push(TherapyScreen.route()),
           ),
         ],
       ),
-      footnote:
-          'Chest pain, breathlessness or palpitations that don\'t '
-          'settle need a doctor, not a breathing exercise. In an emergency, '
-          'call your local emergency number.',
+      footnote: l10n.stressFootnote,
     );
   }
 }

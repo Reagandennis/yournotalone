@@ -31,6 +31,7 @@ import '../support/heavy_day_sheet.dart';
 import '../therapy/session_format.dart';
 import '../therapy/therapy_repository.dart';
 import '../therapy/therapy_screen.dart';
+import '../l10n/l10n.dart';
 import 'home_ui.dart';
 import 'mood_face.dart';
 import 'mood_history_screen.dart';
@@ -52,8 +53,8 @@ class _QuickItem {
 
   final IconData icon;
   final Color accent;
-  final String title;
-  final String sub;
+  final String Function(AppLocalizations) title;
+  final String Function(AppLocalizations) sub;
   final _QuickAction action;
 
   /// What opening content of these kinds counts towards, so the tiles
@@ -61,36 +62,36 @@ class _QuickItem {
   final Set<ContentKind> kinds;
 }
 
-const _quickItems = [
+final _quickItems = [
   _QuickItem(
     Icons.self_improvement_rounded,
     Pillars.blue,
-    'Meditate',
-    'Breathe & settle',
+    (l) => l.homeQuickMeditate,
+    (l) => l.homeQuickMeditateSub,
     action: _QuickAction.meditate,
     kinds: {ContentKind.meditation, ContentKind.breathing},
   ),
   _QuickItem(
     Icons.edit_note_rounded,
     Pillars.red,
-    'Journal',
-    'Write it out',
+    (l) => l.homeQuickJournal,
+    (l) => l.homeQuickJournalSub,
     action: _QuickAction.journal,
     kinds: {ContentKind.prompt},
   ),
   _QuickItem(
     Icons.graphic_eq_rounded,
     Pillars.yellow,
-    'Sounds',
-    'Focus · sleep · calm',
+    (l) => l.homeQuickSounds,
+    (l) => l.homeQuickSoundsSub,
     action: _QuickAction.sounds,
     kinds: {ContentKind.sound},
   ),
   _QuickItem(
     Icons.healing_rounded,
     Pillars.black,
-    'Recovery',
-    'One day at a time',
+    (l) => l.homeQuickRecovery,
+    (l) => l.homeQuickRecoverySub,
     action: _QuickAction.recovery,
     kinds: {ContentKind.recovery},
   ),
@@ -297,7 +298,7 @@ class _HomeTabState extends State<HomeTab> {
       if (!mounted) return;
       if (index != 0 && firstTime) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Thanks for checking in.')),
+          SnackBar(content: Text(context.l10n.homeThanksForCheckingIn)),
         );
         unawaited(_nudgeAfterCheckins());
       }
@@ -308,7 +309,7 @@ class _HomeTabState extends State<HomeTab> {
             content: Text(
               errorMessage(
                 e,
-                'Couldn\'t save your mood — check your connection.',
+                context.l10n.homeMoodSaveFailed,
               ),
             ),
           ),
@@ -342,11 +343,8 @@ class _HomeTabState extends State<HomeTab> {
       showUpgradeSheet(
         context,
         source: 'nudge:mood3',
-        title: 'Three check-ins in',
-        message:
-            'You\'re building a habit. Premium keeps every check-in '
-            'and shows you how the weeks are actually going — and '
-            '$introOffer.',
+        title: context.l10n.homeNudgeCheckinsTitle,
+        message: context.l10n.homeNudgeCheckinsMessage(introOffer),
       );
     } catch (e) {
       debugPrint('Check-in nudge skipped: $e');
@@ -357,10 +355,8 @@ class _HomeTabState extends State<HomeTab> {
     if (!isPremiumUser()) {
       showUpgradeSheet(
         context,
-        title: 'Mood history is part of Premium',
-        message:
-            'Checking in is always free. Premium keeps the record and '
-            'shows you the pattern — and $introOffer.',
+        title: context.l10n.homeMoodHistoryPremiumTitle,
+        message: context.l10n.homeMoodHistoryPremiumMessage(introOffer),
         source: 'home:mood_week',
       );
       return;
@@ -372,9 +368,10 @@ class _HomeTabState extends State<HomeTab> {
 
   String get _greeting {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good morning,';
-    if (hour < 18) return 'Good afternoon,';
-    return 'Good evening,';
+    final l10n = context.l10n;
+    if (hour < 12) return l10n.homeGreetingMorning;
+    if (hour < 18) return l10n.homeGreetingAfternoon;
+    return l10n.homeGreetingEvening;
   }
 
   /// What the app remembers about you. Hidden until there is something to
@@ -406,7 +403,7 @@ class _HomeTabState extends State<HomeTab> {
                       child: Text(
                         // The day-by-day count lives in the rhythm card,
                         // which doesn't break on a rest day.
-                        'Your practice',
+                        context.l10n.homeYourPractice,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -423,8 +420,10 @@ class _HomeTabState extends State<HomeTab> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${summary.minutesThisWeek.round()} minutes this week · '
-                  '${summary.sessions} sessions in all',
+                  context.l10n.homePracticeSummary(
+                    summary.minutesThisWeek.round(),
+                    summary.sessions,
+                  ),
                   style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
                 const SizedBox(height: 14),
@@ -446,7 +445,7 @@ class _HomeTabState extends State<HomeTab> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Last time: ${last.title}',
+                        context.l10n.homeLastTime(last.title),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 13, color: c.ink),
@@ -461,7 +460,7 @@ class _HomeTabState extends State<HomeTab> {
                           source: 'home:continue',
                         ),
                         icon: const Icon(Icons.play_arrow_rounded, size: 18),
-                        label: const Text('Continue'),
+                        label: Text(context.l10n.commonContinue),
                       ),
                   ],
                 ),
@@ -493,9 +492,9 @@ class _HomeTabState extends State<HomeTab> {
         const SizedBox(height: 14),
         Text(
           switch (index) {
-            0 || 1 => 'Something that might help',
-            2 => 'Something for right now',
-            _ => 'Something to keep it going',
+            0 || 1 => context.l10n.homeSuggestionLow,
+            2 => context.l10n.homeSuggestionOkay,
+            _ => context.l10n.homeSuggestionGood,
           },
           style: TextStyle(
             fontSize: 13,
@@ -512,7 +511,9 @@ class _HomeTabState extends State<HomeTab> {
               context,
             ).push(ContentListScreen.route(ContentListScreen.forNeed(need))),
             child: Text(
-              'More for “${need.label.toLowerCase()}”',
+              context.l10n.homeMoreForNeed(
+                context.l10n.midSentence(need.label(context.l10n)),
+              ),
               style: const TextStyle(fontSize: 13),
             ),
           ),
@@ -529,7 +530,7 @@ class _HomeTabState extends State<HomeTab> {
     if (week == null || week.isEmpty) return const SizedBox.shrink();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    const letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    final letters = context.l10n.rhythmWeekdayLetters.split(' ');
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: _openMoodHistory,
@@ -544,7 +545,7 @@ class _HomeTabState extends State<HomeTab> {
               children: [
                 Expanded(
                   child: Text(
-                    'Your week',
+                    context.l10n.homeYourWeek,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -553,7 +554,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                 ),
                 Text(
-                  'History',
+                  context.l10n.homeHistory,
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
@@ -641,7 +642,7 @@ class _HomeTabState extends State<HomeTab> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'How are you feeling today?',
+            context.l10n.homeHowAreYouFeeling,
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w600,
@@ -681,7 +682,7 @@ class _HomeTabState extends State<HomeTab> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            level.label,
+                            level.name(context.l10n),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -736,8 +737,8 @@ class _HomeTabState extends State<HomeTab> {
                   children: [
                     Text(
                       item.kind == ContentKind.prompt
-                          ? 'TODAY\'S PROMPT'
-                          : 'TODAY\'S READ',
+                          ? context.l10n.homeTodaysPrompt
+                          : context.l10n.homeTodaysRead,
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -827,7 +828,7 @@ class _HomeTabState extends State<HomeTab> {
                 context,
               ).push(MaterialPageRoute(builder: (_) => const RecoveryScreen()));
             case _QuickAction.comingSoon:
-              showComingSoon(context, item.title);
+              showComingSoon(context, item.title(context.l10n));
           }
         },
         child: Padding(
@@ -846,7 +847,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
               const Spacer(),
               Text(
-                item.title,
+                item.title(context.l10n),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
@@ -857,7 +858,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
               const SizedBox(height: 2),
               Text(
-                item.sub,
+                item.sub(context.l10n),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontSize: 12, color: c.textMuted),
@@ -891,9 +892,9 @@ class _HomeTabState extends State<HomeTab> {
           ).push(MaterialPageRoute(builder: (_) => const CrisisScreen()));
         },
         icon: const Icon(Icons.health_and_safety_outlined, size: 18),
-        label: const Text(
-          'Need help now?',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        label: Text(
+          context.l10n.homeNeedHelpNow,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -908,7 +909,7 @@ class _HomeTabState extends State<HomeTab> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(title: 'Saved'),
+          SectionHeader(title: context.l10n.homeSaved),
           const SizedBox(height: 12),
           ContentStrip(items: items, source: 'home:saved'),
           const SizedBox(height: 28),
@@ -958,7 +959,7 @@ class _HomeTabState extends State<HomeTab> {
                         children: [
                           Flexible(
                             child: Text(
-                              'Your insights',
+                              context.l10n.homeYourInsights,
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
@@ -974,7 +975,7 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        'How practice, your week and your moods connect.',
+                        context.l10n.homeInsightsSub,
                         style: TextStyle(fontSize: 13, color: c.textMuted),
                       ),
                     ],
@@ -1020,8 +1021,8 @@ class _HomeTabState extends State<HomeTab> {
             borderRadius: BorderRadius.circular(18),
             onTap: () => openNewJournalEntry(
               context,
-              title: 'Before my session',
-              content: 'In my session, I\'d like to talk about ',
+              title: context.l10n.homeBeforeSessionJournalTitle,
+              content: context.l10n.homeBeforeSessionJournalSeed,
             ),
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -1034,7 +1035,7 @@ class _HomeTabState extends State<HomeTab> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Before your session',
+                          context.l10n.homeBeforeSessionTitle,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -1043,8 +1044,7 @@ class _HomeTabState extends State<HomeTab> {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          'Jot down what you want to talk about, so nothing '
-                          'slips away when the call starts.',
+                          context.l10n.homeBeforeSessionSub,
                           style: TextStyle(
                             fontSize: 13,
                             color: c.textMuted,
@@ -1081,7 +1081,7 @@ class _HomeTabState extends State<HomeTab> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'FROM YOUR LAST SESSION',
+                context.l10n.homeFromLastSession,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -1101,12 +1101,12 @@ class _HomeTabState extends State<HomeTab> {
                 child: TextButton(
                   onPressed: () =>
                       Navigator.of(context).push(TherapyScreen.route()),
-                  child: const Text('Read it all'),
+                  child: Text(context.l10n.homeReadItAll),
                 ),
               ),
               if (practise.isNotEmpty) ...[
                 Text(
-                  'Something to practise until next time',
+                  context.l10n.homePractiseUntilNext,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -1130,8 +1130,8 @@ class _HomeTabState extends State<HomeTab> {
     final today = DateTime(now.year, now.month, now.day);
     final day = DateTime(at.year, at.month, at.day);
     return switch (day.difference(today).inDays) {
-      0 => 'Today, ${formatTime(at)}',
-      1 => 'Tomorrow, ${formatTime(at)}',
+      0 => currentL10n().homeToday(formatTime(at)),
+      1 => currentL10n().homeTomorrow(formatTime(at)),
       _ => formatDateTime(at),
     };
   }
@@ -1143,18 +1143,17 @@ class _HomeTabState extends State<HomeTab> {
     final session = _session;
     final now = DateTime.now();
     final open = session != null && session.joinStateAt(now) == JoinState.open;
+    final l10n = context.l10n;
     final (title, sub) = switch (session) {
       final s? when s.isConfirmed && s.scheduledAt != null => (
-        'Your session · ${_when(s.scheduledAt!, now)}',
-        open
-            ? 'It\'s open now — tap to join.'
-            : 'Tap for the details, or to join when it opens.',
+        l10n.homeYourSession(_when(s.scheduledAt!, now)),
+        open ? l10n.homeSessionOpen : l10n.homeSessionDetails,
       ),
       final s? when s.isPending => (
-        'Finding your therapist',
-        'We\'ll let you know as soon as your session is booked.',
+        l10n.homeFindingTherapist,
+        l10n.homeFindingTherapistSub,
       ),
-      _ => ('Talk to a real therapist', '\$20 a session, paid when you book.'),
+      _ => (l10n.homeTalkToTherapist, l10n.homeTalkToTherapistSub('\$20')),
     };
     return Material(
       color: open ? c.tint(Pillars.red, 0.10) : c.tint(Pillars.blue, 0.06),
@@ -1292,7 +1291,7 @@ class _HomeTabState extends State<HomeTab> {
         ],
         const SizedBox(height: 28),
         if (forNow.isNotEmpty) ...[
-          SectionHeader(title: dayPart.heading),
+          SectionHeader(title: dayPart.heading(context.l10n)),
           const SizedBox(height: 12),
           ContentStrip(items: forNow, source: 'home:${dayPart.name}'),
           const SizedBox(height: 28),
@@ -1300,7 +1299,7 @@ class _HomeTabState extends State<HomeTab> {
         _savedStrip(),
         _practiceCard(),
         _insightsTeaser(premium),
-        const SectionHeader(title: 'Quick access'),
+        SectionHeader(title: context.l10n.homeQuickAccess),
         const SizedBox(height: 12),
         // A fixed aspect ratio ties tile height to screen width, so the
         // contents overflowed on narrow phones and clipped at larger text

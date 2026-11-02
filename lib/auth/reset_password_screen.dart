@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'auth_redirect.dart';
 import 'auth_ui.dart';
 
@@ -43,11 +44,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_sent) {
       return AuthScaffold(
-        title: 'Check your inbox',
-        subtitle: 'If an account exists for that address, the reset link is '
-            'already on its way.',
+        title: l10n.authCheckInboxTitle,
+        subtitle: l10n.authCheckInboxSubtitle,
         children: [
           Center(
             child: Container(
@@ -78,13 +79,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            child: const Text('Back to log in'),
+            child: Text(l10n.authBackToLogIn),
           ),
           const SizedBox(height: 10),
           Center(
             child: TextButton(
               onPressed: () => setState(() => _sent = false),
-              child: const Text('Try another email'),
+              child: Text(l10n.authTryAnotherEmail),
             ),
           ),
         ],
@@ -92,9 +93,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
 
     return AuthScaffold(
-      title: 'Reset password',
-      subtitle: 'Enter the email you signed up with and we\'ll send you a '
-          'link to set a new password.',
+      title: l10n.authResetTitle,
+      subtitle: l10n.authResetSubtitle,
       children: [
         Form(
           key: _formKey,
@@ -103,7 +103,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             children: [
               AuthTextField(
                 controller: _email,
-                label: 'Email',
+                label: l10n.authEmail,
                 icon: Icons.mail_outline_rounded,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
@@ -111,7 +111,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
               const SizedBox(height: 26),
               AuthSubmitButton(
-                label: 'Send reset link',
+                label: l10n.authSendResetLink,
                 loading: _loading,
                 onPressed: _submit,
               ),

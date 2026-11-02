@@ -30,16 +30,16 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
     final sure = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(DownloadStrings.deleteAllTitle),
-        content: const Text(DownloadStrings.deleteAllBody),
+        title: Text(DownloadStrings.deleteAllTitle),
+        content: Text(DownloadStrings.deleteAllBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(DownloadStrings.cancel),
+            child: Text(DownloadStrings.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(DownloadStrings.delete),
+            child: Text(DownloadStrings.delete),
           ),
         ],
       ),
@@ -250,7 +250,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                         child: TextButton.icon(
                           onPressed: _deleteAll,
                           icon: const Icon(Icons.delete_sweep_outlined),
-                          label: const Text(DownloadStrings.deleteAll),
+                          label: Text(DownloadStrings.deleteAll),
                           style: TextButton.styleFrom(
                             foregroundColor: Pillars.red,
                           ),

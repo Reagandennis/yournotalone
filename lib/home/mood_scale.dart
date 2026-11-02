@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 
 /// One step of the daily mood scale. The order of [moodLevels] is the
 /// order shown in the check-in, and its index is the score minus one —
@@ -8,8 +9,19 @@ import '../brand.dart';
 class MoodLevel {
   const MoodLevel(this.label, this.color);
 
+  /// The English name, which also picks the face's shape in `MoodFace`.
+  /// Show [name] instead.
   final String label;
   final Color color;
+
+  /// The name shown on screen, in the app's language.
+  String name(AppLocalizations l10n) => switch (label) {
+    'Awful' => l10n.moodAwful,
+    'Low' => l10n.moodLow,
+    'Okay' => l10n.moodOkay,
+    'Good' => l10n.moodGood,
+    _ => l10n.moodGreat,
+  };
 }
 
 /// Warm colours for the hard days, cool blues for the good ones — all

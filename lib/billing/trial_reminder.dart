@@ -5,6 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:timezone/timezone.dart' as tz;
 
+import '../l10n/l10n.dart';
 import '../notifications/local_notifications.dart';
 import '../therapy/session_format.dart';
 
@@ -17,17 +18,18 @@ import '../therapy/session_format.dart';
 abstract final class TrialReminder {
   static const _id = 300000001;
 
-  static const _details = NotificationDetails(
-    android: AndroidNotificationDetails(
-      'billing',
-      'Subscription',
-      channelDescription: 'A heads-up before a free trial ends',
-      importance: Importance.defaultImportance,
-      priority: Priority.defaultPriority,
-    ),
-    iOS: DarwinNotificationDetails(),
-    macOS: DarwinNotificationDetails(),
-  );
+  static NotificationDetails _details(AppLocalizations l10n) =>
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          'billing',
+          l10n.billingTrialChannelName,
+          channelDescription: l10n.billingTrialChannelDescription,
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+        ),
+        iOS: const DarwinNotificationDetails(),
+        macOS: const DarwinNotificationDetails(),
+      );
 
   /// [pro] is the Pro entitlement as RevenueCat last reported it, or null
   /// when there is none.
@@ -53,17 +55,17 @@ abstract final class TrialReminder {
         await plugin.cancel(id: _id);
         return;
       }
+      final l10n = currentL10n();
       final store = Platform.isIOS || Platform.isMacOS
-          ? 'the App Store'
-          : 'Google Play';
+          ? l10n.billingStoreAppStore
+          : l10n.billingStoreGooglePlay;
       await plugin.zonedSchedule(
         id: _id,
         scheduledDate: tz.TZDateTime.from(at, tz.local),
-        notificationDetails: _details,
+        notificationDetails: _details(l10n),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        title: 'Your Premium trial ends soon',
-        body: 'From ${formatDate(expiry)} it continues at the plan price. '
-            'Keep it, or cancel any time in $store.',
+        title: l10n.billingTrialReminderTitle,
+        body: l10n.billingTrialReminderBody(formatDate(expiry), store),
       );
     } catch (e) {
       debugPrint('Trial reminder unavailable: $e');

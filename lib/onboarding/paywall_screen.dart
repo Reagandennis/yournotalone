@@ -10,6 +10,7 @@ import '../brand.dart';
 import '../home/home_ui.dart';
 import '../home/mood_face.dart';
 import '../home/mood_scale.dart';
+import '../l10n/l10n.dart';
 import '../legal/legal_content.dart';
 import '../legal/legal_screen.dart';
 import 'onboarding_ui.dart';
@@ -26,20 +27,30 @@ class _PlanRow {
   static const included = '✓';
 }
 
+/// [n] free, as a table cell ("2 free").
+String _free(AppLocalizations l10n, int n) => l10n.paywallCellFree(n);
+
+/// All [n], as a table cell ("All 20").
+String _all(AppLocalizations l10n, int n) => l10n.paywallCellAll(n);
+
 // Keep this honest: every row here is checked against what the app
 // actually gates. Reminders and urge surfing are free, so they are not
 // sold as Premium. The first three rows are the ones that differ most,
 // because only those show until "See everything" is tapped.
-const _rows = [
-  _PlanRow('Guided meditations & breathing', '2 free', 'All 20'),
-  _PlanRow('Journaling', '5 entries', 'Unlimited'),
-  _PlanRow('Mood history & progress', null, _PlanRow.included),
-  _PlanRow('Wellbeing sounds — focus, sleep, calm', '1 free', 'All 13'),
-  _PlanRow('Journal prompts', '1 free', 'All 19'),
-  _PlanRow('Recovery tracking & insights', null, _PlanRow.included),
-  _PlanRow('Daily mood check-ins', _PlanRow.included, _PlanRow.included),
-  _PlanRow('Daily reminders', _PlanRow.included, _PlanRow.included),
-  _PlanRow('Urge surfing, any time', _PlanRow.included, _PlanRow.included),
+List<_PlanRow> _rows(AppLocalizations l10n) => [
+  _PlanRow(l10n.paywallRowMeditations, _free(l10n, 2), _all(l10n, 20)),
+  _PlanRow(
+    l10n.paywallRowJournaling,
+    l10n.paywallCellEntries(5),
+    l10n.paywallCellUnlimited,
+  ),
+  _PlanRow(l10n.paywallRowMoodHistory, null, _PlanRow.included),
+  _PlanRow(l10n.paywallRowSounds, _free(l10n, 1), _all(l10n, 13)),
+  _PlanRow(l10n.paywallRowPrompts, _free(l10n, 1), _all(l10n, 19)),
+  _PlanRow(l10n.paywallRowRecovery, null, _PlanRow.included),
+  _PlanRow(l10n.paywallRowCheckins, _PlanRow.included, _PlanRow.included),
+  _PlanRow(l10n.paywallRowReminders, _PlanRow.included, _PlanRow.included),
+  _PlanRow(l10n.paywallRowUrgeSurfing, _PlanRow.included, _PlanRow.included),
 ];
 
 const _rowsShownFolded = 3;
@@ -146,8 +157,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Future<void> _alreadyPremium() async {
     if (_done || !mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('You already have Premium — everything is unlocked.'),
+      SnackBar(
+        content: Text(context.l10n.paywallAlreadyPremium),
       ),
     );
     await _finish('premium');
@@ -214,9 +225,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
     final package = _selected;
     if (package == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Purchases aren\'t available on this device yet — '
-              'you can upgrade later from Settings.'),
+        SnackBar(
+          content: Text(context.l10n.paywallPurchasesUnavailable),
         ),
       );
       return;
@@ -239,9 +249,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
           'Check the product\'s Associated Entitlements in RevenueCat.');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Purchase completed, but premium didn\'t '
-                'activate. Try "Restore purchases", or contact support.'),
+          SnackBar(
+            content: Text(context.l10n.paywallNotActivated),
           ),
         );
       }
@@ -259,7 +268,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
           debugPrint('Restore after already-owned failed: $restoreError');
         }
       }
-      final message = purchaseErrorMessage(e);
+      final message =
+          mounted ? purchaseErrorMessage(e, context.l10n) : null;
       if (message != null && mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(message)));
@@ -280,11 +290,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
       }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No previous purchases found.')),
+          SnackBar(content: Text(context.l10n.paywallNoPurchases)),
         );
       }
     } catch (e) {
-      final message = purchaseErrorMessage(e);
+      final message =
+          mounted ? purchaseErrorMessage(e, context.l10n) : null;
       if (message != null && mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(message)));
@@ -295,23 +306,23 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   String _packageName(Package p) => switch (p.packageType) {
-        PackageType.weekly => 'Weekly',
-        PackageType.monthly => 'Monthly',
-        PackageType.annual => 'Yearly',
+        PackageType.weekly => context.l10n.paywallPlanWeekly,
+        PackageType.monthly => context.l10n.paywallPlanMonthly,
+        PackageType.annual => context.l10n.paywallPlanYearly,
         _ => p.storeProduct.title,
       };
 
   String _packageNote(Package p) => switch (p.packageType) {
-        PackageType.weekly => 'per week',
-        PackageType.monthly => 'per month',
-        PackageType.annual => 'per year',
+        PackageType.weekly => context.l10n.paywallPerWeek,
+        PackageType.monthly => context.l10n.paywallPerMonth,
+        PackageType.annual => context.l10n.paywallPerYear,
         _ => '',
       };
 
   String _periodSuffix(Package p) => switch (p.packageType) {
-        PackageType.weekly => '/week',
-        PackageType.monthly => '/month',
-        PackageType.annual => '/year',
+        PackageType.weekly => context.l10n.billingSuffixWeek,
+        PackageType.monthly => context.l10n.billingSuffixMonth,
+        PackageType.annual => context.l10n.billingSuffixYear,
         _ => '',
       };
 
@@ -347,7 +358,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   Widget _trust() {
     final c = context.brand;
-    const items = ['Licensed therapists', 'Private by design', 'Cancel anytime'];
+    final l10n = context.l10n;
+    final items = [
+      l10n.paywallTrustTherapists,
+      l10n.paywallTrustPrivate,
+      l10n.paywallTrustCancel,
+    ];
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -434,7 +450,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         const SizedBox(height: 3),
                         Text(
                           p.packageType == PackageType.annual
-                              ? perMonthLabel(p)
+                              ? perMonthLabel(p, context.l10n)
                               : _packageNote(p),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -456,7 +472,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              'SAVE $savings%',
+                              context.l10n.paywallSave(savings),
                               style: TextStyle(
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.w700,
@@ -486,6 +502,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
       days,
       p.storeProduct.priceString,
       _periodSuffix(p),
+      context.l10n,
     );
     final c = context.brand;
     const accents = [Pillars.red, Pillars.blue, Pillars.yellow];
@@ -585,7 +602,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
 
   List<Widget> _table() {
     final c = context.brand;
-    final rows = _expanded ? _rows : _rows.take(_rowsShownFolded).toList();
+    final l10n = context.l10n;
+    final all = _rows(l10n);
+    final rows = _expanded ? all : all.take(_rowsShownFolded).toList();
     return [
       Row(
         children: [
@@ -593,7 +612,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
           SizedBox(
             width: 64,
             child: Text(
-              'Free',
+              l10n.paywallColumnFree,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -610,7 +629,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              'Premium',
+              l10n.paywallColumnPremium,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -661,7 +680,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 : Icons.keyboard_arrow_down_rounded,
             size: 18,
           ),
-          label: Text(_expanded ? 'Show less' : 'See everything'),
+          label: Text(
+            _expanded ? l10n.paywallShowLess : l10n.paywallSeeEverything,
+          ),
         ),
       ),
     ];
@@ -691,9 +712,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
       alignment: WrapAlignment.center,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        link('Terms of Use', termsOfService),
+        link(context.l10n.paywallTerms, termsOfService),
         Text('·', style: TextStyle(color: c.textMuted)),
-        link('Privacy Policy', privacyPolicy),
+        link(context.l10n.paywallPrivacy, privacyPolicy),
       ],
     );
   }
@@ -701,9 +722,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
-    final copy = paywallCopy(widget.checkin);
+    final l10n = context.l10n;
+    final copy = paywallCopy(widget.checkin, l10n);
     final selected = _selected;
-    final trial = selected == null ? null : trialLabel(selected);
+    final trial = selected == null ? null : trialLabel(selected, l10n);
     final days = selected == null ? null : trialDays(selected);
     return OnboardingScaffold(
       dismissible: !widget.fromOnboarding,
@@ -713,19 +735,27 @@ class _PaywallScreenState extends State<PaywallScreen> {
           AuthSubmitButton(
             label: selected != null
                 ? (trial != null
-                    ? 'Try free for $trial'
-                    : 'Start Premium — ${selected.storeProduct.priceString}')
-                : 'Start Premium',
+                    ? l10n.paywallTryFreeFor(trial)
+                    : l10n.paywallStartPremiumPrice(
+                        selected.storeProduct.priceString,
+                      ))
+                : l10n.paywallStartPremium,
             loading: _loading || _checking,
             onPressed: _buy,
           ),
           const SizedBox(height: 4),
           Text(
             selected != null
-                ? '${trial != null ? 'then ' : ''}'
-                    '${selected.storeProduct.priceString}'
-                    '${_periodSuffix(selected)} · cancel anytime'
-                : 'Cancel anytime',
+                ? (trial != null
+                    ? l10n.paywallThenPriceCancelAnytime(
+                        '${selected.storeProduct.priceString}'
+                        '${_periodSuffix(selected)}',
+                      )
+                    : l10n.paywallPriceCancelAnytime(
+                        '${selected.storeProduct.priceString}'
+                        '${_periodSuffix(selected)}',
+                      ))
+                : l10n.paywallCancelAnytime,
             style: TextStyle(fontSize: 12, color: c.textMuted),
           ),
           const SizedBox(height: 2),
@@ -736,8 +766,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
               TextButton(
                 onPressed: _loading ? null : _finishFree,
                 child: Text(widget.fromOnboarding
-                    ? 'Continue with Free'
-                    : 'Maybe later'),
+                    ? l10n.paywallContinueFree
+                    : l10n.paywallMaybeLater),
               ),
               Text(
                 '·',
@@ -745,7 +775,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               ),
               TextButton(
                 onPressed: _loading ? null : _restore,
-                child: const Text('Restore purchases'),
+                child: Text(l10n.paywallRestore),
               ),
             ],
           ),
@@ -799,7 +829,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
         ..._table(),
         const SizedBox(height: 4),
         Text(
-          'Therapy sessions are available to everyone and booked separately.',
+          l10n.paywallTherapyNote,
           style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.5),
         ),
       ],

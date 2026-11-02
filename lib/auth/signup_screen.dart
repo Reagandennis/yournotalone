@@ -6,6 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../legal/legal_content.dart';
 import '../legal/legal_screen.dart';
 import 'apple_auth.dart';
@@ -52,6 +53,36 @@ class _SignupScreenState extends State<SignupScreen> {
         );
       }
     });
+  }
+
+  /// "By creating an account you agree to our Terms of Service and Privacy
+  /// Policy.", with the two documents as links wherever the language puts
+  /// them in the sentence.
+  List<InlineSpan> _agreement(AppLocalizations l10n, BrandColors c) {
+    const termsMark = '\u0001', privacyMark = '\u0002';
+    final sentence = l10n.authSignupAgreement(termsMark, privacyMark);
+    final link = TextStyle(fontWeight: FontWeight.w600, color: c.blue);
+    final spans = <InlineSpan>[];
+    final parts = sentence.split(RegExp('(?=[$termsMark$privacyMark])|'
+        '(?<=[$termsMark$privacyMark])'));
+    for (final part in parts) {
+      if (part == termsMark) {
+        spans.add(TextSpan(
+          text: l10n.authTermsOfService,
+          recognizer: _termsTap,
+          style: link,
+        ));
+      } else if (part == privacyMark) {
+        spans.add(TextSpan(
+          text: l10n.authPrivacyPolicy,
+          recognizer: _privacyTap,
+          style: link,
+        ));
+      } else if (part.isNotEmpty) {
+        spans.add(TextSpan(text: part));
+      }
+    }
+    return spans;
   }
 
   void _openLegal(LegalDoc doc) {
@@ -102,11 +133,11 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_awaitingConfirm) {
       return AuthScaffold(
-        title: 'Confirm your email',
-        subtitle: 'We sent a confirmation link to verify it\'s really you. '
-            'Tap the link, then come back and log in.',
+        title: l10n.authConfirmEmailTitle,
+        subtitle: l10n.authConfirmEmailSubtitle,
         children: [
           Center(
             child: Container(
@@ -137,7 +168,7 @@ class _SignupScreenState extends State<SignupScreen> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            child: const Text('Back to log in'),
+            child: Text(l10n.authBackToLogIn),
           ),
         ],
       );
@@ -149,17 +180,17 @@ class _SignupScreenState extends State<SignupScreen> {
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Text(
-            'Already have an account?',
+            l10n.authHaveAccount,
             style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            child: const Text('Log in'),
+            child: Text(l10n.authLogIn),
           ),
         ],
       ),
-      title: 'Create your account',
-      subtitle: 'A calmer mind starts here. It only takes a minute.',
+      title: l10n.authSignupTitle,
+      subtitle: l10n.authSignupSubtitle,
       children: [
         Form(
           key: _formKey,
@@ -168,17 +199,17 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               AuthTextField(
                 controller: _name,
-                label: 'Full name',
+                label: l10n.authFullName,
                 icon: Icons.person_outline_rounded,
                 keyboardType: TextInputType.name,
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Enter your name'
+                    ? l10n.authNameRequired
                     : null,
               ),
               const SizedBox(height: 16),
               AuthTextField(
                 controller: _email,
-                label: 'Email',
+                label: l10n.authEmail,
                 icon: Icons.mail_outline_rounded,
                 keyboardType: TextInputType.emailAddress,
                 validator: validateEmail,
@@ -186,7 +217,7 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 16),
               AuthTextField(
                 controller: _password,
-                label: 'Password',
+                label: l10n.authPassword,
                 icon: Icons.lock_outline_rounded,
                 isPassword: true,
                 validator: validatePassword,
@@ -194,16 +225,16 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 16),
               AuthTextField(
                 controller: _confirm,
-                label: 'Confirm password',
+                label: l10n.authConfirmPassword,
                 icon: Icons.lock_outline_rounded,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 validator: (v) =>
-                    v != _password.text ? 'Passwords don\'t match' : null,
+                    v != _password.text ? l10n.authPasswordsDontMatch : null,
               ),
               const SizedBox(height: 26),
               AuthSubmitButton(
-                label: 'Create account',
+                label: l10n.authCreateAccount,
                 loading: _loading,
                 onPressed: _submit,
               ),
@@ -223,29 +254,7 @@ class _SignupScreenState extends State<SignupScreen> {
         const GoogleAuthButton(),
         const SizedBox(height: 18),
         Text.rich(
-          TextSpan(
-            text: 'By creating an account you agree to our ',
-            children: [
-              TextSpan(
-                text: 'Terms of Service',
-                recognizer: _termsTap,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: c.blue,
-                ),
-              ),
-              const TextSpan(text: ' and '),
-              TextSpan(
-                text: 'Privacy Policy',
-                recognizer: _privacyTap,
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: c.blue,
-                ),
-              ),
-              const TextSpan(text: '.'),
-            ],
-          ),
+          TextSpan(children: _agreement(l10n, c)),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 12,

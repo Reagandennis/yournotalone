@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'rhythm.dart';
 import 'sunrise_art.dart';
 
-const _dayLetters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+/// Monday-first one-letter weekday names ("M T W T F S S" in English).
+List<String> _dayLetters(AppLocalizations l10n) =>
+    l10n.rhythmWeekdayLetters.split(' ');
 
 /// The headline for where the week stands. Never about loss: a gap is
 /// met with a welcome, and a missed day is just a rest day.
-String rhythmHeadline(Rhythm r) {
-  if (r.milestone != null) return r.milestone!;
-  if (r.welcomeBack) return 'Welcome back';
-  if (r.goalMet) return 'Your sun is up this week';
-  if (r.daysThisWeek == 0) return 'A new week, a new sunrise';
-  return '${r.daysThisWeek} of ${r.goal} days this week';
+///
+/// [l10n] defaults to the app's current language.
+String rhythmHeadline(Rhythm r, [AppLocalizations? l10n]) {
+  l10n ??= currentL10n();
+  final milestone = r.milestoneIn(l10n);
+  if (milestone != null) return milestone;
+  if (r.welcomeBack) return l10n.rhythmWelcomeBack;
+  if (r.goalMet) return l10n.rhythmSunIsUp;
+  if (r.daysThisWeek == 0) return l10n.rhythmNewWeek;
+  return l10n.rhythmDaysThisWeek(r.daysThisWeek, r.goal);
 }
 
 /// The quieter line under it.
-String rhythmDetail(Rhythm r) {
-  if (r.isEmpty) {
-    return 'Any small step counts — a check-in, a breath, a few lines.';
-  }
-  final total = '${r.totalDays} ${r.totalDays == 1 ? 'day' : 'days'} in total';
-  if (r.welcomeBack) return 'You\'ve shown up $total. Today can count too.';
+String rhythmDetail(Rhythm r, [AppLocalizations? l10n]) {
+  l10n ??= currentL10n();
+  if (r.isEmpty) return l10n.rhythmAnyStepCounts;
+  if (r.welcomeBack) return l10n.rhythmShownUpWelcomeBack(r.totalDays);
   if (r.weeksInRhythm > 0) {
-    return '${r.weeksInRhythm}-week rhythm · $total';
+    return l10n.rhythmWeeksAndTotal(r.weeksInRhythm, r.totalDays);
   }
-  return total;
+  return l10n.rhythmDaysInTotal(r.totalDays);
 }
 
 /// The week's sunrise on Home: the sun climbs with each day shown up,
@@ -43,7 +48,10 @@ class RhythmCard extends StatelessWidget {
     final r = rhythm;
     return Semantics(
       button: true,
-      label: '${rhythmHeadline(r)}. ${rhythmDetail(r)}',
+      label: context.l10n.rhythmCardSemantics(
+        rhythmHeadline(r, context.l10n),
+        rhythmDetail(r, context.l10n),
+      ),
       excludeSemantics: true,
       child: Material(
         color: c.card,
@@ -67,7 +75,7 @@ class RhythmCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            rhythmHeadline(r),
+                            rhythmHeadline(r, context.l10n),
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
@@ -84,7 +92,7 @@ class RhythmCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      rhythmDetail(r),
+                      rhythmDetail(r, context.l10n),
                       style: TextStyle(fontSize: 12.5, color: c.textMuted),
                     ),
                     const SizedBox(height: 14),
@@ -141,7 +149,7 @@ class RhythmWeek extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  _dayLetters[i],
+                  _dayLetters(context.l10n)[i],
                   style: TextStyle(
                     fontSize: 10.5,
                     fontWeight: i == r.todayIndex

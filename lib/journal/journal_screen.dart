@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'journal_editor_screen.dart';
 import 'journal_repository.dart';
 
@@ -65,18 +67,21 @@ class _JournalScreenState extends State<JournalScreen> {
 
 
   String _dateLabel(DateTime d) {
+    final l10n = context.l10n;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final that = DateTime(d.year, d.month, d.day);
     final days = today.difference(that).inDays;
-    if (days == 0) return 'Today';
-    if (days == 1) return 'Yesterday';
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final year = d.year == now.year ? '' : ' ${d.year}';
-    return '${d.day} ${months[d.month - 1]}$year';
+    if (days == 0) return l10n.journalToday;
+    if (days == 1) return l10n.journalYesterday;
+    final thisYear = d.year == now.year;
+    final locale = l10n.localeName;
+    // English keeps its day-first "5 Jan"; other languages get their own
+    // short date.
+    final format = locale.startsWith('en')
+        ? DateFormat(thisYear ? 'd MMM' : 'd MMM y', locale)
+        : (thisYear ? DateFormat.MMMd(locale) : DateFormat.yMMMd(locale));
+    return format.format(d);
   }
 
   Widget _entryCard(JournalEntry entry) {
@@ -102,7 +107,7 @@ class _JournalScreenState extends State<JournalScreen> {
                     child: Text(
                       entry.title?.trim().isNotEmpty == true
                           ? entry.title!.trim()
-                          : 'Untitled',
+                          : context.l10n.journalUntitled,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -142,6 +147,7 @@ class _JournalScreenState extends State<JournalScreen> {
 
   Widget _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,7 +156,7 @@ class _JournalScreenState extends State<JournalScreen> {
           Icon(Icons.cloud_off_rounded, size: 40, color: c.border),
           const SizedBox(height: 14),
           Text(
-            'Couldn\'t load your journal.',
+            l10n.journalLoadFailed,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
@@ -158,7 +164,7 @@ class _JournalScreenState extends State<JournalScreen> {
           Center(
             child: TextButton(
               onPressed: _load,
-              child: const Text('Try again'),
+              child: Text(l10n.commonTryAgain),
             ),
           ),
         ],
@@ -180,7 +186,7 @@ class _JournalScreenState extends State<JournalScreen> {
           Icon(Icons.edit_note_rounded, size: 40, color: c.border),
           const SizedBox(height: 14),
           Text(
-            'Your space is ready.\nWrite your first entry whenever you like.',
+            l10n.journalEmpty,
             textAlign: TextAlign.center,
             style:
                 TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
@@ -202,6 +208,7 @@ class _JournalScreenState extends State<JournalScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final count = _entries?.length ?? 0;
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -224,7 +231,7 @@ class _JournalScreenState extends State<JournalScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Journal',
+                  l10n.journalTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -237,9 +244,8 @@ class _JournalScreenState extends State<JournalScreen> {
                 const SizedBox(height: 16),
                 Text(
                   _isPremium
-                      ? 'A private place for whatever\'s on your mind.'
-                      : 'A private place for whatever\'s on your mind · '
-                          '$count/$freeJournalEntryLimit free entries used.',
+                      ? l10n.journalIntro
+                      : l10n.journalIntroFree(count, freeJournalEntryLimit),
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,

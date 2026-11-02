@@ -5,6 +5,7 @@ import '../auth/auth_ui.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
 import '../support/crisis_screen.dart';
@@ -37,15 +38,9 @@ const urgeSurfMeditation = Meditation(
   ],
 );
 
-const _triggerKinds = [
-  'Stress',
-  'Boredom',
-  'Loneliness',
-  'Social pressure',
-  'Tiredness',
-  'Habit',
-  'Other',
-];
+/// Saved as is in `craving_logs.trigger_kind` — never change these; they
+/// are named on screen through [recoveryTriggerLabel].
+const _triggerKinds = recoveryTriggerKinds;
 
 /// Recovery hub: SOS urge surfing, commitments with streaks & pledges,
 /// and the craving trigger tracker.
@@ -109,10 +104,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     showUpgradeSheet(
       context,
       source: 'sheet:recovery',
-      title: 'Recovery tracking is part of Premium',
-      message: 'Urge surfing is free for everyone, always. Premium adds '
-          'commitment streaks, daily pledges, and the trigger tracker — '
-          'and $introOffer.',
+      title: context.l10n.recoveryPremiumTitle,
+      message: context.l10n.recoveryPremiumMessage(introOffer),
     );
   }
 
@@ -120,6 +113,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   Future<void> _addHabitSheet() async {
     final c = context.brand;
+    final l10n = context.l10n;
     final controller = TextEditingController();
     var dayOne = DateTime.now();
     await showModalBottomSheet<void>(
@@ -141,7 +135,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
-                'What are you leaving behind?',
+                l10n.recoveryAddHabitTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -153,13 +147,13 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 controller: controller,
                 autofocus: true,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'e.g. Alcohol, smoking, gambling…',
+                decoration: InputDecoration(
+                  labelText: l10n.recoveryAddHabitHint,
                 ),
               ),
               const SizedBox(height: 16),
               Text(
-                'Counting from',
+                l10n.recoveryCountingFrom,
                 style: TextStyle(fontSize: 13, color: c.textMuted),
               ),
               const SizedBox(height: 8),
@@ -167,9 +161,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 spacing: 8,
                 children: [
                   for (final (label, date) in [
-                    ('Today', DateTime.now()),
+                    (l10n.recoveryToday, DateTime.now()),
                     (
-                      'Yesterday',
+                      l10n.recoveryYesterday,
                       DateTime.now().subtract(const Duration(days: 1))
                     ),
                   ])
@@ -180,7 +174,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                       onSelected: (_) => setSheetState(() => dayOne = date),
                     ),
                   ActionChip(
-                    label: const Text('Pick a date'),
+                    label: Text(l10n.recoveryPickADate),
                     onPressed: () async {
                       final picked = await showDatePicker(
                         context: sheetContext,
@@ -209,13 +203,13 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
+            content: Text(errorMessage(e, context.l10n.recoverySaveFailed)),
                         ),
                       );
                     }
                   }
                 },
-                child: const Text('Start counting'),
+                child: Text(l10n.recoveryStartCounting),
               ),
             ],
           ),
@@ -231,7 +225,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Pledged: today, not ${habit.name.toLowerCase()}.'),
+            content: Text(
+              context.l10n.recoveryPledgedSnack(
+                context.l10n.midSentence(habit.name),
+              ),
+            ),
           ),
         );
       }
@@ -239,7 +237,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
+            content: Text(errorMessage(e, context.l10n.recoverySaveFailed)),
           ),
         );
       }
@@ -253,19 +251,16 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Starting again?'),
-        content: Text(
-          'Slips happen — they don\'t erase what you learned. Your best '
-          'streak ($best days) stays on record, and day one starts now.',
-        ),
+        title: Text(context.l10n.recoveryResetTitle),
+        content: Text(context.l10n.recoveryResetBody(best)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Reset to day one'),
+            child: Text(context.l10n.recoveryResetConfirm),
           ),
         ],
       ),
@@ -278,7 +273,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
+            content: Text(errorMessage(e, context.l10n.recoverySaveFailed)),
           ),
         );
       }
@@ -289,17 +284,17 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Remove "${habit.name}"?'),
-        content: const Text('Its streak and pledges will be deleted.'),
+        title: Text(context.l10n.recoveryRemoveTitle(habit.name)),
+        content: Text(context.l10n.recoveryRemoveBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: context.brand.red),
-            child: const Text('Remove'),
+            child: Text(context.l10n.commonRemove),
           ),
         ],
       ),
@@ -312,7 +307,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t delete — check your connection.')),
+            content: Text(errorMessage(e, context.l10n.recoveryDeleteFailed)),
           ),
         );
       }
@@ -321,7 +316,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
 
   Widget _habitCard(RecoveryHabit habit) {
     final c = context.brand;
-    final next = habit.nextMilestone;
+    final l10n = context.l10n;
+    final next = habit.nextMilestoneIn(l10n);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.fromLTRB(16, 14, 8, 16),
@@ -348,7 +344,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ),
               ),
               Text(
-                'Day ${habit.daysIn}',
+                l10n.recoveryDayNumber(habit.daysIn),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -361,9 +357,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 onSelected: (value) => value == 'reset'
                     ? _confirmReset(habit)
                     : _confirmDelete(habit),
-                itemBuilder: (context) => const [
-                  PopupMenuItem(value: 'reset', child: Text('Reset day one')),
-                  PopupMenuItem(value: 'remove', child: Text('Remove')),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                      value: 'reset', child: Text(l10n.recoveryResetDayOne)),
+                  PopupMenuItem(value: 'remove', child: Text(l10n.commonRemove)),
                 ],
               ),
             ],
@@ -386,11 +383,17 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 const SizedBox(height: 6),
                 Text(
                   next == null
-                      ? 'Past every milestone — extraordinary.'
-                      : 'Next milestone: ${next.$2} '
-                          '(${next.$1 - habit.daysIn} day'
-                          '${next.$1 - habit.daysIn == 1 ? '' : 's'} to go)'
-                          '${habit.bestStreakDays > 0 ? ' · best ${habit.bestStreakDays}' : ''}',
+                      ? l10n.recoveryPastEveryMilestone
+                      : habit.bestStreakDays > 0
+                          ? l10n.recoveryNextMilestoneWithBest(
+                              next.$2,
+                              next.$1 - habit.daysIn,
+                              habit.bestStreakDays,
+                            )
+                          : l10n.recoveryNextMilestone(
+                              next.$2,
+                              next.$1 - habit.daysIn,
+                            ),
                   style: TextStyle(
                     fontSize: 12,
                     color: c.textMuted,
@@ -407,7 +410,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                         size: 18, color: c.blue),
                     const SizedBox(width: 6),
                     Text(
-                      'Pledged for today',
+                      l10n.recoveryPledgedForToday,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -427,11 +430,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     ),
                     textStyle: const TextStyle(
                       fontFamily: 'Poppins',
+                      fontFamilyFallback: appFontFallback,
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  child: const Text('I\'m in for today'),
+                  child: Text(l10n.recoveryPledgeButton),
                 ),
         ],
       ),
@@ -445,6 +449,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     String trigger = _triggerKinds.first;
     final note = TextEditingController();
     final c = context.brand;
+    final l10n = context.l10n;
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -465,7 +470,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Log a craving',
+                  l10n.recoveryLogCravingTitle,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -474,13 +479,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Noticing is progress — patterns lose power once you '
-                  'can see them.',
+                  l10n.recoveryLogCravingSubtitle,
                   style: TextStyle(fontSize: 13, color: c.textMuted),
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  'How strong was it?',
+                  l10n.recoveryLogCravingStrength,
                   style: TextStyle(fontSize: 13, color: c.textMuted),
                 ),
                 const SizedBox(height: 8),
@@ -519,7 +523,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ),
                 const SizedBox(height: 18),
                 Text(
-                  'What set it off?',
+                  l10n.recoveryLogCravingTrigger,
                   style: TextStyle(fontSize: 13, color: c.textMuted),
                 ),
                 const SizedBox(height: 8),
@@ -529,7 +533,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   children: [
                     for (final kind in _triggerKinds)
                       ChoiceChip(
-                        label: Text(kind),
+                        label: Text(recoveryTriggerLabel(l10n, kind)),
                         selected: trigger == kind,
                         onSelected: (_) =>
                             setSheetState(() => trigger = kind),
@@ -540,8 +544,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 TextField(
                   controller: note,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(
-                    labelText: 'Anything else? (optional)',
+                  decoration: InputDecoration(
+                    labelText: l10n.recoveryLogCravingNote,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -557,9 +561,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                       _load();
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Logged. You rode it out — that counts.'),
+                          SnackBar(
+                            content: Text(context.l10n.recoveryCravingLogged),
                           ),
                         );
                       }
@@ -567,13 +570,13 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
+            content: Text(errorMessage(e, context.l10n.recoverySaveFailed)),
                           ),
                         );
                       }
                     }
                   },
-                  child: const Text('Save'),
+                  child: Text(l10n.commonSave),
                 ),
               ],
             ),
@@ -595,11 +598,12 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   }
 
   String _relativeTime(DateTime time) {
+    final l10n = context.l10n;
     final diff = DateTime.now().difference(time);
-    if (diff.inMinutes < 60) return '${diff.inMinutes} min ago';
-    if (diff.inHours < 24) return '${diff.inHours} h ago';
-    if (diff.inDays == 1) return 'yesterday';
-    return '${diff.inDays} days ago';
+    if (diff.inMinutes < 60) return l10n.recoveryMinutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l10n.recoveryHoursAgo(diff.inHours);
+    if (diff.inDays == 1) return l10n.recoveryYesterdayLower;
+    return l10n.recoveryDaysAgo(diff.inDays);
   }
 
   Widget _cravingRow(CravingLog log) {
@@ -628,7 +632,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  log.trigger,
+                  recoveryTriggerLabel(context.l10n, log.trigger),
                   style: TextStyle(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
@@ -772,6 +776,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final habits = _habits;
     final cravings = _cravings;
     return Scaffold(
@@ -788,7 +793,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Recovery',
+                  l10n.recoveryTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -800,7 +805,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'One day at a time — with tools for the hard minutes.',
+                  l10n.recoverySubtitle,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -844,7 +849,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Craving right now?',
+                                  l10n.recoveryCravingNowTitle,
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -853,8 +858,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                                 ),
                                 const SizedBox(height: 3),
                                 Text(
-                                  'Urges pass. Surf this one — 8 guided '
-                                  'minutes.',
+                                  l10n.recoveryCravingNowBody,
                                   style: TextStyle(
                                     fontSize: 13,
                                     color: c.textMuted,
@@ -874,53 +878,48 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   ),
                 ),
                 const SizedBox(height: 26),
-                const SectionHeader(title: 'In the moment'),
+                SectionHeader(title: l10n.recoveryInTheMoment),
                 const SizedBox(height: 10),
                 _toolCard(
                   icon: Icons.psychology_alt_rounded,
                   accent: Pillars.yellow,
-                  title: 'HALT check',
-                  detail: 'Hungry, angry, lonely, tired — find out what the '
-                      'craving is standing in for.',
+                  title: l10n.recoveryHaltCardTitle,
+                  detail: l10n.recoveryHaltCardDetail,
                   open: (_) => const HaltScreen(),
                 ),
                 _toolCard(
                   icon: Icons.movie_filter_rounded,
                   accent: Pillars.red,
-                  title: 'Play the tape forward',
-                  detail: 'Watch the rest of the film before you decide, '
-                      'then keep it in your journal.',
+                  title: l10n.recoveryTapeCardTitle,
+                  detail: l10n.recoveryTapeCardDetail,
                   open: (_) => const TapeForwardScreen(),
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Expanded(
-                      child: SectionHeader(title: 'My commitments'),
+                    Expanded(
+                      child: SectionHeader(title: l10n.recoveryMyCommitments),
                     ),
                     if (_premium)
                       TextButton(
                         onPressed: _addHabitSheet,
-                        child: const Text('+ Add'),
+                        child: Text(l10n.recoveryAddButton),
                       ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 if (!_premium)
-                  _lockedCard(
-                    'Count every day, pledge each morning, and celebrate '
-                    'milestones.',
-                  )
+                  _lockedCard(l10n.recoveryCommitmentsLocked)
                 else if (_error)
                   Column(
                     children: [
                       Text(
-                        'Couldn\'t load your recovery data.',
+                        l10n.recoveryLoadError,
                         style:
                             TextStyle(fontSize: 13.5, color: c.textMuted),
                       ),
                       TextButton(
-                          onPressed: _load, child: const Text('Try again')),
+                          onPressed: _load, child: Text(l10n.commonTryAgain)),
                     ],
                   )
                 else if (habits == null)
@@ -937,8 +936,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      'What are you leaving behind? Add it — we\'ll count '
-                      'every day with you.',
+                      l10n.recoveryCommitmentsEmpty,
                       style: TextStyle(
                         fontSize: 13.5,
                         color: c.textMuted,
@@ -952,30 +950,26 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 _toolCard(
                   icon: Icons.emoji_events_rounded,
                   accent: Pillars.blue,
-                  title: 'Milestones',
-                  detail: 'Every marker, reached and ahead, for each '
-                      'commitment.',
+                  title: l10n.recoveryMilestonesCardTitle,
+                  detail: l10n.recoveryMilestonesCardDetail,
                   open: (_) => const MilestonesScreen(),
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Expanded(
-                      child: SectionHeader(title: 'Trigger tracker'),
+                    Expanded(
+                      child: SectionHeader(title: l10n.recoveryTriggerTracker),
                     ),
                     if (_premium)
                       TextButton(
                         onPressed: _logCravingSheet,
-                        child: const Text('+ Log'),
+                        child: Text(l10n.recoveryLogButton),
                       ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 if (!_premium)
-                  _lockedCard(
-                    'Log cravings as they happen and learn what sets '
-                    'them off.',
-                  )
+                  _lockedCard(l10n.recoveryTrackerLocked)
                 else if (cravings != null) ...[
                   if (_topTrigger != null)
                     Container(
@@ -992,9 +986,11 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Your most common trigger lately: '
-                              '${_topTrigger!.toLowerCase()}. Naming it is '
-                              'half the battle.',
+                              l10n.recoveryTopTrigger(
+                                l10n.midSentence(
+                                  recoveryTriggerLabel(l10n, _topTrigger!),
+                                ),
+                              ),
                               style: TextStyle(
                                 fontSize: 12.5,
                                 color: c.ink,
@@ -1007,8 +1003,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     ),
                   if (cravings.isEmpty)
                     Text(
-                      'Nothing logged yet. Next time a craving hits, ride '
-                      'it out and note it here.',
+                      l10n.recoveryCravingsEmpty,
                       style: TextStyle(
                         fontSize: 13.5,
                         color: c.textMuted,
@@ -1022,16 +1017,14 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 _toolCard(
                   icon: Icons.query_stats_rounded,
                   accent: Pillars.black,
-                  title: 'Trigger insights',
-                  detail: 'What sets them off, when they land, and how hard '
-                      '— over the last 90 days.',
+                  title: l10n.recoveryInsightsCardTitle,
+                  detail: l10n.recoveryInsightsCardDetail,
                   open: (_) => const TriggerInsightsScreen(),
                 ),
                 const SizedBox(height: 16),
-                const CrisisFooter(
+                CrisisFooter(
                   textAlign: TextAlign.left,
-                  trailing: ' Recovery is easier with backup — a licensed '
-                      'therapist here is never far away.',
+                  trailing: l10n.recoveryCrisisFooterTrailing,
                 ),
               ],
             ),

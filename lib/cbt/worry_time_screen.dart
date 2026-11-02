@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'cbt_content.dart';
 
@@ -93,12 +94,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Parked. It\'ll be here at worry time — you don\'t have '
-            'to hold it now.',
-          ),
-        ),
+        SnackBar(content: Text(context.l10n.worryTimeParked)),
       );
   }
 
@@ -123,12 +119,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Time\'s up. Whatever\'s left can wait for tomorrow\'s '
-              'window.',
-            ),
-          ),
+          SnackBar(content: Text(context.l10n.worryTimeTimesUp)),
         );
     }
   }
@@ -179,8 +170,8 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
                   worry.outcome == 'plan'
-                      ? 'You\'ve got a plan for this one.'
-                      : 'Let go — nothing to do here today.',
+                      ? context.l10n.worryTimeHavePlan
+                      : context.l10n.worryTimeLetGo,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -191,7 +182,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
             else if (_inWindow) ...[
               const SizedBox(height: 6),
               Text(
-                'Can you do something about it in the next week?',
+                context.l10n.worryTimeCanYouAct,
                 style: TextStyle(fontSize: 12.5, color: c.textMuted),
               ),
               const SizedBox(height: 8),
@@ -200,14 +191,14 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _decide(worry, 'plan'),
-                      child: const Text('Yes — plan it'),
+                      child: Text(context.l10n.worryTimeYesPlan),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => _decide(worry, 'let_go'),
-                      child: const Text('No — let it go'),
+                      child: Text(context.l10n.worryTimeNoLetGo),
                     ),
                   ),
                 ],
@@ -222,26 +213,23 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
   @override
   Widget build(BuildContext context) {
     final worries = _worries;
+    final l10n = context.l10n;
     if (worries == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: cbtAccent,
-        title: 'Worry window',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.worryTimeTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final c = context.brand;
     final parked = worries.where((w) => w.outcome == null).length;
     return ToolkitScaffold(
       accent: cbtAccent,
-      title: 'Worry window',
+      title: l10n.worryTimeTitle,
       children: [
-        const ToolkitSection(
-          title: 'Worry later, on purpose',
-          subtitle:
-              'You can\'t stop a worry arriving, but you can decide when '
-              'to give it attention. Park it here as it comes. Then, once a '
-              'day, open a fifteen-minute window and go through the list — '
-              'and only then.',
+        ToolkitSection(
+          title: l10n.worryTimeSectionTitle,
+          subtitle: l10n.worryTimeSectionBody,
         ),
         if (!_inWindow) ...[
           TextField(
@@ -251,11 +239,11 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
             textCapitalization: TextCapitalization.sentences,
             onSubmitted: (_) => _park(),
             decoration: InputDecoration(
-              labelText: 'What\'s on your mind right now?',
+              labelText: l10n.worryTimeInputLabel,
               counterText: '',
               suffixIcon: IconButton(
                 icon: const Icon(Icons.local_parking_rounded),
-                tooltip: 'Park it',
+                tooltip: l10n.worryTimeParkTooltip,
                 onPressed: _park,
               ),
             ),
@@ -271,8 +259,8 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                     children: [
                       Text(
                         parked == 0
-                            ? 'Nothing parked'
-                            : '$parked parked for worry time',
+                            ? l10n.worryTimeNothingParked
+                            : l10n.worryTimeParkedCount(parked),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -281,8 +269,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        'Best kept to the same time each day — not the '
-                        'hour before bed.',
+                        l10n.worryTimeBestTime,
                         style: TextStyle(
                           fontSize: 12.5,
                           color: c.textMuted,
@@ -301,7 +288,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                     minimumSize: const Size(0, 48),
                     padding: const EdgeInsets.symmetric(horizontal: 18),
                   ),
-                  child: const Text('Open window'),
+                  child: Text(l10n.worryTimeOpenWindow),
                 ),
               ],
             ),
@@ -323,7 +310,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
-                    'Go through each worry once. Decide, don\'t dwell.',
+                    l10n.worryTimeGoThrough,
                     style: TextStyle(
                       fontSize: 13,
                       color: c.textMuted,
@@ -333,7 +320,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
                 ),
                 TextButton(
                   onPressed: () => _endWindow(),
-                  child: const Text('Close'),
+                  child: Text(l10n.commonClose),
                 ),
               ],
             ),
@@ -343,13 +330,13 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
         if (worries.isNotEmpty) ...[
           Row(
             children: [
-              const Expanded(child: ToolkitSection(title: 'Your list')),
+              Expanded(child: ToolkitSection(title: l10n.worryTimeYourList)),
               if (worries.any((w) => w.outcome != null))
                 TextButton(
                   onPressed: _clearDone,
-                  child: const Text(
-                    'Clear decided',
-                    style: TextStyle(fontSize: 13),
+                  child: Text(
+                    l10n.worryTimeClearDecided,
+                    style: const TextStyle(fontSize: 13),
                   ),
                 ),
             ],
@@ -359,8 +346,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'Your parked worries appear here. Most people find half of them '
-              'have lost their sting by the time the window opens.',
+              l10n.worryTimeEmpty,
               style: TextStyle(
                 fontSize: 13,
                 color: c.textMuted,

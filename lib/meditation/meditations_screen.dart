@@ -4,6 +4,7 @@ import '../billing/pricing_copy.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'breathing_screen.dart';
 import 'meditation_catalog.dart';
 import 'meditation_screen.dart';
@@ -19,9 +20,8 @@ class MeditationsScreen extends StatelessWidget {
         context,
         item: item,
         source: 'sheet:meditations',
-        title: 'This session is part of Premium',
-        message: 'Free includes a taste of each practice. Premium unlocks '
-            'every session — and $introOffer.',
+        title: context.l10n.meditationsUpgradeTitle,
+        message: context.l10n.meditationsUpgradeMessage(introOffer),
       );
       return false;
     }
@@ -185,7 +185,10 @@ class MeditationsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '${meditation.minutes} min · ${meditation.detail}',
+                        context.l10n.meditationsItemMeta(
+                          meditation.minutes,
+                          meditation.detail,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -228,7 +231,7 @@ class MeditationsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Meditations & breathing',
+                  context.l10n.meditationsTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -240,8 +243,7 @@ class MeditationsScreen extends StatelessWidget {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'A few minutes of guided calm — breathe along with the '
-                  'circle, or settle into a quiet session.',
+                  context.l10n.meditationsIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -249,12 +251,12 @@ class MeditationsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const SectionHeader(title: 'Breathing exercises'),
+                SectionHeader(title: context.l10n.meditationsBreathingHeader),
                 const SizedBox(height: 12),
                 for (final pattern in breathPatterns)
                   _breathCard(context, pattern),
                 const SizedBox(height: 14),
-                const SectionHeader(title: 'Meditations'),
+                SectionHeader(title: context.l10n.meditationsMeditationsHeader),
                 const SizedBox(height: 12),
                 for (final meditation in meditations)
                   _meditationCard(context, meditation),

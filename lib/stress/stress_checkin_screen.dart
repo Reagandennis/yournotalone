@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'stress_content.dart';
 
@@ -49,27 +50,16 @@ int stressScore(List<int> answers) {
   return total;
 }
 
-/// What a score means, in plain words, and where to go next.
-(String, String) stressBand(int score) => switch (score) {
-  <= 6 => (
-    'Low',
-    'You\'re carrying this week fine. Keep whatever recovery you\'ve '
-        'got in place — it\'s working.',
-  ),
-  <= 13 => (
-    'Moderate',
-    'Noticeable, and worth ten deliberate minutes a day: a sigh '
-        'round, a walk, a proper break. Sort one thing that\'s in '
-        'your hands.',
-  ),
-  _ => (
-    'High',
-    'A lot right now. Bring the body down first — sigh, tense and '
-        'release — then look at the load. If it\'s been like this '
-        'for weeks, talk to someone; that\'s what the therapist '
-        'sessions are for.',
-  ),
-};
+/// What a score means, in plain words, and where to go next. In the
+/// app's current language unless [l10n] is given.
+(String, String) stressBand(int score, [AppLocalizations? l10n]) {
+  final l = l10n ?? currentL10n();
+  return switch (score) {
+    <= 6 => (l.stressBandLow, l.stressBandLowAdvice),
+    <= 13 => (l.stressBandModerate, l.stressBandModerateAdvice),
+    _ => (l.stressBandHigh, l.stressBandHighAdvice),
+  };
+}
 
 /// Five questions about the past week, scored and kept, so the trend is
 /// visible over time.
@@ -130,7 +120,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${i + 1}. ${q.text}',
+                context.l10n.stressCheckinQuestion(i + 1, q.text),
                 style: TextStyle(
                   fontSize: 14,
                   color: c.ink,
@@ -165,7 +155,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Your last check-ins',
+            context.l10n.stressCheckinHistoryTitle,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -215,7 +205,10 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            '${recent.first.date} → ${recent.last.date} · 0 is calm, 20 is a lot',
+            context.l10n.stressCheckinHistoryRange(
+              recent.first.date,
+              recent.last.date,
+            ),
             style: TextStyle(fontSize: 11.5, color: c.textMuted),
           ),
         ],
@@ -226,23 +219,24 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
   @override
   Widget build(BuildContext context) {
     final history = _history;
+    final l10n = context.l10n;
     if (history == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: stressAccent,
-        title: 'Stress check-in',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.stressCheckinTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final c = context.brand;
     final result = _result;
     if (result != null) {
-      final (band, advice) = stressBand(result);
+      final (band, advice) = stressBand(result, l10n);
       return ToolkitScaffold(
         accent: stressAccent,
-        title: 'Stress check-in',
+        title: l10n.stressCheckinTitle,
         bottom: ElevatedButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Done'),
+          child: Text(l10n.commonDone),
         ),
         children: [
           ToolkitNote(
@@ -251,7 +245,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$result out of 20 · $band',
+                  l10n.stressCheckinScore(result, band),
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -274,8 +268,7 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
           if (history.length > 1) _trend(history),
           const SizedBox(height: 16),
           Text(
-            'A check-in is a snapshot of one week, not a diagnosis. If the '
-            'high scores keep coming, that\'s the signal to talk to someone.',
+            l10n.stressCheckinDisclaimer,
             style: TextStyle(
               fontSize: 12.5,
               color: c.textMuted,
@@ -287,21 +280,22 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
     }
     return ToolkitScaffold(
       accent: stressAccent,
-      title: 'Stress check-in',
+      title: l10n.stressCheckinTitle,
       bottom: ElevatedButton(
         onPressed: _complete ? _finish : null,
         child: Text(
           _complete
-              ? 'See my score'
-              : '${_answers.whereType<int>().length} of ${stressQuestions.length} answered',
+              ? l10n.stressCheckinSeeScore
+              : l10n.stressCheckinAnswered(
+                  _answers.whereType<int>().length,
+                  stressQuestions.length,
+                ),
         ),
       ),
       children: [
-        const ToolkitSection(
-          title: 'The past week',
-          subtitle:
-              'Go with your first answer. Once a week, same day, gives '
-              'you a line you can actually read.',
+        ToolkitSection(
+          title: l10n.stressCheckinSectionTitle,
+          subtitle: l10n.stressCheckinSectionBody,
         ),
         if (history.isNotEmpty) ...[
           _trend(history),

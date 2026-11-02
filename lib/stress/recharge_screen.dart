@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'stress_content.dart';
 
@@ -163,26 +164,23 @@ class _RechargeScreenState extends State<RechargeScreen> {
   @override
   Widget build(BuildContext context) {
     final list = _list;
+    final l10n = context.l10n;
     if (list == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: stressAccent,
-        title: 'Recharge list',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.rechargeTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final c = context.brand;
     final pick = list.pickFor(_today);
     return ToolkitScaffold(
       accent: stressAccent,
-      title: 'Recharge list',
+      title: l10n.rechargeTitle,
       children: [
-        const ToolkitSection(
-          title: 'Know your tank',
-          subtitle:
-              'Stress is a budget: things that take from it and things '
-              'that pay in. Most people can name the drains instantly and go '
-              'quiet on the refills. Write both. Then choose one refill for '
-              'today — and treat it as an appointment.',
+        ToolkitSection(
+          title: l10n.rechargeSectionTitle,
+          subtitle: l10n.rechargeSectionBody,
         ),
         if (pick != null) ...[
           ToolkitNote(
@@ -196,7 +194,7 @@ class _RechargeScreenState extends State<RechargeScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Today: $pick',
+                    l10n.rechargeToday(pick),
                     style: TextStyle(
                       fontSize: 14.5,
                       fontWeight: FontWeight.w600,
@@ -209,21 +207,21 @@ class _RechargeScreenState extends State<RechargeScreen> {
           ),
           const SizedBox(height: 18),
         ],
-        const ToolkitSection(title: 'What drains me'),
+        ToolkitSection(title: l10n.rechargeDrainsTitle),
         _chips(list.drains, refuel: false),
         const SizedBox(height: 10),
-        _input(_drain, 'Add a drain', list.drains),
+        _input(_drain, l10n.rechargeAddDrain, list.drains),
         const SizedBox(height: 22),
-        const ToolkitSection(
-          title: 'What refills me',
-          subtitle: 'Tap one to make it today\'s.',
+        ToolkitSection(
+          title: l10n.rechargeRefillsTitle,
+          subtitle: l10n.rechargeRefillsHint,
         ),
         _chips(list.refuels, refuel: true),
         const SizedBox(height: 10),
-        _input(_refuel, 'Add a refill', list.refuels),
+        _input(_refuel, l10n.rechargeAddRefill, list.refuels),
         const SizedBox(height: 18),
         Text(
-          'Stuck for refills? Borrow one:',
+          l10n.rechargeBorrow,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,

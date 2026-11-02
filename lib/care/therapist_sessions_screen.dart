@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
 import '../therapy/call_screen.dart';
@@ -83,7 +84,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _error = careErrorMessage(
-            e, 'Couldn\'t load your sessions — check your connection.'));
+            e, context.l10n.careSessionsCouldNotLoad));
       }
     }
   }
@@ -93,7 +94,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
       MaterialPageRoute(
         settings: const RouteSettings(name: CallScreen.routeName),
         builder: (_) => CallScreen(
-          counterpartName: session.clientLabel,
+          counterpartName: session.clientLabel(context.l10n),
           connect: () => _repo.joinSession(session.id),
         ),
       ),
@@ -114,8 +115,8 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(session.isCompleted
-            ? 'Saved.'
-            : 'Session finished — thank you.'),
+            ? context.l10n.careSessionsSaved
+            : context.l10n.careSessionsFinished),
       ),
     );
     await _load();
@@ -125,7 +126,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
   Widget build(BuildContext context) {
     final sessions = _sessions;
     return Scaffold(
-      appBar: AppBar(title: const Text('My sessions')),
+      appBar: AppBar(title: Text(context.l10n.careSessionsTitle)),
       body: sessions == null
           ? _error != null
               ? LoadFailed(
@@ -145,6 +146,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
 
   Widget _list(List<TherapistSession> sessions) {
     final c = context.brand;
+    final l10n = context.l10n;
     final now = _now();
     final upcoming = [
       for (final s in sessions)
@@ -161,8 +163,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 60),
             child: Text(
-              'No sessions yet. When the care team books one with you, it '
-              'shows up here and you\'ll get an email.',
+              l10n.careSessionsEmpty,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -172,13 +173,13 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
             ),
           ),
         if (upcoming.isNotEmpty) ...[
-          const SectionHeader(title: 'Upcoming'),
+          SectionHeader(title: l10n.careSessionsUpcoming),
           const SizedBox(height: 12),
           for (final session in upcoming) _upcomingCard(session, now),
           const SizedBox(height: 14),
         ],
         if (past.isNotEmpty) ...[
-          const SectionHeader(title: 'Past'),
+          SectionHeader(title: l10n.careSessionsPast),
           const SizedBox(height: 12),
           for (final session in past) _pastCard(session),
         ],
@@ -188,16 +189,14 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
 
   Widget _upcomingCard(TherapistSession session, DateTime now) {
     final c = context.brand;
+    final l10n = context.l10n;
     final state = session.joinStateAt(now);
     final canJoin = state == JoinState.open && session.paymentSettled;
     final hint = switch (state) {
-      JoinState.tooEarly => 'The call opens 10 minutes before the start.',
-      JoinState.over =>
-        'The call has closed. Finish the session to close it out — '
-            'otherwise it closes itself in a couple of hours.',
-      _ when !session.paymentSettled =>
-        'The client hasn\'t paid yet — the call opens once they do.',
-      _ => 'The call is open.',
+      JoinState.tooEarly => l10n.careSessionsTooEarly,
+      JoinState.over => l10n.careSessionsOver,
+      _ when !session.paymentSettled => l10n.careSessionsUnpaid,
+      _ => l10n.careSessionsOpen,
     };
     final note = session.note?.trim() ?? '';
 
@@ -213,14 +212,14 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
         children: [
           Row(
             children: [
-              TherapistAvatar(name: session.clientLabel, size: 44),
+              TherapistAvatar(name: session.clientLabel(l10n), size: 44),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      session.clientLabel,
+                      session.clientLabel(l10n),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -238,25 +237,25 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                 ),
               ),
               if (session.isFreeSession)
-                const StatusBadge('Free', color: Pillars.blue)
+                StatusBadge(l10n.carePaymentFree, color: Pillars.blue)
               else if (!session.paymentSettled)
-                const StatusBadge('Unpaid', color: Pillars.red),
+                StatusBadge(l10n.carePaymentUnpaid, color: Pillars.red),
             ],
           ),
           const SizedBox(height: 12),
           if (session.scheduledAt != null)
             InfoLine(
               Icons.schedule_rounded,
-              '${formatDateTime(session.scheduledAt!)} · '
-              '${session.durationMinutes} min',
+              l10n.careSessionWhen(formatDateTime(session.scheduledAt!),
+                  session.durationMinutes),
             ),
           if (note.isNotEmpty)
-            InfoLine(Icons.notes_rounded, 'They wrote: “$note”'),
+            InfoLine(Icons.notes_rounded, l10n.careSessionsTheyWrote(note)),
           const SizedBox(height: 8),
           ElevatedButton.icon(
             onPressed: canJoin ? () => _join(session) : null,
             icon: const Icon(Icons.videocam_rounded),
-            label: const Text('Join session'),
+            label: Text(l10n.careSessionsJoin),
           ),
           const SizedBox(height: 6),
           Text(
@@ -268,7 +267,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
             const SizedBox(height: 4),
             TextButton(
               onPressed: () => _finish(session),
-              child: const Text('Finish session'),
+              child: Text(l10n.careSessionsFinish),
             ),
           ],
         ],
@@ -278,6 +277,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
 
   Widget _pastCard(TherapistSession session) {
     final c = context.brand;
+    final l10n = context.l10n;
     final when = session.scheduledAt ?? session.completedAt;
     final summary = session.clientSummary;
     return Padding(
@@ -300,7 +300,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        session.clientLabel,
+                        session.clientLabel(l10n),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -318,7 +318,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                       if (session.clientMissed) ...[
                         const SizedBox(height: 4),
                         Text(
-                          'The client didn\'t join the call.',
+                          l10n.careSessionsClientMissed,
                           style: TextStyle(
                             fontSize: 12.5,
                             color: c.red,
@@ -345,7 +345,9 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                 const SizedBox(width: 10),
                 if (session.isCancelled)
                   Text(
-                    session.didNotHappen ? 'Didn\'t happen' : 'Cancelled',
+                    session.didNotHappen
+                        ? l10n.careSessionsDidNotHappen
+                        : l10n.careStatusCancelled,
                     style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
@@ -355,7 +357,7 @@ class _TherapistSessionsScreenState extends State<TherapistSessionsScreen> {
                 else if (session.myRating != null)
                   StarRow(rating: session.myRating!.toDouble())
                 else
-                  const StatusBadge('Rate', color: Pillars.blue),
+                  StatusBadge(l10n.careSessionsRate, color: Pillars.blue),
               ],
             ),
           ),
@@ -394,9 +396,10 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
   }
 
   Future<void> _save() async {
+    final l10n = context.l10n;
     final comment = _comment.text.trim();
     if (_rating == 0 && (comment.isNotEmpty || _flags.isNotEmpty)) {
-      setState(() => _error = 'Add a star rating to send private feedback.');
+      setState(() => _error = l10n.careFinishNeedsRating);
       return;
     }
     setState(() {
@@ -412,7 +415,7 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
           rating: _rating,
           comment: comment.isEmpty ? null : comment,
           flags: [
-            for (final flag in therapistFlagLabels.keys)
+            for (final flag in therapistFlagLabels(l10n).keys)
               if (_flags.contains(flag)) flag,
           ],
         );
@@ -422,7 +425,7 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _error = careErrorMessage(e, 'Couldn\'t save — check your connection.');
+        _error = careErrorMessage(e, l10n.careCouldNotSave);
       });
     }
   }
@@ -430,7 +433,8 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
-    final name = widget.session.clientLabel;
+    final l10n = context.l10n;
+    final name = widget.session.clientLabel(l10n);
     final done = widget.session.isCompleted;
     return Padding(
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -441,7 +445,9 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              done ? 'Session with $name' : 'Finish your session with $name',
+              done
+                  ? l10n.careFinishTitleDone(name)
+                  : l10n.careFinishTitle(name),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 18,
@@ -456,16 +462,15 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
               maxLength: 4000,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                labelText: 'A note for $name (optional)',
-                helperText: 'They see this in the app — a takeaway, or '
-                    'something to practise. Keep clinical notes out of it.',
+                labelText: l10n.careFinishNoteLabel(name),
+                helperText: l10n.careFinishNoteHelp,
                 helperMaxLines: 3,
                 alignLabelWithHint: true,
               ),
             ),
             const SizedBox(height: 18),
             Text(
-              'How did it go?',
+              l10n.careFinishHowDidItGo,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -485,7 +490,7 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
               alignment: WrapAlignment.center,
               children: [
                 for (final MapEntry(key: flag, value: label)
-                    in therapistFlagLabels.entries)
+                    in therapistFlagLabels(l10n).entries)
                   ChoicePill(
                     label: label,
                     selected: _flags.contains(flag),
@@ -500,16 +505,15 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
               controller: _comment,
               maxLines: 3,
               maxLength: 1000,
-              decoration: const InputDecoration(
-                labelText: 'Private note for the care team (optional)',
+              decoration: InputDecoration(
+                labelText: l10n.careFinishPrivateNote,
                 alignLabelWithHint: true,
                 counterText: '',
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Only the care team sees your rating, flags and private note. '
-              'Flagging a safety concern emails them straight away.',
+              l10n.careFinishPrivacy,
               style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.5),
             ),
             if (_error != null) ...[
@@ -531,7 +535,7 @@ class _FinishSessionSheetState extends State<_FinishSessionSheet> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(done ? 'Save' : 'Finish session'),
+                  : Text(done ? l10n.commonSave : l10n.careSessionsFinish),
             ),
           ],
         ),

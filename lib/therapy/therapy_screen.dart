@@ -7,6 +7,7 @@ import '../billing/session_payments.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
 import '../support/crisis_screen.dart';
@@ -22,6 +23,15 @@ const _timeSlots = [
   'Weekday evenings',
   'Weekends',
 ];
+
+/// A stored time slot as it reads on screen.
+String _slotLabel(AppLocalizations l10n, String slot) => switch (slot) {
+      'Weekday mornings' => l10n.therapySlotWeekdayMornings,
+      'Weekday afternoons' => l10n.therapySlotWeekdayAfternoons,
+      'Weekday evenings' => l10n.therapySlotWeekdayEvenings,
+      'Weekends' => l10n.therapySlotWeekends,
+      _ => slot,
+    };
 
 /// Talk to a real therapist: pay for and request a private session, see
 /// who you've been matched with and when, join the video call, and rate it
@@ -171,9 +181,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
       final outcome = draft.needsPayment
           ? await _pay(draft, fromForm: true)
           : SessionPaymentOutcome.paid;
-      if (!draft.needsPayment) {
-        _say('Your request is with our care team — there\'s no charge for '
-            'your sessions.');
+      if (!draft.needsPayment && mounted) {
+        _say(context.l10n.therapyRequestNoCharge);
       }
       if (!mounted) return;
       switch (outcome) {
@@ -200,7 +209,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (e is PostgrestException && e.code == '23514') {
         // A size check: the form caps the note itself, so this is a
         // stale build or something that isn't the app.
-        _say('That note is too long — please keep it under 1000 characters.');
+        _say(context.l10n.therapyNoteTooLong);
       } else if (e is PostgrestException &&
           e.code == 'P0001' &&
           e.message.isNotEmpty) {
@@ -210,8 +219,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         // If it's an open request we hadn't seen, show it instead of the form.
         await _load(quiet: true);
       } else {
-        _say(errorMessage(
-            e, 'Couldn\'t send your request — check your connection.'));
+        _say(errorMessage(e, context.l10n.therapyRequestSendFailed));
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -240,27 +248,23 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   Future<void> _cancel(TherapyRequest request) async {
+    final l10n = context.l10n;
     final (title, body, action) = request.isAwaitingPayment
         ? (
-            'Discard this request?',
-            'Nothing has been paid, so there\'s nothing to refund. You can '
-                'start again whenever you like.',
-            'Discard',
+            l10n.therapyDiscardTitle,
+            l10n.therapyDiscardBody,
+            l10n.therapyDiscardAction,
           )
         : request.isConfirmed
             ? (
-                'Cancel this session?',
-                'We\'ll let your therapist know and refund your '
-                    '${request.priceLabel} in full, since it\'s more than 24 '
-                    'hours away. You can book again whenever you\'re ready.',
-                'Cancel session',
+                l10n.therapyCancelSessionTitle,
+                l10n.therapyCancelSessionBody(request.priceLabel),
+                l10n.therapyCancelSessionAction,
               )
             : (
-                'Cancel this request?',
-                'We haven\'t matched you yet, so your ${request.priceLabel} '
-                    'is refunded in full. You can book again whenever '
-                    'you\'re ready.',
-                'Cancel request',
+                l10n.therapyCancelRequestTitle,
+                l10n.therapyCancelRequestBody(request.priceLabel),
+                l10n.therapyCancelRequestAction,
               );
     final confirmed = await showDialog<bool>(
       context: context,
@@ -270,7 +274,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Keep it'),
+            child: Text(l10n.therapyKeepIt),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -292,7 +296,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         _say(e.message);
         await _load(quiet: true);
       } else {
-        _say(errorMessage(e, 'Couldn\'t cancel — check your connection.'));
+        _say(errorMessage(e, l10n.therapyCancelFailed));
       }
     }
   }
@@ -312,18 +316,15 @@ class _TherapyScreenState extends State<TherapyScreen> {
       switch (outcome) {
         case SessionPaymentOutcome.paid:
           _say(request.isAwaitingPayment
-              ? 'Payment received — your request is with our care team and '
-                  'your receipt is on its way by email.'
-              : 'Payment received — your receipt is on its way by email.');
+              ? context.l10n.therapyPaymentReceivedRequest
+              : context.l10n.therapyPaymentReceived);
           if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.pendingVerification:
           _awaitingVerification.add(request.id);
-          _say('Your payment is going through. If it isn\'t confirmed in a '
-              'minute, tap "Check payment".');
+          _say(context.l10n.therapyPaymentPending);
           if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.unavailable:
-          _say('We couldn\'t open the payment page on this device — please '
-              'try again later.');
+          _say(context.l10n.therapyPaymentUnavailable);
         case SessionPaymentOutcome.cancelled:
           break;
       }
@@ -332,7 +333,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (!mounted) return null;
       final message = e is SessionAccessException
           ? e.message
-          : errorMessage(e, 'The payment didn\'t go through. Please try again.');
+          : errorMessage(e, context.l10n.therapyPaymentFailed);
       _say(message);
       return null;
     } finally {
@@ -358,8 +359,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (!mounted) return;
       _awaitingVerification.remove(request.id);
       _say(request.isAwaitingPayment
-          ? 'Payment found — your request is with our care team.'
-          : 'Payment found — you\'re all set.');
+          ? context.l10n.therapyPaymentFoundRequest
+          : context.l10n.therapyPaymentFound);
       await _load(quiet: true);
     } on SessionAccessException catch (e) {
       // The server has looked and there's nothing to attach, so paying is
@@ -368,7 +369,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (mounted) _say(e.message);
     } catch (e) {
       if (mounted) {
-        _say(errorMessage(e, 'Couldn\'t check — try again in a moment.'));
+        _say(errorMessage(e, context.l10n.therapyCheckFailed));
       }
     } finally {
       if (mounted) setState(() => _paying = false);
@@ -381,7 +382,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
       MaterialPageRoute(
         settings: const RouteSettings(name: CallScreen.routeName),
         builder: (_) => CallScreen(
-          counterpartName: therapist?.fullName ?? 'Your therapist',
+          counterpartName:
+              therapist?.fullName ?? context.l10n.therapyYourTherapist,
           connect: () => _repo.joinSession(request.id),
         ),
       ),
@@ -391,31 +393,33 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Future<void> _rate(TherapyRequest request) async {
     final therapist = _therapists[request.therapistId];
+    final l10n = context.l10n;
     final saved = await showSessionRatingSheet(
       context,
-      title: 'How was your session?',
+      title: l10n.therapyRateTitle,
       subtitle: therapist == null
-          ? 'Your rating helps us match people well.'
-          : 'Your rating helps us match people well. ${therapist.firstName} '
-              'never sees it on its own — only an average.',
-      commentLabel: 'Anything you\'d like to tell us? (optional)',
+          ? l10n.therapyRateSubtitle
+          : l10n.therapyRateSubtitleNamed(therapist.firstName),
+      commentLabel: l10n.therapyRateComment,
       initialRating: _myRatings[request.id] ?? 0,
       onSubmit: (rating, comment) =>
           _repo.rateSession(request.id, rating: rating, comment: comment),
       describeError: (e) =>
-          errorMessage(e, 'Couldn\'t send your rating — check your connection.'),
+          errorMessage(e, l10n.therapyRateFailed),
     );
     if (saved == true && mounted) {
-      _say('Thank you — that helps.');
+      _say(l10n.therapyRateThanks);
       await _load(quiet: true);
     }
   }
 
   Future<void> _showCompleted(TherapyRequest request) async {
     final c = context.brand;
+    final l10n = context.l10n;
     final therapist = _therapists[request.therapistId];
     final rating = _myRatings[request.id];
     final when = request.scheduledAt ?? request.createdAt;
+    final topic = therapyTopicLabel(l10n, request.topic);
     final wantsRating = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -432,7 +436,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
               Row(
                 children: [
                   TherapistAvatar(
-                    name: therapist?.fullName ?? request.topic,
+                    name: therapist?.fullName ?? topic,
                     photoUrl: therapist?.photoUrl,
                   ),
                   const SizedBox(width: 12),
@@ -441,7 +445,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          therapist?.fullName ?? request.topic,
+                          therapist?.fullName ?? topic,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -463,8 +467,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
               const SizedBox(height: 22),
               Text(
                 therapist == null
-                    ? 'Notes from your therapist'
-                    : 'Notes from ${therapist.firstName}',
+                    ? l10n.therapyNotesFromTherapist
+                    : l10n.therapyNotesFrom(therapist.firstName),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -473,7 +477,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
               ),
               const SizedBox(height: 6),
               SelectableText(
-                request.clientSummary ?? 'No notes for this session.',
+                request.clientSummary ?? l10n.therapyNoNotes,
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.6,
@@ -486,14 +490,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
               if (rating == null)
                 ElevatedButton(
                   onPressed: () => Navigator.of(sheetContext).pop(true),
-                  child: const Text('Rate this session'),
+                  child: Text(l10n.therapyRateSession),
                 )
               else ...[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'You rated it  ',
+                      '${l10n.therapyYouRatedIt}  ',
                       style: TextStyle(fontSize: 13.5, color: c.textMuted),
                     ),
                     StarRow(rating: rating.toDouble(), size: 18),
@@ -501,7 +505,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(sheetContext).pop(true),
-                  child: const Text('Change your rating'),
+                  child: Text(l10n.therapyChangeRating),
                 ),
               ],
             ],
@@ -545,22 +549,22 @@ class _TherapyScreenState extends State<TherapyScreen> {
   /// Three steps, so nobody has to guess what happens after they tap.
   Widget _howItWorks() {
     final c = context.brand;
-    const steps = [
+    final l10n = context.l10n;
+    final steps = [
       (
         Icons.tune_rounded,
-        'Tell us what you need, and pay',
-        'A topic, the times that suit you, and \$20 — paid securely in '
-            'the app. Nothing is sent until it\'s paid.',
+        l10n.therapyStepPayTitle,
+        l10n.therapyStepPayDetail(formatPrice(therapySessionPriceCents)),
       ),
       (
         Icons.mark_email_read_rounded,
-        'We match you',
-        'A licensed therapist and a time, usually within a day.',
+        l10n.therapyStepMatchTitle,
+        l10n.therapyStepMatchDetail,
       ),
       (
         Icons.videocam_rounded,
-        'You talk',
-        'A private video call, right here in the app.',
+        l10n.therapyStepTalkTitle,
+        l10n.therapyStepTalkDetail,
       ),
     ];
     return Column(
@@ -593,7 +597,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${index + 1}. $title',
+                        l10n.therapyStepNumbered(index + 1, title),
                         style: TextStyle(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w600,
@@ -622,16 +626,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
   /// The questions people actually have before they ask for help.
   Widget _reassurance() {
     final c = context.brand;
-    const points = [
-      (Icons.verified_user_rounded, 'Licensed therapists',
-          'Qualified practitioners, not volunteers or chatbots.'),
-      (Icons.lock_rounded, 'Private',
-          'What you say in a session stays between you and them. Calls '
-              'aren\'t recorded.'),
-      (Icons.event_available_rounded, 'One session at a time',
-          'No subscription. Cancel up to 24 hours before for a full '
-              'refund — after that, or if you don\'t join, the session isn\'t '
-              'refunded.'),
+    final l10n = context.l10n;
+    final points = [
+      (Icons.verified_user_rounded, l10n.therapyPointLicensedTitle,
+          l10n.therapyPointLicensedDetail),
+      (Icons.lock_rounded, l10n.therapyPointPrivateTitle,
+          l10n.therapyPointPrivateDetail),
+      (Icons.event_available_rounded, l10n.therapyPointOneAtATimeTitle,
+          l10n.therapyPointOneAtATimeDetail),
     ];
     return Container(
       padding: const EdgeInsets.all(18),
@@ -740,6 +742,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Widget _bookingForm() {
     final c = context.brand;
+    final l10n = context.l10n;
     final price = formatPrice(therapySessionPriceCents);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -747,14 +750,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
         _offerBanner(
           icon: Icons.payments_outlined,
           iconColor: c.blue,
-          title: 'Sessions are $price, paid when you book',
-          detail: 'Pay securely by $therapyPaymentMethods through Paystack '
-              '(charged as $therapySessionChargeLabel) and your request goes '
-              'straight to our care team. You get a receipt by email. No '
-              'subscription.',
+          title: l10n.therapyOfferTitle(price),
+          detail: l10n.therapyOfferDetail(
+              l10n.therapyPaymentMethods, therapySessionChargeLabel),
         ),
         const SizedBox(height: 26),
-        const SectionHeader(title: 'What would you like to focus on?'),
+        SectionHeader(title: l10n.therapyFocusQuestion),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -762,14 +763,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
           children: [
             for (final topic in therapyTopics)
               _pill(
-                topic,
+                therapyTopicLabel(l10n, topic),
                 selected: _topic == topic,
                 onTap: () => setState(() => _topic = topic),
               ),
           ],
         ),
         const SizedBox(height: 24),
-        const SectionHeader(title: 'When could you meet?'),
+        SectionHeader(title: l10n.therapyWhenQuestion),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
@@ -777,7 +778,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           children: [
             for (final slot in _timeSlots)
               _pill(
-                slot,
+                _slotLabel(l10n, slot),
                 selected: _slots.contains(slot),
                 onTap: () => setState(() {
                   _slots.contains(slot)
@@ -792,8 +793,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
           controller: _noteController,
           maxLines: 3,
           maxLength: 500,
-          decoration: const InputDecoration(
-            labelText: 'Anything your therapist should know? (optional)',
+          decoration: InputDecoration(
+            labelText: l10n.therapyNoteLabel,
             alignLabelWithHint: true,
             counterText: '',
           ),
@@ -810,13 +811,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     color: Colors.white,
                   ),
                 )
-              : Text('Pay $price and request a session'),
+              : Text(l10n.therapyPayAndRequest(price)),
         ),
         const SizedBox(height: 10),
         Text(
-          'We\'ll match you with a licensed therapist and a time, usually '
-          'within a day, and email you when your session is booked. '
-          '$therapyCancellationPolicy',
+          l10n.therapyBookingFootnote(l10n.therapyCancellationPolicy),
           style: TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.5),
         ),
       ],
@@ -848,13 +847,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
   }
 
   String _priceLine(TherapyRequest request) {
-    if (request.isFreeSession) return 'First session — free';
+    final l10n = context.l10n;
+    if (request.isFreeSession) return l10n.therapyPriceFirstFree;
     return switch (request.paymentStatus) {
-      'paid' => '${request.priceLabel} — paid, receipt emailed',
-      'waived' => 'No charge for this session',
+      'paid' => l10n.therapyPricePaid(request.priceLabel),
+      'waived' => l10n.therapyPriceWaived,
       _ when request.isAwaitingPayment =>
-        '${request.priceLabel} — pay to send your request',
-      _ => '${request.priceLabel} — payment needed',
+        l10n.therapyPriceToSend(request.priceLabel),
+      _ => l10n.therapyPriceNeeded(request.priceLabel),
     };
   }
 
@@ -862,28 +862,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
     final c = context.brand;
     final therapist = _therapists[request.therapistId];
     final confirmed = request.isConfirmed;
+    final l10n = context.l10n;
     final (title, detail) = request.isAwaitingPayment
-        ? (
-            'Almost there',
-            'Your request is saved but hasn\'t reached our care team yet. '
-                'It\'s sent the moment your session is paid for.',
-          )
+        ? (l10n.therapyAlmostThereTitle, l10n.therapyAlmostThereDetail)
         : !confirmed
-            ? (
-                'Request received',
-                'We\'re finding the right licensed therapist for you — '
-                    'usually within a day. We\'ll email you when your '
-                    'session is booked.',
-              )
+            ? (l10n.therapyReceivedTitle, l10n.therapyReceivedDetail)
             : request.needsPayment
-                ? (
-                    'You\'re matched',
-                    'Pay for your session to confirm your place.',
-                  )
-                : (
-                    'Session confirmed',
-                    'Everything\'s set. Join right here when it\'s time.',
-                  );
+                ? (l10n.therapyMatchedTitle, l10n.therapyMatchedDetail)
+                : (l10n.therapyConfirmedTitle, l10n.therapyConfirmedDetail);
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -916,10 +902,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
             const SizedBox(height: 14),
             NotificationsOffBanner(
               message: confirmed
-                  ? 'Notifications are off, so you won\'t get the ten-minute '
-                      'reminder for this session.'
-                  : 'Notifications are off, so you won\'t hear when you\'re '
-                      'matched.',
+                  ? l10n.therapyNotificationsOffReminder
+                  : l10n.therapyNotificationsOffMatch,
               reason: NotificationReasons.session,
               permission: _notifications,
               onChanged: (on) {
@@ -935,13 +919,19 @@ class _TherapyScreenState extends State<TherapyScreen> {
           if (confirmed && request.scheduledAt != null)
             _detailRow(
               Icons.schedule_rounded,
-              '${formatDateTime(request.scheduledAt!)} · '
-              '${request.durationMinutes} min',
+              l10n.therapyWhenAndLength(
+                  formatDateTime(request.scheduledAt!),
+                  request.durationMinutes),
             ),
-          _detailRow(Icons.chat_bubble_outline_rounded, request.topic),
+          _detailRow(Icons.chat_bubble_outline_rounded,
+              therapyTopicLabel(l10n, request.topic)),
           if (!confirmed && request.availability.isNotEmpty)
-            _detailRow(Icons.calendar_month_rounded,
-                request.availability.join(' · ')),
+            _detailRow(
+                Icons.calendar_month_rounded,
+                [
+                  for (final slot in request.availability)
+                    _slotLabel(l10n, slot),
+                ].join(' · ')),
           _detailRow(
             request.isFreeSession
                 ? Icons.favorite_rounded
@@ -966,18 +956,16 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 onPressed: () => _cancel(request),
                 style: TextButton.styleFrom(foregroundColor: c.red),
                 child: Text(request.isAwaitingPayment
-                    ? 'Discard'
+                    ? l10n.therapyDiscardAction
                     : confirmed
-                        ? 'Cancel session'
-                        : 'Cancel request'),
+                        ? l10n.therapyCancelSessionAction
+                        : l10n.therapyCancelRequestAction),
               ),
             ),
           ] else if (request.isActive) ...[
             const SizedBox(height: 12),
             Text(
-              'Your session is less than 24 hours away, so it can no longer '
-              'be cancelled here. If you can\'t make it, reply to your booking '
-              'email — a missed or late-cancelled session isn\'t refunded.',
+              l10n.therapyLateCancelNote,
               style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.5),
             ),
           ],
@@ -989,6 +977,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
   Widget _paymentBox(TherapyRequest request) {
     final c = context.brand;
     final awaiting = _awaitingVerification.contains(request.id);
+    final l10n = context.l10n;
+    final methods = l10n.therapyPaymentMethods;
     final spinner = const SizedBox(
       width: 22,
       height: 22,
@@ -1006,10 +996,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
         children: [
           Text(
             awaiting
-                ? 'Your payment is being verified'
+                ? l10n.therapyPaymentVerifying
                 : request.isAwaitingPayment
-                    ? '${request.priceLabel} to send your request'
-                    : '${request.priceLabel} to confirm your session',
+                    ? l10n.therapyPayToSend(request.priceLabel)
+                    : l10n.therapyPayToConfirm(request.priceLabel),
             style: TextStyle(
               fontSize: 14.5,
               fontWeight: FontWeight.w600,
@@ -1019,18 +1009,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const SizedBox(height: 4),
           Text(
             awaiting
-                ? 'Paystack has your payment. Don\'t pay again — your '
-                    'request goes through as soon as it\'s found.'
+                ? l10n.therapyPaymentVerifyingDetail
                 : request.isAwaitingPayment
-                    ? 'Pay securely by $therapyPaymentMethods through '
-                        'Paystack (charged as $therapySessionChargeLabel) '
-                        'and your request goes '
-                        'straight to our care team, with a receipt by '
-                        'email. $therapyCancellationPolicy'
-                    : 'Pay securely by $therapyPaymentMethods through '
-                        'Paystack (charged as $therapySessionChargeLabel). '
-                        'The Join button unlocks as '
-                        'soon as it\'s paid.',
+                    ? l10n.therapyPayDetailRequest(methods,
+                        therapySessionChargeLabel, l10n.therapyCancellationPolicy)
+                    : l10n.therapyPayDetailSession(
+                        methods, therapySessionChargeLabel),
             style: TextStyle(
               fontSize: 12.5,
               color: c.textMuted,
@@ -1041,17 +1025,19 @@ class _TherapyScreenState extends State<TherapyScreen> {
           if (awaiting)
             ElevatedButton(
               onPressed: _paying ? null : () => _checkPayment(request),
-              child: _paying ? spinner : const Text('Check payment'),
+              child: _paying ? spinner : Text(l10n.therapyCheckPayment),
             )
           else ...[
             ElevatedButton(
               onPressed: _paying ? null : () => _pay(request),
-              child: _paying ? spinner : Text('Pay ${request.priceLabel}'),
+              child: _paying
+                  ? spinner
+                  : Text(l10n.therapyPayPrice(request.priceLabel)),
             ),
             const SizedBox(height: 4),
             TextButton(
               onPressed: _paying ? null : () => _checkPayment(request),
-              child: const Text('Already paid? Check again'),
+              child: Text(l10n.therapyAlreadyPaid),
             ),
           ],
         ],
@@ -1063,21 +1049,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
     final c = context.brand;
     final state = request.joinStateAt(_now());
     final ready = state == JoinState.open && !request.needsPayment;
+    final l10n = context.l10n;
     final hint = switch (state) {
-      JoinState.tooEarly =>
-        'The call opens 10 minutes before the start.',
-      JoinState.over when request.needsPayment =>
-        'This session\'s time has passed without payment. It\'ll be '
-            'cancelled shortly, and you can book again after that.',
-      JoinState.over =>
-        'This session\'s time has passed. It closes out on its own within '
-            'a couple of hours: if it went ahead, any note from your '
-            'therapist appears under Past sessions; if it didn\'t happen, '
-            'you\'ll be able to book again.',
-      _ when request.needsPayment =>
-        'The call opens once your session is paid for.',
-      _ => 'Find a quiet, private spot — you\'ll need your camera and '
-          'microphone.',
+      JoinState.tooEarly => l10n.therapyJoinOpensSoon,
+      JoinState.over when request.needsPayment => l10n.therapyJoinOverUnpaid,
+      JoinState.over => l10n.therapyJoinOver,
+      _ when request.needsPayment => l10n.therapyJoinNeedsPayment,
+      _ => l10n.therapyJoinReady,
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1085,7 +1063,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         ElevatedButton.icon(
           onPressed: ready ? () => _join(request) : null,
           icon: const Icon(Icons.videocam_rounded),
-          label: const Text('Join session'),
+          label: Text(l10n.therapyJoinSession),
         ),
         const SizedBox(height: 8),
         Text(
@@ -1104,6 +1082,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     final therapist = _therapists[request.therapistId];
     final rating = _myRatings[request.id];
     final when = request.scheduledAt ?? request.createdAt;
+    final l10n = context.l10n;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
@@ -1124,7 +1103,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        request.topic,
+                        therapyTopicLabel(l10n, request.topic),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -1135,7 +1114,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       Text(
                         therapist == null
                             ? formatDate(when)
-                            : '${therapist.fullName} · ${formatDate(when)}',
+                            : l10n.therapyPastWithTherapist(
+                                therapist.fullName, formatDate(when)),
                         style: TextStyle(
                           fontSize: 12,
                           color: c.textMuted,
@@ -1165,7 +1145,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      'Rate',
+                      l10n.therapyRate,
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -1184,10 +1164,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final requests = _requests;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Talk to a therapist'),
+        title: Text(l10n.therapyTitle),
         // The hero art carries the screen; a heavy bar above it competes.
         backgroundColor: Colors.transparent,
       ),
@@ -1198,13 +1179,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Couldn\'t load — check your connection.',
+                      l10n.therapyLoadFailed,
                       style: TextStyle(fontSize: 14, color: c.textMuted),
                     ),
                     const SizedBox(height: 10),
                     TextButton(
                       onPressed: _load,
-                      child: const Text('Try again'),
+                      child: Text(l10n.commonTryAgain),
                     ),
                   ],
                 ),
@@ -1218,6 +1199,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Widget _body(List<TherapyRequest> requests) {
     final c = context.brand;
+    final l10n = context.l10n;
     final active = requests.where((r) => r.isCurrent).firstOrNull;
     // A draft that was discarded or expired never went anywhere; listing
     // it as a past session would only puzzle people.
@@ -1232,7 +1214,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const TherapyArt(height: 156),
           const SizedBox(height: 18),
           Text(
-            'You don\'t have to do this alone',
+            l10n.therapyHeadline,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
@@ -1245,9 +1227,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const Center(child: PillarStripe()),
           const SizedBox(height: 16),
           Text(
-            'Private one-on-one sessions with licensed therapists, right '
-            'from here. Tell us a little about what you need and we\'ll '
-            'match you with the right person.',
+            l10n.therapyIntro,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
@@ -1263,14 +1243,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ],
           if (past.isNotEmpty) ...[
             const SizedBox(height: 28),
-            const SectionHeader(title: 'Past sessions'),
+            SectionHeader(title: l10n.therapyPastSessions),
             const SizedBox(height: 12),
             for (final request in past) _pastRow(request),
           ],
           const SizedBox(height: 24),
-          const CrisisFooter(
-            trailing: ' This app can\'t replace emergency care.',
-          ),
+          CrisisFooter(trailing: l10n.therapyCrisisTrailing),
         ],
       ),
     );
@@ -1335,16 +1313,14 @@ class _CheckoutWaitDialogState extends State<_CheckoutWaitDialog> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final hint = _offline
-        ? 'We can\'t reach our server right now — we\'ll keep checking.'
+        ? l10n.therapyCheckoutOffline
         : _notFoundYet
-            ? 'We haven\'t seen your payment yet. If you\'ve just paid, give '
-                'it a few seconds.'
-            : 'Finish paying on the Paystack page — by '
-                '$therapyPaymentMethods. This closes by itself once your '
-                'payment is in.';
+            ? l10n.therapyCheckoutNotFound
+            : l10n.therapyCheckoutHint(l10n.therapyPaymentMethods);
     return AlertDialog(
-      title: const Text('Waiting for your payment'),
+      title: Text(l10n.therapyCheckoutTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1360,11 +1336,11 @@ class _CheckoutWaitDialogState extends State<_CheckoutWaitDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.commonCancel),
         ),
         TextButton(
           onPressed: _checking ? null : () => _check(asked: true),
-          child: const Text('I\'ve paid'),
+          child: Text(l10n.therapyIvePaid),
         ),
       ],
     );

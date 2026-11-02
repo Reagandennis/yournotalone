@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
 
@@ -46,8 +47,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
       await Supabase.instance.client.auth
           .updateUser(UserAttributes(password: _password.text));
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Password updated.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.authPasswordUpdated)));
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => postAuthDestination()),
         (_) => false,
@@ -61,10 +62,10 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AuthScaffold(
-      title: 'Choose a new password',
-      subtitle: 'You\'re verified — set the password you\'ll use to log in '
-          'from now on.',
+      title: l10n.authNewPasswordTitle,
+      subtitle: l10n.authNewPasswordSubtitle,
       children: [
         Form(
           key: _formKey,
@@ -73,7 +74,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             children: [
               AuthTextField(
                 controller: _password,
-                label: 'New password',
+                label: l10n.authNewPassword,
                 icon: Icons.lock_outline_rounded,
                 isPassword: true,
                 validator: validatePassword,
@@ -81,16 +82,16 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               const SizedBox(height: 16),
               AuthTextField(
                 controller: _confirm,
-                label: 'Confirm password',
+                label: l10n.authConfirmPassword,
                 icon: Icons.lock_outline_rounded,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 validator: (v) =>
-                    v != _password.text ? 'Passwords don\'t match' : null,
+                    v != _password.text ? l10n.authPasswordsDontMatch : null,
               ),
               const SizedBox(height: 26),
               AuthSubmitButton(
-                label: 'Save password',
+                label: l10n.authSavePassword,
                 loading: _loading,
                 onPressed: _submit,
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'legal_content.dart';
 
 /// Renders a [LegalDoc] (Privacy Policy / Terms of Service) as a
@@ -25,7 +26,7 @@ class LegalScreen extends StatelessWidget {
                 const PillarStripe(),
                 const SizedBox(height: 14),
                 Text(
-                  'Last updated: $legalLastUpdated',
+                  context.l10n.legalLastUpdated(legalLastUpdated),
                   style: TextStyle(
                     fontSize: 12.5,
                     color: c.textMuted,

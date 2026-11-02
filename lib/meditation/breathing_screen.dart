@@ -6,6 +6,7 @@ import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../discover/content_index.dart';
+import '../l10n/l10n.dart';
 import '../sounds/sound_player.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
@@ -14,11 +15,11 @@ import 'meditation_catalog.dart';
 enum _Phase { inhale, holdIn, exhale, holdOut }
 
 extension on _Phase {
-  String get label => switch (this) {
-    _Phase.inhale => 'Breathe in',
-    _Phase.holdIn => 'Hold',
-    _Phase.exhale => 'Breathe out',
-    _Phase.holdOut => 'Hold',
+  String label(AppLocalizations l10n) => switch (this) {
+    _Phase.inhale => l10n.breathingBreatheIn,
+    _Phase.holdIn => l10n.breathingHold,
+    _Phase.exhale => l10n.breathingBreatheOut,
+    _Phase.holdOut => l10n.breathingHold,
   };
 }
 
@@ -175,7 +176,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            '$minutes min',
+            context.l10n.breathingMinutesChip(minutes),
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -278,7 +279,10 @@ class _BreathingScreenState extends State<BreathingScreen>
         const Spacer(),
         Padding(
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 26),
-          child: ElevatedButton(onPressed: _start, child: const Text('Begin')),
+          child: ElevatedButton(
+            onPressed: _start,
+            child: Text(context.l10n.breathingBegin),
+          ),
         ),
       ],
     );
@@ -305,7 +309,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         ),
         const SizedBox(height: 24),
         Text(
-          'Well done',
+          context.l10n.breathingWellDone,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -314,14 +318,13 @@ class _BreathingScreenState extends State<BreathingScreen>
         ),
         const SizedBox(height: 10),
         Text(
-          '$_minutes minute${_minutes == 1 ? '' : 's'} · about $cycles '
-          'breath cycles.\nNotice how you feel right now.',
+          context.l10n.breathingDoneSummary(_minutes, cycles),
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 8),
         Text(
-          'Added to your practice history.',
+          context.l10n.breathingAddedToHistory,
           style: TextStyle(fontSize: 12.5, color: c.accent(pattern.accent)),
         ),
         const Spacer(),
@@ -337,7 +340,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
-            child: const Text('Go again'),
+            child: Text(context.l10n.breathingGoAgain),
           ),
         ),
         Padding(
@@ -374,7 +377,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    phase.label,
+                    phase.label(context.l10n),
                     style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w600,
@@ -406,7 +409,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
-                    tooltip: 'End session',
+                    tooltip: context.l10n.breathingEndSession,
                     onPressed: _end,
                     icon: Icon(
                       Icons.stop_rounded,

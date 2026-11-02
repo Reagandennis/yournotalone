@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../journal/journal_repository.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'cbt_content.dart';
@@ -30,6 +31,16 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
 
   static const _whens = ['Today', 'Tomorrow', 'This week', 'Next week'];
 
+  /// How a choice in [_whens] is shown, in the app's language.
+  static String _whenLabel(AppLocalizations l10n, String when) =>
+      switch (when) {
+        'Today' => l10n.problemSolvingWhenToday,
+        'Tomorrow' => l10n.problemSolvingWhenTomorrow,
+        'This week' => l10n.problemSolvingWhenThisWeek,
+        'Next week' => l10n.problemSolvingWhenNextWeek,
+        _ => when,
+      };
+
   @override
   void dispose() {
     _problem.dispose();
@@ -54,17 +65,23 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
     });
   }
 
-  String get _summary =>
-      'Problem: ${_problem.text.trim()}\n'
-      'Options considered: ${_options.join('; ')}\n'
-      'Chosen: $_chosen\n'
-      'First step: ${_firstStep.text.trim()} — $_when';
+  String get _summary {
+    final l10n = context.l10n;
+    final when = _when;
+    return l10n.problemSolvingSummary(
+      _problem.text.trim(),
+      _options.join('; '),
+      '$_chosen',
+      _firstStep.text.trim(),
+      when == null ? 'null' : _whenLabel(l10n, when),
+    );
+  }
 
   Future<void> _save() async {
     setState(() => _saving = true);
     final saved = await toolkitSaveToJournal(
       context,
-      title: 'Problem-solving plan',
+      title: context.l10n.problemSolvingPlanTitle,
       content: _summary,
       repository: widget.journal,
     );
@@ -75,17 +92,15 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
 
   List<Widget> _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     switch (_step) {
       case 1:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 1,
             of: _steps,
-            title: 'What exactly is the problem?',
-            hint:
-                'One problem, in one sentence, specific enough to act on. '
-                '"Money" is a worry; "I\'m £300 short for rent on the 1st" '
-                'is a problem.',
+            title: l10n.problemSolvingStep1Title,
+            hint: l10n.problemSolvingStep1Hint,
           ),
           TextField(
             controller: _problem,
@@ -93,8 +108,8 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
             maxLength: 300,
             textCapitalization: TextCapitalization.sentences,
             onChanged: (_) => setState(() {}),
-            decoration: const InputDecoration(
-              labelText: 'The problem, precisely',
+            decoration: InputDecoration(
+              labelText: l10n.problemSolvingStep1Field,
               alignLabelWithHint: true,
               counterText: '',
             ),
@@ -102,13 +117,11 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
         ];
       case 2:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 2,
             of: _steps,
-            title: 'List every option',
-            hint:
-                'Don\'t judge them yet — bad ideas loosen up good ones. '
-                'Aim for at least three, including one you\'d never do.',
+            title: l10n.problemSolvingStep2Title,
+            hint: l10n.problemSolvingStep2Hint,
           ),
           TextField(
             controller: _option,
@@ -116,7 +129,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
             textCapitalization: TextCapitalization.sentences,
             onSubmitted: (_) => _addOption(),
             decoration: InputDecoration(
-              labelText: 'An option',
+              labelText: l10n.problemSolvingOptionField,
               counterText: '',
               suffixIcon: IconButton(
                 icon: const Icon(Icons.add_rounded),
@@ -157,13 +170,11 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
         ];
       case 3:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 3,
             of: _steps,
-            title: 'Pick one to try',
-            hint:
-                'Not the perfect one — the one that\'s good enough and '
-                'that you\'d actually do. You can come back to the others.',
+            title: l10n.problemSolvingStep3Title,
+            hint: l10n.problemSolvingStep3Hint,
           ),
           for (final o in _options)
             Padding(
@@ -208,17 +219,15 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
         ];
       default:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 4,
             of: _steps,
-            title: 'What\'s the first step?',
-            hint:
-                'Something that takes under twenty minutes and needs no '
-                'one\'s permission. Then decide when.',
+            title: l10n.problemSolvingStep4Title,
+            hint: l10n.problemSolvingStep4Hint,
           ),
           ToolkitNote(
             child: Text(
-              'Trying: $_chosen',
+              l10n.problemSolvingTrying('$_chosen'),
               style: TextStyle(
                 fontSize: 13,
                 color: c.textMuted,
@@ -233,8 +242,8 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
             maxLength: 200,
             textCapitalization: TextCapitalization.sentences,
             onChanged: (_) => setState(() {}),
-            decoration: const InputDecoration(
-              labelText: 'First step',
+            decoration: InputDecoration(
+              labelText: l10n.problemSolvingFirstStepField,
               counterText: '',
             ),
           ),
@@ -245,7 +254,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
             children: [
               for (final w in _whens)
                 ToolkitPill(
-                  label: w,
+                  label: _whenLabel(l10n, w),
                   selected: _when == w,
                   onTap: () => setState(() => _when = w),
                 ),
@@ -258,21 +267,22 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
   @override
   Widget build(BuildContext context) {
     final last = _step == _steps;
+    final l10n = context.l10n;
     return ToolkitScaffold(
       accent: cbtAccent,
-      title: 'Problem solving',
+      title: l10n.problemSolvingTitle,
       bottom: Row(
         children: [
           if (_step > 1)
             TextButton(
               onPressed: () => setState(() => _step--),
-              child: const Text('Back'),
+              child: Text(l10n.commonBack),
             ),
           const Spacer(),
           if (last)
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Done'),
+              child: Text(l10n.commonDone),
             ),
           const SizedBox(width: 8),
           Expanded(
@@ -283,7 +293,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
                   : last
                   ? _save
                   : () => setState(() => _step++),
-              child: Text(last ? 'Save to journal' : 'Continue'),
+              child: Text(last ? l10n.cbtSaveToJournal : l10n.commonContinue),
             ),
           ),
         ],

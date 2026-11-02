@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'sleep_content.dart';
 
@@ -111,22 +112,16 @@ class SleepSummary {
     return ((averageWake - length + 1440) % 1440, averageWake);
   }
 
-  String get verdict {
-    if (count == 0) return 'Log a night to get started.';
+  /// The advice in English; screens use [verdictIn].
+  String get verdict =>
+      verdictIn(lookupAppLocalizations(const Locale('en')));
+
+  String verdictIn(AppLocalizations l10n) {
+    if (count == 0) return l10n.sleepDiaryVerdictEmpty;
     final pct = (averageEfficiency * 100).round();
-    if (count < 5) {
-      return 'Sleep efficiency $pct% so far. Five nights in, this starts '
-          'to mean something — keep going.';
-    }
-    if (averageEfficiency >= 0.85) {
-      return 'Sleep efficiency $pct%: your bed is doing its job. If you\'re '
-          'still tired, the lever is probably total time — try lights out '
-          '15 minutes earlier, same wake time.';
-    }
-    return 'Sleep efficiency $pct%. Under 85% means a lot of your time in '
-        'bed is spent awake, which teaches the bed the wrong lesson. '
-        'Tighten the window: later to bed, same wake time, until it\'s '
-        'above 85%, then add 15 minutes a week.';
+    if (count < 5) return l10n.sleepDiaryVerdictEarly(pct);
+    if (averageEfficiency >= 0.85) return l10n.sleepDiaryVerdictGood(pct);
+    return l10n.sleepDiaryVerdictLow(pct);
   }
 }
 
@@ -136,8 +131,11 @@ String _fmt(int minutes) {
   return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
 }
 
-String _hours(int minutes) =>
-    '${minutes ~/ 60}h ${(minutes % 60).toString().padLeft(2, '0')}m';
+String _hours(AppLocalizations l10n, int minutes) =>
+    l10n.sleepDiaryHoursMinutes(
+      minutes ~/ 60,
+      (minutes % 60).toString().padLeft(2, '0'),
+    );
 
 /// Log last night in a minute. After a week it shows sleep efficiency
 /// and suggests a sleep window — the core of CBT for insomnia.
@@ -159,7 +157,13 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
   double _awake = 10;
   int _quality = 3;
 
-  static const _qualities = ['Awful', 'Poor', 'Okay', 'Good', 'Great'];
+  List<String> _qualities(AppLocalizations l10n) => [
+    l10n.sleepDiaryQualityAwful,
+    l10n.sleepDiaryQualityPoor,
+    l10n.sleepDiaryQualityOkay,
+    l10n.sleepDiaryQualityGood,
+    l10n.sleepDiaryQualityGreat,
+  ];
 
   @override
   void initState() {
@@ -178,7 +182,9 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: bed ? _bed : _wake,
-      helpText: bed ? 'Lights out' : 'Woke for the day',
+      helpText: bed
+          ? context.l10n.sleepDiaryLightsOut
+          : context.l10n.sleepDiaryWoke,
     );
     if (picked == null || !mounted) return;
     setState(() {
@@ -212,20 +218,20 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       ..showSnackBar(
         SnackBar(
           content: Text(
-            'Logged: ${_hours(night.totalSleep)} asleep, '
-            '${(night.efficiency * 100).round()}% efficient.',
+            context.l10n.sleepDiaryLogged(
+              _hours(context.l10n, night.totalSleep),
+              (night.efficiency * 100).round(),
+            ),
           ),
         ),
       );
   }
 
-  Widget _timeRow(String label, TimeOfDay t, VoidCallback onTap) {
+  Widget _timeRow(String label, TimeOfDay t, bool bed, VoidCallback onTap) {
     return ToolkitChoice(
       title: label,
       detail: t.format(context),
-      icon: label.startsWith('Lights')
-          ? Icons.bedtime_rounded
-          : Icons.wb_sunny_rounded,
+      icon: bed ? Icons.bedtime_rounded : Icons.wb_sunny_rounded,
       selected: false,
       onTap: onTap,
       trailing: Icons.edit_rounded,
@@ -243,7 +249,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$label · ${value.round()} min',
+          context.l10n.sleepDiarySliderLabel(label, value.round()),
           style: TextStyle(
             fontSize: 13.5,
             fontWeight: FontWeight.w600,
@@ -262,31 +268,29 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
     );
   }
 
-  List<Widget> _form() => [
-    const ToolkitSection(
-      title: 'Last night',
-      subtitle:
-          'Best guesses are fine — don\'t clock-watch to get this '
-          'right. Rough and every day beats exact and occasional.',
+  List<Widget> _form(AppLocalizations l10n) => [
+    ToolkitSection(
+      title: l10n.sleepDiaryLastNight,
+      subtitle: l10n.sleepDiaryLastNightHint,
     ),
-    _timeRow('Lights out', _bed, () => _pick(true)),
-    _timeRow('Woke for the day', _wake, () => _pick(false)),
+    _timeRow(l10n.sleepDiaryLightsOut, _bed, true, () => _pick(true)),
+    _timeRow(l10n.sleepDiaryWoke, _wake, false, () => _pick(false)),
     const SizedBox(height: 8),
     _slider(
-      'Time to fall asleep',
+      l10n.sleepDiaryTimeToFallAsleep,
       _latency,
       120,
       (v) => setState(() => _latency = v),
     ),
     _slider(
-      'Awake during the night',
+      l10n.sleepDiaryAwakeInNight,
       _awake,
       180,
       (v) => setState(() => _awake = v),
     ),
     const SizedBox(height: 6),
     Text(
-      'How did you feel on waking?',
+      l10n.sleepDiaryHowDidYouFeel,
       style: TextStyle(
         fontSize: 13.5,
         fontWeight: FontWeight.w600,
@@ -298,7 +302,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
       spacing: 8,
       runSpacing: 8,
       children: [
-        for (final (i, q) in _qualities.indexed)
+        for (final (i, q) in _qualities(l10n).indexed)
           ToolkitPill(
             label: q,
             selected: _quality == i + 1,
@@ -310,14 +314,13 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
 
   List<Widget> _overview(List<SleepNight> nights) {
     final c = context.brand;
+    final l10n = context.l10n;
     final summary = SleepSummary(nights);
     final window = summary.window;
     return [
-      const ToolkitSection(
-        title: 'Your nights',
-        subtitle:
-            'Sleep efficiency is the share of your time in bed you '
-            'actually spend asleep. Clinics aim for 85% and above.',
+      ToolkitSection(
+        title: l10n.sleepDiaryYourNights,
+        subtitle: l10n.sleepDiaryYourNightsHint,
       ),
       ToolkitNote(
         tint: c.tint(sleepAccent, 0.08),
@@ -327,23 +330,26 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             Row(
               children: [
                 _Stat(
-                  label: 'Efficiency',
+                  label: l10n.sleepDiaryStatEfficiency,
                   value: summary.count == 0
                       ? '—'
                       : '${(summary.averageEfficiency * 100).round()}%',
                 ),
                 _Stat(
-                  label: 'Asleep',
+                  label: l10n.sleepDiaryStatAsleep,
                   value: summary.count == 0
                       ? '—'
-                      : _hours(summary.averageSleep),
+                      : _hours(l10n, summary.averageSleep),
                 ),
-                _Stat(label: 'Nights', value: '${summary.count} of 7'),
+                _Stat(
+                  label: l10n.sleepDiaryStatNights,
+                  value: l10n.sleepDiaryNightsOfSeven(summary.count),
+                ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
-              summary.verdict,
+              summary.verdictIn(l10n),
               style: TextStyle(
                 fontSize: 13,
                 color: c.ink,
@@ -353,7 +359,10 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
             if (window != null) ...[
               const SizedBox(height: 10),
               Text(
-                'Suggested window: in bed ${_fmt(window.$1)} to ${_fmt(window.$2)}.',
+                l10n.sleepDiarySuggestedWindow(
+                  _fmt(window.$1),
+                  _fmt(window.$2),
+                ),
                 style: TextStyle(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w600,
@@ -369,8 +378,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
         Padding(
           padding: const EdgeInsets.only(top: 4),
           child: Text(
-            'No nights yet. Log this morning\'s and the picture starts to '
-            'form within a week.',
+            l10n.sleepDiaryEmpty,
             style: TextStyle(fontSize: 13, color: c.textMuted, height: 1.5),
           ),
         )
@@ -406,14 +414,23 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${_fmt(n.bedMinutes)} → ${_fmt(n.wakeMinutes)} · ${_hours(n.totalSleep)} asleep',
+                            l10n.sleepDiaryNightSummary(
+                              _fmt(n.bedMinutes),
+                              _fmt(n.wakeMinutes),
+                              _hours(l10n, n.totalSleep),
+                            ),
                             style: TextStyle(
                               fontSize: 13.5,
                               color: c.ink,
                             ),
                           ),
                           Text(
-                            '${n.date} · ${n.latency} min to drop off, ${n.awake} min awake · ${_qualities[n.quality - 1].toLowerCase()}',
+                            l10n.sleepDiaryNightDetail(
+                              n.date,
+                              n.latency,
+                              n.awake,
+                              l10n.midSentence(_qualities(l10n)[n.quality - 1]),
+                            ),
                             style: TextStyle(
                               fontSize: 12,
                               color: c.textMuted,
@@ -432,31 +449,32 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final nights = _nights;
     if (nights == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: sleepAccent,
-        title: 'Sleep diary',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.sleepDiaryTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final loggedToday = nights.any((n) => n.date == _today);
     return ToolkitScaffold(
       accent: sleepAccent,
-      title: 'Sleep diary',
+      title: l10n.sleepDiaryTitle,
       bottom: _logging
           ? Row(
               children: [
                 TextButton(
                   onPressed: () => setState(() => _logging = false),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.commonCancel),
                 ),
                 const Spacer(),
                 Expanded(
                   flex: 2,
                   child: ElevatedButton(
                     onPressed: _save,
-                    child: const Text('Save night'),
+                    child: Text(l10n.sleepDiarySaveNight),
                   ),
                 ),
               ],
@@ -465,10 +483,12 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
               onPressed: () => setState(() => _logging = true),
               icon: const Icon(Icons.add_rounded),
               label: Text(
-                loggedToday ? 'Edit this morning\'s entry' : 'Log last night',
+                loggedToday
+                    ? l10n.sleepDiaryEditToday
+                    : l10n.sleepDiaryLogLastNight,
               ),
             ),
-      children: _logging ? _form() : _overview(nights),
+      children: _logging ? _form(l10n) : _overview(nights),
     );
   }
 }

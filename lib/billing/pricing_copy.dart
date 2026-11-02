@@ -11,12 +11,17 @@
 /// update it when the offer itself changes.
 library;
 
+import '../l10n/l10n.dart';
+
 /// How the offer is described where no store data is shown.
 ///
 /// Both plans start with a free trial, but not the same length (monthly 7
 /// days, yearly 1 month), so this never names a length. If the trials are
 /// ever removed in Play Console, this becomes a false claim — change it.
-const introOffer = 'you can try it free first';
+///
+/// A clause that ends someone else's sentence ("… — and you can try it
+/// free first."), in the language the app is showing.
+String get introOffer => currentL10n().billingIntroOffer;
 
 /// Sentence-ending version, capitalised for the start of a line.
-const introOfferSentence = 'Every plan starts with a free trial.';
+String get introOfferSentence => currentL10n().billingIntroOfferSentence;

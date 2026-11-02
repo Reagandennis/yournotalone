@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'sleep_content.dart';
 
@@ -93,13 +94,13 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
               Row(
                 children: [
                   ToolkitPill(
-                    label: 'Yes',
+                    label: context.l10n.sleepHabitsYes,
                     selected: yes,
                     onTap: () => _answer(h.id, true),
                   ),
                   const SizedBox(width: 8),
                   ToolkitPill(
-                    label: 'No',
+                    label: context.l10n.sleepHabitsNo,
                     selected: no,
                     onTap: () => _answer(h.id, false),
                   ),
@@ -114,25 +115,19 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
 
   List<Widget> _results() {
     final c = context.brand;
+    final l10n = context.l10n;
     final hits = sleepHabits.where((h) => _yes.contains(h.id)).toList();
     final verdict = switch (hits.length) {
-      0 =>
-        'Nothing here is working against you. If sleep is still hard, '
-            'the diary and the 20-minute rule are the next places to look.',
-      1 || 2 =>
-        'One or two habits to change — small, and they tend to pay '
-            'back within a week or two.',
-      3 || 4 =>
-        'A few things are stacking up against your nights. Pick the '
-            'easiest one first; momentum matters more than order.',
-      _ =>
-        'Quite a lot is working against you, which is actually good '
-            'news: there\'s a lot of room to improve without anything '
-            'drastic. Start with the wake time.',
+      0 => l10n.sleepHabitsVerdictNone,
+      1 || 2 => l10n.sleepHabitsVerdictFew,
+      3 || 4 => l10n.sleepHabitsVerdictSome,
+      _ => l10n.sleepHabitsVerdictMany,
     };
     return [
       ToolkitSection(
-        title: hits.isEmpty ? 'All clear' : '${hits.length} of 10 to work on',
+        title: hits.isEmpty
+            ? l10n.sleepHabitsAllClear
+            : l10n.sleepHabitsToWorkOn(hits.length),
         subtitle: verdict,
       ),
       for (final h in hits)
@@ -178,41 +173,43 @@ class _SleepHabitsScreenState extends State<SleepHabitsScreen> {
       const SizedBox(height: 8),
       TextButton(
         onPressed: () => setState(() => _showResults = false),
-        child: const Text('Answer again'),
+        child: Text(l10n.sleepHabitsAnswerAgain),
       ),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     if (!_loaded) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: sleepAccent,
-        title: 'Sleep habits check',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.sleepHabitsTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     return ToolkitScaffold(
       accent: sleepAccent,
-      title: 'Sleep habits check',
+      title: l10n.sleepHabitsTitle,
       bottom: _showResults
           ? null
           : ElevatedButton(
               onPressed: _complete ? _finish : null,
               child: Text(
                 _complete
-                    ? 'See what to change'
-                    : '${_yes.length + _no.length} of ${sleepHabits.length} answered',
+                    ? l10n.sleepHabitsSeeResults
+                    : l10n.sleepHabitsAnswered(
+                        _yes.length + _no.length,
+                        sleepHabits.length,
+                      ),
               ),
             ),
       children: _showResults
           ? _results()
           : [
-              const ToolkitSection(
-                title: 'Honest answers, please',
-                subtitle:
-                    'Most of these are ordinary — everyone has a '
-                    'few. Each yes comes with a specific, small change.',
+              ToolkitSection(
+                title: l10n.sleepHabitsIntroTitle,
+                subtitle: l10n.sleepHabitsIntroHint,
               ),
               for (final h in sleepHabits) _question(h),
             ],

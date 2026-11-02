@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'toolkit_art.dart';
 import 'toolkit_content.dart';
 import 'toolkit_lesson_screen.dart';
@@ -23,11 +24,9 @@ class ToolkitHub extends StatelessWidget {
     required this.resources,
     required this.resourceArt,
     required this.source,
-    this.toolsTitle = 'Tools',
-    this.lessonsTitle = 'Learn the ideas',
-    this.resourcesIntro =
-        'Reputable, clinician-written material from '
-        'outside the app. Links open in your browser.',
+    this.toolsTitle,
+    this.lessonsTitle,
+    this.resourcesIntro,
     this.footer,
     this.footnote,
   });
@@ -43,9 +42,11 @@ class ToolkitHub extends StatelessWidget {
 
   /// Names the programme in upgrade-sheet analytics ("cbt", "sleep").
   final String source;
-  final String toolsTitle;
-  final String lessonsTitle;
-  final String resourcesIntro;
+
+  /// "Tools", "Learn the ideas" and the resources blurb unless given.
+  final String? toolsTitle;
+  final String? lessonsTitle;
+  final String? resourcesIntro;
 
   /// Something to do next, under the resources — a banner, usually.
   final Widget? footer;
@@ -61,14 +62,13 @@ class ToolkitHub extends StatelessWidget {
     required String item,
   }) {
     if (!premium || isPremiumUser()) return true;
+    final l10n = context.l10n;
     showUpgradeSheet(
       context,
       item: item,
       source: 'toolkit:$source',
-      title: 'This is part of Premium',
-      message:
-          'Free includes a taste of each programme. Premium unlocks '
-          'every tool and read — and $introOffer.',
+      title: l10n.toolkitPremiumTitle,
+      message: l10n.toolkitPremiumMessage(introOffer),
     );
     return false;
   }
@@ -88,11 +88,15 @@ class ToolkitHub extends StatelessWidget {
     );
   }
 
-  /// "1 free · 6 Premium", the way Explore counts the other pillars.
-  static String countLine(Iterable<bool> premiumFlags) {
+  /// "1 free · 6 Premium", the way Explore counts the other pillars. In
+  /// the app's current language unless [l10n] is given.
+  static String countLine(
+    Iterable<bool> premiumFlags, [
+    AppLocalizations? l10n,
+  ]) {
     final locked = premiumFlags.where((p) => p).length;
     final free = premiumFlags.length - locked;
-    return '$free free · $locked Premium';
+    return (l10n ?? currentL10n()).toolkitCountLine(free, locked);
   }
 
   @override
@@ -101,6 +105,7 @@ class ToolkitHub extends StatelessWidget {
 
   Widget _page(BuildContext context, bool premium) {
     final c = context.brand;
+    final l10n = context.l10n;
     return ToolkitScaffold(
       accent: accent,
       title: title,
@@ -126,14 +131,14 @@ class ToolkitHub extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         ToolkitSection(
-          title: toolsTitle,
-          subtitle: countLine(tools.map((t) => t.premium)),
+          title: toolsTitle ?? l10n.toolkitToolsTitle,
+          subtitle: countLine(tools.map((t) => t.premium), l10n),
         ),
         for (final tool in tools)
           ToolkitCard(
             title: tool.title,
             blurb: tool.blurb,
-            meta: tool.meta ?? '${tool.minutes} min',
+            meta: tool.meta ?? l10n.toolkitMinutes(tool.minutes),
             art: tool.art,
             locked: tool.premium && !premium,
             onTap: () => _open(context, tool),
@@ -141,14 +146,14 @@ class ToolkitHub extends StatelessWidget {
         if (lessons.isNotEmpty) ...[
           const SizedBox(height: 14),
           ToolkitSection(
-            title: lessonsTitle,
-            subtitle: countLine(lessons.map((l) => l.premium)),
+            title: lessonsTitle ?? l10n.toolkitLessonsTitle,
+            subtitle: countLine(lessons.map((l) => l.premium), l10n),
           ),
           for (final lesson in lessons)
             ToolkitCard(
               title: lesson.title,
               blurb: lesson.blurb,
-              meta: '${lesson.minutes} min read',
+              meta: l10n.toolkitMinutesRead(lesson.minutes),
               art: lesson.art,
               locked: lesson.premium && !premium,
               onTap: () => _read(context, lesson),
@@ -156,7 +161,10 @@ class ToolkitHub extends StatelessWidget {
         ],
         if (resources.isNotEmpty) ...[
           const SizedBox(height: 14),
-          ToolkitSection(title: 'Free resources', subtitle: resourcesIntro),
+          ToolkitSection(
+            title: l10n.toolkitFreeResources,
+            subtitle: resourcesIntro ?? l10n.toolkitResourcesIntro,
+          ),
           for (final r in resources)
             ToolkitCard(
               title: r.title,

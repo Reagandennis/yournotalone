@@ -8,6 +8,8 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
+
 /// Signs in with Apple and trades the resulting identity token for a
 /// Supabase session. iOS only: Android would need Apple's web flow (a
 /// Services ID and a client secret that expires every six months), and
@@ -48,16 +50,12 @@ abstract final class AppleAuth {
       if (e.code == AuthorizationErrorCode.canceled) return false;
       throw AuthException(_messageFor(e));
     } on SignInWithAppleNotSupportedException {
-      throw const AuthException(
-        'Sign in with Apple isn\'t available on this device.',
-      );
+      throw AuthException(currentL10n().authAppleUnavailable);
     }
 
     final idToken = credential.identityToken;
     if (idToken == null) {
-      throw const AuthException(
-        'Apple didn\'t return a sign-in token. Please try again.',
-      );
+      throw AuthException(currentL10n().authAppleNoToken);
     }
 
     final auth = Supabase.instance.client.auth;
@@ -137,12 +135,10 @@ abstract final class AppleAuth {
   /// entitlement — the native message rides along in brackets so a tester
   /// can tell which.
   static String _messageFor(SignInWithAppleAuthorizationException e) {
+    final l10n = currentL10n();
     final message = switch (e.code) {
-      AuthorizationErrorCode.unknown =>
-        'Couldn\'t sign in with Apple. Check that this device is signed in '
-            'to an Apple Account in Settings, then try again.',
-      _ => 'Couldn\'t sign in with Apple. Please try again, or use your '
-          'email instead.',
+      AuthorizationErrorCode.unknown => l10n.authAppleNoAccount,
+      _ => l10n.authAppleFailed,
     };
     var detail = e.message.trim();
     if (detail.isEmpty) return message;

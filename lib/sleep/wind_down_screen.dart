@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../reminders/reminders_screen.dart';
 import '../toolkit/toolkit_ui.dart';
 import 'sleep_content.dart';
@@ -82,7 +83,7 @@ class _WindDownScreenState extends State<WindDownScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _plan!.bedtime,
-      helpText: 'Lights out at',
+      helpText: context.l10n.windDownPickerTitle,
     );
     if (picked == null || !mounted) return;
     setState(() => _plan!.bedtime = picked);
@@ -99,35 +100,31 @@ class _WindDownScreenState extends State<WindDownScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('That\'s the whole wind-down. Sleep well.'),
-          ),
+          SnackBar(content: Text(context.l10n.windDownAllDone)),
         );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final plan = _plan;
     if (plan == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: sleepAccent,
-        title: 'Wind-down plan',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.windDownTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final c = context.brand;
     final bed = plan.bedtime.format(context);
     return ToolkitScaffold(
       accent: sleepAccent,
-      title: 'Wind-down plan',
+      title: l10n.windDownTitle,
       children: [
-        const ToolkitSection(
-          title: 'The last hour decides the night',
-          subtitle:
-              'Bodies don\'t switch off; they dim. The same five steps '
-              'in the same order, every evening, become the cue your brain '
-              'waits for. Tick them off as you go.',
+        ToolkitSection(
+          title: l10n.windDownIntroTitle,
+          subtitle: l10n.windDownIntroHint,
         ),
         ToolkitNote(
           tint: c.tint(sleepAccent, 0.08),
@@ -140,7 +137,7 @@ class _WindDownScreenState extends State<WindDownScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Lights out at $bed',
+                      l10n.windDownLightsOutAt(bed),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -148,7 +145,7 @@ class _WindDownScreenState extends State<WindDownScreen> {
                       ),
                     ),
                     Text(
-                      'Same time most nights, and a wake time that never moves.',
+                      l10n.windDownLightsOutHint,
                       style: TextStyle(
                         fontSize: 12.5,
                         color: c.textMuted,
@@ -158,7 +155,10 @@ class _WindDownScreenState extends State<WindDownScreen> {
                   ],
                 ),
               ),
-              TextButton(onPressed: _pickBedtime, child: const Text('Change')),
+              TextButton(
+                onPressed: _pickBedtime,
+                child: Text(l10n.commonChange),
+              ),
             ],
           ),
         ),
@@ -181,8 +181,7 @@ class _WindDownScreenState extends State<WindDownScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  'Want a nudge when it\'s time to start? The Wind-down '
-                  'reminder is in Reminders.',
+                  l10n.windDownReminderNote,
                   style: TextStyle(
                     fontSize: 13,
                     color: c.ink,
@@ -194,7 +193,7 @@ class _WindDownScreenState extends State<WindDownScreen> {
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const RemindersScreen()),
                 ),
-                child: const Text('Set it'),
+                child: Text(l10n.windDownReminderButton),
               ),
             ],
           ),
@@ -255,7 +254,7 @@ class _StepTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '$time · ${step.minutesBefore} min before',
+                        context.l10n.windDownStepTime(time, step.minutesBefore),
                         style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,

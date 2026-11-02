@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:intl/date_symbol_data_local.dart';
+
 import 'package:yournotalone/content/catalog_snapshot.dart';
 import 'package:yournotalone/content/content_catalog.dart';
 
@@ -9,6 +11,8 @@ import 'package:yournotalone/content/content_catalog.dart';
 /// the catalogue read from the bundled snapshot instead of the Dart
 /// catalogues, the way the app runs with the same flag.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
+  // As in main(): date names for every language, delegate or not.
+  await initializeDateFormatting();
   if (catalogSnapshotEnabled) {
     ContentCatalog.instance.use(
       CatalogSnapshot.fromJson(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'home_ui.dart';
 import 'mood_repository.dart';
 import 'mood_face.dart';
@@ -68,14 +70,13 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
     final days = DateTime(now.year, now.month, now.day)
         .difference(DateTime(d.year, d.month, d.day))
         .inDays;
-    if (days == 0) return 'Today';
-    if (days == 1) return 'Yesterday';
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final year = d.year == now.year ? '' : ' ${d.year}';
-    return '${d.day} ${months[d.month - 1]}$year';
+    final l10n = context.l10n;
+    if (days == 0) return l10n.moodHistoryToday;
+    if (days == 1) return l10n.moodHistoryYesterday;
+    final pattern = d.year == now.year
+        ? l10n.moodHistoryDatePattern
+        : l10n.moodHistoryDatePatternWithYear;
+    return DateFormat(pattern, l10n.localeName).format(d);
   }
 
   /// One column per day for the last month: taller and warmer as the day
@@ -176,7 +177,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
               ),
             ),
             Text(
-              level.label,
+              level.name(context.l10n),
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -191,16 +192,17 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
 
   Widget _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Couldn\'t load your check-ins.',
+            l10n.moodHistoryLoadError,
             style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
-          OutlinedButton(onPressed: _load, child: const Text('Try again')),
+          OutlinedButton(onPressed: _load, child: Text(l10n.commonTryAgain)),
         ],
       );
     }
@@ -213,8 +215,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
     }
     if (entries.isEmpty) {
       return Text(
-        'No check-ins yet. Tap a face on the home screen and this fills '
-        'in — one day at a time.',
+        l10n.moodHistoryEmpty,
         style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
@@ -237,7 +238,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader(title: 'Last 30 days'),
+        SectionHeader(title: l10n.moodHistoryLast30Days),
         const SizedBox(height: 12),
         _strip(byDate),
         const SizedBox(height: 6),
@@ -250,7 +251,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
               style: TextStyle(fontSize: 11, color: c.textMuted),
             ),
             Text(
-              'Today',
+              l10n.moodHistoryToday,
               style: TextStyle(fontSize: 11, color: c.textMuted),
             ),
           ],
@@ -264,15 +265,18 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
           ),
           child: Row(
             children: [
-              _stat('${entries.length}', 'check-ins'),
-              _stat('${_streak(byDate)}', 'day streak'),
-              _stat(average.toStringAsFixed(1), 'average'),
-              _stat(moodLevels[common].label, 'most days'),
+              _stat('${entries.length}', l10n.moodHistoryStatCheckIns),
+              _stat('${_streak(byDate)}', l10n.moodHistoryStatStreak),
+              _stat(average.toStringAsFixed(1), l10n.moodHistoryStatAverage),
+              _stat(
+                moodLevels[common].name(l10n),
+                l10n.moodHistoryStatMostDays,
+              ),
             ],
           ),
         ),
         const SizedBox(height: 24),
-        const SectionHeader(title: 'Every check-in'),
+        SectionHeader(title: l10n.moodHistoryEveryCheckIn),
         const SizedBox(height: 12),
         for (final entry in entries) _entryRow(entry),
       ],
@@ -296,7 +300,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Mood history',
+                  context.l10n.moodHistoryTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -308,8 +312,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'Hard weeks feel permanent while you\'re in them. This is '
-                  'the record that says otherwise.',
+                  context.l10n.moodHistoryIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,

@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
+import '../l10n/l10n.dart';
 import '../reminders/reminders_service.dart';
 import '../supabase_config.dart';
 import '../therapy/session_format.dart';
@@ -29,20 +30,23 @@ const _userPref = 'session_notifications_user';
 const _afterPref = 'session_notifications_after';
 const _scheduledPref = 'session_notifications_scheduled';
 
-const _details = NotificationDetails(
-  android: AndroidNotificationDetails(
-    'therapy_sessions',
-    'Therapy sessions',
-    channelDescription: 'Bookings, changes and reminders for your sessions',
-    importance: Importance.high,
-    priority: Priority.high,
-    // Marked sensitive, so a phone set to hide sensitive content on the
-    // lock screen shows "Contents hidden" instead of the words below.
-    visibility: NotificationVisibility.private,
-  ),
-  iOS: DarwinNotificationDetails(),
-  macOS: DarwinNotificationDetails(),
-);
+NotificationDetails _details() {
+  final l10n = currentL10n();
+  return NotificationDetails(
+    android: AndroidNotificationDetails(
+      'therapy_sessions',
+      l10n.notificationSessionsChannel,
+      channelDescription: l10n.notificationSessionsChannelDescription,
+      importance: Importance.high,
+      priority: Priority.high,
+      // Marked sensitive, so a phone set to hide sensitive content on the
+      // lock screen shows "Contents hidden" instead of the words below.
+      visibility: NotificationVisibility.private,
+    ),
+    iOS: const DarwinNotificationDetails(),
+    macOS: const DarwinNotificationDetails(),
+  );
+}
 
 /// A session's start as a comparable key: the same instant always gives the
 /// same string, however the server formatted it.
@@ -77,17 +81,18 @@ int sessionNotificationId(String sessionId) =>
   Map<String, dynamic> data,
   DateTime now,
 ) {
+  final l10n = currentL10n();
   final client = data['role'] != 'therapist';
   final name = (data['counterpart'] as String?)?.trim() ?? '';
   final who = name.isNotEmpty
       ? name
       : client
-          ? 'your therapist'
-          : 'your client';
+          ? l10n.notificationYourTherapist
+          : l10n.notificationYourClient;
   final at = data['scheduled_at'] == null
       ? null
       : DateTime.parse(data['scheduled_at'] as String).toLocal();
-  final when = at == null ? 'the booked time' : formatDateTime(at);
+  final when = at == null ? l10n.notificationBookedTime : formatDateTime(at);
   final minutes = (data['duration_minutes'] as num?)?.toInt() ?? 50;
   final unpaid = data['payment_status'] == 'unpaid';
   final price = formatPrice((data['price_cents'] as num?)?.toInt() ?? 0);
@@ -95,65 +100,64 @@ int sessionNotificationId(String sessionId) =>
   switch (kind) {
     case 'session_booked':
       if (client) {
-        final next = unpaid
-            ? 'Pay $price in the app to confirm your place.'
-            : 'You\'re all set.';
         return (
-          title: 'You\'re matched with $who',
-          body: '$when · $minutes min. $next',
+          title: l10n.notificationMatchedTitle(who),
+          body: unpaid
+              ? l10n.notificationMatchedBodyUnpaid(when, minutes, price)
+              : l10n.notificationMatchedBodyPaid(when, minutes),
         );
       }
       return (
-        title: 'New session with $who',
-        body: '$when · $minutes min.'
-            '${unpaid ? ' Waiting for the client to pay.' : ''}',
+        title: l10n.notificationNewSessionTitle(who),
+        body: unpaid
+            ? l10n.notificationNewSessionBodyUnpaid(when, minutes)
+            : l10n.notificationNewSessionBody(when, minutes),
       );
     case 'session_changed':
       return client
           ? (
-              title: 'Your session has changed',
-              body: 'Now $when with $who · $minutes min.',
+              title: l10n.notificationChangedTitle,
+              body: l10n.notificationChangedBody(when, who, minutes),
             )
           : (
-              title: 'Session updated',
-              body: 'With $who, now $when · $minutes min.',
+              title: l10n.notificationUpdatedTitle,
+              body: l10n.notificationUpdatedBody(who, when, minutes),
             );
     case 'session_cancelled':
       return (
-        title: 'Session cancelled',
-        body: 'Your session with $who on $when has been cancelled.',
+        title: l10n.notificationCancelledTitle,
+        body: l10n.notificationCancelledBody(who, when),
       );
     case 'session_missed':
       // Only the client is told; the therapist was there.
       return (
-        title: 'You missed your session',
-        body: '$who was in the call on $when but you didn\'t join, so this '
-            'session isn\'t refunded. You can book again in the app.',
+        title: l10n.notificationMissedTitle,
+        body: l10n.notificationMissedBody(who, when),
       );
     case 'session_reminder':
       final left =
           at == null ? 10 : max(0, (at.difference(now).inSeconds / 60).ceil());
-      final starts = left == 0
-          ? 'is starting now'
-          : left == 1
-              ? 'starts in 1 minute'
-              : 'starts in $left minutes';
-      final time = at == null ? '' : ' at ${formatTime(at)}';
+      final hasTime = at == null ? 'no' : 'yes';
+      final time = at == null ? '' : formatTime(at);
       return client
           ? (
-              title: 'Your session $starts',
+              title: l10n.notificationReminderClientTitle(left),
               body: unpaid
-                  ? 'With $who$time — pay in the app to join.'
-                  : 'With $who$time. Open the app to join.',
+                  ? l10n.notificationReminderClientBodyUnpaid(
+                      hasTime, who, time)
+                  : l10n.notificationReminderClientBody(hasTime, who, time),
             )
           : (
-              title: 'Session with $who $starts',
+              title: l10n.notificationReminderTherapistTitle(left, who),
               body: unpaid
-                  ? 'Starts$time. The client hasn\'t paid yet.'
-                  : 'Starts$time. Open My sessions to join.',
+                  ? l10n.notificationReminderTherapistBodyUnpaid(hasTime, time)
+                  : l10n.notificationReminderTherapistBody(hasTime, time),
             );
   }
-  return (title: 'Therapy session update', body: 'Open the app for details.');
+  return (
+    title: l10n.notificationGenericTitle,
+    body: l10n.notificationGenericBody,
+  );
 }
 
 /// News that arrives too late to be useful stays quiet: a reminder once the
@@ -408,7 +412,7 @@ class SessionNotifications {
       await _plugin.zonedSchedule(
         id: reminderNotificationId(session['request_id'] as String),
         scheduledDate: tz.TZDateTime.from(remindAt, tz.local),
-        notificationDetails: _details,
+        notificationDetails: _details(),
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         title: text.title,
         body: text.body,
@@ -439,7 +443,7 @@ class SessionNotifications {
             : sessionNotificationId(sessionId),
         title: text.title,
         body: text.body,
-        notificationDetails: _details,
+        notificationDetails: _details(),
         payload: data['role'] as String?,
       );
     }
@@ -478,6 +482,9 @@ void sessionNotificationsCallback() {
   Workmanager().executeTask((task, inputData) async {
     DartPluginRegistrant.ensureInitialized();
     try {
+      // A fresh isolate: the notifications are written in the language
+      // picked in Settings, if any.
+      await LocaleSetting.instance.load();
       final active = await SessionNotifications.instance.sync();
       if (!active) await Workmanager().cancelByUniqueName(sessionCheckTask);
     } catch (e) {
