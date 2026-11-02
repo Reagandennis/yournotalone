@@ -3254,4 +3254,463 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get stressCheckinSectionBody =>
       'Go with your first answer. Once a week, same day, gives you a line you can actually read.';
+
+  @override
+  String get awakeTitle => 'Awake at 3am?';
+
+  @override
+  String get awakeStep1Title => 'Awake, and it\'s not passing?';
+
+  @override
+  String get awakeStep1Hint =>
+      'Don\'t check the time — it only gives you sums to do. If it feels like you\'ve been lying here twenty minutes or more, that\'s long enough.';
+
+  @override
+  String get awakeStep1Note =>
+      'Lying in bed awake and frustrated teaches your brain that the bed is a place to be awake and frustrated. Getting up breaks that link. It feels backwards; it\'s the most reliable trick sleep clinics have.';
+
+  @override
+  String get awakeStep2Title => 'Get up. Low light, something dull.';
+
+  @override
+  String get awakeStep2Hint =>
+      'Another room if you can. No bright screens, no news, no work. Boring is the goal — you\'re waiting for sleepiness to come back, not entertaining yourself.';
+
+  @override
+  String get awakeTimerHint =>
+      'Sleepy before this runs out? Go back to bed now — sleepiness wins over the timer.';
+
+  @override
+  String get awakeOptionBoxBreathing => 'Box breathing';
+
+  @override
+  String get awakeOptionBoxBreathingDetail =>
+      'Four counts each way, in the dark.';
+
+  @override
+  String get awakeOptionSound => 'A quiet sound';
+
+  @override
+  String get awakeOptionSoundDetail => 'Rain or crickets, low, on a timer.';
+
+  @override
+  String get awakeOptionDeepRest => 'Deep rest';
+
+  @override
+  String get awakeOptionDeepRestDetail =>
+      'A long guided lie-down for when sleep won\'t come.';
+
+  @override
+  String get awakeOptionBook => 'A dull book';
+
+  @override
+  String get awakeOptionBookDetail =>
+      'Something you\'ve read before. Paper, if you have it.';
+
+  @override
+  String get awakeStep3Title =>
+      'Back to bed when sleepy — not when the clock says';
+
+  @override
+  String get awakeStep3Hint =>
+      'Heavy eyes, slow thoughts, a yawn. That\'s the signal. If it doesn\'t come, stay up a little longer; if you go back and it doesn\'t take, do the whole thing again.';
+
+  @override
+  String get awakeStep3Note =>
+      'Tomorrow: get up at your usual time however the night went. The sleep pressure you build will make tonight easier. One rough night is survivable; a drifting wake time isn\'t.';
+
+  @override
+  String get awakeConfirmButton => 'Yes — I\'ve been awake a while';
+
+  @override
+  String get awakeStartBreakButton => 'Start a 15-minute break';
+
+  @override
+  String get awakeSleepyButton => 'I\'m sleepy — back to bed';
+
+  @override
+  String get awakeGoodnightButton => 'Goodnight';
+
+  @override
+  String get sleepDiaryTitle => 'Sleep diary';
+
+  @override
+  String get sleepDiaryVerdictEmpty => 'Log a night to get started.';
+
+  @override
+  String sleepDiaryVerdictEarly(int pct) {
+    return 'Sleep efficiency $pct% so far. Five nights in, this starts to mean something — keep going.';
+  }
+
+  @override
+  String sleepDiaryVerdictGood(int pct) {
+    return 'Sleep efficiency $pct%: your bed is doing its job. If you\'re still tired, the lever is probably total time — try lights out 15 minutes earlier, same wake time.';
+  }
+
+  @override
+  String sleepDiaryVerdictLow(int pct) {
+    return 'Sleep efficiency $pct%. Under 85% means a lot of your time in bed is spent awake, which teaches the bed the wrong lesson. Tighten the window: later to bed, same wake time, until it\'s above 85%, then add 15 minutes a week.';
+  }
+
+  @override
+  String sleepDiaryHoursMinutes(int hours, String minutes) {
+    return '${hours}h ${minutes}m';
+  }
+
+  @override
+  String get sleepDiaryQualityAwful => 'Awful';
+
+  @override
+  String get sleepDiaryQualityPoor => 'Poor';
+
+  @override
+  String get sleepDiaryQualityOkay => 'Okay';
+
+  @override
+  String get sleepDiaryQualityGood => 'Good';
+
+  @override
+  String get sleepDiaryQualityGreat => 'Great';
+
+  @override
+  String get sleepDiaryLightsOut => 'Lights out';
+
+  @override
+  String get sleepDiaryWoke => 'Woke for the day';
+
+  @override
+  String sleepDiaryLogged(String duration, int pct) {
+    return 'Logged: $duration asleep, $pct% efficient.';
+  }
+
+  @override
+  String sleepDiarySliderLabel(String label, int minutes) {
+    return '$label · $minutes min';
+  }
+
+  @override
+  String get sleepDiaryLastNight => 'Last night';
+
+  @override
+  String get sleepDiaryLastNightHint =>
+      'Best guesses are fine — don\'t clock-watch to get this right. Rough and every day beats exact and occasional.';
+
+  @override
+  String get sleepDiaryTimeToFallAsleep => 'Time to fall asleep';
+
+  @override
+  String get sleepDiaryAwakeInNight => 'Awake during the night';
+
+  @override
+  String get sleepDiaryHowDidYouFeel => 'How did you feel on waking?';
+
+  @override
+  String get sleepDiaryYourNights => 'Your nights';
+
+  @override
+  String get sleepDiaryYourNightsHint =>
+      'Sleep efficiency is the share of your time in bed you actually spend asleep. Clinics aim for 85% and above.';
+
+  @override
+  String get sleepDiaryStatEfficiency => 'Efficiency';
+
+  @override
+  String get sleepDiaryStatAsleep => 'Asleep';
+
+  @override
+  String get sleepDiaryStatNights => 'Nights';
+
+  @override
+  String sleepDiaryNightsOfSeven(int count) {
+    return '$count of 7';
+  }
+
+  @override
+  String sleepDiarySuggestedWindow(String bed, String wake) {
+    return 'Suggested window: in bed $bed to $wake.';
+  }
+
+  @override
+  String get sleepDiaryEmpty =>
+      'No nights yet. Log this morning\'s and the picture starts to form within a week.';
+
+  @override
+  String sleepDiaryNightSummary(String bed, String wake, String duration) {
+    return '$bed → $wake · $duration asleep';
+  }
+
+  @override
+  String sleepDiaryNightDetail(
+    String date,
+    int latency,
+    int awake,
+    String quality,
+  ) {
+    return '$date · $latency min to drop off, $awake min awake · $quality';
+  }
+
+  @override
+  String get sleepDiarySaveNight => 'Save night';
+
+  @override
+  String get sleepDiaryEditToday => 'Edit this morning\'s entry';
+
+  @override
+  String get sleepDiaryLogLastNight => 'Log last night';
+
+  @override
+  String get sleepHabitsTitle => 'Sleep habits check';
+
+  @override
+  String get sleepHabitsYes => 'Yes';
+
+  @override
+  String get sleepHabitsNo => 'No';
+
+  @override
+  String get sleepHabitsVerdictNone =>
+      'Nothing here is working against you. If sleep is still hard, the diary and the 20-minute rule are the next places to look.';
+
+  @override
+  String get sleepHabitsVerdictFew =>
+      'One or two habits to change — small, and they tend to pay back within a week or two.';
+
+  @override
+  String get sleepHabitsVerdictSome =>
+      'A few things are stacking up against your nights. Pick the easiest one first; momentum matters more than order.';
+
+  @override
+  String get sleepHabitsVerdictMany =>
+      'Quite a lot is working against you, which is actually good news: there\'s a lot of room to improve without anything drastic. Start with the wake time.';
+
+  @override
+  String get sleepHabitsAllClear => 'All clear';
+
+  @override
+  String sleepHabitsToWorkOn(int count) {
+    return '$count of 10 to work on';
+  }
+
+  @override
+  String get sleepHabitsAnswerAgain => 'Answer again';
+
+  @override
+  String get sleepHabitsSeeResults => 'See what to change';
+
+  @override
+  String sleepHabitsAnswered(int answered, int total) {
+    return '$answered of $total answered';
+  }
+
+  @override
+  String get sleepHabitsIntroTitle => 'Honest answers, please';
+
+  @override
+  String get sleepHabitsIntroHint =>
+      'Most of these are ordinary — everyone has a few. Each yes comes with a specific, small change.';
+
+  @override
+  String get sleepHubTitle => 'Sleep better';
+
+  @override
+  String get sleepHubHeadline => 'Sleep is built in the daytime';
+
+  @override
+  String get sleepHubIntro =>
+      'Most sleep problems aren\'t fixed in bed. They\'re fixed by a steady wake time, an evening that winds down on purpose, and not fighting the nights that go wrong. These are the tools sleep clinics use — cognitive behavioural therapy for insomnia — in a form you can start tonight.';
+
+  @override
+  String get sleepHubSoundsTitle => 'Sounds to fall asleep to';
+
+  @override
+  String get sleepHubSoundsDetail =>
+      'Rainfall, crickets, pink noise and more — loops that keep going after you\'ve stopped listening.';
+
+  @override
+  String get sleepHubFootnote =>
+      'Snoring with pauses in breathing, falling asleep in the day, or insomnia that\'s lasted months deserve a doctor\'s look. These tools sit alongside that, not instead of it.';
+
+  @override
+  String get tomorrowListTitle => 'Put the day down';
+
+  @override
+  String tomorrowListSummary(String top, String letGo, String good) {
+    return 'Tomorrow:\n$top\n\nLetting go tonight: $letGo\nOne good thing today: $good';
+  }
+
+  @override
+  String get tomorrowListSaved => 'Written down. It\'ll keep till morning.';
+
+  @override
+  String get tomorrowListSaveToJournal => 'Save to journal';
+
+  @override
+  String get tomorrowListDoneForTonight => 'Done for tonight';
+
+  @override
+  String get tomorrowListIntroTitle => 'Out of your head, onto the page';
+
+  @override
+  String get tomorrowListIntroHint =>
+      'The 2am mind is a to-do list with nowhere to go. Give it somewhere. Three things for tomorrow — not ten — one thing you\'re choosing not to carry tonight, and one thing that was good today, however small.';
+
+  @override
+  String get tomorrowListTopThree => 'Tomorrow\'s three';
+
+  @override
+  String tomorrowListThing(int number) {
+    return 'Thing $number';
+  }
+
+  @override
+  String get tomorrowListLetGo => 'Tonight I\'m letting go of';
+
+  @override
+  String get tomorrowListLetGoHint => 'A worry that can wait until daylight';
+
+  @override
+  String get tomorrowListGood => 'One good thing today';
+
+  @override
+  String get tomorrowListGoodHint => 'Small counts';
+
+  @override
+  String get windDownTitle => 'Wind-down plan';
+
+  @override
+  String get windDownPickerTitle => 'Lights out at';
+
+  @override
+  String get windDownAllDone => 'That\'s the whole wind-down. Sleep well.';
+
+  @override
+  String get windDownIntroTitle => 'The last hour decides the night';
+
+  @override
+  String get windDownIntroHint =>
+      'Bodies don\'t switch off; they dim. The same five steps in the same order, every evening, become the cue your brain waits for. Tick them off as you go.';
+
+  @override
+  String windDownLightsOutAt(String time) {
+    return 'Lights out at $time';
+  }
+
+  @override
+  String get windDownLightsOutHint =>
+      'Same time most nights, and a wake time that never moves.';
+
+  @override
+  String get windDownReminderNote =>
+      'Want a nudge when it\'s time to start? The Wind-down reminder is in Reminders.';
+
+  @override
+  String get windDownReminderButton => 'Set it';
+
+  @override
+  String windDownStepTime(String time, int minutes) {
+    return '$time · $minutes min before';
+  }
+
+  @override
+  String get journalEditorSaveFailed =>
+      'Couldn\'t save your entry — check your connection.';
+
+  @override
+  String get journalEditorDeleteFailed =>
+      'Couldn\'t delete the entry — check your connection.';
+
+  @override
+  String get journalEditorDeleteTitle => 'Delete this entry?';
+
+  @override
+  String get journalEditorDeleteBody => 'This can\'t be undone.';
+
+  @override
+  String get journalEditorDeleteTooltip => 'Delete entry';
+
+  @override
+  String get journalEditorTitleHint => 'Title (optional)';
+
+  @override
+  String get journalEditorBodyHint =>
+      'Whatever\'s on your mind — this space is yours alone.';
+
+  @override
+  String get journalEditorSave => 'Save entry';
+
+  @override
+  String get journalHubTitle => 'Journal & mood';
+
+  @override
+  String get journalHubIntro =>
+      'Put the day into words — start from a blank page or let a prompt do the opening line.';
+
+  @override
+  String get journalHubWriteSection => 'Write';
+
+  @override
+  String get journalHubMyJournal => 'My journal';
+
+  @override
+  String get journalHubMyJournalDetail =>
+      'Every entry you\'ve written, newest first.';
+
+  @override
+  String get journalHubFreeWrite => 'Free write';
+
+  @override
+  String get journalHubFreeWriteDetail => 'A blank page, no prompt, no rules.';
+
+  @override
+  String get journalHubMoodSection => 'Mood';
+
+  @override
+  String get journalHubMoodHistory => 'Mood history';
+
+  @override
+  String get journalHubMoodHistoryDetail =>
+      'Every check-in, and how the weeks actually went.';
+
+  @override
+  String get journalHubPromptPremiumTitle => 'This prompt is part of Premium';
+
+  @override
+  String journalHubPromptPremiumMessage(int count, String offer) {
+    return 'Free includes a prompt to try. Premium unlocks all $count — and $offer.';
+  }
+
+  @override
+  String get journalHubMoodPremiumTitle => 'Mood history is part of Premium';
+
+  @override
+  String journalHubMoodPremiumMessage(String offer) {
+    return 'Checking in is always free. Premium keeps the record and shows you the pattern — and $offer.';
+  }
+
+  @override
+  String get journalTitle => 'Journal';
+
+  @override
+  String get journalToday => 'Today';
+
+  @override
+  String get journalYesterday => 'Yesterday';
+
+  @override
+  String get journalUntitled => 'Untitled';
+
+  @override
+  String get journalLoadFailed => 'Couldn\'t load your journal.';
+
+  @override
+  String get journalEmpty =>
+      'Your space is ready.\nWrite your first entry whenever you like.';
+
+  @override
+  String get journalIntro => 'A private place for whatever\'s on your mind.';
+
+  @override
+  String journalIntroFree(int count, int limit) {
+    return 'A private place for whatever\'s on your mind · $count/$limit free entries used.';
+  }
 }

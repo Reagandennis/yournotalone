@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../sounds/sounds_screen.dart';
 import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_hub.dart';
@@ -19,16 +20,12 @@ class SleepScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return ToolkitHub(
-      title: 'Sleep better',
+      title: l10n.sleepHubTitle,
       accent: sleepAccent,
-      headline: 'Sleep is built in the daytime',
-      intro:
-          'Most sleep problems aren\'t fixed in bed. They\'re fixed by a '
-          'steady wake time, an evening that winds down on purpose, and '
-          'not fighting the nights that go wrong. These are the tools sleep '
-          'clinics use — cognitive behavioural therapy for insomnia — in a '
-          'form you can start tonight.',
+      headline: l10n.sleepHubHeadline,
+      intro: l10n.sleepHubIntro,
       tools: sleepTools,
       lessons: sleepLessons,
       resources: sleepResources,
@@ -38,18 +35,13 @@ class SleepScreen extends StatelessWidget {
         icon: Icons.graphic_eq_rounded,
         iconColor: c.yellow,
         tint: c.tint(Pillars.yellow, 0.08),
-        title: 'Sounds to fall asleep to',
-        detail:
-            'Rainfall, crickets, pink noise and more — loops that keep '
-            'going after you\'ve stopped listening.',
+        title: l10n.sleepHubSoundsTitle,
+        detail: l10n.sleepHubSoundsDetail,
         onTap: () => Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (_) => const SoundsScreen())),
       ),
-      footnote:
-          'Snoring with pauses in breathing, falling asleep in the '
-          'day, or insomnia that\'s lasted months deserve a doctor\'s look. '
-          'These tools sit alongside that, not instead of it.',
+      footnote: l10n.sleepHubFootnote,
     );
   }
 }

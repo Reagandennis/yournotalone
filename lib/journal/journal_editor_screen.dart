@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'journal_repository.dart';
 
 /// Write or edit a single journal entry. Pops with `true` when the list
@@ -70,7 +71,9 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save your entry — check your connection.')),
+            content: Text(
+              errorMessage(e, context.l10n.journalEditorSaveFailed),
+            ),
           ),
         );
       }
@@ -81,17 +84,17 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete this entry?'),
-        content: const Text('This can\'t be undone.'),
+        title: Text(context.l10n.journalEditorDeleteTitle),
+        content: Text(context.l10n.journalEditorDeleteBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: context.brand.red),
-            child: const Text('Delete'),
+            child: Text(context.l10n.commonDelete),
           ),
         ],
       ),
@@ -104,7 +107,9 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t delete the entry — check your connection.')),
+            content: Text(
+              errorMessage(e, context.l10n.journalEditorDeleteFailed),
+            ),
           ),
         );
       }
@@ -114,6 +119,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final canSave = _content.text.trim().isNotEmpty;
     return Scaffold(
       body: SafeArea(
@@ -131,7 +137,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                       const Spacer(),
                       if (widget.entry != null)
                         IconButton(
-                          tooltip: 'Delete entry',
+                          tooltip: l10n.journalEditorDeleteTooltip,
                           onPressed: _saving ? null : _confirmDelete,
                           icon: Icon(
                             Icons.delete_outline_rounded,
@@ -156,7 +162,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
-                      hintText: 'Title (optional)',
+                      hintText: l10n.journalEditorTitleHint,
                       hintStyle: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -187,8 +193,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
-                        hintText: 'Whatever\'s on your mind — this space is '
-                            'yours alone.',
+                        hintText: l10n.journalEditorBodyHint,
                         hintStyle: TextStyle(
                           fontSize: 15,
                           color: c.textMuted,
@@ -200,7 +205,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
                   Padding(
                     padding: const EdgeInsets.only(top: 10, bottom: 24),
                     child: AuthSubmitButton(
-                      label: 'Save entry',
+                      label: l10n.journalEditorSave,
                       loading: _saving,
                       onPressed: canSave ? _save : null,
                     ),

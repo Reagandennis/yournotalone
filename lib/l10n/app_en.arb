@@ -4449,5 +4449,691 @@
   "stressCheckinSectionBody": "Go with your first answer. Once a week, same day, gives you a line you can actually read.",
   "@stressCheckinSectionBody": {
     "description": "Instruction at the top of the stress check-in."
+  },
+  "awakeTitle": "Awake at 3am?",
+  "@awakeTitle": {
+    "description": "Screen title. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night). Short."
+  },
+  "awakeStep1Title": "Awake, and it's not passing?",
+  "@awakeStep1Title": {
+    "description": "Step 1 heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStep1Hint": "Don't check the time — it only gives you sums to do. If it feels like you've been lying here twenty minutes or more, that's long enough.",
+  "@awakeStep1Hint": {
+    "description": "Step 1 hint under the heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night). Gentle, sleepy tone."
+  },
+  "awakeStep1Note": "Lying in bed awake and frustrated teaches your brain that the bed is a place to be awake and frustrated. Getting up breaks that link. It feels backwards; it's the most reliable trick sleep clinics have.",
+  "@awakeStep1Note": {
+    "description": "Step 1 explanatory note. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStep2Title": "Get up. Low light, something dull.",
+  "@awakeStep2Title": {
+    "description": "Step 2 heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStep2Hint": "Another room if you can. No bright screens, no news, no work. Boring is the goal — you're waiting for sleepiness to come back, not entertaining yourself.",
+  "@awakeStep2Hint": {
+    "description": "Step 2 hint. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeTimerHint": "Sleepy before this runs out? Go back to bed now — sleepiness wins over the timer.",
+  "@awakeTimerHint": {
+    "description": "Next to the break countdown timer. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionBoxBreathing": "Box breathing",
+  "@awakeOptionBoxBreathing": {
+    "description": "Option card title: a breathing exercise (4 counts in, hold, out, hold). Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionBoxBreathingDetail": "Four counts each way, in the dark.",
+  "@awakeOptionBoxBreathingDetail": {
+    "description": "Option card detail for box breathing. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionSound": "A quiet sound",
+  "@awakeOptionSound": {
+    "description": "Option card title: play a calming sound. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionSoundDetail": "Rain or crickets, low, on a timer.",
+  "@awakeOptionSoundDetail": {
+    "description": "Option card detail for the sound option. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionDeepRest": "Deep rest",
+  "@awakeOptionDeepRest": {
+    "description": "Option card title: a long guided meditation called \"Deep rest\". Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionDeepRestDetail": "A long guided lie-down for when sleep won't come.",
+  "@awakeOptionDeepRestDetail": {
+    "description": "Option card detail for Deep rest. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionBook": "A dull book",
+  "@awakeOptionBook": {
+    "description": "Option card title: read something boring. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeOptionBookDetail": "Something you've read before. Paper, if you have it.",
+  "@awakeOptionBookDetail": {
+    "description": "Option card detail for the book option. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStep3Title": "Back to bed when sleepy — not when the clock says",
+  "@awakeStep3Title": {
+    "description": "Step 3 heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStep3Hint": "Heavy eyes, slow thoughts, a yawn. That's the signal. If it doesn't come, stay up a little longer; if you go back and it doesn't take, do the whole thing again.",
+  "@awakeStep3Hint": {
+    "description": "Step 3 hint. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStep3Note": "Tomorrow: get up at your usual time however the night went. The sleep pressure you build will make tonight easier. One rough night is survivable; a drifting wake time isn't.",
+  "@awakeStep3Note": {
+    "description": "Step 3 note about the next morning. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeConfirmButton": "Yes — I've been awake a while",
+  "@awakeConfirmButton": {
+    "description": "Button on step 1: confirms they have been awake long enough to get up. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeStartBreakButton": "Start a 15-minute break",
+  "@awakeStartBreakButton": {
+    "description": "Button on step 2: starts a 15-minute out-of-bed timer. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeSleepyButton": "I'm sleepy — back to bed",
+  "@awakeSleepyButton": {
+    "description": "Button while the break timer runs: ends it early. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "awakeGoodnightButton": "Goodnight",
+  "@awakeGoodnightButton": {
+    "description": "Final button: closes the screen. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night)."
+  },
+  "sleepDiaryTitle": "Sleep diary",
+  "@sleepDiaryTitle": {
+    "description": "Screen title. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryVerdictEmpty": "Log a night to get started.",
+  "@sleepDiaryVerdictEmpty": {
+    "description": "Summary text when no nights are logged. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryVerdictEarly": "Sleep efficiency {pct}% so far. Five nights in, this starts to mean something — keep going.",
+  "@sleepDiaryVerdictEarly": {
+    "description": "Summary after 1–4 nights. pct = average sleep efficiency percentage. Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "pct": {
+        "type": "int",
+        "example": "82"
+      }
+    }
+  },
+  "sleepDiaryVerdictGood": "Sleep efficiency {pct}%: your bed is doing its job. If you're still tired, the lever is probably total time — try lights out 15 minutes earlier, same wake time.",
+  "@sleepDiaryVerdictGood": {
+    "description": "Summary when efficiency is 85% or more. Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "pct": {
+        "type": "int",
+        "example": "82"
+      }
+    }
+  },
+  "sleepDiaryVerdictLow": "Sleep efficiency {pct}%. Under 85% means a lot of your time in bed is spent awake, which teaches the bed the wrong lesson. Tighten the window: later to bed, same wake time, until it's above 85%, then add 15 minutes a week.",
+  "@sleepDiaryVerdictLow": {
+    "description": "Summary when efficiency is under 85% (sleep restriction advice). Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "pct": {
+        "type": "int",
+        "example": "82"
+      }
+    }
+  },
+  "sleepDiaryHoursMinutes": "{hours}h {minutes}m",
+  "@sleepDiaryHoursMinutes": {
+    "description": "A duration of sleep, e.g. \"7h 05m\". minutes is already zero-padded. Use the local short units. Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "7"
+      },
+      "minutes": {
+        "type": "String",
+        "example": "05"
+      }
+    }
+  },
+  "sleepDiaryQualityAwful": "Awful",
+  "@sleepDiaryQualityAwful": {
+    "description": "How they felt on waking, 1 of 5 (worst). Short chip label; also shown lower-cased in the night list. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryQualityPoor": "Poor",
+  "@sleepDiaryQualityPoor": {
+    "description": "How they felt on waking, 2 of 5. Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryQualityOkay": "Okay",
+  "@sleepDiaryQualityOkay": {
+    "description": "How they felt on waking, 3 of 5. Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryQualityGood": "Good",
+  "@sleepDiaryQualityGood": {
+    "description": "How they felt on waking, 4 of 5. Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryQualityGreat": "Great",
+  "@sleepDiaryQualityGreat": {
+    "description": "How they felt on waking, 5 of 5 (best). Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryLightsOut": "Lights out",
+  "@sleepDiaryLightsOut": {
+    "description": "Row label and time-picker title: the time they turned the lights off to sleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryWoke": "Woke for the day",
+  "@sleepDiaryWoke": {
+    "description": "Row label and time-picker title: the time they finally woke up for the day. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryLogged": "Logged: {duration} asleep, {pct}% efficient.",
+  "@sleepDiaryLogged": {
+    "description": "Snackbar after saving a night. duration is like \"7h 05m\". Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "7h 05m"
+      },
+      "pct": {
+        "type": "int",
+        "example": "88"
+      }
+    }
+  },
+  "sleepDiarySliderLabel": "{label} · {minutes} min",
+  "@sleepDiarySliderLabel": {
+    "description": "Slider label with its current value in minutes, e.g. \"Time to fall asleep · 15 min\". Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "label": {
+        "type": "String",
+        "example": "Time to fall asleep"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "15"
+      }
+    }
+  },
+  "sleepDiaryLastNight": "Last night",
+  "@sleepDiaryLastNight": {
+    "description": "Section title of the logging form. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryLastNightHint": "Best guesses are fine — don't clock-watch to get this right. Rough and every day beats exact and occasional.",
+  "@sleepDiaryLastNightHint": {
+    "description": "Hint under \"Last night\". Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryTimeToFallAsleep": "Time to fall asleep",
+  "@sleepDiaryTimeToFallAsleep": {
+    "description": "Slider label: minutes it took to fall asleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryAwakeInNight": "Awake during the night",
+  "@sleepDiaryAwakeInNight": {
+    "description": "Slider label: minutes awake in the night. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryHowDidYouFeel": "How did you feel on waking?",
+  "@sleepDiaryHowDidYouFeel": {
+    "description": "Question above the 5 quality chips. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryYourNights": "Your nights",
+  "@sleepDiaryYourNights": {
+    "description": "Section title of the overview. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryYourNightsHint": "Sleep efficiency is the share of your time in bed you actually spend asleep. Clinics aim for 85% and above.",
+  "@sleepDiaryYourNightsHint": {
+    "description": "Explains sleep efficiency. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryStatEfficiency": "Efficiency",
+  "@sleepDiaryStatEfficiency": {
+    "description": "Small stat label: average sleep efficiency. Sleep diary (sleep toolkit: log last night, see sleep efficiency). Short."
+  },
+  "sleepDiaryStatAsleep": "Asleep",
+  "@sleepDiaryStatAsleep": {
+    "description": "Small stat label: average time asleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency). Short."
+  },
+  "sleepDiaryStatNights": "Nights",
+  "@sleepDiaryStatNights": {
+    "description": "Small stat label: nights logged this week. Sleep diary (sleep toolkit: log last night, see sleep efficiency). Short."
+  },
+  "sleepDiaryNightsOfSeven": "{count} of 7",
+  "@sleepDiaryNightsOfSeven": {
+    "description": "Stat value: how many of the last 7 nights are logged. Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "sleepDiarySuggestedWindow": "Suggested window: in bed {bed} to {wake}.",
+  "@sleepDiarySuggestedWindow": {
+    "description": "The suggested sleep window (24-hour times). Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "bed": {
+        "type": "String",
+        "example": "23:30"
+      },
+      "wake": {
+        "type": "String",
+        "example": "06:45"
+      }
+    }
+  },
+  "sleepDiaryEmpty": "No nights yet. Log this morning's and the picture starts to form within a week.",
+  "@sleepDiaryEmpty": {
+    "description": "Empty state. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryNightSummary": "{bed} → {wake} · {duration} asleep",
+  "@sleepDiaryNightSummary": {
+    "description": "One night in the list: bed time → wake time · time asleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "bed": {
+        "type": "String",
+        "example": "23:00"
+      },
+      "wake": {
+        "type": "String",
+        "example": "07:00"
+      },
+      "duration": {
+        "type": "String",
+        "example": "7h 05m"
+      }
+    }
+  },
+  "sleepDiaryNightDetail": "{date} · {latency} min to drop off, {awake} min awake · {quality}",
+  "@sleepDiaryNightDetail": {
+    "description": "Second line of a night in the list. date is yyyy-mm-dd; quality is a lower-cased quality word (e.g. \"good\"). Sleep diary (sleep toolkit: log last night, see sleep efficiency).",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "2026-11-02"
+      },
+      "latency": {
+        "type": "int",
+        "example": "15"
+      },
+      "awake": {
+        "type": "int",
+        "example": "10"
+      },
+      "quality": {
+        "type": "String",
+        "example": "good"
+      }
+    }
+  },
+  "sleepDiarySaveNight": "Save night",
+  "@sleepDiarySaveNight": {
+    "description": "Button: save the logged night. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryEditToday": "Edit this morning's entry",
+  "@sleepDiaryEditToday": {
+    "description": "Button when today is already logged. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepDiaryLogLastNight": "Log last night",
+  "@sleepDiaryLogLastNight": {
+    "description": "Button: start logging last night. Sleep diary (sleep toolkit: log last night, see sleep efficiency)."
+  },
+  "sleepHabitsTitle": "Sleep habits check",
+  "@sleepHabitsTitle": {
+    "description": "Screen title. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsYes": "Yes",
+  "@sleepHabitsYes": {
+    "description": "Answer chip for a habit question. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsNo": "No",
+  "@sleepHabitsNo": {
+    "description": "Answer chip for a habit question. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsVerdictNone": "Nothing here is working against you. If sleep is still hard, the diary and the 20-minute rule are the next places to look.",
+  "@sleepHabitsVerdictNone": {
+    "description": "Result summary when no habits need work. \"The diary\" and \"the 20-minute rule\" are other sleep tools in the app. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsVerdictFew": "One or two habits to change — small, and they tend to pay back within a week or two.",
+  "@sleepHabitsVerdictFew": {
+    "description": "Result summary for 1–2 habits to work on. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsVerdictSome": "A few things are stacking up against your nights. Pick the easiest one first; momentum matters more than order.",
+  "@sleepHabitsVerdictSome": {
+    "description": "Result summary for 3–4 habits to work on. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsVerdictMany": "Quite a lot is working against you, which is actually good news: there's a lot of room to improve without anything drastic. Start with the wake time.",
+  "@sleepHabitsVerdictMany": {
+    "description": "Result summary for 5+ habits to work on. Encouraging, not judging. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsAllClear": "All clear",
+  "@sleepHabitsAllClear": {
+    "description": "Results title when no habits need work. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsToWorkOn": "{count} of 10 to work on",
+  "@sleepHabitsToWorkOn": {
+    "description": "Results title: how many of the ten habits need work. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "sleepHabitsAnswerAgain": "Answer again",
+  "@sleepHabitsAnswerAgain": {
+    "description": "Button: redo the questions. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsSeeResults": "See what to change",
+  "@sleepHabitsSeeResults": {
+    "description": "Button when all questions are answered. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsAnswered": "{answered} of {total} answered",
+  "@sleepHabitsAnswered": {
+    "description": "Disabled button text showing progress. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).",
+    "placeholders": {
+      "answered": {
+        "type": "int",
+        "example": "4"
+      },
+      "total": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "sleepHabitsIntroTitle": "Honest answers, please",
+  "@sleepHabitsIntroTitle": {
+    "description": "Section title above the questions. Friendly. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHabitsIntroHint": "Most of these are ordinary — everyone has a few. Each yes comes with a specific, small change.",
+  "@sleepHabitsIntroHint": {
+    "description": "Hint above the questions. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep)."
+  },
+  "sleepHubTitle": "Sleep better",
+  "@sleepHubTitle": {
+    "description": "Screen title of the sleep toolkit. Sleep toolkit hub screen (\"Sleep better\")."
+  },
+  "sleepHubHeadline": "Sleep is built in the daytime",
+  "@sleepHubHeadline": {
+    "description": "Headline at the top of the hub. Sleep toolkit hub screen (\"Sleep better\")."
+  },
+  "sleepHubIntro": "Most sleep problems aren't fixed in bed. They're fixed by a steady wake time, an evening that winds down on purpose, and not fighting the nights that go wrong. These are the tools sleep clinics use — cognitive behavioural therapy for insomnia — in a form you can start tonight.",
+  "@sleepHubIntro": {
+    "description": "Intro paragraph. Sleep toolkit hub screen (\"Sleep better\")."
+  },
+  "sleepHubSoundsTitle": "Sounds to fall asleep to",
+  "@sleepHubSoundsTitle": {
+    "description": "Banner title linking to the sounds screen. Sleep toolkit hub screen (\"Sleep better\")."
+  },
+  "sleepHubSoundsDetail": "Rainfall, crickets, pink noise and more — loops that keep going after you've stopped listening.",
+  "@sleepHubSoundsDetail": {
+    "description": "Banner detail for sounds. Sleep toolkit hub screen (\"Sleep better\")."
+  },
+  "sleepHubFootnote": "Snoring with pauses in breathing, falling asleep in the day, or insomnia that's lasted months deserve a doctor's look. These tools sit alongside that, not instead of it.",
+  "@sleepHubFootnote": {
+    "description": "Medical-safety footnote at the bottom of the hub. Keep the meaning precise. Sleep toolkit hub screen (\"Sleep better\")."
+  },
+  "tomorrowListTitle": "Put the day down",
+  "@tomorrowListTitle": {
+    "description": "Screen title; also the title of the journal entry it can save. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListSummary": "Tomorrow:\n{top}\n\nLetting go tonight: {letGo}\nOne good thing today: {good}",
+  "@tomorrowListSummary": {
+    "description": "Text of the journal entry saved from this screen. top is a numbered list (one per line) or \"—\"; letGo and good are what the person wrote, or \"—\". Keep the line breaks. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).",
+    "placeholders": {
+      "top": {
+        "type": "String",
+        "example": "1. Call the bank"
+      },
+      "letGo": {
+        "type": "String",
+        "example": "The email from work"
+      },
+      "good": {
+        "type": "String",
+        "example": "Lunch in the sun"
+      }
+    }
+  },
+  "tomorrowListSaved": "Written down. It'll keep till morning.",
+  "@tomorrowListSaved": {
+    "description": "Snackbar after saving without the journal. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListSaveToJournal": "Save to journal",
+  "@tomorrowListSaveToJournal": {
+    "description": "Button: save this page to the journal too. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListDoneForTonight": "Done for tonight",
+  "@tomorrowListDoneForTonight": {
+    "description": "Main button: save and close. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListIntroTitle": "Out of your head, onto the page",
+  "@tomorrowListIntroTitle": {
+    "description": "Section title. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListIntroHint": "The 2am mind is a to-do list with nowhere to go. Give it somewhere. Three things for tomorrow — not ten — one thing you're choosing not to carry tonight, and one thing that was good today, however small.",
+  "@tomorrowListIntroHint": {
+    "description": "Intro text. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListTopThree": "Tomorrow's three",
+  "@tomorrowListTopThree": {
+    "description": "Label above three text fields for tomorrow's tasks. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListThing": "Thing {number}",
+  "@tomorrowListThing": {
+    "description": "Text field label, numbered 1–3. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "tomorrowListLetGo": "Tonight I'm letting go of",
+  "@tomorrowListLetGo": {
+    "description": "Label above a text field: a worry to set aside tonight. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListLetGoHint": "A worry that can wait until daylight",
+  "@tomorrowListLetGoHint": {
+    "description": "Field label inside the let-go text field. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListGood": "One good thing today",
+  "@tomorrowListGood": {
+    "description": "Label above a text field. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "tomorrowListGoodHint": "Small counts",
+  "@tomorrowListGoodHint": {
+    "description": "Field label inside the good-thing text field: even small things count. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing)."
+  },
+  "windDownTitle": "Wind-down plan",
+  "@windDownTitle": {
+    "description": "Screen title. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownPickerTitle": "Lights out at",
+  "@windDownPickerTitle": {
+    "description": "Title of the time picker for bedtime. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownAllDone": "That's the whole wind-down. Sleep well.",
+  "@windDownAllDone": {
+    "description": "Snackbar when every step is ticked. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownIntroTitle": "The last hour decides the night",
+  "@windDownIntroTitle": {
+    "description": "Section title. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownIntroHint": "Bodies don't switch off; they dim. The same five steps in the same order, every evening, become the cue your brain waits for. Tick them off as you go.",
+  "@windDownIntroHint": {
+    "description": "Intro text. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownLightsOutAt": "Lights out at {time}",
+  "@windDownLightsOutAt": {
+    "description": "Bedtime shown in a card, e.g. \"Lights out at 22:30\". Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "22:30"
+      }
+    }
+  },
+  "windDownLightsOutHint": "Same time most nights, and a wake time that never moves.",
+  "@windDownLightsOutHint": {
+    "description": "Under the bedtime. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownReminderNote": "Want a nudge when it's time to start? The Wind-down reminder is in Reminders.",
+  "@windDownReminderNote": {
+    "description": "Note pointing to the Reminders screen. \"Reminders\" is the name of that screen. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownReminderButton": "Set it",
+  "@windDownReminderButton": {
+    "description": "Short button: open Reminders to set the wind-down reminder. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime)."
+  },
+  "windDownStepTime": "{time} · {minutes} min before",
+  "@windDownStepTime": {
+    "description": "Above each step: its clock time and how many minutes before bedtime. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "21:30"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "60"
+      }
+    }
+  },
+  "journalEditorSaveFailed": "Couldn't save your entry — check your connection.",
+  "@journalEditorSaveFailed": {
+    "description": "Snackbar when saving fails. Journal entry editor."
+  },
+  "journalEditorDeleteFailed": "Couldn't delete the entry — check your connection.",
+  "@journalEditorDeleteFailed": {
+    "description": "Snackbar when deleting fails. Journal entry editor."
+  },
+  "journalEditorDeleteTitle": "Delete this entry?",
+  "@journalEditorDeleteTitle": {
+    "description": "Confirm dialog title. Journal entry editor."
+  },
+  "journalEditorDeleteBody": "This can't be undone.",
+  "@journalEditorDeleteBody": {
+    "description": "Confirm dialog body. Journal entry editor."
+  },
+  "journalEditorDeleteTooltip": "Delete entry",
+  "@journalEditorDeleteTooltip": {
+    "description": "Tooltip/accessibility label of the delete icon. Journal entry editor."
+  },
+  "journalEditorTitleHint": "Title (optional)",
+  "@journalEditorTitleHint": {
+    "description": "Placeholder in the title field. Journal entry editor."
+  },
+  "journalEditorBodyHint": "Whatever's on your mind — this space is yours alone.",
+  "@journalEditorBodyHint": {
+    "description": "Placeholder in the main writing area. Private, warm. Journal entry editor."
+  },
+  "journalEditorSave": "Save entry",
+  "@journalEditorSave": {
+    "description": "Main button. Journal entry editor."
+  },
+  "journalHubTitle": "Journal & mood",
+  "@journalHubTitle": {
+    "description": "Screen title. Journal & mood hub screen."
+  },
+  "journalHubIntro": "Put the day into words — start from a blank page or let a prompt do the opening line.",
+  "@journalHubIntro": {
+    "description": "Intro under the title. Journal & mood hub screen."
+  },
+  "journalHubWriteSection": "Write",
+  "@journalHubWriteSection": {
+    "description": "Section heading above the writing options. Journal & mood hub screen."
+  },
+  "journalHubMyJournal": "My journal",
+  "@journalHubMyJournal": {
+    "description": "Card title: opens the list of entries. Journal & mood hub screen."
+  },
+  "journalHubMyJournalDetail": "Every entry you've written, newest first.",
+  "@journalHubMyJournalDetail": {
+    "description": "Card detail for My journal. One line. Journal & mood hub screen."
+  },
+  "journalHubFreeWrite": "Free write",
+  "@journalHubFreeWrite": {
+    "description": "Card title: start a blank entry. Journal & mood hub screen."
+  },
+  "journalHubFreeWriteDetail": "A blank page, no prompt, no rules.",
+  "@journalHubFreeWriteDetail": {
+    "description": "Card detail for Free write. One line. Journal & mood hub screen."
+  },
+  "journalHubMoodSection": "Mood",
+  "@journalHubMoodSection": {
+    "description": "Section heading above mood history. Journal & mood hub screen."
+  },
+  "journalHubMoodHistory": "Mood history",
+  "@journalHubMoodHistory": {
+    "description": "Card title: opens past mood check-ins. Journal & mood hub screen."
+  },
+  "journalHubMoodHistoryDetail": "Every check-in, and how the weeks actually went.",
+  "@journalHubMoodHistoryDetail": {
+    "description": "Card detail for Mood history. One line. Journal & mood hub screen."
+  },
+  "journalHubPromptPremiumTitle": "This prompt is part of Premium",
+  "@journalHubPromptPremiumTitle": {
+    "description": "Upgrade sheet title when a free user taps a locked writing prompt. \"Premium\" is the paid plan name. Journal & mood hub screen."
+  },
+  "journalHubPromptPremiumMessage": "Free includes a prompt to try. Premium unlocks all {count} — and {offer}.",
+  "@journalHubPromptPremiumMessage": {
+    "description": "Upgrade sheet message. count = number of prompts; offer is a separately translated phrase such as \"you can try it free first\". Journal & mood hub screen.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "12"
+      },
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "journalHubMoodPremiumTitle": "Mood history is part of Premium",
+  "@journalHubMoodPremiumTitle": {
+    "description": "Upgrade sheet title when a free user taps Mood history. Journal & mood hub screen."
+  },
+  "journalHubMoodPremiumMessage": "Checking in is always free. Premium keeps the record and shows you the pattern — and {offer}.",
+  "@journalHubMoodPremiumMessage": {
+    "description": "Upgrade sheet message. offer is a separately translated phrase such as \"you can try it free first\". Journal & mood hub screen.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "journalTitle": "Journal",
+  "@journalTitle": {
+    "description": "Screen title. Journal entry list screen."
+  },
+  "journalToday": "Today",
+  "@journalToday": {
+    "description": "Date label on an entry written today. Journal entry list screen."
+  },
+  "journalYesterday": "Yesterday",
+  "@journalYesterday": {
+    "description": "Date label on an entry written yesterday. Journal entry list screen."
+  },
+  "journalUntitled": "Untitled",
+  "@journalUntitled": {
+    "description": "Shown for an entry with no title. Journal entry list screen."
+  },
+  "journalLoadFailed": "Couldn't load your journal.",
+  "@journalLoadFailed": {
+    "description": "Error state when the entries fail to load. Journal entry list screen."
+  },
+  "journalEmpty": "Your space is ready.\nWrite your first entry whenever you like.",
+  "@journalEmpty": {
+    "description": "Empty state; keep the line break. Journal entry list screen."
+  },
+  "journalIntro": "A private place for whatever's on your mind.",
+  "@journalIntro": {
+    "description": "Intro under the title (Premium users). Journal entry list screen."
+  },
+  "journalIntroFree": "A private place for whatever's on your mind · {count}/{limit} free entries used.",
+  "@journalIntroFree": {
+    "description": "Intro under the title for free users, with how many of the free entries are used, e.g. \"3/5\". Journal entry list screen.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      },
+      "limit": {
+        "type": "int",
+        "example": "5"
+      }
+    }
   }
 }

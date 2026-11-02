@@ -5313,6 +5313,779 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go with your first answer. Once a week, same day, gives you a line you can actually read.'**
   String get stressCheckinSectionBody;
+
+  /// Screen title. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Awake at 3am?'**
+  String get awakeTitle;
+
+  /// Step 1 heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Awake, and it\'s not passing?'**
+  String get awakeStep1Title;
+
+  /// Step 1 hint under the heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night). Gentle, sleepy tone.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t check the time — it only gives you sums to do. If it feels like you\'ve been lying here twenty minutes or more, that\'s long enough.'**
+  String get awakeStep1Hint;
+
+  /// Step 1 explanatory note. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Lying in bed awake and frustrated teaches your brain that the bed is a place to be awake and frustrated. Getting up breaks that link. It feels backwards; it\'s the most reliable trick sleep clinics have.'**
+  String get awakeStep1Note;
+
+  /// Step 2 heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Get up. Low light, something dull.'**
+  String get awakeStep2Title;
+
+  /// Step 2 hint. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Another room if you can. No bright screens, no news, no work. Boring is the goal — you\'re waiting for sleepiness to come back, not entertaining yourself.'**
+  String get awakeStep2Hint;
+
+  /// Next to the break countdown timer. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleepy before this runs out? Go back to bed now — sleepiness wins over the timer.'**
+  String get awakeTimerHint;
+
+  /// Option card title: a breathing exercise (4 counts in, hold, out, hold). Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Box breathing'**
+  String get awakeOptionBoxBreathing;
+
+  /// Option card detail for box breathing. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Four counts each way, in the dark.'**
+  String get awakeOptionBoxBreathingDetail;
+
+  /// Option card title: play a calming sound. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet sound'**
+  String get awakeOptionSound;
+
+  /// Option card detail for the sound option. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Rain or crickets, low, on a timer.'**
+  String get awakeOptionSoundDetail;
+
+  /// Option card title: a long guided meditation called "Deep rest". Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Deep rest'**
+  String get awakeOptionDeepRest;
+
+  /// Option card detail for Deep rest. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'A long guided lie-down for when sleep won\'t come.'**
+  String get awakeOptionDeepRestDetail;
+
+  /// Option card title: read something boring. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'A dull book'**
+  String get awakeOptionBook;
+
+  /// Option card detail for the book option. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Something you\'ve read before. Paper, if you have it.'**
+  String get awakeOptionBookDetail;
+
+  /// Step 3 heading. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Back to bed when sleepy — not when the clock says'**
+  String get awakeStep3Title;
+
+  /// Step 3 hint. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy eyes, slow thoughts, a yawn. That\'s the signal. If it doesn\'t come, stay up a little longer; if you go back and it doesn\'t take, do the whole thing again.'**
+  String get awakeStep3Hint;
+
+  /// Step 3 note about the next morning. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow: get up at your usual time however the night went. The sleep pressure you build will make tonight easier. One rough night is survivable; a drifting wake time isn\'t.'**
+  String get awakeStep3Note;
+
+  /// Button on step 1: confirms they have been awake long enough to get up. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Yes — I\'ve been awake a while'**
+  String get awakeConfirmButton;
+
+  /// Button on step 2: starts a 15-minute out-of-bed timer. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Start a 15-minute break'**
+  String get awakeStartBreakButton;
+
+  /// Button while the break timer runs: ends it early. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m sleepy — back to bed'**
+  String get awakeSleepyButton;
+
+  /// Final button: closes the screen. Awake at 3am? (sleep toolkit: the 20-minute rule, used in the middle of the night).
+  ///
+  /// In en, this message translates to:
+  /// **'Goodnight'**
+  String get awakeGoodnightButton;
+
+  /// Screen title. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep diary'**
+  String get sleepDiaryTitle;
+
+  /// Summary text when no nights are logged. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Log a night to get started.'**
+  String get sleepDiaryVerdictEmpty;
+
+  /// Summary after 1–4 nights. pct = average sleep efficiency percentage. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep efficiency {pct}% so far. Five nights in, this starts to mean something — keep going.'**
+  String sleepDiaryVerdictEarly(int pct);
+
+  /// Summary when efficiency is 85% or more. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep efficiency {pct}%: your bed is doing its job. If you\'re still tired, the lever is probably total time — try lights out 15 minutes earlier, same wake time.'**
+  String sleepDiaryVerdictGood(int pct);
+
+  /// Summary when efficiency is under 85% (sleep restriction advice). Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep efficiency {pct}%. Under 85% means a lot of your time in bed is spent awake, which teaches the bed the wrong lesson. Tighten the window: later to bed, same wake time, until it\'s above 85%, then add 15 minutes a week.'**
+  String sleepDiaryVerdictLow(int pct);
+
+  /// A duration of sleep, e.g. "7h 05m". minutes is already zero-padded. Use the local short units. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'{hours}h {minutes}m'**
+  String sleepDiaryHoursMinutes(int hours, String minutes);
+
+  /// How they felt on waking, 1 of 5 (worst). Short chip label; also shown lower-cased in the night list. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Awful'**
+  String get sleepDiaryQualityAwful;
+
+  /// How they felt on waking, 2 of 5. Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get sleepDiaryQualityPoor;
+
+  /// How they felt on waking, 3 of 5. Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Okay'**
+  String get sleepDiaryQualityOkay;
+
+  /// How they felt on waking, 4 of 5. Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get sleepDiaryQualityGood;
+
+  /// How they felt on waking, 5 of 5 (best). Short chip label. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Great'**
+  String get sleepDiaryQualityGreat;
+
+  /// Row label and time-picker title: the time they turned the lights off to sleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Lights out'**
+  String get sleepDiaryLightsOut;
+
+  /// Row label and time-picker title: the time they finally woke up for the day. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Woke for the day'**
+  String get sleepDiaryWoke;
+
+  /// Snackbar after saving a night. duration is like "7h 05m". Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Logged: {duration} asleep, {pct}% efficient.'**
+  String sleepDiaryLogged(String duration, int pct);
+
+  /// Slider label with its current value in minutes, e.g. "Time to fall asleep · 15 min". Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'{label} · {minutes} min'**
+  String sleepDiarySliderLabel(String label, int minutes);
+
+  /// Section title of the logging form. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Last night'**
+  String get sleepDiaryLastNight;
+
+  /// Hint under "Last night". Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Best guesses are fine — don\'t clock-watch to get this right. Rough and every day beats exact and occasional.'**
+  String get sleepDiaryLastNightHint;
+
+  /// Slider label: minutes it took to fall asleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Time to fall asleep'**
+  String get sleepDiaryTimeToFallAsleep;
+
+  /// Slider label: minutes awake in the night. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Awake during the night'**
+  String get sleepDiaryAwakeInNight;
+
+  /// Question above the 5 quality chips. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'How did you feel on waking?'**
+  String get sleepDiaryHowDidYouFeel;
+
+  /// Section title of the overview. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Your nights'**
+  String get sleepDiaryYourNights;
+
+  /// Explains sleep efficiency. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep efficiency is the share of your time in bed you actually spend asleep. Clinics aim for 85% and above.'**
+  String get sleepDiaryYourNightsHint;
+
+  /// Small stat label: average sleep efficiency. Sleep diary (sleep toolkit: log last night, see sleep efficiency). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Efficiency'**
+  String get sleepDiaryStatEfficiency;
+
+  /// Small stat label: average time asleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Asleep'**
+  String get sleepDiaryStatAsleep;
+
+  /// Small stat label: nights logged this week. Sleep diary (sleep toolkit: log last night, see sleep efficiency). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Nights'**
+  String get sleepDiaryStatNights;
+
+  /// Stat value: how many of the last 7 nights are logged. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 7'**
+  String sleepDiaryNightsOfSeven(int count);
+
+  /// The suggested sleep window (24-hour times). Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested window: in bed {bed} to {wake}.'**
+  String sleepDiarySuggestedWindow(String bed, String wake);
+
+  /// Empty state. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'No nights yet. Log this morning\'s and the picture starts to form within a week.'**
+  String get sleepDiaryEmpty;
+
+  /// One night in the list: bed time → wake time · time asleep. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'{bed} → {wake} · {duration} asleep'**
+  String sleepDiaryNightSummary(String bed, String wake, String duration);
+
+  /// Second line of a night in the list. date is yyyy-mm-dd; quality is a lower-cased quality word (e.g. "good"). Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {latency} min to drop off, {awake} min awake · {quality}'**
+  String sleepDiaryNightDetail(
+    String date,
+    int latency,
+    int awake,
+    String quality,
+  );
+
+  /// Button: save the logged night. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Save night'**
+  String get sleepDiarySaveNight;
+
+  /// Button when today is already logged. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Edit this morning\'s entry'**
+  String get sleepDiaryEditToday;
+
+  /// Button: start logging last night. Sleep diary (sleep toolkit: log last night, see sleep efficiency).
+  ///
+  /// In en, this message translates to:
+  /// **'Log last night'**
+  String get sleepDiaryLogLastNight;
+
+  /// Screen title. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep habits check'**
+  String get sleepHabitsTitle;
+
+  /// Answer chip for a habit question. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get sleepHabitsYes;
+
+  /// Answer chip for a habit question. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get sleepHabitsNo;
+
+  /// Result summary when no habits need work. "The diary" and "the 20-minute rule" are other sleep tools in the app. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here is working against you. If sleep is still hard, the diary and the 20-minute rule are the next places to look.'**
+  String get sleepHabitsVerdictNone;
+
+  /// Result summary for 1–2 habits to work on. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'One or two habits to change — small, and they tend to pay back within a week or two.'**
+  String get sleepHabitsVerdictFew;
+
+  /// Result summary for 3–4 habits to work on. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'A few things are stacking up against your nights. Pick the easiest one first; momentum matters more than order.'**
+  String get sleepHabitsVerdictSome;
+
+  /// Result summary for 5+ habits to work on. Encouraging, not judging. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Quite a lot is working against you, which is actually good news: there\'s a lot of room to improve without anything drastic. Start with the wake time.'**
+  String get sleepHabitsVerdictMany;
+
+  /// Results title when no habits need work. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'All clear'**
+  String get sleepHabitsAllClear;
+
+  /// Results title: how many of the ten habits need work. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of 10 to work on'**
+  String sleepHabitsToWorkOn(int count);
+
+  /// Button: redo the questions. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Answer again'**
+  String get sleepHabitsAnswerAgain;
+
+  /// Button when all questions are answered. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'See what to change'**
+  String get sleepHabitsSeeResults;
+
+  /// Disabled button text showing progress. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'{answered} of {total} answered'**
+  String sleepHabitsAnswered(int answered, int total);
+
+  /// Section title above the questions. Friendly. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Honest answers, please'**
+  String get sleepHabitsIntroTitle;
+
+  /// Hint above the questions. Sleep habits check (sleep toolkit: ten yes/no questions about habits that hurt sleep).
+  ///
+  /// In en, this message translates to:
+  /// **'Most of these are ordinary — everyone has a few. Each yes comes with a specific, small change.'**
+  String get sleepHabitsIntroHint;
+
+  /// Screen title of the sleep toolkit. Sleep toolkit hub screen ("Sleep better").
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep better'**
+  String get sleepHubTitle;
+
+  /// Headline at the top of the hub. Sleep toolkit hub screen ("Sleep better").
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep is built in the daytime'**
+  String get sleepHubHeadline;
+
+  /// Intro paragraph. Sleep toolkit hub screen ("Sleep better").
+  ///
+  /// In en, this message translates to:
+  /// **'Most sleep problems aren\'t fixed in bed. They\'re fixed by a steady wake time, an evening that winds down on purpose, and not fighting the nights that go wrong. These are the tools sleep clinics use — cognitive behavioural therapy for insomnia — in a form you can start tonight.'**
+  String get sleepHubIntro;
+
+  /// Banner title linking to the sounds screen. Sleep toolkit hub screen ("Sleep better").
+  ///
+  /// In en, this message translates to:
+  /// **'Sounds to fall asleep to'**
+  String get sleepHubSoundsTitle;
+
+  /// Banner detail for sounds. Sleep toolkit hub screen ("Sleep better").
+  ///
+  /// In en, this message translates to:
+  /// **'Rainfall, crickets, pink noise and more — loops that keep going after you\'ve stopped listening.'**
+  String get sleepHubSoundsDetail;
+
+  /// Medical-safety footnote at the bottom of the hub. Keep the meaning precise. Sleep toolkit hub screen ("Sleep better").
+  ///
+  /// In en, this message translates to:
+  /// **'Snoring with pauses in breathing, falling asleep in the day, or insomnia that\'s lasted months deserve a doctor\'s look. These tools sit alongside that, not instead of it.'**
+  String get sleepHubFootnote;
+
+  /// Screen title; also the title of the journal entry it can save. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Put the day down'**
+  String get tomorrowListTitle;
+
+  /// Text of the journal entry saved from this screen. top is a numbered list (one per line) or "—"; letGo and good are what the person wrote, or "—". Keep the line breaks. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow:\n{top}\n\nLetting go tonight: {letGo}\nOne good thing today: {good}'**
+  String tomorrowListSummary(String top, String letGo, String good);
+
+  /// Snackbar after saving without the journal. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Written down. It\'ll keep till morning.'**
+  String get tomorrowListSaved;
+
+  /// Button: save this page to the journal too. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Save to journal'**
+  String get tomorrowListSaveToJournal;
+
+  /// Main button: save and close. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Done for tonight'**
+  String get tomorrowListDoneForTonight;
+
+  /// Section title. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Out of your head, onto the page'**
+  String get tomorrowListIntroTitle;
+
+  /// Intro text. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'The 2am mind is a to-do list with nowhere to go. Give it somewhere. Three things for tomorrow — not ten — one thing you\'re choosing not to carry tonight, and one thing that was good today, however small.'**
+  String get tomorrowListIntroHint;
+
+  /// Label above three text fields for tomorrow's tasks. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow\'s three'**
+  String get tomorrowListTopThree;
+
+  /// Text field label, numbered 1–3. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Thing {number}'**
+  String tomorrowListThing(int number);
+
+  /// Label above a text field: a worry to set aside tonight. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Tonight I\'m letting go of'**
+  String get tomorrowListLetGo;
+
+  /// Field label inside the let-go text field. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'A worry that can wait until daylight'**
+  String get tomorrowListLetGoHint;
+
+  /// Label above a text field. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'One good thing today'**
+  String get tomorrowListGood;
+
+  /// Field label inside the good-thing text field: even small things count. Put the day down (sleep toolkit: write tomorrow's three things, one worry to let go, one good thing).
+  ///
+  /// In en, this message translates to:
+  /// **'Small counts'**
+  String get tomorrowListGoodHint;
+
+  /// Screen title. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Wind-down plan'**
+  String get windDownTitle;
+
+  /// Title of the time picker for bedtime. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Lights out at'**
+  String get windDownPickerTitle;
+
+  /// Snackbar when every step is ticked. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s the whole wind-down. Sleep well.'**
+  String get windDownAllDone;
+
+  /// Section title. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'The last hour decides the night'**
+  String get windDownIntroTitle;
+
+  /// Intro text. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Bodies don\'t switch off; they dim. The same five steps in the same order, every evening, become the cue your brain waits for. Tick them off as you go.'**
+  String get windDownIntroHint;
+
+  /// Bedtime shown in a card, e.g. "Lights out at 22:30". Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Lights out at {time}'**
+  String windDownLightsOutAt(String time);
+
+  /// Under the bedtime. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Same time most nights, and a wake time that never moves.'**
+  String get windDownLightsOutHint;
+
+  /// Note pointing to the Reminders screen. "Reminders" is the name of that screen. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Want a nudge when it\'s time to start? The Wind-down reminder is in Reminders.'**
+  String get windDownReminderNote;
+
+  /// Short button: open Reminders to set the wind-down reminder. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'Set it'**
+  String get windDownReminderButton;
+
+  /// Above each step: its clock time and how many minutes before bedtime. Wind-down plan (sleep toolkit: an hour of steps counted back from bedtime).
+  ///
+  /// In en, this message translates to:
+  /// **'{time} · {minutes} min before'**
+  String windDownStepTime(String time, int minutes);
+
+  /// Snackbar when saving fails. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your entry — check your connection.'**
+  String get journalEditorSaveFailed;
+
+  /// Snackbar when deleting fails. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete the entry — check your connection.'**
+  String get journalEditorDeleteFailed;
+
+  /// Confirm dialog title. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this entry?'**
+  String get journalEditorDeleteTitle;
+
+  /// Confirm dialog body. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'This can\'t be undone.'**
+  String get journalEditorDeleteBody;
+
+  /// Tooltip/accessibility label of the delete icon. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entry'**
+  String get journalEditorDeleteTooltip;
+
+  /// Placeholder in the title field. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (optional)'**
+  String get journalEditorTitleHint;
+
+  /// Placeholder in the main writing area. Private, warm. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Whatever\'s on your mind — this space is yours alone.'**
+  String get journalEditorBodyHint;
+
+  /// Main button. Journal entry editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Save entry'**
+  String get journalEditorSave;
+
+  /// Screen title. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal & mood'**
+  String get journalHubTitle;
+
+  /// Intro under the title. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Put the day into words — start from a blank page or let a prompt do the opening line.'**
+  String get journalHubIntro;
+
+  /// Section heading above the writing options. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Write'**
+  String get journalHubWriteSection;
+
+  /// Card title: opens the list of entries. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'My journal'**
+  String get journalHubMyJournal;
+
+  /// Card detail for My journal. One line. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Every entry you\'ve written, newest first.'**
+  String get journalHubMyJournalDetail;
+
+  /// Card title: start a blank entry. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Free write'**
+  String get journalHubFreeWrite;
+
+  /// Card detail for Free write. One line. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A blank page, no prompt, no rules.'**
+  String get journalHubFreeWriteDetail;
+
+  /// Section heading above mood history. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get journalHubMoodSection;
+
+  /// Card title: opens past mood check-ins. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood history'**
+  String get journalHubMoodHistory;
+
+  /// Card detail for Mood history. One line. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Every check-in, and how the weeks actually went.'**
+  String get journalHubMoodHistoryDetail;
+
+  /// Upgrade sheet title when a free user taps a locked writing prompt. "Premium" is the paid plan name. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'This prompt is part of Premium'**
+  String get journalHubPromptPremiumTitle;
+
+  /// Upgrade sheet message. count = number of prompts; offer is a separately translated phrase such as "you can try it free first". Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes a prompt to try. Premium unlocks all {count} — and {offer}.'**
+  String journalHubPromptPremiumMessage(int count, String offer);
+
+  /// Upgrade sheet title when a free user taps Mood history. Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood history is part of Premium'**
+  String get journalHubMoodPremiumTitle;
+
+  /// Upgrade sheet message. offer is a separately translated phrase such as "you can try it free first". Journal & mood hub screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking in is always free. Premium keeps the record and shows you the pattern — and {offer}.'**
+  String journalHubMoodPremiumMessage(String offer);
+
+  /// Screen title. Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal'**
+  String get journalTitle;
+
+  /// Date label on an entry written today. Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get journalToday;
+
+  /// Date label on an entry written yesterday. Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get journalYesterday;
+
+  /// Shown for an entry with no title. Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled'**
+  String get journalUntitled;
+
+  /// Error state when the entries fail to load. Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your journal.'**
+  String get journalLoadFailed;
+
+  /// Empty state; keep the line break. Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Your space is ready.\nWrite your first entry whenever you like.'**
+  String get journalEmpty;
+
+  /// Intro under the title (Premium users). Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A private place for whatever\'s on your mind.'**
+  String get journalIntro;
+
+  /// Intro under the title for free users, with how many of the free entries are used, e.g. "3/5". Journal entry list screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A private place for whatever\'s on your mind · {count}/{limit} free entries used.'**
+  String journalIntroFree(int count, int limit);
 }
 
 class _AppLocalizationsDelegate
