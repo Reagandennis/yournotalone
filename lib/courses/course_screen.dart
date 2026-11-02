@@ -4,6 +4,7 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../discover/content_index.dart';
 import '../home/home_ui.dart';
+import '../media/download_buttons.dart';
 import 'course_catalog.dart';
 import 'course_progress.dart';
 
@@ -229,6 +230,7 @@ class _CourseScreenState extends State<CourseScreen> {
                     color: c.textMuted,
                   ),
                 ),
+                CourseDownloadButton(course: course),
                 const SizedBox(height: 18),
                 for (var i = 0; i < course.days.length; i++)
                   _day(i, progress, now),

@@ -65,9 +65,53 @@ final _recoveryScreens = <String, WidgetBuilder>{
 /// them; null means "don't check" (tests).
 Set<String>? _bundledAssets;
 
-/// Whether [path] can be played: until audio is downloaded on demand,
-/// only files shipped inside the app can.
-bool _playable(String path) => _bundledAssets?.contains(path) ?? true;
+/// Whether [path] ships inside this app.
+bool isBundledAsset(String path) => _bundledAssets?.contains(path) ?? true;
+
+/// Whether [path] can be played: it ships inside the app, or [media] has a
+/// published copy to stream or download.
+bool _playable(String path, MediaRef? media) =>
+    isBundledAsset(path) || media != null;
+
+/// One published audio file, with the item it belongs to.
+class MediaEntry {
+  const MediaEntry({
+    required this.itemId,
+    required this.title,
+    required this.role,
+    required this.path,
+    required this.ref,
+  });
+
+  final String itemId;
+  final String title;
+
+  /// `audio` (a sound's loop) or `narration` (a meditation's voice).
+  final String role;
+
+  /// The path the item's body names, e.g. `assets/sounds/rainfall.m4a`;
+  /// the player still knows a sound by it.
+  final String path;
+  final MediaRef ref;
+
+  /// Whether this build has to fetch it rather than play it from the app.
+  bool get remote => !isBundledAsset(path);
+}
+
+/// [snapshot]'s published audio, one entry per file.
+List<MediaEntry> mediaEntriesFrom(CatalogSnapshot snapshot) => [
+  for (final item in snapshot.items)
+    for (final MapEntry(key: role, value: ref)
+        in (snapshot.media[item.id] ?? const <String, MediaRef>{}).entries)
+      if (item.body[role] case final String path)
+        MediaEntry(
+          itemId: item.id,
+          title: item.textFor(contentLocale).title,
+          role: role,
+          path: path,
+          ref: ref,
+        ),
+];
 
 final _tools = {
   for (final t in [...cbtTools, ...sleepTools, ...stressTools])
@@ -76,8 +120,12 @@ final _tools = {
 
 /// The screen [item] opens, or null when this build can't show it (a
 /// screen it doesn't have, a field it doesn't understand) — such items are
-/// left out rather than shown as tiles that do nothing.
-WidgetBuilder? screenFor(CatalogItem item) {
+/// left out rather than shown as tiles that do nothing. [media] is the
+/// item's published audio by role, for files the app doesn't ship.
+WidgetBuilder? screenFor(
+  CatalogItem item, {
+  Map<String, MediaRef> media = const {},
+}) {
   final t = item.textFor(contentLocale);
   final body = item.body;
   try {
@@ -109,14 +157,14 @@ WidgetBuilder? screenFor(CatalogItem item) {
           ],
           // Without its recording a meditation still runs on its text.
           narration: switch (body['narration']) {
-            final String path when _playable(path) => path,
+            final String path when _playable(path, media['narration']) => path,
             _ => null,
           },
         );
         return (_) => MeditationScreen(meditation: meditation);
       case 'sound':
-        // A sound published after this build can't play yet: leave it out.
-        if (!_playable(body['audio'] as String)) return null;
+        // A sound with no file here or online can't play: leave it out.
+        if (!_playable(body['audio'] as String, media['audio'])) return null;
         final sound = Sound(
           t.title,
           t.blurb,
@@ -154,17 +202,18 @@ WidgetBuilder? screenFor(CatalogItem item) {
 
 /// [snapshot]'s items as the index lists them.
 List<ContentItem> contentItemsFrom(CatalogSnapshot snapshot) => [
-  for (final item in snapshot.items) ?_contentItem(item),
+  for (final item in snapshot.items)
+    ?_contentItem(item, snapshot.media[item.id] ?? const {}),
 ];
 
-ContentItem? _contentItem(CatalogItem item) {
+ContentItem? _contentItem(CatalogItem item, Map<String, MediaRef> media) {
   final t = item.textFor(contentLocale);
   void Function(BuildContext) open;
   if (item.bodyType == 'prompt') {
     open = (context) =>
         openNewJournalEntry(context, title: t.title, content: t.seed);
   } else {
-    final screen = screenFor(item);
+    final screen = screenFor(item, media: media);
     if (screen == null) return null;
     open = (context) =>
         Navigator.of(context).push(MaterialPageRoute(builder: screen));
@@ -255,11 +304,25 @@ class ContentCatalog {
   CatalogSnapshot? _snapshot;
   List<ContentItem>? _items;
   List<Course>? _courses;
+  Map<String, List<MediaEntry>> _mediaByItem = const {};
+  Map<String, MediaEntry> _mediaByPath = const {};
 
   /// Null means "use the Dart catalogues".
   List<ContentItem>? get items => _items;
   List<Course>? get courses => _courses;
   int? get version => _snapshot?.version;
+
+  /// [itemId]'s published audio; empty with no snapshot, or none.
+  List<MediaEntry> mediaFor(String itemId) => _mediaByItem[itemId] ?? const [];
+
+  /// The published copy of the file at [path], if there is one.
+  MediaEntry? mediaAt(String path) => _mediaByPath[path];
+
+  /// [itemId]'s audio this build has to fetch: what a download saves.
+  List<MediaEntry> downloadableFor(String itemId) => [
+    for (final e in mediaFor(itemId))
+      if (e.remote) e,
+  ];
 
   /// Picks the snapshot to use when the flag is on, then looks for a newer
   /// one in the background. Never throws: on any problem the bundled
@@ -340,10 +403,16 @@ class ContentCatalog {
 
   void use(CatalogSnapshot snapshot) {
     final items = contentItemsFrom(snapshot);
+    final media = mediaEntriesFrom(snapshot);
     _snapshot = snapshot;
     _items = items;
     _courses = coursesFrom(snapshot, items);
     SceneLibrary.instance.use(snapshot);
+    _mediaByItem = {};
+    for (final e in media) {
+      (_mediaByItem[e.itemId] ??= []).add(e);
+    }
+    _mediaByPath = {for (final e in media) e.path: e};
   }
 
   @visibleForTesting
@@ -351,6 +420,8 @@ class ContentCatalog {
     _snapshot = null;
     _items = null;
     _courses = null;
+    _mediaByItem = const {};
+    _mediaByPath = const {};
   }
 }
 

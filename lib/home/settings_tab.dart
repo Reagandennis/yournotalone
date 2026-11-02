@@ -18,11 +18,14 @@ import '../brand.dart';
 import '../care/care_dashboard_screen.dart';
 import '../care/care_repository.dart';
 import '../care/therapist_sessions_screen.dart';
+import '../content/content_catalog.dart';
 import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
 import '../legal/legal_content.dart';
 import '../notifications/session_notifications.dart';
 import '../legal/legal_screen.dart';
+import '../media/download_strings.dart';
+import '../media/downloads_screen.dart';
 import '../onboarding/paywall_screen.dart';
 import '../profile/edit_profile_screen.dart';
 import '../reminders/reminders_screen.dart';
@@ -711,6 +714,15 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
         ),
         _calmVisualsRow(context),
+        // Only with the catalogue snapshot on: before that, all audio ships
+        // inside the app and there's nothing to download.
+        if (catalogSnapshotEnabled)
+          _row(
+            context,
+            Icons.download_for_offline_outlined,
+            DownloadStrings.settingsRow,
+            onTap: () => Navigator.of(context).push(DownloadsScreen.route()),
+          ),
         _row(
           context,
           Icons.restore_rounded,
