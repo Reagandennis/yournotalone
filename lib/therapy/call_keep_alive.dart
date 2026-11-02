@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../l10n/l10n.dart';
+
 /// Keeps a therapy call alive while it's on screen and when it isn't.
 ///
 /// Two things end a call that nobody meant to end. The screen times out,
@@ -43,8 +45,9 @@ class DeviceCallKeepAlive implements CallKeepAlive {
     try {
       _init();
       if (await FlutterForegroundTask.isRunningService) return;
-      final title = 'In a session with $counterpartName';
-      const text = 'Tap to come back to the call.';
+      final l10n = currentL10n();
+      final title = l10n.callInSessionWith(counterpartName);
+      final text = l10n.callTapToReturn;
       // Android 14 refuses a service type whose permission isn't granted.
       // A blocked camera shouldn't cost them the microphone, so fall back.
       var result = await FlutterForegroundTask.startService(
@@ -94,13 +97,12 @@ class DeviceCallKeepAlive implements CallKeepAlive {
   static void _init() {
     if (_initialized) return;
     _initialized = true;
+    final l10n = currentL10n();
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
         channelId: 'therapy_call',
-        channelName: 'Therapy session in progress',
-        channelDescription:
-            'Shown while you\'re in a session, so the call keeps running '
-            'when you switch apps.',
+        channelName: l10n.callChannelName,
+        channelDescription: l10n.callChannelDescription,
         channelImportance: NotificationChannelImportance.LOW,
         priority: NotificationPriority.LOW,
         onlyAlertOnce: true,

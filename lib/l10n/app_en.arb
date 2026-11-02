@@ -945,5 +945,1247 @@
   "profileSaveChanges": "Save changes",
   "@profileSaveChanges": {
     "description": "Edit profile save button."
+  },
+  "therapyPaymentMethods": "M-Pesa or Airtel Money",
+  "@therapyPaymentMethods": {
+    "description": "The ways a therapy session can be paid on the Paystack page. M-Pesa and Airtel Money are brand names: keep them; translate only \"or\". Used inside longer sentences (\"Pay securely by {methods} through Paystack\")."
+  },
+  "therapyCancellationPolicy": "Cancel in the app up to 24 hours before your session for a full refund. A session cancelled later than that, or not joined, isn't refunded.",
+  "@therapyCancellationPolicy": {
+    "description": "The therapy session cancellation/refund policy in one or two sentences, shown wherever someone is about to pay. Must stay accurate: 24 hours, full refund."
+  },
+  "therapyTopicAnxietyStress": "Anxiety & stress",
+  "@therapyTopicAnxietyStress": {
+    "description": "Therapy topic choice (a chip) when requesting a session; also shown on the session card."
+  },
+  "therapyTopicLowMood": "Low mood",
+  "@therapyTopicLowMood": {
+    "description": "Therapy topic choice (a chip): feeling down/depressed, said gently."
+  },
+  "therapyTopicRelationships": "Relationships",
+  "@therapyTopicRelationships": {
+    "description": "Therapy topic choice (a chip)."
+  },
+  "therapyTopicGriefLoss": "Grief & loss",
+  "@therapyTopicGriefLoss": {
+    "description": "Therapy topic choice (a chip): bereavement."
+  },
+  "therapyTopicAddictionRecovery": "Addiction & recovery",
+  "@therapyTopicAddictionRecovery": {
+    "description": "Therapy topic choice (a chip)."
+  },
+  "therapyTopicNotSure": "Not sure yet",
+  "@therapyTopicNotSure": {
+    "description": "Therapy topic choice (a chip): the person doesn't know what to focus on yet."
+  },
+  "sessionErrorTooEarly": "The session isn't open yet.",
+  "@sessionErrorTooEarly": {
+    "description": "Shown when someone tries to join a therapy video call before it opens."
+  },
+  "sessionErrorTooEarlyAt": "You can join from {time} — 10 minutes before the start.",
+  "@sessionErrorTooEarlyAt": {
+    "description": "Shown when someone tries to join a therapy call too early. {time} is a clock time like 9:05.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "9:05"
+      }
+    }
+  },
+  "sessionErrorOver": "This session's time has passed.",
+  "@sessionErrorOver": {
+    "description": "Shown when joining a therapy call after its time window closed."
+  },
+  "sessionErrorPaymentRequired": "This session needs to be paid for before you can join.",
+  "@sessionErrorPaymentRequired": {
+    "description": "Shown when joining an unpaid therapy session."
+  },
+  "sessionErrorNotConfirmed": "This session isn't confirmed yet.",
+  "@sessionErrorNotConfirmed": {
+    "description": "Shown when joining a therapy session that has no confirmed time yet."
+  },
+  "sessionErrorNotFound": "We couldn't find that session.",
+  "@sessionErrorNotFound": {
+    "description": "Error: the therapy session no longer exists."
+  },
+  "sessionErrorNoPaymentFound": "We couldn't find your payment yet. If you were charged, try again in a minute.",
+  "@sessionErrorNoPaymentFound": {
+    "description": "Error after \"Check payment\": no payment found yet for the session."
+  },
+  "sessionErrorNotPayable": "This request can't be paid for any more — start a new one.",
+  "@sessionErrorNotPayable": {
+    "description": "Error: a session request has expired and cannot be paid."
+  },
+  "sessionErrorCheckoutFailed": "We couldn't open the payment page — please try again in a moment.",
+  "@sessionErrorCheckoutFailed": {
+    "description": "Error: the Paystack payment page failed to open."
+  },
+  "sessionErrorEmailRequired": "Add an email address to your account to pay for a session.",
+  "@sessionErrorEmailRequired": {
+    "description": "Error: paying needs an email address on the account (for the receipt)."
+  },
+  "sessionErrorNotConfigured": "This isn't switched on yet. Please contact us.",
+  "@sessionErrorNotConfigured": {
+    "description": "Error: payments are not set up on the server yet."
+  },
+  "sessionErrorSignedOut": "You've been signed out. Please log in again.",
+  "@sessionErrorSignedOut": {
+    "description": "Error: the person's login expired."
+  },
+  "sessionErrorGeneric": "Something went wrong — check your connection and try again.",
+  "@sessionErrorGeneric": {
+    "description": "Generic error for therapy session actions (joining, paying)."
+  },
+  "sessionOutcomeMissed": "Missed",
+  "@sessionOutcomeMissed": {
+    "description": "Status label for a past therapy session the client did not join. Short, shown at the end of a list row."
+  },
+  "sessionOutcomeCompleted": "Completed",
+  "@sessionOutcomeCompleted": {
+    "description": "Status label for a past therapy session that took place. Short."
+  },
+  "sessionOutcomeDidNotHappen": "Didn't happen",
+  "@sessionOutcomeDidNotHappen": {
+    "description": "Status label for a past therapy session that did not take place (nobody joined, or the therapist did not). Short."
+  },
+  "sessionOutcomeNotPaid": "Not paid",
+  "@sessionOutcomeNotPaid": {
+    "description": "Status label for a session request cancelled because it was never paid. Short."
+  },
+  "sessionOutcomeNotSent": "Not sent",
+  "@sessionOutcomeNotSent": {
+    "description": "Status label for a session request that was never sent to the care team. Short."
+  },
+  "sessionOutcomeCancelled": "Cancelled",
+  "@sessionOutcomeCancelled": {
+    "description": "Status label for a cancelled therapy session. Short."
+  },
+  "therapySlotWeekdayMornings": "Weekday mornings",
+  "@therapySlotWeekdayMornings": {
+    "description": "Availability choice (chip) when requesting a therapy session."
+  },
+  "therapySlotWeekdayAfternoons": "Weekday afternoons",
+  "@therapySlotWeekdayAfternoons": {
+    "description": "Availability choice (chip) when requesting a therapy session."
+  },
+  "therapySlotWeekdayEvenings": "Weekday evenings",
+  "@therapySlotWeekdayEvenings": {
+    "description": "Availability choice (chip) when requesting a therapy session."
+  },
+  "therapySlotWeekends": "Weekends",
+  "@therapySlotWeekends": {
+    "description": "Availability choice (chip) when requesting a therapy session."
+  },
+  "therapyRequestNoCharge": "Your request is with our care team — there's no charge for your sessions.",
+  "@therapyRequestNoCharge": {
+    "description": "Snackbar after sending a therapy request on an account whose session fee is waived."
+  },
+  "therapyNoteTooLong": "That note is too long — please keep it under 1000 characters.",
+  "@therapyNoteTooLong": {
+    "description": "Snackbar: the note to the therapist is too long."
+  },
+  "therapyRequestSendFailed": "Couldn't send your request — check your connection.",
+  "@therapyRequestSendFailed": {
+    "description": "Snackbar: sending a therapy request failed (likely offline)."
+  },
+  "therapyDiscardTitle": "Discard this request?",
+  "@therapyDiscardTitle": {
+    "description": "Dialog title: discard an unpaid therapy request."
+  },
+  "therapyDiscardBody": "Nothing has been paid, so there's nothing to refund. You can start again whenever you like.",
+  "@therapyDiscardBody": {
+    "description": "Dialog body under therapyDiscardTitle."
+  },
+  "therapyDiscardAction": "Discard",
+  "@therapyDiscardAction": {
+    "description": "Button: discard an unpaid therapy request (red, destructive)."
+  },
+  "therapyCancelSessionTitle": "Cancel this session?",
+  "@therapyCancelSessionTitle": {
+    "description": "Dialog title: cancel a booked therapy session."
+  },
+  "therapyCancelSessionBody": "We'll let your therapist know and refund your {price} in full, since it's more than 24 hours away. You can book again whenever you're ready.",
+  "@therapyCancelSessionBody": {
+    "description": "Dialog body: cancelling a booked session more than 24 hours ahead. {price} is the amount paid, e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyCancelSessionAction": "Cancel session",
+  "@therapyCancelSessionAction": {
+    "description": "Button: cancel a booked therapy session (red, destructive)."
+  },
+  "therapyCancelRequestTitle": "Cancel this request?",
+  "@therapyCancelRequestTitle": {
+    "description": "Dialog title: cancel a paid therapy request not yet matched with a therapist."
+  },
+  "therapyCancelRequestBody": "We haven't matched you yet, so your {price} is refunded in full. You can book again whenever you're ready.",
+  "@therapyCancelRequestBody": {
+    "description": "Dialog body: cancelling an unmatched paid request. {price} e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyCancelRequestAction": "Cancel request",
+  "@therapyCancelRequestAction": {
+    "description": "Button: cancel a therapy request (red, destructive)."
+  },
+  "therapyKeepIt": "Keep it",
+  "@therapyKeepIt": {
+    "description": "Dialog button: do not cancel, keep the request/session."
+  },
+  "therapyCancelFailed": "Couldn't cancel — check your connection.",
+  "@therapyCancelFailed": {
+    "description": "Snackbar: cancelling failed (likely offline)."
+  },
+  "therapyPaymentReceivedRequest": "Payment received — your request is with our care team and your receipt is on its way by email.",
+  "@therapyPaymentReceivedRequest": {
+    "description": "Snackbar after paying for a new therapy request."
+  },
+  "therapyPaymentReceived": "Payment received — your receipt is on its way by email.",
+  "@therapyPaymentReceived": {
+    "description": "Snackbar after paying for an already matched session."
+  },
+  "therapyPaymentPending": "Your payment is going through. If it isn't confirmed in a minute, tap \"Check payment\".",
+  "@therapyPaymentPending": {
+    "description": "Snackbar: payment not yet confirmed. \"Check payment\" must match the button label therapyCheckPayment."
+  },
+  "therapyPaymentUnavailable": "We couldn't open the payment page on this device — please try again later.",
+  "@therapyPaymentUnavailable": {
+    "description": "Snackbar: the payment page could not open on this phone."
+  },
+  "therapyPaymentFailed": "The payment didn't go through. Please try again.",
+  "@therapyPaymentFailed": {
+    "description": "Snackbar: payment failed."
+  },
+  "therapyPaymentFoundRequest": "Payment found — your request is with our care team.",
+  "@therapyPaymentFoundRequest": {
+    "description": "Snackbar after \"Check payment\" finds the payment for a new request."
+  },
+  "therapyPaymentFound": "Payment found — you're all set.",
+  "@therapyPaymentFound": {
+    "description": "Snackbar after \"Check payment\" finds the payment for a matched session."
+  },
+  "therapyCheckFailed": "Couldn't check — try again in a moment.",
+  "@therapyCheckFailed": {
+    "description": "Snackbar: checking the payment failed."
+  },
+  "therapyYourTherapist": "Your therapist",
+  "@therapyYourTherapist": {
+    "description": "Stand-in for the therapist's name when it isn't known (e.g. in the call screen)."
+  },
+  "therapyRateTitle": "How was your session?",
+  "@therapyRateTitle": {
+    "description": "Title of the sheet asking the client to rate a therapy session."
+  },
+  "therapyRateSubtitle": "Your rating helps us match people well.",
+  "@therapyRateSubtitle": {
+    "description": "Subtitle of the rating sheet."
+  },
+  "therapyRateSubtitleNamed": "Your rating helps us match people well. {name} never sees it on its own — only an average.",
+  "@therapyRateSubtitleNamed": {
+    "description": "Subtitle of the rating sheet; {name} is the therapist's first name. Reassures the rating is anonymous to them.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina"
+      }
+    }
+  },
+  "therapyRateComment": "Anything you'd like to tell us? (optional)",
+  "@therapyRateComment": {
+    "description": "Label of the optional comment field on the rating sheet."
+  },
+  "therapyRateFailed": "Couldn't send your rating — check your connection.",
+  "@therapyRateFailed": {
+    "description": "Error: sending a rating failed."
+  },
+  "therapyRateThanks": "Thank you — that helps.",
+  "@therapyRateThanks": {
+    "description": "Snackbar after a rating is sent."
+  },
+  "therapyNotesFromTherapist": "Notes from your therapist",
+  "@therapyNotesFromTherapist": {
+    "description": "Heading over the note a therapist wrote after a session (name unknown)."
+  },
+  "therapyNotesFrom": "Notes from {name}",
+  "@therapyNotesFrom": {
+    "description": "Heading over the note a therapist wrote after a session; {name} is the therapist's first name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina"
+      }
+    }
+  },
+  "therapyNoNotes": "No notes for this session.",
+  "@therapyNoNotes": {
+    "description": "Shown when the therapist left no note for a session."
+  },
+  "therapyRateSession": "Rate this session",
+  "@therapyRateSession": {
+    "description": "Button: open the rating sheet for a past session."
+  },
+  "therapyYouRatedIt": "You rated it",
+  "@therapyYouRatedIt": {
+    "description": "Label before the stars a client gave a past session."
+  },
+  "therapyChangeRating": "Change your rating",
+  "@therapyChangeRating": {
+    "description": "Button: change a rating already given."
+  },
+  "therapyStepNumbered": "{number}. {title}",
+  "@therapyStepNumbered": {
+    "description": "A numbered step heading in \"how it works\", e.g. \"1. We match you\". Change only if your language writes numbered steps differently.",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      },
+      "title": {
+        "type": "String",
+        "example": "We match you"
+      }
+    }
+  },
+  "therapyStepPayTitle": "Tell us what you need, and pay",
+  "@therapyStepPayTitle": {
+    "description": "How-it-works step 1 title."
+  },
+  "therapyStepPayDetail": "A topic, the times that suit you, and {price} — paid securely in the app. Nothing is sent until it's paid.",
+  "@therapyStepPayDetail": {
+    "description": "How-it-works step 1 detail. {price} is the session price, e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyStepMatchTitle": "We match you",
+  "@therapyStepMatchTitle": {
+    "description": "How-it-works step 2 title."
+  },
+  "therapyStepMatchDetail": "A licensed therapist and a time, usually within a day.",
+  "@therapyStepMatchDetail": {
+    "description": "How-it-works step 2 detail."
+  },
+  "therapyStepTalkTitle": "You talk",
+  "@therapyStepTalkTitle": {
+    "description": "How-it-works step 3 title."
+  },
+  "therapyStepTalkDetail": "A private video call, right here in the app.",
+  "@therapyStepTalkDetail": {
+    "description": "How-it-works step 3 detail."
+  },
+  "therapyPointLicensedTitle": "Licensed therapists",
+  "@therapyPointLicensedTitle": {
+    "description": "Reassurance point title on the therapy screen."
+  },
+  "therapyPointLicensedDetail": "Qualified practitioners, not volunteers or chatbots.",
+  "@therapyPointLicensedDetail": {
+    "description": "Reassurance point detail."
+  },
+  "therapyPointPrivateTitle": "Private",
+  "@therapyPointPrivateTitle": {
+    "description": "Reassurance point title: confidentiality."
+  },
+  "therapyPointPrivateDetail": "What you say in a session stays between you and them. Calls aren't recorded.",
+  "@therapyPointPrivateDetail": {
+    "description": "Reassurance point detail about confidentiality."
+  },
+  "therapyPointOneAtATimeTitle": "One session at a time",
+  "@therapyPointOneAtATimeTitle": {
+    "description": "Reassurance point title: pay per session, no subscription."
+  },
+  "therapyPointOneAtATimeDetail": "No subscription. Cancel up to 24 hours before for a full refund — after that, or if you don't join, the session isn't refunded.",
+  "@therapyPointOneAtATimeDetail": {
+    "description": "Reassurance point detail: refund policy."
+  },
+  "therapyOfferTitle": "Sessions are {price}, paid when you book",
+  "@therapyOfferTitle": {
+    "description": "Banner title on the booking form. {price} e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyOfferDetail": "Pay securely by {methods} through Paystack (charged as {charge}) and your request goes straight to our care team. You get a receipt by email. No subscription.",
+  "@therapyOfferDetail": {
+    "description": "Banner detail on the booking form. {methods} is therapyPaymentMethods (e.g. \"M-Pesa or Airtel Money\"); {charge} is the amount in Kenyan shillings, e.g. \"Ksh 2,600\". Paystack is a brand.",
+    "placeholders": {
+      "methods": {
+        "type": "String",
+        "example": "M-Pesa or Airtel Money"
+      },
+      "charge": {
+        "type": "String",
+        "example": "Ksh 2,600"
+      }
+    }
+  },
+  "therapyFocusQuestion": "What would you like to focus on?",
+  "@therapyFocusQuestion": {
+    "description": "Section heading over the topic chips on the booking form."
+  },
+  "therapyWhenQuestion": "When could you meet?",
+  "@therapyWhenQuestion": {
+    "description": "Section heading over the availability chips on the booking form."
+  },
+  "therapyNoteLabel": "Anything your therapist should know? (optional)",
+  "@therapyNoteLabel": {
+    "description": "Label of the optional note field on the booking form."
+  },
+  "therapyPayAndRequest": "Pay {price} and request a session",
+  "@therapyPayAndRequest": {
+    "description": "Main button on the booking form. {price} e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyBookingFootnote": "We'll match you with a licensed therapist and a time, usually within a day, and email you when your session is booked. {policy}",
+  "@therapyBookingFootnote": {
+    "description": "Small print under the booking button. {policy} is therapyCancellationPolicy.",
+    "placeholders": {
+      "policy": {
+        "type": "String"
+      }
+    }
+  },
+  "therapyPriceFirstFree": "First session — free",
+  "@therapyPriceFirstFree": {
+    "description": "Price line on the session card for a free first session."
+  },
+  "therapyPricePaid": "{price} — paid, receipt emailed",
+  "@therapyPricePaid": {
+    "description": "Price line on the session card. {price} e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyPriceWaived": "No charge for this session",
+  "@therapyPriceWaived": {
+    "description": "Price line on the session card when the fee is waived."
+  },
+  "therapyPriceToSend": "{price} — pay to send your request",
+  "@therapyPriceToSend": {
+    "description": "Price line on the session card for an unpaid draft request.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyPriceNeeded": "{price} — payment needed",
+  "@therapyPriceNeeded": {
+    "description": "Price line on the session card when payment is due.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyAlmostThereTitle": "Almost there",
+  "@therapyAlmostThereTitle": {
+    "description": "Session card title: request saved but not paid yet."
+  },
+  "therapyAlmostThereDetail": "Your request is saved but hasn't reached our care team yet. It's sent the moment your session is paid for.",
+  "@therapyAlmostThereDetail": {
+    "description": "Session card detail under therapyAlmostThereTitle."
+  },
+  "therapyReceivedTitle": "Request received",
+  "@therapyReceivedTitle": {
+    "description": "Session card title: paid request waiting for a therapist match."
+  },
+  "therapyReceivedDetail": "We're finding the right licensed therapist for you — usually within a day. We'll email you when your session is booked.",
+  "@therapyReceivedDetail": {
+    "description": "Session card detail under therapyReceivedTitle."
+  },
+  "therapyMatchedTitle": "You're matched",
+  "@therapyMatchedTitle": {
+    "description": "Session card title: matched with a therapist but not paid yet."
+  },
+  "therapyMatchedDetail": "Pay for your session to confirm your place.",
+  "@therapyMatchedDetail": {
+    "description": "Session card detail under therapyMatchedTitle."
+  },
+  "therapyConfirmedTitle": "Session confirmed",
+  "@therapyConfirmedTitle": {
+    "description": "Session card title: booked and paid."
+  },
+  "therapyConfirmedDetail": "Everything's set. Join right here when it's time.",
+  "@therapyConfirmedDetail": {
+    "description": "Session card detail under therapyConfirmedTitle."
+  },
+  "therapyNotificationsOffReminder": "Notifications are off, so you won't get the ten-minute reminder for this session.",
+  "@therapyNotificationsOffReminder": {
+    "description": "Banner on a booked session when notifications are turned off."
+  },
+  "therapyNotificationsOffMatch": "Notifications are off, so you won't hear when you're matched.",
+  "@therapyNotificationsOffMatch": {
+    "description": "Banner on a waiting request when notifications are turned off."
+  },
+  "therapyWhenAndLength": "{when} · {minutes} min",
+  "@therapyWhenAndLength": {
+    "description": "Session time and length on the session card, e.g. \"Mon 14 Sep, 9:05 · 50 min\". {when} is a formatted date and time.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "therapyLateCancelNote": "Your session is less than 24 hours away, so it can no longer be cancelled here. If you can't make it, reply to your booking email — a missed or late-cancelled session isn't refunded.",
+  "@therapyLateCancelNote": {
+    "description": "Small print on a booked session inside the 24-hour no-refund window."
+  },
+  "therapyPaymentVerifying": "Your payment is being verified",
+  "@therapyPaymentVerifying": {
+    "description": "Payment box title while a payment is being confirmed."
+  },
+  "therapyPayToSend": "{price} to send your request",
+  "@therapyPayToSend": {
+    "description": "Payment box title for an unpaid draft request. {price} e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyPayToConfirm": "{price} to confirm your session",
+  "@therapyPayToConfirm": {
+    "description": "Payment box title for a matched session awaiting payment.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyPaymentVerifyingDetail": "Paystack has your payment. Don't pay again — your request goes through as soon as it's found.",
+  "@therapyPaymentVerifyingDetail": {
+    "description": "Payment box detail while verifying. Paystack is a brand."
+  },
+  "therapyPayDetailRequest": "Pay securely by {methods} through Paystack (charged as {charge}) and your request goes straight to our care team, with a receipt by email. {policy}",
+  "@therapyPayDetailRequest": {
+    "description": "Payment box detail for a draft request. {methods} e.g. \"M-Pesa or Airtel Money\"; {charge} e.g. \"Ksh 2,600\"; {policy} is therapyCancellationPolicy.",
+    "placeholders": {
+      "methods": {
+        "type": "String"
+      },
+      "charge": {
+        "type": "String",
+        "example": "Ksh 2,600"
+      },
+      "policy": {
+        "type": "String"
+      }
+    }
+  },
+  "therapyPayDetailSession": "Pay securely by {methods} through Paystack (charged as {charge}). The Join button unlocks as soon as it's paid.",
+  "@therapyPayDetailSession": {
+    "description": "Payment box detail for a matched session. \"Join\" refers to the Join session button.",
+    "placeholders": {
+      "methods": {
+        "type": "String"
+      },
+      "charge": {
+        "type": "String",
+        "example": "Ksh 2,600"
+      }
+    }
+  },
+  "therapyCheckPayment": "Check payment",
+  "@therapyCheckPayment": {
+    "description": "Button: ask the server whether the payment arrived."
+  },
+  "therapyPayPrice": "Pay {price}",
+  "@therapyPayPrice": {
+    "description": "Button: pay for the session. {price} e.g. $20.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "therapyAlreadyPaid": "Already paid? Check again",
+  "@therapyAlreadyPaid": {
+    "description": "Text button under the Pay button."
+  },
+  "therapyJoinOpensSoon": "The call opens 10 minutes before the start.",
+  "@therapyJoinOpensSoon": {
+    "description": "Hint under the Join session button before the call opens."
+  },
+  "therapyJoinOverUnpaid": "This session's time has passed without payment. It'll be cancelled shortly, and you can book again after that.",
+  "@therapyJoinOverUnpaid": {
+    "description": "Hint under Join session after an unpaid session time passed."
+  },
+  "therapyJoinOver": "This session's time has passed. It closes out on its own within a couple of hours: if it went ahead, any note from your therapist appears under Past sessions; if it didn't happen, you'll be able to book again.",
+  "@therapyJoinOver": {
+    "description": "Hint under Join session after the session time passed. \"Past sessions\" is the section title therapyPastSessions."
+  },
+  "therapyJoinNeedsPayment": "The call opens once your session is paid for.",
+  "@therapyJoinNeedsPayment": {
+    "description": "Hint under Join session when unpaid."
+  },
+  "therapyJoinReady": "Find a quiet, private spot — you'll need your camera and microphone.",
+  "@therapyJoinReady": {
+    "description": "Hint under Join session when the call is open."
+  },
+  "therapyJoinSession": "Join session",
+  "@therapyJoinSession": {
+    "description": "Button: join the therapy video call."
+  },
+  "therapyPastWithTherapist": "{name} · {date}",
+  "@therapyPastWithTherapist": {
+    "description": "Past session row subtitle: therapist's full name and date.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "date": {
+        "type": "String",
+        "example": "14 Sep 2026"
+      }
+    }
+  },
+  "therapyRate": "Rate",
+  "@therapyRate": {
+    "description": "Small chip on a past session that has not been rated yet."
+  },
+  "therapyTitle": "Talk to a therapist",
+  "@therapyTitle": {
+    "description": "App bar title of the therapy screen."
+  },
+  "therapyLoadFailed": "Couldn't load — check your connection.",
+  "@therapyLoadFailed": {
+    "description": "Shown when the therapy screen fails to load."
+  },
+  "therapyHeadline": "You don't have to do this alone",
+  "@therapyHeadline": {
+    "description": "Headline on the therapy screen. Warm, supportive."
+  },
+  "therapyIntro": "Private one-on-one sessions with licensed therapists, right from here. Tell us a little about what you need and we'll match you with the right person.",
+  "@therapyIntro": {
+    "description": "Intro paragraph on the therapy screen."
+  },
+  "therapyPastSessions": "Past sessions",
+  "@therapyPastSessions": {
+    "description": "Section heading over the list of past therapy sessions."
+  },
+  "therapyCrisisTrailing": " This app can't replace emergency care.",
+  "@therapyCrisisTrailing": {
+    "description": "Appended to the crisis footer on the therapy screen. Note the leading space."
+  },
+  "therapyCheckoutOffline": "We can't reach our server right now — we'll keep checking.",
+  "@therapyCheckoutOffline": {
+    "description": "Payment waiting dialog: no connection."
+  },
+  "therapyCheckoutNotFound": "We haven't seen your payment yet. If you've just paid, give it a few seconds.",
+  "@therapyCheckoutNotFound": {
+    "description": "Payment waiting dialog: payment not found yet."
+  },
+  "therapyCheckoutHint": "Finish paying on the Paystack page — by {methods}. This closes by itself once your payment is in.",
+  "@therapyCheckoutHint": {
+    "description": "Payment waiting dialog hint. {methods} e.g. \"M-Pesa or Airtel Money\".",
+    "placeholders": {
+      "methods": {
+        "type": "String"
+      }
+    }
+  },
+  "therapyCheckoutTitle": "Waiting for your payment",
+  "@therapyCheckoutTitle": {
+    "description": "Title of the dialog shown while the Paystack page is open."
+  },
+  "therapyIvePaid": "I've paid",
+  "@therapyIvePaid": {
+    "description": "Button in the payment waiting dialog: check now."
+  },
+  "sessionStarsSemantic": "{rating} out of 5 stars",
+  "@sessionStarsSemantic": {
+    "description": "Screen-reader label for a star rating, e.g. \"4.5 out of 5 stars\". {rating} is a number already formatted.",
+    "placeholders": {
+      "rating": {
+        "type": "String",
+        "example": "4.5"
+      }
+    }
+  },
+  "sessionStarTooltip": "{stars} out of 5",
+  "@sessionStarTooltip": {
+    "description": "Tooltip on each star when rating a session (1–5).",
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionRatingAndCount": "{rating} · {count}",
+  "@sessionRatingAndCount": {
+    "description": "Compact average rating and number of ratings on a therapist card, e.g. \"4.5 · 12\". Usually left as is.",
+    "placeholders": {
+      "rating": {
+        "type": "String",
+        "example": "4.5"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionRatingFrom": "{rating} from {count, plural, other{{count} ratings}}",
+  "@sessionRatingFrom": {
+    "description": "Therapist profile: average rating and how many ratings, e.g. \"4.5 from 12 ratings\".",
+    "placeholders": {
+      "rating": {
+        "type": "String",
+        "example": "4.5"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionYearsExperience": "{years, plural, =1{1 year of experience} other{{years} years of experience}}",
+  "@sessionYearsExperience": {
+    "description": "Therapist profile line: years of professional experience.",
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "sessionSendRating": "Send rating",
+  "@sessionSendRating": {
+    "description": "Button on the session rating sheet."
+  },
+  "callMicUnavailable": "Your microphone isn't available. You can allow it in your phone's settings for this app.",
+  "@callMicUnavailable": {
+    "description": "Snackbar in a therapy video call when the microphone could not be turned on."
+  },
+  "callCameraUnavailable": "Your camera isn't available. You can allow it in your phone's settings for this app.",
+  "@callCameraUnavailable": {
+    "description": "Snackbar in a therapy video call when the camera could not be turned on."
+  },
+  "callMicAndCameraUnavailable": "Your microphone and camera isn't available. You can allow it in your phone's settings for this app.",
+  "@callMicAndCameraUnavailable": {
+    "description": "Snackbar in a therapy video call when neither microphone nor camera could be turned on. (The English is ungrammatical by accident; translate as \"aren't available … allow them\".)"
+  },
+  "callSignedOut": "You've been signed out. Please log in again.",
+  "@callSignedOut": {
+    "description": "Error on the call screen: login expired."
+  },
+  "callConnectFailed": "Couldn't connect to the session — check your connection and try again.",
+  "@callConnectFailed": {
+    "description": "Error on the call screen: could not connect to the video call."
+  },
+  "callConnecting": "Connecting to your session…",
+  "@callConnecting": {
+    "description": "Shown while the therapy video call connects."
+  },
+  "callJoinFailedTitle": "Couldn't join",
+  "@callJoinFailedTitle": {
+    "description": "Title when joining the video call failed."
+  },
+  "callEndedTitle": "The call has ended",
+  "@callEndedTitle": {
+    "description": "Title after the video call ended."
+  },
+  "callEndedDetail": "If you were cut off, you can rejoin while the session is still on.",
+  "@callEndedDetail": {
+    "description": "Detail under callEndedTitle."
+  },
+  "callRejoin": "Rejoin",
+  "@callRejoin": {
+    "description": "Button: join the video call again."
+  },
+  "callWaitingFor": "Waiting for {name} to join…",
+  "@callWaitingFor": {
+    "description": "Call status while the other person (therapist or client) has not joined yet.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina Otieno"
+      }
+    }
+  },
+  "callConnected": "Connected",
+  "@callConnected": {
+    "description": "Call status: both people are in the call."
+  },
+  "callEndsAt": "Session ends at {time}",
+  "@callEndsAt": {
+    "description": "Call status: when the session ends; {time} is a clock time like 9:50.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "9:50"
+      }
+    }
+  },
+  "callMute": "Mute",
+  "@callMute": {
+    "description": "Call control button label: turn microphone off. Short."
+  },
+  "callUnmute": "Unmute",
+  "@callUnmute": {
+    "description": "Call control button label: turn microphone on. Short."
+  },
+  "callCameraOff": "Turn camera off",
+  "@callCameraOff": {
+    "description": "Call control button label. Short."
+  },
+  "callCameraOn": "Turn camera on",
+  "@callCameraOn": {
+    "description": "Call control button label. Short."
+  },
+  "callSwitchCamera": "Switch camera",
+  "@callSwitchCamera": {
+    "description": "Call control: switch between front and back camera. Short."
+  },
+  "callLeave": "Leave",
+  "@callLeave": {
+    "description": "Call control: leave the call (red). Short."
+  },
+  "callCameraIsOff": "Camera is off",
+  "@callCameraIsOff": {
+    "description": "Shown in place of the other person's video when their camera is off."
+  },
+  "callNotHereYet": "Not here yet",
+  "@callNotHereYet": {
+    "description": "Shown in place of the other person's video before they join."
+  },
+  "callInSessionWith": "In a session with {name}",
+  "@callInSessionWith": {
+    "description": "Ongoing Android notification title during a therapy call.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina Otieno"
+      }
+    }
+  },
+  "callTapToReturn": "Tap to come back to the call.",
+  "@callTapToReturn": {
+    "description": "Ongoing Android notification text during a therapy call."
+  },
+  "callChannelName": "Therapy session in progress",
+  "@callChannelName": {
+    "description": "Android notification channel name (shown in system notification settings) for the ongoing-call notification."
+  },
+  "callChannelDescription": "Shown while you're in a session, so the call keeps running when you switch apps.",
+  "@callChannelDescription": {
+    "description": "Android notification channel description for the ongoing-call notification."
+  },
+  "notificationReasonSession": "We'll tell you the moment you're matched with a therapist, if your session moves, and ten minutes before it starts — so you don't miss a session you've paid for.",
+  "@notificationReasonSession": {
+    "description": "Why the app asks for notification permission, for a client with a therapy session. Shown in the permission prompt."
+  },
+  "notificationReasonTherapist": "You'll be told when a session is booked with you, if it changes, and ten minutes before it starts.",
+  "@notificationReasonTherapist": {
+    "description": "Why the app asks for notification permission, for a therapist."
+  },
+  "notificationReasonReminders": "Reminders are notifications: without permission the phone can't show them.",
+  "@notificationReasonReminders": {
+    "description": "Why the app asks for notification permission, on the reminders screen."
+  },
+  "notificationReasonOnboarding": "Session bookings, a nudge before each session starts, and the daily reminders you choose. Nothing else.",
+  "@notificationReasonOnboarding": {
+    "description": "What notifications the app sends, shown during onboarding. Reassuring: nothing else."
+  },
+  "notificationOffTitle": "Notifications are off",
+  "@notificationOffTitle": {
+    "description": "Dialog title when notification permission was refused."
+  },
+  "notificationOffBody": "{reason}\n\nThey're switched off for this app at the moment. You can turn them on in your phone's settings — it takes a few seconds.",
+  "@notificationOffBody": {
+    "description": "Dialog body when notifications are off. {reason} is one of the notificationReason* sentences. Keep the blank line.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "notificationOpenSettings": "Open settings",
+  "@notificationOpenSettings": {
+    "description": "Dialog button: open the phone's settings for this app."
+  },
+  "notificationTurnOn": "Turn on",
+  "@notificationTurnOn": {
+    "description": "Short button on a banner shown when notifications are off."
+  },
+  "notificationSessionsChannel": "Therapy sessions",
+  "@notificationSessionsChannel": {
+    "description": "Android notification channel name (in system settings) for therapy session notifications."
+  },
+  "notificationSessionsChannelDescription": "Bookings, changes and reminders for your sessions",
+  "@notificationSessionsChannelDescription": {
+    "description": "Android notification channel description for therapy session notifications."
+  },
+  "notificationYourTherapist": "your therapist",
+  "@notificationYourTherapist": {
+    "description": "Used in session notifications in place of the therapist's name when it's unknown, lower-case, e.g. \"You're matched with your therapist\"."
+  },
+  "notificationYourClient": "your client",
+  "@notificationYourClient": {
+    "description": "Used in session notifications (to a therapist) in place of the client's name when it's unknown, lower-case."
+  },
+  "notificationBookedTime": "the booked time",
+  "@notificationBookedTime": {
+    "description": "Used in session notifications in place of the date when it is unknown, e.g. \"Your session with Amina on the booked time has been cancelled.\""
+  },
+  "notificationMatchedTitle": "You're matched with {who}",
+  "@notificationMatchedTitle": {
+    "description": "Notification title to a client: a therapist was assigned. {who} is the therapist's name. Shown on the lock screen, so it never names the topic.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      }
+    }
+  },
+  "notificationMatchedBodyUnpaid": "{when} · {minutes} min. Pay {price} in the app to confirm your place.",
+  "@notificationMatchedBodyUnpaid": {
+    "description": "Notification body to a client: session time and length, and payment still due. {price} e.g. $20.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "minutes": {
+        "type": "int"
+      },
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "notificationMatchedBodyPaid": "{when} · {minutes} min. You're all set.",
+  "@notificationMatchedBodyPaid": {
+    "description": "Notification body to a client: session time and length; already paid.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationNewSessionTitle": "New session with {who}",
+  "@notificationNewSessionTitle": {
+    "description": "Notification title to a therapist: a session was booked with them. {who} is the client's name.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      }
+    }
+  },
+  "notificationNewSessionBody": "{when} · {minutes} min.",
+  "@notificationNewSessionBody": {
+    "description": "Notification body to a therapist: session time and length.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationNewSessionBodyUnpaid": "{when} · {minutes} min. Waiting for the client to pay.",
+  "@notificationNewSessionBodyUnpaid": {
+    "description": "Notification body to a therapist: session time and length; client has not paid yet.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationChangedTitle": "Your session has changed",
+  "@notificationChangedTitle": {
+    "description": "Notification title to a client: the session time changed."
+  },
+  "notificationChangedBody": "Now {when} with {who} · {minutes} min.",
+  "@notificationChangedBody": {
+    "description": "Notification body to a client: the new session time.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationUpdatedTitle": "Session updated",
+  "@notificationUpdatedTitle": {
+    "description": "Notification title to a therapist: a session changed."
+  },
+  "notificationUpdatedBody": "With {who}, now {when} · {minutes} min.",
+  "@notificationUpdatedBody": {
+    "description": "Notification body to a therapist: the new session time.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationCancelledTitle": "Session cancelled",
+  "@notificationCancelledTitle": {
+    "description": "Notification title: a therapy session was cancelled."
+  },
+  "notificationCancelledBody": "Your session with {who} on {when} has been cancelled.",
+  "@notificationCancelledBody": {
+    "description": "Notification body: a therapy session was cancelled.",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      }
+    }
+  },
+  "notificationMissedTitle": "You missed your session",
+  "@notificationMissedTitle": {
+    "description": "Notification title to a client who did not join their session. Gentle, not blaming."
+  },
+  "notificationMissedBody": "{who} was in the call on {when} but you didn't join, so this session isn't refunded. You can book again in the app.",
+  "@notificationMissedBody": {
+    "description": "Notification body to a client who missed a session. {who} is the therapist (a name, or \"your therapist\").",
+    "placeholders": {
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "when": {
+        "type": "String",
+        "example": "Mon 14 Sep, 9:05"
+      }
+    }
+  },
+  "notificationReminderClientTitle": "{minutes, plural, =0{Your session is starting now} =1{Your session starts in 1 minute} other{Your session starts in {minutes} minutes}}",
+  "@notificationReminderClientTitle": {
+    "description": "Reminder notification title to a client before a session starts.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationReminderClientBodyUnpaid": "{hasTime, select, yes{With {who} at {time} — pay in the app to join.} other{With {who} — pay in the app to join.}}",
+  "@notificationReminderClientBodyUnpaid": {
+    "description": "Reminder notification body to a client whose session is unpaid. hasTime is \"yes\" when {time} (e.g. 9:05) is known; translate both branches, keep the keywords yes/other.",
+    "placeholders": {
+      "hasTime": {
+        "type": "String"
+      },
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "time": {
+        "type": "String",
+        "example": "9:05"
+      }
+    }
+  },
+  "notificationReminderClientBody": "{hasTime, select, yes{With {who} at {time}. Open the app to join.} other{With {who}. Open the app to join.}}",
+  "@notificationReminderClientBody": {
+    "description": "Reminder notification body to a client. hasTime is \"yes\" when {time} (e.g. 9:05) is known; translate both branches, keep the keywords yes/other.",
+    "placeholders": {
+      "hasTime": {
+        "type": "String"
+      },
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      },
+      "time": {
+        "type": "String",
+        "example": "9:05"
+      }
+    }
+  },
+  "notificationReminderTherapistTitle": "{minutes, plural, =0{Session with {who} is starting now} =1{Session with {who} starts in 1 minute} other{Session with {who} starts in {minutes} minutes}}",
+  "@notificationReminderTherapistTitle": {
+    "description": "Reminder notification title to a therapist before a session. {who} is the client.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "who": {
+        "type": "String",
+        "example": "Amina Otieno"
+      }
+    }
+  },
+  "notificationReminderTherapistBodyUnpaid": "{hasTime, select, yes{Starts at {time}. The client hasn't paid yet.} other{Starts. The client hasn't paid yet.}}",
+  "@notificationReminderTherapistBodyUnpaid": {
+    "description": "Reminder notification body to a therapist; client unpaid. hasTime is \"yes\" when {time} is known; keep the keywords yes/other.",
+    "placeholders": {
+      "hasTime": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String",
+        "example": "9:05"
+      }
+    }
+  },
+  "notificationReminderTherapistBody": "{hasTime, select, yes{Starts at {time}. Open My sessions to join.} other{Starts. Open My sessions to join.}}",
+  "@notificationReminderTherapistBody": {
+    "description": "Reminder notification body to a therapist. \"My sessions\" is the therapist's sessions screen title. hasTime is \"yes\" when {time} is known; keep the keywords yes/other.",
+    "placeholders": {
+      "hasTime": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String",
+        "example": "9:05"
+      }
+    }
+  },
+  "notificationGenericTitle": "Therapy session update",
+  "@notificationGenericTitle": {
+    "description": "Fallback notification title for session news of an unknown kind."
+  },
+  "notificationGenericBody": "Open the app for details.",
+  "@notificationGenericBody": {
+    "description": "Fallback notification body."
+  },
+  "remindersCheckinLabel": "Morning check-in",
+  "@remindersCheckinLabel": {
+    "description": "Name of a daily reminder on the Reminders screen."
+  },
+  "remindersCheckinDescription": "A ten-second pulse on how you're doing. Opens the check-in.",
+  "@remindersCheckinDescription": {
+    "description": "Description of the morning check-in reminder."
+  },
+  "remindersCheckinTitle": "How are you feeling today?",
+  "@remindersCheckinTitle": {
+    "description": "Daily reminder notification title (morning mood check-in)."
+  },
+  "remindersCheckinBody": "Take ten seconds to check in with yourself.",
+  "@remindersCheckinBody": {
+    "description": "Daily reminder notification body (morning mood check-in)."
+  },
+  "remindersPledgeLabel": "Daily pledge",
+  "@remindersPledgeLabel": {
+    "description": "Name of a daily reminder: the recovery pledge (a daily commitment to stay sober/clean)."
+  },
+  "remindersPledgeDescription": "Start the day by claiming it.",
+  "@remindersPledgeDescription": {
+    "description": "Description of the daily pledge reminder."
+  },
+  "remindersPledgeTitle": "A new day, on your terms",
+  "@remindersPledgeTitle": {
+    "description": "Daily reminder notification title (recovery pledge)."
+  },
+  "remindersPledgeBody": "Make today's pledge — one day at a time.",
+  "@remindersPledgeBody": {
+    "description": "Daily reminder notification body (recovery pledge). \"One day at a time\" is the recovery motto."
+  },
+  "remindersJournalLabel": "Evening pages",
+  "@remindersJournalLabel": {
+    "description": "Name of a daily reminder: evening journaling."
+  },
+  "remindersJournalDescription": "A quiet minute for your journal. Opens your prompts.",
+  "@remindersJournalDescription": {
+    "description": "Description of the evening journal reminder."
+  },
+  "remindersJournalTitle": "A quiet minute for your journal",
+  "@remindersJournalTitle": {
+    "description": "Daily reminder notification title (evening journal)."
+  },
+  "remindersJournalBody": "Put today into words — even a few lines count.",
+  "@remindersJournalBody": {
+    "description": "Daily reminder notification body (evening journal)."
+  },
+  "remindersWindDownLabel": "Wind-down",
+  "@remindersWindDownLabel": {
+    "description": "Name of a daily reminder: winding down before sleep."
+  },
+  "remindersWindDownDescription": "A nudge to slow down. Opens your wind-down plan.",
+  "@remindersWindDownDescription": {
+    "description": "Description of the wind-down reminder."
+  },
+  "remindersWindDownTitle": "Time to slow down",
+  "@remindersWindDownTitle": {
+    "description": "Daily reminder notification title (wind-down before bed)."
+  },
+  "remindersWindDownBody": "Your wind-down plan is ready — tap to start.",
+  "@remindersWindDownBody": {
+    "description": "Daily reminder notification body (wind-down before bed)."
+  },
+  "remindersChannelName": "Daily reminders",
+  "@remindersChannelName": {
+    "description": "Android notification channel name (in system settings) for daily reminders."
+  },
+  "remindersChannelDescription": "Gentle daily nudges you asked for",
+  "@remindersChannelDescription": {
+    "description": "Android notification channel description for daily reminders."
+  },
+  "remindersSetFailed": "Couldn't set the reminder — fully restart the app and try again.",
+  "@remindersSetFailed": {
+    "description": "Snackbar: scheduling a reminder failed."
+  },
+  "remindersTitle": "Reminders",
+  "@remindersTitle": {
+    "description": "Title of the Reminders screen."
+  },
+  "remindersIntro": "Gentle daily nudges, only if you want them — tap a time to change it.",
+  "@remindersIntro": {
+    "description": "Intro under the Reminders title."
+  },
+  "remindersFootnote": "Reminders are scheduled on this device and arrive even when the app is closed. Times may shift a few minutes to save battery.",
+  "@remindersFootnote": {
+    "description": "Small print at the bottom of the Reminders screen."
   }
 }

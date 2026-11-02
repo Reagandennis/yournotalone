@@ -1335,6 +1335,1328 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save changes'**
   String get profileSaveChanges;
+
+  /// The ways a therapy session can be paid on the Paystack page. M-Pesa and Airtel Money are brand names: keep them; translate only "or". Used inside longer sentences ("Pay securely by {methods} through Paystack").
+  ///
+  /// In en, this message translates to:
+  /// **'M-Pesa or Airtel Money'**
+  String get therapyPaymentMethods;
+
+  /// The therapy session cancellation/refund policy in one or two sentences, shown wherever someone is about to pay. Must stay accurate: 24 hours, full refund.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel in the app up to 24 hours before your session for a full refund. A session cancelled later than that, or not joined, isn\'t refunded.'**
+  String get therapyCancellationPolicy;
+
+  /// Therapy topic choice (a chip) when requesting a session; also shown on the session card.
+  ///
+  /// In en, this message translates to:
+  /// **'Anxiety & stress'**
+  String get therapyTopicAnxietyStress;
+
+  /// Therapy topic choice (a chip): feeling down/depressed, said gently.
+  ///
+  /// In en, this message translates to:
+  /// **'Low mood'**
+  String get therapyTopicLowMood;
+
+  /// Therapy topic choice (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Relationships'**
+  String get therapyTopicRelationships;
+
+  /// Therapy topic choice (a chip): bereavement.
+  ///
+  /// In en, this message translates to:
+  /// **'Grief & loss'**
+  String get therapyTopicGriefLoss;
+
+  /// Therapy topic choice (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Addiction & recovery'**
+  String get therapyTopicAddictionRecovery;
+
+  /// Therapy topic choice (a chip): the person doesn't know what to focus on yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sure yet'**
+  String get therapyTopicNotSure;
+
+  /// Shown when someone tries to join a therapy video call before it opens.
+  ///
+  /// In en, this message translates to:
+  /// **'The session isn\'t open yet.'**
+  String get sessionErrorTooEarly;
+
+  /// Shown when someone tries to join a therapy call too early. {time} is a clock time like 9:05.
+  ///
+  /// In en, this message translates to:
+  /// **'You can join from {time} — 10 minutes before the start.'**
+  String sessionErrorTooEarlyAt(String time);
+
+  /// Shown when joining a therapy call after its time window closed.
+  ///
+  /// In en, this message translates to:
+  /// **'This session\'s time has passed.'**
+  String get sessionErrorOver;
+
+  /// Shown when joining an unpaid therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'This session needs to be paid for before you can join.'**
+  String get sessionErrorPaymentRequired;
+
+  /// Shown when joining a therapy session that has no confirmed time yet.
+  ///
+  /// In en, this message translates to:
+  /// **'This session isn\'t confirmed yet.'**
+  String get sessionErrorNotConfirmed;
+
+  /// Error: the therapy session no longer exists.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find that session.'**
+  String get sessionErrorNotFound;
+
+  /// Error after "Check payment": no payment found yet for the session.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t find your payment yet. If you were charged, try again in a minute.'**
+  String get sessionErrorNoPaymentFound;
+
+  /// Error: a session request has expired and cannot be paid.
+  ///
+  /// In en, this message translates to:
+  /// **'This request can\'t be paid for any more — start a new one.'**
+  String get sessionErrorNotPayable;
+
+  /// Error: the Paystack payment page failed to open.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open the payment page — please try again in a moment.'**
+  String get sessionErrorCheckoutFailed;
+
+  /// Error: paying needs an email address on the account (for the receipt).
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email address to your account to pay for a session.'**
+  String get sessionErrorEmailRequired;
+
+  /// Error: payments are not set up on the server yet.
+  ///
+  /// In en, this message translates to:
+  /// **'This isn\'t switched on yet. Please contact us.'**
+  String get sessionErrorNotConfigured;
+
+  /// Error: the person's login expired.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve been signed out. Please log in again.'**
+  String get sessionErrorSignedOut;
+
+  /// Generic error for therapy session actions (joining, paying).
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong — check your connection and try again.'**
+  String get sessionErrorGeneric;
+
+  /// Status label for a past therapy session the client did not join. Short, shown at the end of a list row.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get sessionOutcomeMissed;
+
+  /// Status label for a past therapy session that took place. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get sessionOutcomeCompleted;
+
+  /// Status label for a past therapy session that did not take place (nobody joined, or the therapist did not). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t happen'**
+  String get sessionOutcomeDidNotHappen;
+
+  /// Status label for a session request cancelled because it was never paid. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paid'**
+  String get sessionOutcomeNotPaid;
+
+  /// Status label for a session request that was never sent to the care team. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent'**
+  String get sessionOutcomeNotSent;
+
+  /// Status label for a cancelled therapy session. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get sessionOutcomeCancelled;
+
+  /// Availability choice (chip) when requesting a therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekday mornings'**
+  String get therapySlotWeekdayMornings;
+
+  /// Availability choice (chip) when requesting a therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekday afternoons'**
+  String get therapySlotWeekdayAfternoons;
+
+  /// Availability choice (chip) when requesting a therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekday evenings'**
+  String get therapySlotWeekdayEvenings;
+
+  /// Availability choice (chip) when requesting a therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekends'**
+  String get therapySlotWeekends;
+
+  /// Snackbar after sending a therapy request on an account whose session fee is waived.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request is with our care team — there\'s no charge for your sessions.'**
+  String get therapyRequestNoCharge;
+
+  /// Snackbar: the note to the therapist is too long.
+  ///
+  /// In en, this message translates to:
+  /// **'That note is too long — please keep it under 1000 characters.'**
+  String get therapyNoteTooLong;
+
+  /// Snackbar: sending a therapy request failed (likely offline).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send your request — check your connection.'**
+  String get therapyRequestSendFailed;
+
+  /// Dialog title: discard an unpaid therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this request?'**
+  String get therapyDiscardTitle;
+
+  /// Dialog body under therapyDiscardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing has been paid, so there\'s nothing to refund. You can start again whenever you like.'**
+  String get therapyDiscardBody;
+
+  /// Button: discard an unpaid therapy request (red, destructive).
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get therapyDiscardAction;
+
+  /// Dialog title: cancel a booked therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this session?'**
+  String get therapyCancelSessionTitle;
+
+  /// Dialog body: cancelling a booked session more than 24 hours ahead. {price} is the amount paid, e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let your therapist know and refund your {price} in full, since it\'s more than 24 hours away. You can book again whenever you\'re ready.'**
+  String therapyCancelSessionBody(String price);
+
+  /// Button: cancel a booked therapy session (red, destructive).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel session'**
+  String get therapyCancelSessionAction;
+
+  /// Dialog title: cancel a paid therapy request not yet matched with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this request?'**
+  String get therapyCancelRequestTitle;
+
+  /// Dialog body: cancelling an unmatched paid request. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'We haven\'t matched you yet, so your {price} is refunded in full. You can book again whenever you\'re ready.'**
+  String therapyCancelRequestBody(String price);
+
+  /// Button: cancel a therapy request (red, destructive).
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get therapyCancelRequestAction;
+
+  /// Dialog button: do not cancel, keep the request/session.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it'**
+  String get therapyKeepIt;
+
+  /// Snackbar: cancelling failed (likely offline).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t cancel — check your connection.'**
+  String get therapyCancelFailed;
+
+  /// Snackbar after paying for a new therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received — your request is with our care team and your receipt is on its way by email.'**
+  String get therapyPaymentReceivedRequest;
+
+  /// Snackbar after paying for an already matched session.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received — your receipt is on its way by email.'**
+  String get therapyPaymentReceived;
+
+  /// Snackbar: payment not yet confirmed. "Check payment" must match the button label therapyCheckPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment is going through. If it isn\'t confirmed in a minute, tap \"Check payment\".'**
+  String get therapyPaymentPending;
+
+  /// Snackbar: the payment page could not open on this phone.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t open the payment page on this device — please try again later.'**
+  String get therapyPaymentUnavailable;
+
+  /// Snackbar: payment failed.
+  ///
+  /// In en, this message translates to:
+  /// **'The payment didn\'t go through. Please try again.'**
+  String get therapyPaymentFailed;
+
+  /// Snackbar after "Check payment" finds the payment for a new request.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment found — your request is with our care team.'**
+  String get therapyPaymentFoundRequest;
+
+  /// Snackbar after "Check payment" finds the payment for a matched session.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment found — you\'re all set.'**
+  String get therapyPaymentFound;
+
+  /// Snackbar: checking the payment failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check — try again in a moment.'**
+  String get therapyCheckFailed;
+
+  /// Stand-in for the therapist's name when it isn't known (e.g. in the call screen).
+  ///
+  /// In en, this message translates to:
+  /// **'Your therapist'**
+  String get therapyYourTherapist;
+
+  /// Title of the sheet asking the client to rate a therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'How was your session?'**
+  String get therapyRateTitle;
+
+  /// Subtitle of the rating sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating helps us match people well.'**
+  String get therapyRateSubtitle;
+
+  /// Subtitle of the rating sheet; {name} is the therapist's first name. Reassures the rating is anonymous to them.
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating helps us match people well. {name} never sees it on its own — only an average.'**
+  String therapyRateSubtitleNamed(String name);
+
+  /// Label of the optional comment field on the rating sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything you\'d like to tell us? (optional)'**
+  String get therapyRateComment;
+
+  /// Error: sending a rating failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t send your rating — check your connection.'**
+  String get therapyRateFailed;
+
+  /// Snackbar after a rating is sent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you — that helps.'**
+  String get therapyRateThanks;
+
+  /// Heading over the note a therapist wrote after a session (name unknown).
+  ///
+  /// In en, this message translates to:
+  /// **'Notes from your therapist'**
+  String get therapyNotesFromTherapist;
+
+  /// Heading over the note a therapist wrote after a session; {name} is the therapist's first name.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes from {name}'**
+  String therapyNotesFrom(String name);
+
+  /// Shown when the therapist left no note for a session.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes for this session.'**
+  String get therapyNoNotes;
+
+  /// Button: open the rating sheet for a past session.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this session'**
+  String get therapyRateSession;
+
+  /// Label before the stars a client gave a past session.
+  ///
+  /// In en, this message translates to:
+  /// **'You rated it'**
+  String get therapyYouRatedIt;
+
+  /// Button: change a rating already given.
+  ///
+  /// In en, this message translates to:
+  /// **'Change your rating'**
+  String get therapyChangeRating;
+
+  /// A numbered step heading in "how it works", e.g. "1. We match you". Change only if your language writes numbered steps differently.
+  ///
+  /// In en, this message translates to:
+  /// **'{number}. {title}'**
+  String therapyStepNumbered(int number, String title);
+
+  /// How-it-works step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what you need, and pay'**
+  String get therapyStepPayTitle;
+
+  /// How-it-works step 1 detail. {price} is the session price, e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'A topic, the times that suit you, and {price} — paid securely in the app. Nothing is sent until it\'s paid.'**
+  String therapyStepPayDetail(String price);
+
+  /// How-it-works step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'We match you'**
+  String get therapyStepMatchTitle;
+
+  /// How-it-works step 2 detail.
+  ///
+  /// In en, this message translates to:
+  /// **'A licensed therapist and a time, usually within a day.'**
+  String get therapyStepMatchDetail;
+
+  /// How-it-works step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'You talk'**
+  String get therapyStepTalkTitle;
+
+  /// How-it-works step 3 detail.
+  ///
+  /// In en, this message translates to:
+  /// **'A private video call, right here in the app.'**
+  String get therapyStepTalkDetail;
+
+  /// Reassurance point title on the therapy screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Licensed therapists'**
+  String get therapyPointLicensedTitle;
+
+  /// Reassurance point detail.
+  ///
+  /// In en, this message translates to:
+  /// **'Qualified practitioners, not volunteers or chatbots.'**
+  String get therapyPointLicensedDetail;
+
+  /// Reassurance point title: confidentiality.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get therapyPointPrivateTitle;
+
+  /// Reassurance point detail about confidentiality.
+  ///
+  /// In en, this message translates to:
+  /// **'What you say in a session stays between you and them. Calls aren\'t recorded.'**
+  String get therapyPointPrivateDetail;
+
+  /// Reassurance point title: pay per session, no subscription.
+  ///
+  /// In en, this message translates to:
+  /// **'One session at a time'**
+  String get therapyPointOneAtATimeTitle;
+
+  /// Reassurance point detail: refund policy.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription. Cancel up to 24 hours before for a full refund — after that, or if you don\'t join, the session isn\'t refunded.'**
+  String get therapyPointOneAtATimeDetail;
+
+  /// Banner title on the booking form. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions are {price}, paid when you book'**
+  String therapyOfferTitle(String price);
+
+  /// Banner detail on the booking form. {methods} is therapyPaymentMethods (e.g. "M-Pesa or Airtel Money"); {charge} is the amount in Kenyan shillings, e.g. "Ksh 2,600". Paystack is a brand.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay securely by {methods} through Paystack (charged as {charge}) and your request goes straight to our care team. You get a receipt by email. No subscription.'**
+  String therapyOfferDetail(String methods, String charge);
+
+  /// Section heading over the topic chips on the booking form.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to focus on?'**
+  String get therapyFocusQuestion;
+
+  /// Section heading over the availability chips on the booking form.
+  ///
+  /// In en, this message translates to:
+  /// **'When could you meet?'**
+  String get therapyWhenQuestion;
+
+  /// Label of the optional note field on the booking form.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything your therapist should know? (optional)'**
+  String get therapyNoteLabel;
+
+  /// Main button on the booking form. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price} and request a session'**
+  String therapyPayAndRequest(String price);
+
+  /// Small print under the booking button. {policy} is therapyCancellationPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll match you with a licensed therapist and a time, usually within a day, and email you when your session is booked. {policy}'**
+  String therapyBookingFootnote(String policy);
+
+  /// Price line on the session card for a free first session.
+  ///
+  /// In en, this message translates to:
+  /// **'First session — free'**
+  String get therapyPriceFirstFree;
+
+  /// Price line on the session card. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} — paid, receipt emailed'**
+  String therapyPricePaid(String price);
+
+  /// Price line on the session card when the fee is waived.
+  ///
+  /// In en, this message translates to:
+  /// **'No charge for this session'**
+  String get therapyPriceWaived;
+
+  /// Price line on the session card for an unpaid draft request.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} — pay to send your request'**
+  String therapyPriceToSend(String price);
+
+  /// Price line on the session card when payment is due.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} — payment needed'**
+  String therapyPriceNeeded(String price);
+
+  /// Session card title: request saved but not paid yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there'**
+  String get therapyAlmostThereTitle;
+
+  /// Session card detail under therapyAlmostThereTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your request is saved but hasn\'t reached our care team yet. It\'s sent the moment your session is paid for.'**
+  String get therapyAlmostThereDetail;
+
+  /// Session card title: paid request waiting for a therapist match.
+  ///
+  /// In en, this message translates to:
+  /// **'Request received'**
+  String get therapyReceivedTitle;
+
+  /// Session card detail under therapyReceivedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re finding the right licensed therapist for you — usually within a day. We\'ll email you when your session is booked.'**
+  String get therapyReceivedDetail;
+
+  /// Session card title: matched with a therapist but not paid yet.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re matched'**
+  String get therapyMatchedTitle;
+
+  /// Session card detail under therapyMatchedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay for your session to confirm your place.'**
+  String get therapyMatchedDetail;
+
+  /// Session card title: booked and paid.
+  ///
+  /// In en, this message translates to:
+  /// **'Session confirmed'**
+  String get therapyConfirmedTitle;
+
+  /// Session card detail under therapyConfirmedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything\'s set. Join right here when it\'s time.'**
+  String get therapyConfirmedDetail;
+
+  /// Banner on a booked session when notifications are turned off.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off, so you won\'t get the ten-minute reminder for this session.'**
+  String get therapyNotificationsOffReminder;
+
+  /// Banner on a waiting request when notifications are turned off.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off, so you won\'t hear when you\'re matched.'**
+  String get therapyNotificationsOffMatch;
+
+  /// Session time and length on the session card, e.g. "Mon 14 Sep, 9:05 · 50 min". {when} is a formatted date and time.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {minutes} min'**
+  String therapyWhenAndLength(String when, int minutes);
+
+  /// Small print on a booked session inside the 24-hour no-refund window.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session is less than 24 hours away, so it can no longer be cancelled here. If you can\'t make it, reply to your booking email — a missed or late-cancelled session isn\'t refunded.'**
+  String get therapyLateCancelNote;
+
+  /// Payment box title while a payment is being confirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment is being verified'**
+  String get therapyPaymentVerifying;
+
+  /// Payment box title for an unpaid draft request. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} to send your request'**
+  String therapyPayToSend(String price);
+
+  /// Payment box title for a matched session awaiting payment.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} to confirm your session'**
+  String therapyPayToConfirm(String price);
+
+  /// Payment box detail while verifying. Paystack is a brand.
+  ///
+  /// In en, this message translates to:
+  /// **'Paystack has your payment. Don\'t pay again — your request goes through as soon as it\'s found.'**
+  String get therapyPaymentVerifyingDetail;
+
+  /// Payment box detail for a draft request. {methods} e.g. "M-Pesa or Airtel Money"; {charge} e.g. "Ksh 2,600"; {policy} is therapyCancellationPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay securely by {methods} through Paystack (charged as {charge}) and your request goes straight to our care team, with a receipt by email. {policy}'**
+  String therapyPayDetailRequest(String methods, String charge, String policy);
+
+  /// Payment box detail for a matched session. "Join" refers to the Join session button.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay securely by {methods} through Paystack (charged as {charge}). The Join button unlocks as soon as it\'s paid.'**
+  String therapyPayDetailSession(String methods, String charge);
+
+  /// Button: ask the server whether the payment arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Check payment'**
+  String get therapyCheckPayment;
+
+  /// Button: pay for the session. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price}'**
+  String therapyPayPrice(String price);
+
+  /// Text button under the Pay button.
+  ///
+  /// In en, this message translates to:
+  /// **'Already paid? Check again'**
+  String get therapyAlreadyPaid;
+
+  /// Hint under the Join session button before the call opens.
+  ///
+  /// In en, this message translates to:
+  /// **'The call opens 10 minutes before the start.'**
+  String get therapyJoinOpensSoon;
+
+  /// Hint under Join session after an unpaid session time passed.
+  ///
+  /// In en, this message translates to:
+  /// **'This session\'s time has passed without payment. It\'ll be cancelled shortly, and you can book again after that.'**
+  String get therapyJoinOverUnpaid;
+
+  /// Hint under Join session after the session time passed. "Past sessions" is the section title therapyPastSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'This session\'s time has passed. It closes out on its own within a couple of hours: if it went ahead, any note from your therapist appears under Past sessions; if it didn\'t happen, you\'ll be able to book again.'**
+  String get therapyJoinOver;
+
+  /// Hint under Join session when unpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'The call opens once your session is paid for.'**
+  String get therapyJoinNeedsPayment;
+
+  /// Hint under Join session when the call is open.
+  ///
+  /// In en, this message translates to:
+  /// **'Find a quiet, private spot — you\'ll need your camera and microphone.'**
+  String get therapyJoinReady;
+
+  /// Button: join the therapy video call.
+  ///
+  /// In en, this message translates to:
+  /// **'Join session'**
+  String get therapyJoinSession;
+
+  /// Past session row subtitle: therapist's full name and date.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {date}'**
+  String therapyPastWithTherapist(String name, String date);
+
+  /// Small chip on a past session that has not been rated yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get therapyRate;
+
+  /// App bar title of the therapy screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to a therapist'**
+  String get therapyTitle;
+
+  /// Shown when the therapy screen fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load — check your connection.'**
+  String get therapyLoadFailed;
+
+  /// Headline on the therapy screen. Warm, supportive.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have to do this alone'**
+  String get therapyHeadline;
+
+  /// Intro paragraph on the therapy screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Private one-on-one sessions with licensed therapists, right from here. Tell us a little about what you need and we\'ll match you with the right person.'**
+  String get therapyIntro;
+
+  /// Section heading over the list of past therapy sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Past sessions'**
+  String get therapyPastSessions;
+
+  /// Appended to the crisis footer on the therapy screen. Note the leading space.
+  ///
+  /// In en, this message translates to:
+  /// **' This app can\'t replace emergency care.'**
+  String get therapyCrisisTrailing;
+
+  /// Payment waiting dialog: no connection.
+  ///
+  /// In en, this message translates to:
+  /// **'We can\'t reach our server right now — we\'ll keep checking.'**
+  String get therapyCheckoutOffline;
+
+  /// Payment waiting dialog: payment not found yet.
+  ///
+  /// In en, this message translates to:
+  /// **'We haven\'t seen your payment yet. If you\'ve just paid, give it a few seconds.'**
+  String get therapyCheckoutNotFound;
+
+  /// Payment waiting dialog hint. {methods} e.g. "M-Pesa or Airtel Money".
+  ///
+  /// In en, this message translates to:
+  /// **'Finish paying on the Paystack page — by {methods}. This closes by itself once your payment is in.'**
+  String therapyCheckoutHint(String methods);
+
+  /// Title of the dialog shown while the Paystack page is open.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for your payment'**
+  String get therapyCheckoutTitle;
+
+  /// Button in the payment waiting dialog: check now.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'ve paid'**
+  String get therapyIvePaid;
+
+  /// Screen-reader label for a star rating, e.g. "4.5 out of 5 stars". {rating} is a number already formatted.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} out of 5 stars'**
+  String sessionStarsSemantic(String rating);
+
+  /// Tooltip on each star when rating a session (1–5).
+  ///
+  /// In en, this message translates to:
+  /// **'{stars} out of 5'**
+  String sessionStarTooltip(int stars);
+
+  /// Compact average rating and number of ratings on a therapist card, e.g. "4.5 · 12". Usually left as is.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} · {count}'**
+  String sessionRatingAndCount(String rating, int count);
+
+  /// Therapist profile: average rating and how many ratings, e.g. "4.5 from 12 ratings".
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} from {count, plural, other{{count} ratings}}'**
+  String sessionRatingFrom(String rating, int count);
+
+  /// Therapist profile line: years of professional experience.
+  ///
+  /// In en, this message translates to:
+  /// **'{years, plural, =1{1 year of experience} other{{years} years of experience}}'**
+  String sessionYearsExperience(int years);
+
+  /// Button on the session rating sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Send rating'**
+  String get sessionSendRating;
+
+  /// Snackbar in a therapy video call when the microphone could not be turned on.
+  ///
+  /// In en, this message translates to:
+  /// **'Your microphone isn\'t available. You can allow it in your phone\'s settings for this app.'**
+  String get callMicUnavailable;
+
+  /// Snackbar in a therapy video call when the camera could not be turned on.
+  ///
+  /// In en, this message translates to:
+  /// **'Your camera isn\'t available. You can allow it in your phone\'s settings for this app.'**
+  String get callCameraUnavailable;
+
+  /// Snackbar in a therapy video call when neither microphone nor camera could be turned on. (The English is ungrammatical by accident; translate as "aren't available … allow them".)
+  ///
+  /// In en, this message translates to:
+  /// **'Your microphone and camera isn\'t available. You can allow it in your phone\'s settings for this app.'**
+  String get callMicAndCameraUnavailable;
+
+  /// Error on the call screen: login expired.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve been signed out. Please log in again.'**
+  String get callSignedOut;
+
+  /// Error on the call screen: could not connect to the video call.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t connect to the session — check your connection and try again.'**
+  String get callConnectFailed;
+
+  /// Shown while the therapy video call connects.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to your session…'**
+  String get callConnecting;
+
+  /// Title when joining the video call failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t join'**
+  String get callJoinFailedTitle;
+
+  /// Title after the video call ended.
+  ///
+  /// In en, this message translates to:
+  /// **'The call has ended'**
+  String get callEndedTitle;
+
+  /// Detail under callEndedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'If you were cut off, you can rejoin while the session is still on.'**
+  String get callEndedDetail;
+
+  /// Button: join the video call again.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejoin'**
+  String get callRejoin;
+
+  /// Call status while the other person (therapist or client) has not joined yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for {name} to join…'**
+  String callWaitingFor(String name);
+
+  /// Call status: both people are in the call.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get callConnected;
+
+  /// Call status: when the session ends; {time} is a clock time like 9:50.
+  ///
+  /// In en, this message translates to:
+  /// **'Session ends at {time}'**
+  String callEndsAt(String time);
+
+  /// Call control button label: turn microphone off. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute'**
+  String get callMute;
+
+  /// Call control button label: turn microphone on. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute'**
+  String get callUnmute;
+
+  /// Call control button label. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn camera off'**
+  String get callCameraOff;
+
+  /// Call control button label. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn camera on'**
+  String get callCameraOn;
+
+  /// Call control: switch between front and back camera. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch camera'**
+  String get callSwitchCamera;
+
+  /// Call control: leave the call (red). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave'**
+  String get callLeave;
+
+  /// Shown in place of the other person's video when their camera is off.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera is off'**
+  String get callCameraIsOff;
+
+  /// Shown in place of the other person's video before they join.
+  ///
+  /// In en, this message translates to:
+  /// **'Not here yet'**
+  String get callNotHereYet;
+
+  /// Ongoing Android notification title during a therapy call.
+  ///
+  /// In en, this message translates to:
+  /// **'In a session with {name}'**
+  String callInSessionWith(String name);
+
+  /// Ongoing Android notification text during a therapy call.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to come back to the call.'**
+  String get callTapToReturn;
+
+  /// Android notification channel name (shown in system notification settings) for the ongoing-call notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy session in progress'**
+  String get callChannelName;
+
+  /// Android notification channel description for the ongoing-call notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown while you\'re in a session, so the call keeps running when you switch apps.'**
+  String get callChannelDescription;
+
+  /// Why the app asks for notification permission, for a client with a therapy session. Shown in the permission prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll tell you the moment you\'re matched with a therapist, if your session moves, and ten minutes before it starts — so you don\'t miss a session you\'ve paid for.'**
+  String get notificationReasonSession;
+
+  /// Why the app asks for notification permission, for a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be told when a session is booked with you, if it changes, and ten minutes before it starts.'**
+  String get notificationReasonTherapist;
+
+  /// Why the app asks for notification permission, on the reminders screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders are notifications: without permission the phone can\'t show them.'**
+  String get notificationReasonReminders;
+
+  /// What notifications the app sends, shown during onboarding. Reassuring: nothing else.
+  ///
+  /// In en, this message translates to:
+  /// **'Session bookings, a nudge before each session starts, and the daily reminders you choose. Nothing else.'**
+  String get notificationReasonOnboarding;
+
+  /// Dialog title when notification permission was refused.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notificationOffTitle;
+
+  /// Dialog body when notifications are off. {reason} is one of the notificationReason* sentences. Keep the blank line.
+  ///
+  /// In en, this message translates to:
+  /// **'{reason}\n\nThey\'re switched off for this app at the moment. You can turn them on in your phone\'s settings — it takes a few seconds.'**
+  String notificationOffBody(String reason);
+
+  /// Dialog button: open the phone's settings for this app.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get notificationOpenSettings;
+
+  /// Short button on a banner shown when notifications are off.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get notificationTurnOn;
+
+  /// Android notification channel name (in system settings) for therapy session notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy sessions'**
+  String get notificationSessionsChannel;
+
+  /// Android notification channel description for therapy session notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings, changes and reminders for your sessions'**
+  String get notificationSessionsChannelDescription;
+
+  /// Used in session notifications in place of the therapist's name when it's unknown, lower-case, e.g. "You're matched with your therapist".
+  ///
+  /// In en, this message translates to:
+  /// **'your therapist'**
+  String get notificationYourTherapist;
+
+  /// Used in session notifications (to a therapist) in place of the client's name when it's unknown, lower-case.
+  ///
+  /// In en, this message translates to:
+  /// **'your client'**
+  String get notificationYourClient;
+
+  /// Used in session notifications in place of the date when it is unknown, e.g. "Your session with Amina on the booked time has been cancelled."
+  ///
+  /// In en, this message translates to:
+  /// **'the booked time'**
+  String get notificationBookedTime;
+
+  /// Notification title to a client: a therapist was assigned. {who} is the therapist's name. Shown on the lock screen, so it never names the topic.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re matched with {who}'**
+  String notificationMatchedTitle(String who);
+
+  /// Notification body to a client: session time and length, and payment still due. {price} e.g. $20.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {minutes} min. Pay {price} in the app to confirm your place.'**
+  String notificationMatchedBodyUnpaid(String when, int minutes, String price);
+
+  /// Notification body to a client: session time and length; already paid.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {minutes} min. You\'re all set.'**
+  String notificationMatchedBodyPaid(String when, int minutes);
+
+  /// Notification title to a therapist: a session was booked with them. {who} is the client's name.
+  ///
+  /// In en, this message translates to:
+  /// **'New session with {who}'**
+  String notificationNewSessionTitle(String who);
+
+  /// Notification body to a therapist: session time and length.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {minutes} min.'**
+  String notificationNewSessionBody(String when, int minutes);
+
+  /// Notification body to a therapist: session time and length; client has not paid yet.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {minutes} min. Waiting for the client to pay.'**
+  String notificationNewSessionBodyUnpaid(String when, int minutes);
+
+  /// Notification title to a client: the session time changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has changed'**
+  String get notificationChangedTitle;
+
+  /// Notification body to a client: the new session time.
+  ///
+  /// In en, this message translates to:
+  /// **'Now {when} with {who} · {minutes} min.'**
+  String notificationChangedBody(String when, String who, int minutes);
+
+  /// Notification title to a therapist: a session changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Session updated'**
+  String get notificationUpdatedTitle;
+
+  /// Notification body to a therapist: the new session time.
+  ///
+  /// In en, this message translates to:
+  /// **'With {who}, now {when} · {minutes} min.'**
+  String notificationUpdatedBody(String who, String when, int minutes);
+
+  /// Notification title: a therapy session was cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Session cancelled'**
+  String get notificationCancelledTitle;
+
+  /// Notification body: a therapy session was cancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session with {who} on {when} has been cancelled.'**
+  String notificationCancelledBody(String who, String when);
+
+  /// Notification title to a client who did not join their session. Gentle, not blaming.
+  ///
+  /// In en, this message translates to:
+  /// **'You missed your session'**
+  String get notificationMissedTitle;
+
+  /// Notification body to a client who missed a session. {who} is the therapist (a name, or "your therapist").
+  ///
+  /// In en, this message translates to:
+  /// **'{who} was in the call on {when} but you didn\'t join, so this session isn\'t refunded. You can book again in the app.'**
+  String notificationMissedBody(String who, String when);
+
+  /// Reminder notification title to a client before a session starts.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =0{Your session is starting now} =1{Your session starts in 1 minute} other{Your session starts in {minutes} minutes}}'**
+  String notificationReminderClientTitle(int minutes);
+
+  /// Reminder notification body to a client whose session is unpaid. hasTime is "yes" when {time} (e.g. 9:05) is known; translate both branches, keep the keywords yes/other.
+  ///
+  /// In en, this message translates to:
+  /// **'{hasTime, select, yes{With {who} at {time} — pay in the app to join.} other{With {who} — pay in the app to join.}}'**
+  String notificationReminderClientBodyUnpaid(
+    String hasTime,
+    String who,
+    String time,
+  );
+
+  /// Reminder notification body to a client. hasTime is "yes" when {time} (e.g. 9:05) is known; translate both branches, keep the keywords yes/other.
+  ///
+  /// In en, this message translates to:
+  /// **'{hasTime, select, yes{With {who} at {time}. Open the app to join.} other{With {who}. Open the app to join.}}'**
+  String notificationReminderClientBody(
+    String hasTime,
+    String who,
+    String time,
+  );
+
+  /// Reminder notification title to a therapist before a session. {who} is the client.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =0{Session with {who} is starting now} =1{Session with {who} starts in 1 minute} other{Session with {who} starts in {minutes} minutes}}'**
+  String notificationReminderTherapistTitle(int minutes, String who);
+
+  /// Reminder notification body to a therapist; client unpaid. hasTime is "yes" when {time} is known; keep the keywords yes/other.
+  ///
+  /// In en, this message translates to:
+  /// **'{hasTime, select, yes{Starts at {time}. The client hasn\'t paid yet.} other{Starts. The client hasn\'t paid yet.}}'**
+  String notificationReminderTherapistBodyUnpaid(String hasTime, String time);
+
+  /// Reminder notification body to a therapist. "My sessions" is the therapist's sessions screen title. hasTime is "yes" when {time} is known; keep the keywords yes/other.
+  ///
+  /// In en, this message translates to:
+  /// **'{hasTime, select, yes{Starts at {time}. Open My sessions to join.} other{Starts. Open My sessions to join.}}'**
+  String notificationReminderTherapistBody(String hasTime, String time);
+
+  /// Fallback notification title for session news of an unknown kind.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy session update'**
+  String get notificationGenericTitle;
+
+  /// Fallback notification body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the app for details.'**
+  String get notificationGenericBody;
+
+  /// Name of a daily reminder on the Reminders screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning check-in'**
+  String get remindersCheckinLabel;
+
+  /// Description of the morning check-in reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'A ten-second pulse on how you\'re doing. Opens the check-in.'**
+  String get remindersCheckinDescription;
+
+  /// Daily reminder notification title (morning mood check-in).
+  ///
+  /// In en, this message translates to:
+  /// **'How are you feeling today?'**
+  String get remindersCheckinTitle;
+
+  /// Daily reminder notification body (morning mood check-in).
+  ///
+  /// In en, this message translates to:
+  /// **'Take ten seconds to check in with yourself.'**
+  String get remindersCheckinBody;
+
+  /// Name of a daily reminder: the recovery pledge (a daily commitment to stay sober/clean).
+  ///
+  /// In en, this message translates to:
+  /// **'Daily pledge'**
+  String get remindersPledgeLabel;
+
+  /// Description of the daily pledge reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the day by claiming it.'**
+  String get remindersPledgeDescription;
+
+  /// Daily reminder notification title (recovery pledge).
+  ///
+  /// In en, this message translates to:
+  /// **'A new day, on your terms'**
+  String get remindersPledgeTitle;
+
+  /// Daily reminder notification body (recovery pledge). "One day at a time" is the recovery motto.
+  ///
+  /// In en, this message translates to:
+  /// **'Make today\'s pledge — one day at a time.'**
+  String get remindersPledgeBody;
+
+  /// Name of a daily reminder: evening journaling.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening pages'**
+  String get remindersJournalLabel;
+
+  /// Description of the evening journal reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet minute for your journal. Opens your prompts.'**
+  String get remindersJournalDescription;
+
+  /// Daily reminder notification title (evening journal).
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet minute for your journal'**
+  String get remindersJournalTitle;
+
+  /// Daily reminder notification body (evening journal).
+  ///
+  /// In en, this message translates to:
+  /// **'Put today into words — even a few lines count.'**
+  String get remindersJournalBody;
+
+  /// Name of a daily reminder: winding down before sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind-down'**
+  String get remindersWindDownLabel;
+
+  /// Description of the wind-down reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'A nudge to slow down. Opens your wind-down plan.'**
+  String get remindersWindDownDescription;
+
+  /// Daily reminder notification title (wind-down before bed).
+  ///
+  /// In en, this message translates to:
+  /// **'Time to slow down'**
+  String get remindersWindDownTitle;
+
+  /// Daily reminder notification body (wind-down before bed).
+  ///
+  /// In en, this message translates to:
+  /// **'Your wind-down plan is ready — tap to start.'**
+  String get remindersWindDownBody;
+
+  /// Android notification channel name (in system settings) for daily reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminders'**
+  String get remindersChannelName;
+
+  /// Android notification channel description for daily reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle daily nudges you asked for'**
+  String get remindersChannelDescription;
+
+  /// Snackbar: scheduling a reminder failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t set the reminder — fully restart the app and try again.'**
+  String get remindersSetFailed;
+
+  /// Title of the Reminders screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get remindersTitle;
+
+  /// Intro under the Reminders title.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle daily nudges, only if you want them — tap a time to change it.'**
+  String get remindersIntro;
+
+  /// Small print at the bottom of the Reminders screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders are scheduled on this device and arrive even when the app is closed. Times may shift a few minutes to save battery.'**
+  String get remindersFootnote;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../l10n/l10n.dart';
 import 'call_keep_alive.dart';
 import 'session_format.dart';
 import 'therapy_repository.dart';
@@ -155,14 +156,14 @@ class _CallScreenState extends State<CallScreen>
 
       // A blocked camera shouldn't cost them the session: carry on with
       // whatever works and say what doesn't.
-      final missing = <String>[];
+      var micMissing = false, cameraMissing = false;
       try {
         await room.localParticipant?.setMicrophoneEnabled(true);
         _micOn = true;
       } catch (e) {
         debugPrint('Microphone unavailable: $e');
         _micOn = false;
-        missing.add('microphone');
+        micMissing = true;
       }
       try {
         await room.localParticipant?.setCameraEnabled(true);
@@ -170,7 +171,7 @@ class _CallScreenState extends State<CallScreen>
       } catch (e) {
         debugPrint('Camera unavailable: $e');
         _cameraOn = false;
-        missing.add('camera');
+        cameraMissing = true;
       }
 
       // After the microphone and camera are on: Android 14 only lets the
@@ -182,12 +183,16 @@ class _CallScreenState extends State<CallScreen>
       if (!mounted) return;
       setState(() => _phase = _Phase.live);
       Sentry.metrics.count('therapy.call_joined', 1);
-      if (missing.isNotEmpty) {
+      if (micMissing || cameraMissing) {
+        final l10n = context.l10n;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Your ${missing.join(' and ')} isn\'t available. You can allow '
-              'it in your phone\'s settings for this app.',
+              micMissing && cameraMissing
+                  ? l10n.callMicAndCameraUnavailable
+                  : micMissing
+                      ? l10n.callMicUnavailable
+                      : l10n.callCameraUnavailable,
             ),
           ),
         );
@@ -195,11 +200,10 @@ class _CallScreenState extends State<CallScreen>
     } on SessionAccessException catch (e) {
       _fail(e.message);
     } on StateError {
-      _fail('You\'ve been signed out. Please log in again.');
+      if (mounted) _fail(context.l10n.callSignedOut);
     } catch (e) {
       debugPrint('Joining the session failed: $e');
-      _fail('Couldn\'t connect to the session — check your connection and '
-          'try again.');
+      if (mounted) _fail(context.l10n.callConnectFailed);
     }
   }
 
@@ -278,21 +282,20 @@ class _CallScreenState extends State<CallScreen>
           body: switch (_phase) {
             _Phase.connecting => _message(
                 icon: null,
-                title: 'Connecting to your session…',
+                title: context.l10n.callConnecting,
                 detail: null,
               ),
             _Phase.failed => _message(
                 icon: Icons.videocam_off_rounded,
-                title: 'Couldn\'t join',
+                title: context.l10n.callJoinFailedTitle,
                 detail: _error,
-                primary: ('Try again', _start),
+                primary: (context.l10n.commonTryAgain, _start),
               ),
             _Phase.ended => _message(
                 icon: Icons.call_end_rounded,
-                title: 'The call has ended',
-                detail: 'If you were cut off, you can rejoin while the '
-                    'session is still on.',
-                primary: ('Rejoin', _start),
+                title: context.l10n.callEndedTitle,
+                detail: context.l10n.callEndedDetail,
+                primary: (context.l10n.callRejoin, _start),
               ),
             _Phase.live => _live(),
           },
@@ -364,7 +367,7 @@ class _CallScreenState extends State<CallScreen>
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: TextButton.styleFrom(foregroundColor: Colors.white),
-                  child: const Text('Close'),
+                  child: Text(context.l10n.commonClose),
                 ),
               ],
             ),
@@ -390,11 +393,12 @@ class _CallScreenState extends State<CallScreen>
     final selfShort = tablet ? 160.0 : 108.0;
     final selfWidth = tablet && landscape ? selfLong : selfShort;
     final selfHeight = tablet && landscape ? selfShort : selfLong;
+    final l10n = context.l10n;
     final status = remote == null
-        ? 'Waiting for ${widget.counterpartName} to join…'
+        ? l10n.callWaitingFor(widget.counterpartName)
         : endsAt == null
-            ? 'Connected'
-            : 'Session ends at ${formatTime(endsAt)}';
+            ? l10n.callConnected
+            : l10n.callEndsAt(formatTime(endsAt));
 
     return Stack(
       children: [
@@ -462,7 +466,7 @@ class _CallScreenState extends State<CallScreen>
                 children: [
                   _control(
                     icon: _micOn ? Icons.mic_rounded : Icons.mic_off_rounded,
-                    label: _micOn ? 'Mute' : 'Unmute',
+                    label: _micOn ? l10n.callMute : l10n.callUnmute,
                     active: _micOn,
                     onTap: _toggleMic,
                   ),
@@ -470,19 +474,19 @@ class _CallScreenState extends State<CallScreen>
                     icon: _cameraOn
                         ? Icons.videocam_rounded
                         : Icons.videocam_off_rounded,
-                    label: _cameraOn ? 'Turn camera off' : 'Turn camera on',
+                    label: _cameraOn ? l10n.callCameraOff : l10n.callCameraOn,
                     active: _cameraOn,
                     onTap: _toggleCamera,
                   ),
                   _control(
                     icon: Icons.cameraswitch_rounded,
-                    label: 'Switch camera',
+                    label: l10n.callSwitchCamera,
                     active: true,
                     onTap: _cameraOn ? _flipCamera : null,
                   ),
                   _control(
                     icon: Icons.call_end_rounded,
-                    label: 'Leave',
+                    label: l10n.callLeave,
                     active: true,
                     color: Pillars.red,
                     onTap: _leave,
@@ -523,7 +527,9 @@ class _CallScreenState extends State<CallScreen>
             ),
             const SizedBox(height: 14),
             Text(
-              joined ? 'Camera is off' : 'Not here yet',
+              joined
+                  ? context.l10n.callCameraIsOff
+                  : context.l10n.callNotHereYet,
               style: const TextStyle(fontSize: 13.5, color: Colors.white70),
             ),
           ],

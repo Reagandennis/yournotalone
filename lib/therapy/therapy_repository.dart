@@ -1,6 +1,7 @@
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
 import 'session_format.dart';
 
 /// What a session costs. The database holds the real price
@@ -16,19 +17,16 @@ const therapySessionChargeLabel = 'Ksh 2,600';
 
 /// How a session can be paid for on the Paystack page — only the channels
 /// switched on for the Paystack account (Settings → Preferences → Payment
-/// channels). Add card and Apple Pay here once Paystack activates them.
-const therapyPaymentMethods = 'M-Pesa or Airtel Money';
+/// channels). Add card and Apple Pay here (`therapyPaymentMethods` in the
+/// ARB files) once Paystack activates them.
 
 /// How far ahead a session can still be cancelled from the app, with a
 /// refund. Later than this — or not joining at all — isn't refunded. The
 /// database enforces the same cutoff (`therapy_cancel_notice()`, 0019).
 const therapyCancelNotice = Duration(hours: 24);
 
-/// The policy in one breath, shown wherever someone is about to pay.
-const therapyCancellationPolicy =
-    'Cancel in the app up to 24 hours before your session for a full '
-    'refund. A session cancelled later than that, or not joined, isn\'t '
-    'refunded.';
+/// The policy in one breath, shown wherever someone is about to pay, is
+/// `therapyCancellationPolicy` in the ARB files: keep it in step with this.
 
 /// How early a call opens, and how long past its scheduled end it stays
 /// open. The session-token Edge Function enforces the same window.
@@ -36,7 +34,8 @@ const sessionEarlyJoin = Duration(minutes: 10);
 const sessionLateGrace = Duration(minutes: 30);
 
 /// What someone can ask for help with. Therapists' specialties use the same
-/// names, so the care team can see who fits a request.
+/// names, so the care team can see who fits a request. These are stored as
+/// they are; [therapyTopicLabel] is how each one reads on screen.
 const therapyTopics = [
   'Anxiety & stress',
   'Low mood',
@@ -45,6 +44,19 @@ const therapyTopics = [
   'Addiction & recovery',
   'Not sure yet',
 ];
+
+/// A stored topic (or specialty) in the language the app is showing; one
+/// that isn't in [therapyTopics] is shown as it was written.
+String therapyTopicLabel(AppLocalizations l10n, String topic) =>
+    switch (topic) {
+      'Anxiety & stress' => l10n.therapyTopicAnxietyStress,
+      'Low mood' => l10n.therapyTopicLowMood,
+      'Relationships' => l10n.therapyTopicRelationships,
+      'Grief & loss' => l10n.therapyTopicGriefLoss,
+      'Addiction & recovery' => l10n.therapyTopicAddictionRecovery,
+      'Not sure yet' => l10n.therapyTopicNotSure,
+      _ => topic,
+    };
 
 /// "$20"; cents only when there are some.
 String formatPrice(int cents, [String currency = 'USD']) {
@@ -289,47 +301,43 @@ class SessionAccessException implements Exception {
   final String code;
   final DateTime? opensAt;
 
-  String get message => switch (code) {
-        'too_early' => opensAt == null
-            ? 'The session isn\'t open yet.'
-            : 'You can join from ${formatTime(opensAt!)} — 10 minutes '
-                'before the start.',
-        'session_over' => 'This session\'s time has passed.',
-        'payment_required' =>
-          'This session needs to be paid for before you can join.',
-        'not_confirmed' => 'This session isn\'t confirmed yet.',
-        'not_found' => 'We couldn\'t find that session.',
-        'no_payment_found' =>
-          'We couldn\'t find your payment yet. If you were charged, try '
-              'again in a minute.',
-        'not_payable' =>
-          'This request can\'t be paid for any more — start a new one.',
-        'checkout_failed' =>
-          'We couldn\'t open the payment page — please try again in a '
-              'moment.',
-        'email_required' =>
-          'Add an email address to your account to pay for a session.',
-        'not_configured' =>
-          'This isn\'t switched on yet. Please contact us.',
-        'invalid_token' ||
-        'missing_token' =>
-          'You\'ve been signed out. Please log in again.',
-        _ => 'Something went wrong — check your connection and try again.',
-      };
+  String get message {
+    final l10n = currentL10n();
+    return switch (code) {
+      'too_early' => opensAt == null
+          ? l10n.sessionErrorTooEarly
+          : l10n.sessionErrorTooEarlyAt(formatTime(opensAt!)),
+      'session_over' => l10n.sessionErrorOver,
+      'payment_required' => l10n.sessionErrorPaymentRequired,
+      'not_confirmed' => l10n.sessionErrorNotConfirmed,
+      'not_found' => l10n.sessionErrorNotFound,
+      'no_payment_found' => l10n.sessionErrorNoPaymentFound,
+      'not_payable' => l10n.sessionErrorNotPayable,
+      'checkout_failed' => l10n.sessionErrorCheckoutFailed,
+      'email_required' => l10n.sessionErrorEmailRequired,
+      'not_configured' => l10n.sessionErrorNotConfigured,
+      'invalid_token' || 'missing_token' => l10n.sessionErrorSignedOut,
+      _ => l10n.sessionErrorGeneric,
+    };
+  }
 
   @override
   String toString() => 'SessionAccessException($code)';
 }
 
 /// How a finished session reads in a list, for clients and staff alike.
-String sessionOutcomeLabel(TherapyRequest request) => switch (request.status) {
-      'completed' when request.wasMissed => 'Missed',
-      'completed' => 'Completed',
-      'cancelled' when request.didNotHappen => 'Didn\'t happen',
-      'cancelled' when request.closeReason == 'unpaid' => 'Not paid',
-      'cancelled' when request.submittedAt == null => 'Not sent',
-      _ => 'Cancelled',
-    };
+String sessionOutcomeLabel(TherapyRequest request) {
+  final l10n = currentL10n();
+  return switch (request.status) {
+    'completed' when request.wasMissed => l10n.sessionOutcomeMissed,
+    'completed' => l10n.sessionOutcomeCompleted,
+    'cancelled' when request.didNotHappen => l10n.sessionOutcomeDidNotHappen,
+    'cancelled' when request.closeReason == 'unpaid' =>
+      l10n.sessionOutcomeNotPaid,
+    'cancelled' when request.submittedAt == null => l10n.sessionOutcomeNotSent,
+    _ => l10n.sessionOutcomeCancelled,
+  };
+}
 
 /// Supabase-backed storage for a client's therapy sessions.
 class TherapyRepository {

@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../reminders/reminders_service.dart';
 import 'local_notifications.dart';
 
@@ -27,19 +28,10 @@ enum NotificationAccess {
 /// Why we're asking, in the person's terms. Shown in the prompts so the
 /// request never arrives out of the blue.
 abstract final class NotificationReasons {
-  static const session =
-      'We\'ll tell you the moment you\'re matched with a therapist, if your '
-      'session moves, and ten minutes before it starts — so you don\'t miss '
-      'a session you\'ve paid for.';
-  static const therapist =
-      'You\'ll be told when a session is booked with you, if it changes, and '
-      'ten minutes before it starts.';
-  static const reminders =
-      'Reminders are notifications: without permission the phone can\'t '
-      'show them.';
-  static const onboarding =
-      'Session bookings, a nudge before each session starts, and the daily '
-      'reminders you choose. Nothing else.';
+  static String get session => currentL10n().notificationReasonSession;
+  static String get therapist => currentL10n().notificationReasonTherapist;
+  static String get reminders => currentL10n().notificationReasonReminders;
+  static String get onboarding => currentL10n().notificationReasonOnboarding;
 }
 
 /// Everything about notification permission in one place: what the OS
@@ -193,20 +185,16 @@ class NotificationPermission {
     final open = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Notifications are off'),
-        content: Text(
-          '$reason\n\nThey\'re switched off for this app at the moment. '
-          'You can turn them on in your phone\'s settings — it takes a '
-          'few seconds.',
-        ),
+        title: Text(context.l10n.notificationOffTitle),
+        content: Text(context.l10n.notificationOffBody(reason)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Not now'),
+            child: Text(context.l10n.commonNotNow),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Open settings'),
+            child: Text(context.l10n.notificationOpenSettings),
           ),
         ],
       ),
@@ -267,7 +255,7 @@ class NotificationsOffBanner extends StatelessWidget {
                 final on = await permission.ensure(context, reason: reason);
                 onChanged(on);
               },
-              child: const Text('Turn on'),
+              child: Text(context.l10n.notificationTurnOn),
             ),
           ],
         ),

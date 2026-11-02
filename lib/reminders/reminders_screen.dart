@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import 'reminders_service.dart';
 
@@ -49,10 +50,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
       debugPrint('Reminder toggle failed: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couldn\'t set the reminder — fully restart the '
-                'app and try again.'),
-          ),
+          SnackBar(content: Text(context.l10n.remindersSetFailed)),
         );
       }
     }
@@ -103,7 +101,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  kind.label,
+                  kind.label(context.l10n),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -112,7 +110,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  kind.description,
+                  kind.description(context.l10n),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -190,7 +188,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Reminders',
+                  context.l10n.remindersTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -202,8 +200,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'Gentle daily nudges, only if you want them — tap a time '
-                  'to change it.',
+                  context.l10n.remindersIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -225,9 +222,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
                   for (final kind in ReminderKind.values) _reminderCard(kind),
                 const SizedBox(height: 8),
                 Text(
-                  'Reminders are scheduled on this device and arrive even '
-                  'when the app is closed. Times may shift a few minutes to '
-                  'save battery.',
+                  context.l10n.remindersFootnote,
                   style: TextStyle(
                     fontSize: 12,
                     color: c.textMuted,
