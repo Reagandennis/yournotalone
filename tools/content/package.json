@@ -1,0 +1,18 @@
+{
+  "name": "yournotalone-content",
+  "private": true,
+  "type": "module",
+  "description": "Validates content/ and builds the catalogue snapshot (docs/backend-design.md §8).",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "node src/check.ts",
+    "build": "node src/build.ts",
+    "test": "node --test src/*.test.ts"
+  },
+  "dependencies": {
+    "yaml": "2.9.1",
+    "zod": "4.6.7"
+  }
+}
