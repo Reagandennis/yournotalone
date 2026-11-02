@@ -6908,5 +6908,59 @@
   "soundPlayerFallbackTitle": "Wellbeing sound",
   "@soundPlayerFallbackTitle": {
     "description": "Title on the lock screen / media notification for a sound with no name."
+  },
+  "playerCouldNotPlay": "Couldn't play that sound.",
+  "@playerCouldNotPlay": {
+    "description": "Snackbar on the sound player when a sound fails to start."
+  },
+  "playerSleepTimerStopsIn": "Stops in {time} · cancel",
+  "@playerSleepTimerStopsIn": {
+    "description": "Sound player button while a sleep timer runs: time left as mm:ss; tapping it cancels the timer. Keep short.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "14:59"
+      }
+    }
+  },
+  "playerSleepTimerOption": "{minutes}m",
+  "@playerSleepTimerOption": {
+    "description": "Small chip on the sound player to set a sleep timer of this many minutes (15, 30, 60). Abbreviated minutes; very short.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "30"
+      }
+    }
+  },
+  "meditationVoiceChip": "Voice",
+  "@meditationVoiceChip": {
+    "description": "Chip during a guided meditation that turns the narrator's voice on or off. One short word."
+  },
+  "meditationSessionComplete": "Session complete",
+  "@meditationSessionComplete": {
+    "description": "Heading when a meditation session ends."
+  },
+  "meditationCompleteBody": "{minutes, plural, other{{minutes} quiet minutes, just for you.\nCarry a little of this with you.}}",
+  "@meditationCompleteBody": {
+    "description": "Under 'Session complete' after a meditation: gentle, warm. Two lines (keep the line break).",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "meditationAddedToHistory": "Added to your practice history.",
+  "@meditationAddedToHistory": {
+    "description": "Small note after a meditation: the session was recorded in the practice history."
+  },
+  "meditationRemaining": "remaining",
+  "@meditationRemaining": {
+    "description": "Under the countdown clock during a meditation (time remaining). Lower-case, one word if possible."
+  },
+  "meditationNoSound": "No sound",
+  "@meditationNoSound": {
+    "description": "Chip during a meditation: play no background sound."
   }
 }

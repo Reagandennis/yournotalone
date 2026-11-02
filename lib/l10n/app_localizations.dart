@@ -8040,6 +8040,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wellbeing sound'**
   String get soundPlayerFallbackTitle;
+
+  /// Snackbar on the sound player when a sound fails to start.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t play that sound.'**
+  String get playerCouldNotPlay;
+
+  /// Sound player button while a sleep timer runs: time left as mm:ss; tapping it cancels the timer. Keep short.
+  ///
+  /// In en, this message translates to:
+  /// **'Stops in {time} · cancel'**
+  String playerSleepTimerStopsIn(String time);
+
+  /// Small chip on the sound player to set a sleep timer of this many minutes (15, 30, 60). Abbreviated minutes; very short.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes}m'**
+  String playerSleepTimerOption(int minutes);
+
+  /// Chip during a guided meditation that turns the narrator's voice on or off. One short word.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get meditationVoiceChip;
+
+  /// Heading when a meditation session ends.
+  ///
+  /// In en, this message translates to:
+  /// **'Session complete'**
+  String get meditationSessionComplete;
+
+  /// Under 'Session complete' after a meditation: gentle, warm. Two lines (keep the line break).
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} quiet minutes, just for you.\nCarry a little of this with you.}}'**
+  String meditationCompleteBody(int minutes);
+
+  /// Small note after a meditation: the session was recorded in the practice history.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your practice history.'**
+  String get meditationAddedToHistory;
+
+  /// Under the countdown clock during a meditation (time remaining). Lower-case, one word if possible.
+  ///
+  /// In en, this message translates to:
+  /// **'remaining'**
+  String get meditationRemaining;
+
+  /// Chip during a meditation: play no background sound.
+  ///
+  /// In en, this message translates to:
+  /// **'No sound'**
+  String get meditationNoSound;
 }
 
 class _AppLocalizationsDelegate

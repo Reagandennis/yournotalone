@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../l10n/l10n.dart';
 import 'sound_player.dart';
 import 'sounds_catalog.dart';
 
@@ -50,7 +51,7 @@ class _PlayerScreenState extends State<PlayerScreen>
       debugPrint('Sound playback failed for ${sound.asset}: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Couldn\'t play that sound.')),
+          SnackBar(content: Text(context.l10n.playerCouldNotPlay)),
         );
       }
     }
@@ -89,8 +90,10 @@ class _PlayerScreenState extends State<PlayerScreen>
             onPressed: () => SoundPlayer.instance.setSleepTimer(null),
             icon: const Icon(Icons.bedtime_rounded, size: 17),
             label: Text(
-              'Stops in ${minutes.toString().padLeft(2, '0')}:'
-              '${seconds.toString().padLeft(2, '0')} · cancel',
+              context.l10n.playerSleepTimerStopsIn(
+                '${minutes.toString().padLeft(2, '0')}:'
+                '${seconds.toString().padLeft(2, '0')}',
+              ),
             ),
             style: TextButton.styleFrom(foregroundColor: accent),
           );
@@ -117,7 +120,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 6),
                       child: Text(
-                        '${minutes}m',
+                        context.l10n.playerSleepTimerOption(minutes),
                         style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
@@ -279,7 +282,7 @@ class _PlayerScreenState extends State<PlayerScreen>
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          tooltip: 'Stop',
+                          tooltip: context.l10n.commonStop,
                           onPressed: () async {
                             await player.stop();
                             if (context.mounted) {

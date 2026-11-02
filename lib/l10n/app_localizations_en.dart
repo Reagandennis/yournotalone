@@ -5159,4 +5159,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get soundPlayerFallbackTitle => 'Wellbeing sound';
+
+  @override
+  String get playerCouldNotPlay => 'Couldn\'t play that sound.';
+
+  @override
+  String playerSleepTimerStopsIn(String time) {
+    return 'Stops in $time · cancel';
+  }
+
+  @override
+  String playerSleepTimerOption(int minutes) {
+    return '${minutes}m';
+  }
+
+  @override
+  String get meditationVoiceChip => 'Voice';
+
+  @override
+  String get meditationSessionComplete => 'Session complete';
+
+  @override
+  String meditationCompleteBody(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other:
+          '$minutes quiet minutes, just for you.\nCarry a little of this with you.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get meditationAddedToHistory => 'Added to your practice history.';
+
+  @override
+  String get meditationRemaining => 'remaining';
+
+  @override
+  String get meditationNoSound => 'No sound';
 }

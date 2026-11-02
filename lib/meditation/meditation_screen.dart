@@ -8,6 +8,7 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
 import '../sounds/sound_player.dart';
@@ -187,7 +188,7 @@ class _MeditationScreenState extends State<MeditationScreen>
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  'Voice',
+                  context.l10n.meditationVoiceChip,
                   style: TextStyle(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
@@ -269,7 +270,7 @@ class _MeditationScreenState extends State<MeditationScreen>
         ),
         const SizedBox(height: 24),
         Text(
-          'Session complete',
+          context.l10n.meditationSessionComplete,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -278,8 +279,7 @@ class _MeditationScreenState extends State<MeditationScreen>
         ),
         const SizedBox(height: 10),
         Text(
-          '${meditation.minutes} quiet minutes, just for you.\n'
-          'Carry a little of this with you.',
+          context.l10n.meditationCompleteBody(meditation.minutes),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
@@ -289,7 +289,7 @@ class _MeditationScreenState extends State<MeditationScreen>
         ),
         const SizedBox(height: 8),
         Text(
-          'Added to your practice history.',
+          context.l10n.meditationAddedToHistory,
           style: TextStyle(
             fontSize: 12.5,
             color: c.accent(meditation.accent),
@@ -345,7 +345,7 @@ class _MeditationScreenState extends State<MeditationScreen>
                     ),
                   ),
                   Text(
-                    'remaining',
+                    context.l10n.meditationRemaining,
                     style: TextStyle(fontSize: 12, color: c.textMuted),
                   ),
                 ],
@@ -416,7 +416,7 @@ class _MeditationScreenState extends State<MeditationScreen>
           child: Row(
             children: [
               if (_hasVoice) _voiceChip(),
-              _ambientChip('No sound', null),
+              _ambientChip(context.l10n.meditationNoSound, null),
               for (final s in _ambientChoices) _ambientChip(s.title, s),
             ],
           ),
