@@ -1,0 +1,13 @@
+id: night-aurora
+status: published
+order: 30
+engine: aurora
+defaultFor: [meditation, recovery]
+params:
+  palette: ["#3E9B5B", "#3764CD", "#8E7CC3"]
+  speed: 0.7
+  density: 1
+  seed: 3
+text:
+  en:
+    title: Night aurora

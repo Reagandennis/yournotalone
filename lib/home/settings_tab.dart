@@ -10,6 +10,8 @@ import '../appearance.dart';
 import '../auth/auth_redirect.dart';
 import '../auth/auth_ui.dart';
 import '../auth/google_auth.dart';
+import '../backgrounds/background_strings.dart';
+import '../backgrounds/calm_visuals.dart';
 import '../auth/login_screen.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
@@ -41,9 +43,9 @@ class _SettingsTabState extends State<SettingsTab> {
       Supabase.instance.client.auth.currentUser?.userMetadata;
 
   Future<void> _openEditProfile(BuildContext context) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const EditProfileScreen()));
     // Name or photo may have changed — re-read the auth metadata.
     if (mounted) setState(() {});
   }
@@ -70,17 +72,20 @@ class _SettingsTabState extends State<SettingsTab> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(pro
-                ? 'Premium restored — welcome back.'
-                : 'No previous purchases found.'),
+            content: Text(
+              pro
+                  ? 'Premium restored — welcome back.'
+                  : 'No previous purchases found.',
+            ),
           ),
         );
       }
     } catch (e) {
       final message = purchaseErrorMessage(e);
       if (message != null && context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     }
   }
@@ -89,8 +94,10 @@ class _SettingsTabState extends State<SettingsTab> {
     final email = Supabase.instance.client.auth.currentUser?.email;
     if (email == null) return;
     try {
-      await Supabase.instance.client.auth
-          .resetPasswordForEmail(email, redirectTo: authRedirectUrl);
+      await Supabase.instance.client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: authRedirectUrl,
+      );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Password reset link sent to $email')),
@@ -108,8 +115,10 @@ class _SettingsTabState extends State<SettingsTab> {
       queryParameters: {'subject': 'yournotalone — support'},
     );
     try {
-      final launched =
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
       if (launched || !context.mounted) return;
       throw Exception('no mail app');
     } catch (_) {
@@ -286,10 +295,7 @@ class _SettingsTabState extends State<SettingsTab> {
                     user!.email!,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      color: c.textMuted,
-                    ),
+                    style: TextStyle(fontSize: 12.5, color: c.textMuted),
                   ),
                 ],
               ],
@@ -297,11 +303,7 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
           IconButton(
             onPressed: () => _openEditProfile(context),
-            icon: Icon(
-              Icons.edit_outlined,
-              size: 20,
-              color: c.textMuted,
-            ),
+            icon: Icon(Icons.edit_outlined, size: 20, color: c.textMuted),
           ),
         ],
       ),
@@ -323,10 +325,7 @@ class _SettingsTabState extends State<SettingsTab> {
           Container(
             width: 44,
             height: 44,
-            decoration: BoxDecoration(
-              color: c.chip,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: c.chip, shape: BoxShape.circle),
             child: Icon(
               Icons.workspace_premium_rounded,
               size: 22,
@@ -351,10 +350,7 @@ class _SettingsTabState extends State<SettingsTab> {
                   premium
                       ? 'Every room in the house is open.'
                       : introOfferSentence,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: c.textMuted,
-                  ),
+                  style: TextStyle(fontSize: 12.5, color: c.textMuted),
                 ),
               ],
             ),
@@ -401,7 +397,8 @@ class _SettingsTabState extends State<SettingsTab> {
                 'Care team dashboard',
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (_) => const CareDashboardScreen()),
+                    builder: (_) => const CareDashboardScreen(),
+                  ),
                 ),
               ),
             if (roles.isTherapist)
@@ -448,12 +445,43 @@ class _SettingsTabState extends State<SettingsTab> {
               Text(value, style: TextStyle(fontSize: 13, color: c.textMuted)),
               const SizedBox(width: 8),
             ],
-            Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 14,
-              color: c.border,
-            ),
+            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: c.border),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// Calm visuals on or off: a switch, since there's nothing to choose
+  /// between. Off holds the backgrounds behind sounds and sessions still.
+  Widget _calmVisualsRow(BuildContext context) {
+    final c = context.brand;
+    final setting = CalmVisualsSetting.instance;
+    return ListenableBuilder(
+      listenable: setting,
+      builder: (context, _) => MergeSemantics(
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () => setting.setEnabled(!setting.enabled),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: Row(
+              children: [
+                Icon(Icons.blur_on_rounded, size: 21, color: c.textMuted),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    BackgroundStrings.calmVisuals,
+                    style: TextStyle(fontSize: 14.5, color: c.ink),
+                  ),
+                ),
+                Switch.adaptive(
+                  value: setting.enabled,
+                  onChanged: setting.setEnabled,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -616,9 +644,8 @@ class _SettingsTabState extends State<SettingsTab> {
   }
 
   @override
-  Widget build(BuildContext context) => PremiumBuilder(
-        builder: (context, _) => _buildContent(context),
-      );
+  Widget build(BuildContext context) =>
+      PremiumBuilder(builder: (context, _) => _buildContent(context));
 
   /// Wrapped by [PremiumBuilder] above, so this repaints the moment the
   /// entitlement changes — buying from inside the app used to leave the
@@ -662,9 +689,9 @@ class _SettingsTabState extends State<SettingsTab> {
           context,
           Icons.notifications_none_rounded,
           'Reminders & notifications',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const RemindersScreen()),
-          ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const RemindersScreen())),
         ),
         _row(
           context,
@@ -683,6 +710,7 @@ class _SettingsTabState extends State<SettingsTab> {
             onTap: () => _chooseAppearance(context),
           ),
         ),
+        _calmVisualsRow(context),
         _row(
           context,
           Icons.restore_rounded,
@@ -695,9 +723,9 @@ class _SettingsTabState extends State<SettingsTab> {
           context,
           Icons.health_and_safety_outlined,
           'Crisis resources',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const CrisisScreen()),
-          ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const CrisisScreen())),
         ),
         _row(
           context,
@@ -709,9 +737,9 @@ class _SettingsTabState extends State<SettingsTab> {
           context,
           Icons.help_outline_rounded,
           'FAQ',
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const FaqScreen()),
-          ),
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const FaqScreen())),
         ),
         const SizedBox(height: 22),
         _sectionLabel('Legal'),

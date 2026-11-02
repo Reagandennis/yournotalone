@@ -148,6 +148,25 @@ void main() {
     expect(s.textFor('fr').title, s.textFor('en').title);
   });
 
+  test('reads a snapshot with fields it doesn\'t know', () {
+    // New fields arrive without a format bump (backgrounds did), so an
+    // older build must skip what it doesn't understand.
+    final json =
+        jsonDecode(File(bundledCatalogAsset).readAsStringSync())
+            as Map<String, dynamic>;
+    final item = (json['items'] as List).first as Map<String, dynamic>;
+    final read = CatalogSnapshot.fromJson({
+      ...json,
+      'sparkles': {'any': 'thing'},
+      'items': [
+        {...item, 'background': 'dusk-waves', 'sparkles': true},
+        ...(json['items'] as List).skip(1),
+      ],
+    })!;
+    expect(read.items, hasLength(snapshot.items.length));
+    expect(read.items.first.id, snapshot.items.first.id);
+  });
+
   test('ignores a snapshot in a newer format', () {
     expect(
       CatalogSnapshot.fromJson({

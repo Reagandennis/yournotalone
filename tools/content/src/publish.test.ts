@@ -33,6 +33,7 @@ const fakePrepare: PlanOptions['prepare'] = async (src) => ({ bytes: enc(`audio:
 const opts = (store: MemoryStore | null, items = fixture()): PlanOptions => ({
   items,
   courses: base.courses,
+  backgrounds: base.backgrounds,
   env: staging,
   minApp: '1.1.0',
   store,
@@ -99,7 +100,7 @@ test('the media map has one entry per item with media, in the agreed shape', asy
   // Meditations without narration have no entry.
   assert.equal('meditation:Loving kindness' in snap.media, false);
   // The rest of the snapshot is what build writes, plus media.
-  assert.deepEqual(Object.keys(snap), ['format', 'version', 'hash', 'items', 'courses', 'media']);
+  assert.deepEqual(Object.keys(snap), ['format', 'version', 'hash', 'items', 'courses', 'backgrounds', 'media']);
 });
 
 test('version starts at 1 and counts up from the current latest', async () => {

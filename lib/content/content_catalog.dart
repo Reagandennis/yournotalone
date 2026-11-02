@@ -16,6 +16,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../backgrounds/scene_library.dart';
 import '../cbt/cbt_catalog.dart';
 import '../courses/course_catalog.dart';
 import '../discover/content_index.dart';
@@ -342,6 +343,7 @@ class ContentCatalog {
     _snapshot = snapshot;
     _items = items;
     _courses = coursesFrom(snapshot, items);
+    SceneLibrary.instance.use(snapshot);
   }
 
   @visibleForTesting

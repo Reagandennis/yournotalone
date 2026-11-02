@@ -1,0 +1,12 @@
+id: fireflies
+status: published
+order: 40
+engine: particles
+params:
+  palette: ["#FAB414", "#EF7418", "#3E9B5B"]
+  speed: 0.6
+  density: 1
+  seed: 11
+text:
+  en:
+    title: Fireflies
