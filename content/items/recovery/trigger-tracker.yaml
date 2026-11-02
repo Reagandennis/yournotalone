@@ -1,0 +1,17 @@
+id: "recovery:Trigger tracker"
+kind: recovery
+status: published
+order: 840
+premium: false
+icon: bolt_rounded
+accent: yellow
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "Trigger tracker"
+    blurb: "Log a craving: what set it off and how strong it was."
+body:
+  type: native
+  screen: recovery-hub

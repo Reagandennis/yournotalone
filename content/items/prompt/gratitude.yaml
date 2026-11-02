@@ -1,0 +1,18 @@
+id: "prompt:Gratitude"
+kind: prompt
+status: published
+order: 340
+premium: false
+icon: wb_sunny_rounded
+accent: yellow
+tags:
+  needs: [reflect, good]
+  dayParts: [evening]
+text:
+  en:
+    title: "Gratitude"
+    blurb: "Three small things that went right."
+    seed: "Today, I'm grateful for "
+body:
+  type: prompt
+  group: "Everyday"

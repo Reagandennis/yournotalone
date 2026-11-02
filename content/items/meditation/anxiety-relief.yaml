@@ -1,0 +1,35 @@
+id: "meditation:Anxiety relief"
+kind: meditation
+status: published
+order: 100
+premium: true
+minutes: 8
+icon: spa_rounded
+accent: blue
+tags:
+  needs: [anxious, panic]
+  dayParts: []
+text:
+  en:
+    title: "Anxiety relief"
+    blurb: "Ground yourself in what's real and right here."
+    prompts:
+      - "Settle in. Let your shoulders drop away from your ears."
+      - "Breathe out longer than you breathe in, just for a while."
+      - "Name five things you can feel touching your body."
+      - "Anxiety is a wave — it rises, peaks, and always passes."
+      - "Place a hand on your chest. Feel it rise and fall."
+      - "You don't have to solve anything right now."
+      - "With each exhale, let your jaw and hands soften."
+      - "You're safe in this moment. Stay as long as you like."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.06
+    - 0.16
+    - 0.3
+    - 0.45
+    - 0.6
+    - 0.75
+    - 0.9

@@ -1,0 +1,22 @@
+id: "breathing:Morning lift"
+kind: breathing
+status: published
+order: 80
+premium: true
+minutes: 3
+icon: air_rounded
+accent: yellow
+tags:
+  needs: [low, focus]
+  dayParts: [morning]
+text:
+  en:
+    title: "Morning lift"
+    blurb: "A fuller inhale to wake the body up without rushing it."
+    area: "Breathing · 6 · 2 · 4"
+body:
+  type: breathing
+  inhale: 6
+  holdIn: 2
+  exhale: 4
+  holdOut: 0

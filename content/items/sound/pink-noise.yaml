@@ -1,0 +1,24 @@
+id: "sound:Pink noise"
+kind: sound
+status: published
+order: 270
+premium: true
+icon: grain_rounded
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [night]
+text:
+  en:
+    title: "Pink noise"
+    blurb: "Softer and warmer than white noise — easy to sleep through."
+    area: "Sound · Sleep"
+body:
+  type: sound
+  category: sleep
+  audio: "assets/sounds/pink_noise.m4a"
+  loop: true
+  waveFreq: 7.0
+  waveSpeed: 3
+  waveHeight: 0.35
+  pulse: false

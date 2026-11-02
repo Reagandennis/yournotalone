@@ -1,0 +1,24 @@
+id: "sound:Heartbeat"
+kind: sound
+status: published
+order: 320
+premium: true
+icon: monitor_heart_rounded
+accent: blue
+tags:
+  needs: [anxious, panic, stressed]
+  dayParts: []
+text:
+  en:
+    title: "Heartbeat"
+    blurb: "Sixty beats a minute — the pace a settled body finds."
+    area: "Sound · Calm"
+body:
+  type: sound
+  category: calm
+  audio: "assets/sounds/resting_heartbeat.m4a"
+  loop: true
+  waveFreq: 1.6
+  waveSpeed: 1
+  waveHeight: 0.5
+  pulse: true

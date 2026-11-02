@@ -1,0 +1,20 @@
+id: "tool:Stress check-in"
+kind: tool
+status: published
+order: 720
+premium: true
+minutes: 2
+icon: speed_rounded
+accent: stress
+tags:
+  needs: [stressed]
+  dayParts: []
+text:
+  en:
+    title: "Stress check-in"
+    blurb: "Five questions about the past week, and a trend you can watch."
+    area: "Stress"
+body:
+  type: native
+  screen: stress-check-in
+  art: gauge

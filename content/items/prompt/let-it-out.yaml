@@ -1,0 +1,18 @@
+id: "prompt:Let it out"
+kind: prompt
+status: published
+order: 350
+premium: true
+icon: bolt_rounded
+accent: red
+tags:
+  needs: [stressed, angry, reflect]
+  dayParts: []
+text:
+  en:
+    title: "Let it out"
+    blurb: "No filter, no editing — just get it down."
+    seed: "What's sitting heaviest on me right now is "
+body:
+  type: prompt
+  group: "Everyday"

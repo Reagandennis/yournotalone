@@ -1,0 +1,18 @@
+id: "prompt:Put the day down"
+kind: prompt
+status: published
+order: 510
+premium: true
+icon: bedtime_rounded
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [evening]
+text:
+  en:
+    title: "Put the day down"
+    blurb: "Close the loops so they stop reopening at 2am."
+    seed: "Finished today:\n\n- \n\nWaiting for tomorrow:\n\n- \n"
+body:
+  type: prompt
+  group: "Before sleep"

@@ -1,0 +1,20 @@
+id: "tool:Worry window"
+kind: tool
+status: published
+order: 570
+premium: true
+minutes: 15
+icon: schedule_rounded
+accent: cbt
+tags:
+  needs: [anxious]
+  dayParts: []
+text:
+  en:
+    title: "Worry window"
+    blurb: "Park worries as they come; give them fifteen minutes, once a day."
+    area: "CBT"
+body:
+  type: native
+  screen: worry-window
+  art: worry

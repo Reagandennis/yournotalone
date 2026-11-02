@@ -1,0 +1,18 @@
+id: "prompt:Body check-in"
+kind: prompt
+status: published
+order: 380
+premium: true
+icon: accessibility_new_rounded
+accent: black
+tags:
+  needs: [stressed, reflect]
+  dayParts: []
+text:
+  en:
+    title: "Body check-in"
+    blurb: "Where the day is sitting — shoulders, chest, jaw."
+    seed: "My body today feels "
+body:
+  type: prompt
+  group: "Everyday"

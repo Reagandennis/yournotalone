@@ -1,0 +1,17 @@
+id: "recovery:Trigger insights"
+kind: recovery
+status: published
+order: 820
+premium: true
+icon: query_stats_rounded
+accent: black
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "Trigger insights"
+    blurb: "What sets cravings off, when they land, and how hard."
+body:
+  type: native
+  screen: trigger-insights

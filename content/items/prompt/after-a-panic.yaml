@@ -1,0 +1,18 @@
+id: "prompt:After a panic"
+kind: prompt
+status: published
+order: 410
+premium: true
+icon: healing_rounded
+accent: blue
+tags:
+  needs: [panic, low, reflect]
+  dayParts: []
+text:
+  en:
+    title: "After a panic"
+    blurb: "Write it down while it's fresh, so it teaches you something."
+    seed: "What set it off:\n\nWhat it felt like:\n\nWhat helped:\n\nWhat I want to remember for next time:\n"
+body:
+  type: prompt
+  group: "Hard days"

@@ -1,0 +1,20 @@
+id: "tool:Tense and release"
+kind: tool
+status: published
+order: 710
+premium: true
+minutes: 8
+icon: accessibility_new_rounded
+accent: stress
+tags:
+  needs: [sleep, stressed]
+  dayParts: [evening]
+text:
+  en:
+    title: "Tense and release"
+    blurb: "Progressive muscle relaxation, group by group, with the timer kept."
+    area: "Stress"
+body:
+  type: native
+  screen: tense-and-release
+  art: muscles

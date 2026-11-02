@@ -1,0 +1,20 @@
+id: "tool:Grounding: 5-4-3-2-1"
+kind: tool
+status: published
+order: 530
+premium: false
+minutes: 3
+icon: spa_rounded
+accent: cbt
+tags:
+  needs: [anxious, panic]
+  dayParts: []
+text:
+  en:
+    title: "Grounding: 5-4-3-2-1"
+    blurb: "Back into the room when panic or a spiral takes over."
+    area: "CBT"
+body:
+  type: native
+  screen: grounding-5-4-3-2-1
+  art: grounding

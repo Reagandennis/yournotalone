@@ -1,0 +1,22 @@
+id: "breathing:Slow exhale"
+kind: breathing
+status: published
+order: 30
+premium: true
+minutes: 3
+icon: air_rounded
+accent: black
+tags:
+  needs: [stressed, angry]
+  dayParts: []
+text:
+  en:
+    title: "Slow exhale"
+    blurb: "Breathing out longer than in — the quickest way to downshift."
+    area: "Breathing · 4 · 7"
+body:
+  type: breathing
+  inhale: 4
+  holdIn: 0
+  exhale: 7
+  holdOut: 0

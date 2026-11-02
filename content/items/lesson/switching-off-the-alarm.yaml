@@ -1,0 +1,24 @@
+id: "lesson:Switching off the alarm"
+kind: lesson
+status: published
+order: 760
+premium: true
+minutes: 2
+icon: menu_book_rounded
+accent: stress
+tags:
+  needs: [panic, stressed]
+  dayParts: []
+text:
+  en:
+    title: "Switching off the alarm"
+    blurb: "You can't think your way calm. You can breathe your way there."
+    area: "Stress read"
+    paragraphs:
+      - "The part of you that panics doesn't read. Telling yourself to calm down works about as well as telling a smoke alarm to calm down. What that part does respond to is the body: the breath, the muscles, movement."
+      - "The exhale is the lever. Breathing out slows the heart a little; breathing in speeds it up. Make the out-breath longer than the in-breath and, within a minute or two, the alarm quietens on its own. The physiological sigh — two sips in, one long breath out — is the fastest version anyone has measured."
+      - "Muscles work the same way in reverse. A tense body tells the brain there's a threat. Tensing hard and then letting go, group by group, sends the opposite message, and most people feel it within a single round."
+      - "Do these before you think. Once the alarm is quieter, thinking works again — and the problem-solving tools have something to work with."
+body:
+  type: lesson
+  art: sigh

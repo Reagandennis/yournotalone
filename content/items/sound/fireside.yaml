@@ -1,0 +1,24 @@
+id: "sound:Fireside"
+kind: sound
+status: published
+order: 290
+premium: true
+icon: local_fire_department_rounded
+accent: black
+tags:
+  needs: [sleep, low]
+  dayParts: [evening, night]
+text:
+  en:
+    title: "Fireside"
+    blurb: "A low roar and the crackle of a fire nearby."
+    area: "Sound · Sleep"
+body:
+  type: sound
+  category: sleep
+  audio: "assets/sounds/fireside.m4a"
+  loop: true
+  waveFreq: 4.0
+  waveSpeed: 2
+  waveHeight: 0.5
+  pulse: true

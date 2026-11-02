@@ -1,0 +1,17 @@
+id: "recovery:Milestones"
+kind: recovery
+status: published
+order: 810
+premium: true
+icon: emoji_events_rounded
+accent: blue
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "Milestones"
+    blurb: "Every marker, reached and ahead, for each commitment."
+body:
+  type: native
+  screen: milestones

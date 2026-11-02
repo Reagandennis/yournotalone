@@ -1,0 +1,22 @@
+id: "breathing:Coherent breath"
+kind: breathing
+status: published
+order: 40
+premium: true
+minutes: 3
+icon: air_rounded
+accent: blue
+tags:
+  needs: [anxious, focus]
+  dayParts: []
+text:
+  en:
+    title: "Coherent breath"
+    blurb: "Five in, five out — the steady pace your heart settles into."
+    area: "Breathing · 5 · 5"
+body:
+  type: breathing
+  inhale: 5
+  holdIn: 0
+  exhale: 5
+  holdOut: 0

@@ -1,0 +1,39 @@
+id: "meditation:Body scan"
+kind: meditation
+status: published
+order: 110
+premium: true
+minutes: 12
+icon: accessibility_new_rounded
+accent: red
+tags:
+  needs: [sleep, stressed]
+  dayParts: [evening]
+text:
+  en:
+    title: "Body scan"
+    blurb: "Travel slowly from head to toe, releasing as you go."
+    prompts:
+      - "Lie down or sit back. Close your eyes when you're ready."
+      - "Bring your attention to the top of your head."
+      - "Soften your forehead, your eyes, your jaw."
+      - "Notice your neck and shoulders. Breathe into any tightness."
+      - "Follow your arms down to your fingertips."
+      - "Feel your chest and belly rise and fall."
+      - "Let your back release into whatever holds you."
+      - "Move through your hips, your legs, your knees."
+      - "Reach your feet. Feel them, heavy and warm."
+      - "Hold your whole body in awareness. Rest."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.05
+    - 0.14
+    - 0.25
+    - 0.37
+    - 0.5
+    - 0.62
+    - 0.74
+    - 0.86
+    - 0.95

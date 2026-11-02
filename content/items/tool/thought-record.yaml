@@ -1,0 +1,20 @@
+id: "tool:Thought record"
+kind: tool
+status: published
+order: 540
+premium: true
+minutes: 8
+icon: edit_note_rounded
+accent: cbt
+tags:
+  needs: [anxious, low]
+  dayParts: []
+text:
+  en:
+    title: "Thought record"
+    blurb: "Catch the thought, check the evidence, write a fairer one."
+    area: "CBT"
+body:
+  type: native
+  screen: thought-record
+  art: thoughts

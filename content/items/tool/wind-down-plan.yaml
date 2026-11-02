@@ -1,0 +1,20 @@
+id: "tool:Wind-down plan"
+kind: tool
+status: published
+order: 620
+premium: false
+minutes: 4
+icon: nights_stay_rounded
+accent: sleep
+tags:
+  needs: [sleep]
+  dayParts: [evening]
+text:
+  en:
+    title: "Wind-down plan"
+    blurb: "An hour of small steps that tell your body it's night."
+    area: "Sleep"
+body:
+  type: native
+  screen: wind-down-plan
+  art: "windDown"

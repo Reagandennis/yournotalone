@@ -1,0 +1,24 @@
+id: "lesson:What CBT actually is"
+kind: lesson
+status: published
+order: 590
+premium: false
+minutes: 3
+icon: menu_book_rounded
+accent: cbt
+tags:
+  needs: [anxious, low]
+  dayParts: []
+text:
+  en:
+    title: "What CBT actually is"
+    blurb: "Thoughts, feelings and actions pull on each other. That's the whole idea."
+    area: "CBT read"
+    paragraphs:
+      - "Cognitive behavioural therapy starts from one observation: how we feel depends less on what happens to us than on what we make of it. Two people miss the same bus. One thinks \"typical, nothing goes right for me\" and feels flat for an hour. The other thinks \"annoying — I'll message ahead\" and moves on. Same bus."
+      - "The thoughts that shape our mood are usually quick, automatic and unexamined. CBT teaches you to notice them, check them against the evidence, and answer them — not with forced positivity, but with something fairer and more accurate."
+      - "The other half is behaviour. When we feel low we do less; doing less gives us less to feel good about; so we feel lower. Anxiety works the same way through avoidance. Changing what you do, even a little, changes how you feel — often before your thinking catches up."
+      - "None of this is a trick. It's a set of skills, and like any skill it works with practice. The tools in this section are the ones therapists teach most often. Use them alongside a session, or on their own."
+body:
+  type: lesson
+  art: learn

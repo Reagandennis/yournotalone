@@ -1,0 +1,23 @@
+id: "lesson:Caffeine, alcohol and light"
+kind: lesson
+status: published
+order: 690
+premium: true
+minutes: 2
+icon: menu_book_rounded
+accent: sleep
+tags:
+  needs: [sleep]
+  dayParts: []
+text:
+  en:
+    title: "Caffeine, alcohol and light"
+    blurb: "Three levers you can move today, and when to move them."
+    area: "Sleep read"
+    paragraphs:
+      - "Caffeine blocks the chemical that carries sleep pressure. Its half-life is five to six hours, so a coffee at four is a quarter coffee at midnight. If you sleep badly, make the last one before two."
+      - "Alcohol is a sedative and then a stimulant. It helps you drop off and then fragments the second half of the night, cutting the dreaming sleep that does the emotional housekeeping. If you use it to sleep, you're borrowing from three a.m."
+      - "Light is the clock. Bright light in the morning — outdoors, even on a grey day — pulls your body clock earlier and makes the evening come sooner. Bright light late does the opposite. Ten minutes outside before nine a.m. and dim lamps after nine p.m. is the whole prescription."
+body:
+  type: lesson
+  art: "windDown"

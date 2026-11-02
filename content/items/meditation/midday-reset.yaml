@@ -1,0 +1,35 @@
+id: "meditation:Midday reset"
+kind: meditation
+status: published
+order: 140
+premium: true
+minutes: 5
+icon: restart_alt_rounded
+accent: yellow
+tags:
+  needs: [stressed, focus]
+  dayParts: [afternoon]
+text:
+  en:
+    title: "Midday reset"
+    blurb: "Put the morning down before you pick the afternoon up."
+    prompts:
+      - "Stop where you are. Both feet flat, hands still."
+      - "One long breath out — longer than feels necessary."
+      - "Whatever the morning was, it's already behind you."
+      - "Unclench your jaw. Drop your shoulders. Soften your eyes."
+      - "Notice one thing you can hear right now, near or far."
+      - "Nothing needs deciding in the next sixty seconds."
+      - "Ask: what is the one thing the afternoon actually needs?"
+      - "Take that answer with you. Leave the rest here."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.08
+    - 0.2
+    - 0.36
+    - 0.52
+    - 0.68
+    - 0.84
+    - 0.94

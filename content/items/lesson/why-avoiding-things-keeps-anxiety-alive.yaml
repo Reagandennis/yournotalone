@@ -1,0 +1,23 @@
+id: "lesson:Why avoiding things keeps anxiety alive"
+kind: lesson
+status: published
+order: 600
+premium: true
+minutes: 2
+icon: menu_book_rounded
+accent: cbt
+tags:
+  needs: [anxious]
+  dayParts: []
+text:
+  en:
+    title: "Why avoiding things keeps anxiety alive"
+    blurb: "Avoidance feels like relief. It's actually the fuel."
+    area: "CBT read"
+    paragraphs:
+      - "When something frightens you and you step away from it, the fear drops. That drop is a reward, and your brain learns from it: \"avoiding worked\". Next time the pull to avoid is stronger, and the thing itself never gets the chance to turn out fine."
+      - "The way out is the opposite, done gently: approach the feared thing in steps small enough to manage, stay long enough for the fear to come down on its own, and repeat. Each time, your brain updates. This is called graded exposure, and it is one of the most reliable findings in all of psychology."
+      - "You don't have to do it alone or all at once. Write the steps down, start with one that's uncomfortable but doable, and treat each one as an experiment: \"what do I predict will happen — and what actually happened?\""
+body:
+  type: lesson
+  art: traps

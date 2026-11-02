@@ -1,0 +1,33 @@
+id: "meditation:Sleep wind-down"
+kind: meditation
+status: published
+order: 120
+premium: true
+minutes: 10
+icon: bedtime_rounded
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [night]
+text:
+  en:
+    title: "Sleep wind-down"
+    blurb: "Put the day down gently and let your body get heavy."
+    prompts:
+      - "Get comfortable — this one can end in sleep."
+      - "Let today be finished. Nothing more is needed from you."
+      - "Breathe slower on each exhale, sinking a little deeper."
+      - "Let your body feel heavy, like sand settling."
+      - "Thoughts may drift by. Let them pass like clouds."
+      - "Warmth in your hands. Warmth in your feet."
+      - "There's nothing to do now but rest."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.08
+    - 0.2
+    - 0.35
+    - 0.52
+    - 0.7
+    - 0.85

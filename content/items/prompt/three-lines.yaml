@@ -1,0 +1,18 @@
+id: "prompt:Three lines"
+kind: prompt
+status: published
+order: 370
+premium: true
+icon: short_text_rounded
+accent: blue
+tags:
+  needs: [reflect]
+  dayParts: []
+text:
+  en:
+    title: "Three lines"
+    blurb: "One thing that happened, one feeling, one thought."
+    seed: "What happened:\n\nHow it felt:\n\nWhat I make of it:\n"
+body:
+  type: prompt
+  group: "Everyday"

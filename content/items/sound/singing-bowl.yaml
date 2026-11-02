@@ -1,0 +1,24 @@
+id: "sound:Singing bowl"
+kind: sound
+status: published
+order: 310
+premium: true
+icon: track_changes_rounded
+accent: blue
+tags:
+  needs: [anxious, stressed]
+  dayParts: []
+text:
+  en:
+    title: "Singing bowl"
+    blurb: "A struck bowl and its long, slow fade."
+    area: "Sound · Calm"
+body:
+  type: sound
+  category: calm
+  audio: "assets/sounds/singing_bowl.m4a"
+  loop: true
+  waveFreq: 1.4
+  waveSpeed: 1
+  waveHeight: 0.7
+  pulse: false

@@ -1,0 +1,24 @@
+id: "sound:Crickets at night"
+kind: sound
+status: published
+order: 260
+premium: true
+icon: nightlight_outlined
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [night]
+text:
+  en:
+    title: "Crickets at night"
+    blurb: "A calm field long after sunset."
+    area: "Sound · Sleep"
+body:
+  type: sound
+  category: sleep
+  audio: "assets/sounds/crickets_night.m4a"
+  loop: true
+  waveFreq: 5.0
+  waveSpeed: 2
+  waveHeight: 0.45
+  pulse: true

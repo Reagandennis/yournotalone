@@ -1,0 +1,24 @@
+id: "sound:Rainfall"
+kind: sound
+status: published
+order: 250
+premium: true
+icon: water_drop_outlined
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [night]
+text:
+  en:
+    title: "Rainfall"
+    blurb: "Steady rain on a quiet evening."
+    area: "Sound · Sleep"
+body:
+  type: sound
+  category: sleep
+  audio: "assets/sounds/rainfall.m4a"
+  loop: true
+  waveFreq: 7.0
+  waveSpeed: 3
+  waveHeight: 0.4
+  pulse: false

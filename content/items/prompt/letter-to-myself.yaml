@@ -1,0 +1,18 @@
+id: "prompt:Letter to myself"
+kind: prompt
+status: published
+order: 460
+premium: true
+icon: mail_outline_rounded
+accent: black
+tags:
+  needs: [reflect]
+  dayParts: []
+text:
+  en:
+    title: "Letter to myself"
+    blurb: "Write to the you who reads this next month."
+    seed: "Dear me,\n\nBy the time you read this, "
+body:
+  type: prompt
+  group: "Looking back"

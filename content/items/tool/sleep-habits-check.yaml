@@ -1,0 +1,20 @@
+id: "tool:Sleep habits check"
+kind: tool
+status: published
+order: 660
+premium: true
+minutes: 3
+icon: checklist_rounded
+accent: sleep
+tags:
+  needs: [sleep]
+  dayParts: []
+text:
+  en:
+    title: "Sleep habits check"
+    blurb: "Ten questions, and a fix for each one you say yes to."
+    area: "Sleep"
+body:
+  type: native
+  screen: sleep-habits-check
+  art: habits

@@ -1,0 +1,20 @@
+id: "tool:Put the day down"
+kind: tool
+status: published
+order: 630
+premium: true
+minutes: 3
+icon: edit_note_rounded
+accent: sleep
+tags:
+  needs: [sleep, anxious]
+  dayParts: [evening]
+text:
+  en:
+    title: "Put the day down"
+    blurb: "Tomorrow's three things and one you're letting go, on paper."
+    area: "Sleep"
+body:
+  type: native
+  screen: put-the-day-down
+  art: "tomorrowList"

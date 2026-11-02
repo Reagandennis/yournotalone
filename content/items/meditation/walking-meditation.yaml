@@ -1,0 +1,37 @@
+id: "meditation:Walking meditation"
+kind: meditation
+status: published
+order: 180
+premium: true
+minutes: 10
+icon: directions_walk_rounded
+accent: black
+tags:
+  needs: [low, stressed]
+  dayParts: [afternoon]
+text:
+  en:
+    title: "Walking meditation"
+    blurb: "Ten minutes outside, with your attention in your feet."
+    prompts:
+      - "Start walking, slower than usual. No destination."
+      - "Feel the ground meet each foot — heel, then toe."
+      - "Let your arms swing. Unlock your knees."
+      - "Match your breath to your steps, whatever rhythm fits."
+      - "Take in what's around you without naming it."
+      - "If your thoughts run ahead, come back to your feet."
+      - "Notice the air on your face and hands."
+      - "Let the pace stay slow, even now."
+      - "Before you stop, take three full breaths standing still."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.08
+    - 0.2
+    - 0.33
+    - 0.47
+    - 0.6
+    - 0.73
+    - 0.86
+    - 0.95

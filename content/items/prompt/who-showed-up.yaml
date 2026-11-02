@@ -1,0 +1,18 @@
+id: "prompt:Who showed up"
+kind: prompt
+status: published
+order: 450
+premium: true
+icon: people_alt_rounded
+accent: yellow
+tags:
+  needs: [reflect, good]
+  dayParts: []
+text:
+  en:
+    title: "Who showed up"
+    blurb: "The people who made this week lighter, named."
+    seed: "Someone who made this week easier was "
+body:
+  type: prompt
+  group: "Looking back"

@@ -1,0 +1,22 @@
+id: "breathing:Panic reset"
+kind: breathing
+status: published
+order: 70
+premium: true
+minutes: 3
+icon: air_rounded
+accent: red
+tags:
+  needs: [anxious, panic]
+  dayParts: []
+text:
+  en:
+    title: "Panic reset"
+    blurb: "For the minutes when your chest races and you need out fast."
+    area: "Breathing · 4 · 6 · 2"
+body:
+  type: breathing
+  inhale: 4
+  holdIn: 0
+  exhale: 6
+  holdOut: 2

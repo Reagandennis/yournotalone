@@ -1,0 +1,18 @@
+id: "prompt:Anger on paper"
+kind: prompt
+status: published
+order: 420
+premium: true
+icon: local_fire_department_rounded
+accent: red
+tags:
+  needs: [low, angry, reflect]
+  dayParts: []
+text:
+  en:
+    title: "Anger on paper"
+    blurb: "Say the unsaid version here, where it costs nothing."
+    seed: "What I'm actually angry about is "
+body:
+  type: prompt
+  group: "Hard days"

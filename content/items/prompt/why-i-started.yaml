@@ -1,0 +1,18 @@
+id: "prompt:Why I started"
+kind: prompt
+status: published
+order: 480
+premium: true
+icon: anchor_rounded
+accent: black
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "Why I started"
+    blurb: "The reason, in your handwriting, for the days you forget it."
+    seed: "I started this because "
+body:
+  type: prompt
+  group: "Recovery"

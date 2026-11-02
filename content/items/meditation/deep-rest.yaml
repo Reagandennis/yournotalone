@@ -1,0 +1,41 @@
+id: "meditation:Deep rest"
+kind: meditation
+status: published
+order: 200
+premium: true
+minutes: 15
+icon: nights_stay_rounded
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [night]
+text:
+  en:
+    title: "Deep rest"
+    blurb: "A long, guided lie-down for when sleep won't come."
+    prompts:
+      - "Lie on your back, arms a little away from your sides."
+      - "You don't need to fall asleep. Resting is enough."
+      - "Let the floor or the bed take your full weight."
+      - "Bring your attention to your right hand. Let it go heavy."
+      - "Now the left. Then both arms, from shoulder to fingertip."
+      - "Your legs, one at a time, sinking down."
+      - "Your back, your ribs, your belly — all released."
+      - "Your face: forehead, eyes, jaw, tongue, all soft."
+      - "Breath moving on its own, slow and unhurried."
+      - "Nothing to do, nowhere to be, no one needing you."
+      - "Stay as long as you like. Sleep if it comes."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.05
+    - 0.13
+    - 0.24
+    - 0.34
+    - 0.45
+    - 0.56
+    - 0.67
+    - 0.78
+    - 0.88
+    - 0.96

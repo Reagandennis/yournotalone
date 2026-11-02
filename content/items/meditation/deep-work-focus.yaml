@@ -1,0 +1,37 @@
+id: "meditation:Deep work focus"
+kind: meditation
+status: published
+order: 150
+premium: true
+minutes: 7
+icon: center_focus_strong_rounded
+accent: blue
+tags:
+  needs: [focus]
+  dayParts: [morning, afternoon]
+text:
+  en:
+    title: "Deep work focus"
+    blurb: "Clear the desk in your head before you start."
+    prompts:
+      - "Sit upright but easy. Phone face down."
+      - "Three slow breaths — in through the nose, out through the mouth."
+      - "Picture everything you're carrying, set down in a pile beside you."
+      - "It stays there. You can pick it up when this is done."
+      - "Rest your attention on the breath at the tip of your nose."
+      - "When it wanders — and it will — bring it back without comment."
+      - "Now name the single task you're about to do."
+      - "Hold it lightly. See yourself starting it, calm and unhurried."
+      - "Open your eyes. Begin with that one thing."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.07
+    - 0.18
+    - 0.32
+    - 0.46
+    - 0.6
+    - 0.74
+    - 0.88
+    - 0.96

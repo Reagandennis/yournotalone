@@ -1,0 +1,18 @@
+id: "prompt:Tomorrow, gently"
+kind: prompt
+status: published
+order: 520
+premium: true
+icon: wb_twilight_rounded
+accent: yellow
+tags:
+  needs: [sleep, anxious]
+  dayParts: [evening]
+text:
+  en:
+    title: "Tomorrow, gently"
+    blurb: "One thing you'll do, and one thing you won't."
+    seed: "Tomorrow I'll make room for \n\nAnd I'm letting go of "
+body:
+  type: prompt
+  group: "Before sleep"

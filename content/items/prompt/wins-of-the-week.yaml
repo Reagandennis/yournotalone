@@ -1,0 +1,18 @@
+id: "prompt:Wins of the week"
+kind: prompt
+status: published
+order: 440
+premium: true
+icon: emoji_events_rounded
+accent: blue
+tags:
+  needs: [reflect, good]
+  dayParts: []
+text:
+  en:
+    title: "Wins of the week"
+    blurb: "Count what you carried, not what you missed."
+    seed: "This week I'm proud that I "
+body:
+  type: prompt
+  group: "Looking back"

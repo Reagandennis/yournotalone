@@ -1,0 +1,20 @@
+id: "tool:Problem solving"
+kind: tool
+status: published
+order: 580
+premium: true
+minutes: 10
+icon: lightbulb_rounded
+accent: cbt
+tags:
+  needs: [anxious, stressed]
+  dayParts: []
+text:
+  en:
+    title: "Problem solving"
+    blurb: "Name it, list the options, pick one, take a first step."
+    area: "CBT"
+body:
+  type: native
+  screen: problem-solving
+  art: problem

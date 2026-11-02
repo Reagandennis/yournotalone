@@ -1,0 +1,20 @@
+id: "tool:One small thing"
+kind: tool
+status: published
+order: 560
+premium: true
+minutes: 4
+icon: wb_sunny_rounded
+accent: cbt
+tags:
+  needs: [low]
+  dayParts: [morning]
+text:
+  en:
+    title: "One small thing"
+    blurb: "Plan up to three doable things for today. Mood follows action."
+    area: "CBT"
+body:
+  type: native
+  screen: one-small-thing
+  art: activity

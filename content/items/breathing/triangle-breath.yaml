@@ -1,0 +1,22 @@
+id: "breathing:Triangle breath"
+kind: breathing
+status: published
+order: 60
+premium: true
+minutes: 3
+icon: air_rounded
+accent: yellow
+tags:
+  needs: [anxious, angry]
+  dayParts: []
+text:
+  en:
+    title: "Triangle breath"
+    blurb: "In, hold, then a longer way out — for when your head is loud."
+    area: "Breathing · 4 · 4 · 6"
+body:
+  type: breathing
+  inhale: 4
+  holdIn: 4
+  exhale: 6
+  holdOut: 0

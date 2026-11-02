@@ -1,0 +1,35 @@
+id: "meditation:Loving kindness"
+kind: meditation
+status: published
+order: 130
+premium: true
+minutes: 6
+icon: favorite_rounded
+accent: red
+tags:
+  needs: [low, good]
+  dayParts: []
+text:
+  en:
+    title: "Loving kindness"
+    blurb: "Turn some warmth toward yourself and the people you carry."
+    prompts:
+      - "Sit comfortably and bring a soft breath in."
+      - "Picture yourself as you are right now."
+      - "Quietly offer: may I be safe. May I be well."
+      - "May I be kind to myself, especially on hard days."
+      - "Now picture someone you care about."
+      - "Offer them the same: may you be safe. May you be well."
+      - "Let that warmth widen — to strangers, to everyone."
+      - "Come back to yourself. Carry this with you."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.08
+    - 0.2
+    - 0.35
+    - 0.5
+    - 0.62
+    - 0.78
+    - 0.93

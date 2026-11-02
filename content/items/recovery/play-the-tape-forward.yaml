@@ -1,0 +1,17 @@
+id: "recovery:Play the tape forward"
+kind: recovery
+status: published
+order: 800
+premium: true
+icon: movie_filter_rounded
+accent: red
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "Play the tape forward"
+    blurb: "Watch the rest of the film before you decide."
+body:
+  type: native
+  screen: tape-forward

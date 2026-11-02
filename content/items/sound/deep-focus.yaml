@@ -1,0 +1,24 @@
+id: "sound:Deep focus"
+kind: sound
+status: published
+order: 210
+premium: false
+icon: graphic_eq_rounded
+accent: yellow
+tags:
+  needs: [focus]
+  dayParts: []
+text:
+  en:
+    title: "Deep focus"
+    blurb: "Low, steady noise that softens distraction."
+    area: "Sound · Focus"
+body:
+  type: sound
+  category: focus
+  audio: "assets/sounds/deep_focus.m4a"
+  loop: true
+  waveFreq: 2.5
+  waveSpeed: 1
+  waveHeight: 0.55
+  pulse: false

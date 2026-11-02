@@ -1,0 +1,18 @@
+id: "prompt:Advice to a friend"
+kind: prompt
+status: published
+order: 400
+premium: true
+icon: volunteer_activism_rounded
+accent: red
+tags:
+  needs: [low, reflect]
+  dayParts: []
+text:
+  en:
+    title: "Advice to a friend"
+    blurb: "The kindness you'd hand someone else, turned around."
+    seed: "If a friend told me they were going through this, I'd say "
+body:
+  type: prompt
+  group: "Hard days"

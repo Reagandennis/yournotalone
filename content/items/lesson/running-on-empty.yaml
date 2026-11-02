@@ -1,0 +1,24 @@
+id: "lesson:Running on empty"
+kind: lesson
+status: published
+order: 770
+premium: true
+minutes: 3
+icon: menu_book_rounded
+accent: stress
+tags:
+  needs: [low, stressed]
+  dayParts: []
+text:
+  en:
+    title: "Running on empty"
+    blurb: "How to tell tired from burnt out, and what to do about each."
+    area: "Stress read"
+    paragraphs:
+      - "Tired gets better with rest. Burnout doesn't, or not quickly: a weekend off and Monday feels the same. The other marks are cynicism — caring less about things you used to care about — and a sense that nothing you do makes a difference. Together, over months, those three are the picture."
+      - "It usually comes from a mismatch that lasts: more asked than you can give, less control than you need, effort that isn't seen, or work that grinds against what you value. Sleep and breathing help you carry it; they don't fix the mismatch. That takes a conversation, a boundary, or a change."
+      - "If this is you, three moves. Name it to one person. Cut one thing — actually cut, not postpone. And talk to someone whose job it is: a GP, or a therapist. Burnout in its later stages looks a lot like depression, and it deserves the same seriousness."
+      - "If you're having thoughts of not wanting to be here, that's beyond this app. Use Get help now on the Home screen, today."
+body:
+  type: lesson
+  art: battery

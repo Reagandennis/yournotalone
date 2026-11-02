@@ -1,0 +1,20 @@
+id: "tool:Physiological sigh"
+kind: tool
+status: published
+order: 700
+premium: false
+minutes: 1
+icon: air_rounded
+accent: stress
+tags:
+  needs: [panic, stressed, angry]
+  dayParts: []
+text:
+  en:
+    title: "Physiological sigh"
+    blurb: "Two breaths in, one long breath out. The fastest way to downshift."
+    area: "Stress"
+body:
+  type: native
+  screen: physiological-sigh
+  art: sigh

@@ -1,0 +1,17 @@
+id: "recovery:My commitments"
+kind: recovery
+status: published
+order: 830
+premium: false
+icon: verified_rounded
+accent: blue
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "My commitments"
+    blurb: "What you're leaving behind, and the days you've kept."
+body:
+  type: native
+  screen: recovery-hub

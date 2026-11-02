@@ -1,0 +1,18 @@
+id: "prompt:One day at a time"
+kind: prompt
+status: published
+order: 500
+premium: true
+icon: today_rounded
+accent: yellow
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "One day at a time"
+    blurb: "Just today. Nothing about tomorrow."
+    seed: "Today, the thing I'm choosing is "
+body:
+  type: prompt
+  group: "Recovery"

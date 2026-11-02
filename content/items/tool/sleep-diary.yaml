@@ -1,0 +1,20 @@
+id: "tool:Sleep diary"
+kind: tool
+status: published
+order: 650
+premium: true
+minutes: 2
+icon: auto_stories_rounded
+accent: sleep
+tags:
+  needs: [sleep]
+  dayParts: [morning]
+text:
+  en:
+    title: "Sleep diary"
+    blurb: "Log last night in a minute. Two weeks in, it tells you what to change."
+    area: "Sleep"
+body:
+  type: native
+  screen: sleep-diary
+  art: diary

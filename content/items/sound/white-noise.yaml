@@ -1,0 +1,24 @@
+id: "sound:White noise"
+kind: sound
+status: published
+order: 220
+premium: true
+icon: blur_on_rounded
+accent: yellow
+tags:
+  needs: [focus]
+  dayParts: []
+text:
+  en:
+    title: "White noise"
+    blurb: "The classic — masks the world evenly."
+    area: "Sound · Focus"
+body:
+  type: sound
+  category: focus
+  audio: "assets/sounds/white_noise.m4a"
+  loop: true
+  waveFreq: 9.0
+  waveSpeed: 4
+  waveHeight: 0.3
+  pulse: false

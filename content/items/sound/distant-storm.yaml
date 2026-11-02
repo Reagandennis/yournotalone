@@ -1,0 +1,24 @@
+id: "sound:Distant storm"
+kind: sound
+status: published
+order: 280
+premium: true
+icon: thunderstorm_rounded
+accent: black
+tags:
+  needs: [sleep]
+  dayParts: [night]
+text:
+  en:
+    title: "Distant storm"
+    blurb: "Rain that keeps going, with thunder rolling far off."
+    area: "Sound · Sleep"
+body:
+  type: sound
+  category: sleep
+  audio: "assets/sounds/distant_storm.m4a"
+  loop: true
+  waveFreq: 3.5
+  waveSpeed: 2
+  waveHeight: 0.6
+  pulse: true

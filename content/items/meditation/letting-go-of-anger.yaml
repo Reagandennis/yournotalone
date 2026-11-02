@@ -1,0 +1,37 @@
+id: "meditation:Letting go of anger"
+kind: meditation
+status: published
+order: 170
+premium: true
+minutes: 9
+icon: local_fire_department_rounded
+accent: red
+tags:
+  needs: [angry]
+  dayParts: []
+text:
+  en:
+    title: "Letting go of anger"
+    blurb: "Feel it fully, then set down what it costs you to carry."
+    prompts:
+      - "Sit somewhere you won't be interrupted. Let the eyes close."
+      - "Anger is allowed here. Nothing has to be forgiven yet."
+      - "Where do you feel it — jaw, chest, hands, stomach?"
+      - "Breathe into that place. Don't push it away."
+      - "Underneath the anger, what else is there? Hurt? Fear? Shame?"
+      - "Let that quieter feeling be seen for a moment."
+      - "Each exhale, let the grip loosen by a fraction."
+      - "You can put this down without saying it was okay."
+      - "Come back slowly. Notice what's lighter, even slightly."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.07
+    - 0.17
+    - 0.3
+    - 0.44
+    - 0.58
+    - 0.72
+    - 0.86
+    - 0.95

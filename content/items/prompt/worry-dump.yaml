@@ -1,0 +1,18 @@
+id: "prompt:Worry dump"
+kind: prompt
+status: published
+order: 390
+premium: true
+icon: cyclone_rounded
+accent: black
+tags:
+  needs: [anxious, low, reflect]
+  dayParts: []
+text:
+  en:
+    title: "Worry dump"
+    blurb: "Everything circling, out of your head and onto the page."
+    seed: "Everything I'm worried about right now:\n\n- "
+body:
+  type: prompt
+  group: "Hard days"

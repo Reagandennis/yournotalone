@@ -1,0 +1,17 @@
+id: "recovery:HALT check"
+kind: recovery
+status: published
+order: 790
+premium: true
+icon: psychology_alt_rounded
+accent: yellow
+tags:
+  needs: [angry, urges]
+  dayParts: []
+text:
+  en:
+    title: "HALT check"
+    blurb: "Hungry, angry, lonely, tired — find out what the craving is standing in for."
+body:
+  type: native
+  screen: halt

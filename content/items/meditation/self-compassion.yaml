@@ -1,0 +1,35 @@
+id: "meditation:Self-compassion"
+kind: meditation
+status: published
+order: 160
+premium: true
+minutes: 7
+icon: volunteer_activism_rounded
+accent: red
+tags:
+  needs: [low]
+  dayParts: []
+text:
+  en:
+    title: "Self-compassion"
+    blurb: "Speak to yourself the way you'd speak to a friend."
+    prompts:
+      - "Settle in. Place a hand somewhere that feels kind — chest, arm."
+      - "Bring to mind what's hurting. Just name it, gently."
+      - "Say inwardly: this is a hard moment."
+      - "Hard moments are part of every life. You're not alone in this."
+      - "Ask: what would I say to a friend sitting where I am?"
+      - "Now say it to yourself, in your own words."
+      - "May I be kind to myself. May I give myself what I need."
+      - "Let your hand rest a moment longer before you go."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.09
+    - 0.22
+    - 0.36
+    - 0.5
+    - 0.64
+    - 0.78
+    - 0.9

@@ -1,0 +1,23 @@
+id: "lesson:The 20-minute rule"
+kind: lesson
+status: published
+order: 680
+premium: true
+minutes: 2
+icon: menu_book_rounded
+accent: sleep
+tags:
+  needs: [sleep]
+  dayParts: []
+text:
+  en:
+    title: "The 20-minute rule"
+    blurb: "Your bed should mean sleep. Lying awake teaches it otherwise."
+    area: "Sleep read"
+    paragraphs:
+      - "Brains learn by association. If you spend hours in bed frustrated, awake and worrying, the bed itself starts to trigger frustration and wakefulness — you feel sleepy on the sofa and alert the moment your head hits the pillow. Insomnia specialists call the cure stimulus control, and it's the most reliable technique they have."
+      - "The rule: if you've been awake for what feels like twenty minutes, get up. Go to another room, keep the lights low, and do something quiet and dull until you feel sleepy — actually sleepy, not just tired of being up. Then go back. Repeat as often as it takes."
+      - "It feels counterproductive for the first week; you'll be up more and sleep less. By the second or third week the bed means sleep again, and you fall asleep faster than you have in years. Keep your wake time fixed throughout, or it doesn't work."
+body:
+  type: lesson
+  art: awake

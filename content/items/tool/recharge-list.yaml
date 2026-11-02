@@ -1,0 +1,20 @@
+id: "tool:Recharge list"
+kind: tool
+status: published
+order: 740
+premium: true
+minutes: 4
+icon: battery_charging_full_rounded
+accent: stress
+tags:
+  needs: [low, stressed]
+  dayParts: [afternoon]
+text:
+  en:
+    title: "Recharge list"
+    blurb: "What drains you, what refills you, and one refill for today."
+    area: "Stress"
+body:
+  type: native
+  screen: recharge-list
+  art: battery

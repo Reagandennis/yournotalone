@@ -1,0 +1,24 @@
+id: "sound:Stream"
+kind: sound
+status: published
+order: 240
+premium: true
+icon: water_rounded
+accent: yellow
+tags:
+  needs: [focus]
+  dayParts: []
+text:
+  en:
+    title: "Stream"
+    blurb: "Water over rocks — busy enough to work through."
+    area: "Sound · Focus"
+body:
+  type: sound
+  category: focus
+  audio: "assets/sounds/mountain_stream.m4a"
+  loop: true
+  waveFreq: 6.0
+  waveSpeed: 3
+  waveHeight: 0.45
+  pulse: false

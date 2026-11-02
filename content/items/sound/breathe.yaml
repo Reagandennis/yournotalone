@@ -1,0 +1,24 @@
+id: "sound:Breathe"
+kind: sound
+status: published
+order: 330
+premium: true
+icon: air_rounded
+accent: blue
+tags:
+  needs: [anxious, panic, stressed]
+  dayParts: []
+text:
+  en:
+    title: "Breathe"
+    blurb: "Six breaths a minute — follow the swell and yours slows to meet it."
+    area: "Sound · Calm"
+body:
+  type: sound
+  category: calm
+  audio: "assets/sounds/breathe_with_me.m4a"
+  loop: true
+  waveFreq: 1.0
+  waveSpeed: 1
+  waveHeight: 0.8
+  pulse: false

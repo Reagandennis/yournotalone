@@ -1,0 +1,31 @@
+locales: [en, fr, de, es, "zh-Hans"]
+kinds:
+  - breathing
+  - meditation
+  - sound
+  - prompt
+  - tool
+  - lesson
+  - recovery
+needs:
+  - sleep
+  - anxious
+  - panic
+  - low
+  - stressed
+  - angry
+  - urges
+  - focus
+  - reflect
+  - good
+dayParts: [morning, afternoon, evening, night]
+accents:
+  - red
+  - blue
+  - black
+  - yellow
+  - cbt
+  - sleep
+  - stress
+soundCategories: [focus, sleep, calm]
+promptGroups: ["Everyday", "Hard days", "Looking back", "Recovery", "Before sleep"]

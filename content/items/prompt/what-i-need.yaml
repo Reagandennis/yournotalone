@@ -1,0 +1,18 @@
+id: "prompt:What I need"
+kind: prompt
+status: published
+order: 360
+premium: true
+icon: favorite_rounded
+accent: red
+tags:
+  needs: [low, reflect]
+  dayParts: []
+text:
+  en:
+    title: "What I need"
+    blurb: "Name it plainly, then see who could help."
+    seed: "Right now, what I need most is "
+body:
+  type: prompt
+  group: "Everyday"

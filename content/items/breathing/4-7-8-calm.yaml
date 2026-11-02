@@ -1,0 +1,22 @@
+id: "breathing:4-7-8 calm"
+kind: breathing
+status: published
+order: 20
+premium: true
+minutes: 3
+icon: air_rounded
+accent: yellow
+tags:
+  needs: [sleep, anxious]
+  dayParts: [evening, night]
+text:
+  en:
+    title: "4-7-8 calm"
+    blurb: "A long hold and slow release that tells your body it's safe."
+    area: "Breathing · 4 · 7 · 8"
+body:
+  type: breathing
+  inhale: 4
+  holdIn: 7
+  exhale: 8
+  holdOut: 0

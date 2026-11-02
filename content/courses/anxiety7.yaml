@@ -1,0 +1,26 @@
+id: anxiety7
+status: published
+order: 20
+icon: psychology_rounded
+accent: cbt
+need: anxious
+days:
+  - "tool:Grounding: 5-4-3-2-1"
+  - "lesson:What CBT actually is"
+  - "tool:Thinking traps"
+  - "tool:Thought record"
+  - "lesson:Why avoiding things keeps anxiety alive"
+  - "tool:Worry window"
+  - "lesson:How to talk back to a thought"
+text:
+  en:
+    title: "7 days with anxious thoughts"
+    blurb: "Steady yourself, then learn to catch and check the thoughts."
+    notes:
+      - "First, a way back into the room when it all gets loud."
+      - "How thoughts, feelings and actions feed each other."
+      - "The patterns anxious minds fall into, and their names."
+      - "Catch one thought and check it against the evidence."
+      - "Why stepping back makes the next time harder."
+      - "Give worries a time, so they don't take the whole day."
+      - "Answering the thought, in your own voice."

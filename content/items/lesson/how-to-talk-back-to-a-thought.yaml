@@ -1,0 +1,23 @@
+id: "lesson:How to talk back to a thought"
+kind: lesson
+status: published
+order: 610
+premium: true
+minutes: 2
+icon: menu_book_rounded
+accent: cbt
+tags:
+  needs: [anxious, low]
+  dayParts: []
+text:
+  en:
+    title: "How to talk back to a thought"
+    blurb: "Not \"think positive\". Think accurately."
+    area: "CBT read"
+    paragraphs:
+      - "A balanced thought isn't the cheerful opposite of the anxious one. \"I'll definitely fail\" doesn't become \"I'll definitely succeed\". It becomes something you could actually defend in front of a fair judge: \"I'm underprepared for part of this, I've passed harder things, and if it goes badly I can retake it.\""
+      - "Three questions do most of the work. What is the evidence for this thought, and against it? What would I say to a friend who told me this? And: is there a thinking trap in here — am I mind reading, catastrophising, filtering out the good?"
+      - "Write it down. Thoughts that stay in your head keep their weight; on paper they're just sentences, and sentences can be checked. That's what the thought record is for."
+body:
+  type: lesson
+  art: thoughts

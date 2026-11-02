@@ -1,0 +1,24 @@
+id: "lesson:Why you can't try harder to sleep"
+kind: lesson
+status: published
+order: 670
+premium: false
+minutes: 3
+icon: menu_book_rounded
+accent: sleep
+tags:
+  needs: [sleep]
+  dayParts: []
+text:
+  en:
+    title: "Why you can't try harder to sleep"
+    blurb: "Sleep is something that happens to you, not something you do."
+    area: "Sleep read"
+    paragraphs:
+      - "Two things decide whether you fall asleep: how much sleep pressure has built up since you last slept, and how switched on your nervous system is. Pressure you can only build by being awake and active. Arousal you can only lower — by winding down, by not fighting."
+      - "Effort is arousal. Lying there commanding yourself to sleep raises exactly the thing that keeps you awake. This is why the harder you try, the worse it goes, and why people often sleep best on the sofa, where they weren't trying at all."
+      - "So the work of sleeping better happens in the daytime and the hour before bed, not in bed. Get up at the same time. Be active. Let the evening dim. Get out of bed when you're wide awake. Then trust the pressure you've built to do the rest."
+      - "One bad night proves nothing. Bodies are good at catching up on their own if you don't interfere — the deep sleep comes first the next night. The thing to protect isn't tonight; it's the routine."
+body:
+  type: lesson
+  art: moon

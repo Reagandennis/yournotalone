@@ -1,0 +1,18 @@
+id: "prompt:Worst case"
+kind: prompt
+status: published
+order: 430
+premium: true
+icon: psychology_rounded
+accent: black
+tags:
+  needs: [anxious, low, reflect]
+  dayParts: []
+text:
+  en:
+    title: "Worst case"
+    blurb: "Follow the fear all the way down, then look at it."
+    seed: "The thing I'm afraid of is \n\nIf that happened, I would "
+body:
+  type: prompt
+  group: "Hard days"

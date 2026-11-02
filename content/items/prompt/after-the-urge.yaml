@@ -1,0 +1,18 @@
+id: "prompt:After the urge"
+kind: prompt
+status: published
+order: 490
+premium: true
+icon: surfing_rounded
+accent: red
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "After the urge"
+    blurb: "What it wanted, what it cost, what it passed like."
+    seed: "When the urge came:\n\nWhat I was really needing:\n\nWhat I did instead:\n"
+body:
+  type: prompt
+  group: "Recovery"

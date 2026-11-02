@@ -1,0 +1,35 @@
+id: "meditation:Gratitude"
+kind: meditation
+status: published
+order: 190
+premium: true
+minutes: 6
+icon: wb_sunny_rounded
+accent: yellow
+tags:
+  needs: [low, good]
+  dayParts: [evening]
+text:
+  en:
+    title: "Gratitude"
+    blurb: "Count what's already here before reaching for more."
+    prompts:
+      - "Sit comfortably. Let the breath find its own pace."
+      - "Bring to mind one small thing that went right today."
+      - "Stay with it. Let yourself actually feel it, not just note it."
+      - "Now someone who made this week easier, in any way."
+      - "Picture their face. Offer them a quiet thank you."
+      - "Now something about your own body that carried you today."
+      - "Nothing here is owed to you. Let that land softly."
+      - "Carry one of these with you into the rest of the day."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.1
+    - 0.24
+    - 0.4
+    - 0.55
+    - 0.7
+    - 0.85
+    - 0.95

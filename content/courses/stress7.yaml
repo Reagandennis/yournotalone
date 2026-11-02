@@ -1,0 +1,26 @@
+id: stress7
+status: published
+order: 30
+icon: speed_rounded
+accent: stress
+need: stressed
+days:
+  - "tool:Physiological sigh"
+  - "lesson:Stress isn't the enemy"
+  - "tool:Stress check-in"
+  - "tool:Tense and release"
+  - "lesson:Switching off the alarm"
+  - "tool:What's in your hands"
+  - "tool:Recharge list"
+text:
+  en:
+    title: "7 days to lighter stress"
+    blurb: "Bring the body down, then sort what's on your plate."
+    notes:
+      - "The fastest way to downshift, for any moment."
+      - "What stress is for, and when it tips over."
+      - "Where you are this week, so you can watch it change."
+      - "Let go of what your muscles have been holding."
+      - "How to tell your body the danger has passed."
+      - "Sort the load into control, influence and accept."
+      - "What drains you, what refills you — and one refill today."

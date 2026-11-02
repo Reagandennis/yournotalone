@@ -1,0 +1,26 @@
+id: sleep7
+status: published
+order: 10
+icon: bedtime_rounded
+accent: sleep
+need: sleep
+days:
+  - "tool:Wind-down plan"
+  - "lesson:Why you can't try harder to sleep"
+  - "tool:Put the day down"
+  - "lesson:The 20-minute rule"
+  - "breathing:4-7-8 calm"
+  - "lesson:Caffeine, alcohol and light"
+  - "meditation:Sleep wind-down"
+text:
+  en:
+    title: "7 days to better sleep"
+    blurb: "Fix the evening first, then the night. A step a day."
+    notes:
+      - "Sleep starts an hour before bed. Build the hour."
+      - "Why effort keeps you awake, and what to do instead."
+      - "Get tomorrow out of your head and onto paper."
+      - "What to do when you've been lying awake too long."
+      - "A breath to slow the body down once you're in bed."
+      - "The three things quietly shaping your nights."
+      - "Put it all together: wind down, lie down, let go."

@@ -1,0 +1,20 @@
+id: "tool:Thinking traps"
+kind: tool
+status: published
+order: 550
+premium: true
+minutes: 5
+icon: psychology_rounded
+accent: cbt
+tags:
+  needs: [anxious, low]
+  dayParts: []
+text:
+  en:
+    title: "Thinking traps"
+    blurb: "Eleven patterns anxious and low moods run on, and how to spot them."
+    area: "CBT"
+body:
+  type: native
+  screen: thinking-traps
+  art: traps

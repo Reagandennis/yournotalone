@@ -1,0 +1,18 @@
+id: "prompt:A month from now"
+kind: prompt
+status: published
+order: 470
+premium: true
+icon: flag_rounded
+accent: blue
+tags:
+  needs: [reflect]
+  dayParts: []
+text:
+  en:
+    title: "A month from now"
+    blurb: "What you want to be true, in your own words."
+    seed: "A month from now, I want to be able to say that I "
+body:
+  type: prompt
+  group: "Looking back"

@@ -1,0 +1,24 @@
+id: "lesson:Stress isn't the enemy"
+kind: lesson
+status: published
+order: 750
+premium: false
+minutes: 3
+icon: menu_book_rounded
+accent: stress
+tags:
+  needs: [stressed]
+  dayParts: []
+text:
+  en:
+    title: "Stress isn't the enemy"
+    blurb: "The problem is never the surge. It's the missing recovery."
+    area: "Stress read"
+    paragraphs:
+      - "The stress response is a piece of good engineering. Heart rate up, attention narrowed, fuel released: it's what lets you swerve a car, meet a deadline, give the speech. Short bursts followed by rest leave you no worse off — sometimes better. Athletes call this training."
+      - "The damage comes when the surge never ends. Deadlines that roll into deadlines, worry that fills the evenings, sleep that doesn't restore. The body stays in gear, and gear that's never released wears: poor sleep, a short fuse, a stomach that complains, getting every cold going."
+      - "So the question isn't \"how do I have less stress\" — often you can't. It's \"where is my recovery\". Recovery is anything that tells the body the emergency is over: a long exhale, movement, laughter, food eaten slowly, a person you trust, sleep. Not scrolling; that's more input."
+      - "The tools here work on both sides: some cut the load, most add recovery. Ten deliberate minutes of recovery a day changes the arithmetic more than people expect."
+body:
+  type: lesson
+  art: gauge

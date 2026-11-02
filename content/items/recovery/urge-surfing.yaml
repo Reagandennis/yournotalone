@@ -1,0 +1,39 @@
+id: "recovery:Urge surfing"
+kind: recovery
+status: published
+order: 780
+premium: false
+minutes: 8
+icon: surfing_rounded
+accent: blue
+tags:
+  needs: [urges]
+  dayParts: []
+text:
+  en:
+    title: "Urge surfing"
+    blurb: "Urges are waves — ride this one until it breaks."
+    prompts:
+      - "You're here — that's the strongest move you could make."
+      - "An urge is a wave. It rises, it peaks, and it always falls."
+      - "Don't fight it. Just watch it, like weather passing through."
+      - "Where do you feel it in your body? Just notice, without acting."
+      - "Breathe out slowly — longer out than in."
+      - "You don't have to act. You only have to wait."
+      - "It's already losing strength, even if slowly."
+      - "Think of tomorrow-you, grateful that you held on today."
+      - "Still here. Still riding. The wave is passing."
+      - "You surfed it. Every urge you outlast makes the next one smaller."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.05
+    - 0.12
+    - 0.2
+    - 0.3
+    - 0.42
+    - 0.55
+    - 0.68
+    - 0.8
+    - 0.92

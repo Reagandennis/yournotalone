@@ -1,0 +1,22 @@
+id: "breathing:Box breathing"
+kind: breathing
+status: published
+order: 10
+premium: false
+minutes: 3
+icon: air_rounded
+accent: blue
+tags:
+  needs: [anxious, stressed, focus]
+  dayParts: []
+text:
+  en:
+    title: "Box breathing"
+    blurb: "Even sides, steady mind — used by athletes and navy divers alike."
+    area: "Breathing · 4 · 4 · 4 · 4"
+body:
+  type: breathing
+  inhale: 4
+  holdIn: 4
+  exhale: 4
+  holdOut: 4

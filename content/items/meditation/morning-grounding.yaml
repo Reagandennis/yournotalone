@@ -1,0 +1,35 @@
+id: "meditation:Morning grounding"
+kind: meditation
+status: published
+order: 90
+premium: false
+minutes: 5
+icon: wb_twilight_rounded
+accent: yellow
+tags:
+  needs: [anxious, focus]
+  dayParts: [morning]
+text:
+  en:
+    title: "Morning grounding"
+    blurb: "Arrive in your day before the day arrives at you."
+    prompts:
+      - "Find a comfortable seat and let your eyes soften or close."
+      - "Take a slow breath in… and let it all the way out."
+      - "Feel the weight of your body — held and supported."
+      - "Notice your breath moving on its own. No need to change it."
+      - "When your mind wanders, that's okay. Gently come back."
+      - "Ask quietly: what would make today feel gentle?"
+      - "Rest here a little longer. There's nowhere else to be."
+      - "Slowly bring small movements back. You're ready."
+body:
+  type: meditation
+  promptAt:
+    - 0.0
+    - 0.07
+    - 0.18
+    - 0.32
+    - 0.48
+    - 0.63
+    - 0.8
+    - 0.94
