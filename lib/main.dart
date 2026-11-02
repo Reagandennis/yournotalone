@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -122,6 +123,9 @@ Future<void> _start() async {
   await initOnboardingFlags();
   await AppearanceSetting.instance.load();
   await LocaleSetting.instance.load();
+  // Date names for every language, so a DateFormat never depends on which
+  // locale's data the Material delegate happened to load first.
+  await initializeDateFormatting();
   await ContentCatalog.instance.load();
   await _initSessionNotifications();
   runApp(SentryWidget(child: const MyApp()));
