@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../therapy/therapy_repository.dart';
 
 /// "Couldn't load" with a way to try again.
@@ -25,7 +26,10 @@ class LoadFailed extends StatelessWidget {
               style: TextStyle(fontSize: 14, color: c.textMuted),
             ),
             const SizedBox(height: 10),
-            TextButton(onPressed: onRetry, child: const Text('Try again')),
+            TextButton(
+              onPressed: onRetry,
+              child: Text(context.l10n.commonTryAgain),
+            ),
           ],
         ),
       ),
@@ -67,16 +71,23 @@ class StatusBadge extends StatelessWidget {
   }
 }
 
-StatusBadge paymentBadge(TherapyRequest request, {bool refunded = false}) {
+StatusBadge paymentBadge(
+  AppLocalizations l10n,
+  TherapyRequest request, {
+  bool refunded = false,
+}) {
   if (request.isFreeSession) {
-    return const StatusBadge('Free', color: Pillars.blue);
+    return StatusBadge(l10n.carePaymentFree, color: Pillars.blue);
   }
   return switch (request.paymentStatus) {
-    'unpaid' when refunded => const StatusBadge('Refunded', color: Pillars.red),
-    'unpaid' => const StatusBadge('Unpaid', color: Pillars.red),
-    'paid' => const StatusBadge('Paid', color: Pillars.black),
-    'waived' => const StatusBadge('Waived'),
-    _ => const StatusBadge('Free', color: Pillars.blue),
+    'unpaid' when refunded => StatusBadge(
+      l10n.carePaymentRefunded,
+      color: Pillars.red,
+    ),
+    'unpaid' => StatusBadge(l10n.carePaymentUnpaid, color: Pillars.red),
+    'paid' => StatusBadge(l10n.carePaymentPaid, color: Pillars.black),
+    'waived' => StatusBadge(l10n.carePaymentWaived),
+    _ => StatusBadge(l10n.carePaymentFree, color: Pillars.blue),
   };
 }
 

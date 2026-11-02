@@ -2187,5 +2187,1233 @@
   "remindersFootnote": "Reminders are scheduled on this device and arrive even when the app is closed. Times may shift a few minutes to save battery.",
   "@remindersFootnote": {
     "description": "Small print at the bottom of the Reminders screen."
+  },
+  "crisisCouldNotOpen": "Couldn't open {target}",
+  "@crisisCouldNotOpen": {
+    "description": "Snackbar on the crisis screen when a phone number, text or website could not be opened. {target} is the number or web address.",
+    "placeholders": {
+      "target": {
+        "type": "String",
+        "example": "116 123"
+      }
+    }
+  },
+  "crisisWhereAreYou": "Where are you?",
+  "@crisisWhereAreYou": {
+    "description": "Title of the sheet on the crisis screen for picking the country whose helplines are shown. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisCallEmergency": "Call {number}",
+  "@crisisCallEmergency": {
+    "description": "Big button on the crisis screen that calls the local emergency number. {number} is e.g. 999 or 112. Crisis wording: needs careful review by a fluent speaker.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "112"
+      }
+    }
+  },
+  "crisisEmergencyHint": "If you are in immediate danger, this comes first.",
+  "@crisisEmergencyHint": {
+    "description": "Under the emergency call button on the crisis screen. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisCallLine": "Call {phone}",
+  "@crisisCallLine": {
+    "description": "Button on a helpline card: call this phone number.",
+    "placeholders": {
+      "phone": {
+        "type": "String",
+        "example": "116 123"
+      }
+    }
+  },
+  "crisisTextLine": "Text {keyword} to {number}",
+  "@crisisTextLine": {
+    "description": "Button on a helpline card: send a text message with {keyword} to the short number {number} (e.g. \"Text SHOUT to 85258\"). Keep {keyword} as is; it is what the service expects.",
+    "placeholders": {
+      "keyword": {
+        "type": "String",
+        "example": "SHOUT"
+      },
+      "number": {
+        "type": "String",
+        "example": "85258"
+      }
+    }
+  },
+  "crisisOpenSite": "Open {host}",
+  "@crisisOpenSite": {
+    "description": "Button on a helpline card: open the service's website. {host} is the web address, e.g. samaritans.org.",
+    "placeholders": {
+      "host": {
+        "type": "String",
+        "example": "samaritans.org"
+      }
+    }
+  },
+  "crisisTitle": "Help right now",
+  "@crisisTitle": {
+    "description": "Title of the crisis resources screen, which lists emergency and helpline numbers. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisIntro": "You do not have to explain yourself well, or be in enough trouble to deserve it. Any of these will pick up.",
+  "@crisisIntro": {
+    "description": "Intro on the crisis screen: reassurance that anyone can call these lines. Warm, plain, never clinical. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisSomewhereElse": "Somewhere else",
+  "@crisisSomewhereElse": {
+    "description": "Heading on the crisis screen above international helplines, for people outside the chosen country."
+  },
+  "crisisNotEmergencyCare": "This app can't replace emergency care. When the moment has passed, a licensed therapist here can help you work through what led to it.",
+  "@crisisNotEmergencyCare": {
+    "description": "Small print at the bottom of the crisis screen, before a button to book a therapy session. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisBookSession": "Book a session",
+  "@crisisBookSession": {
+    "description": "Button at the bottom of the crisis screen and the heavy-day sheet: book a session with a therapist."
+  },
+  "crisisFooterLink": "In crisis or immediate danger? Get help now",
+  "@crisisFooterLink": {
+    "description": "Underlined link at the bottom of several screens, opening the crisis screen. Followed by crisisFooterRest in the same line. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisFooterRest": " — real numbers, one tap.",
+  "@crisisFooterRest": {
+    "description": "Follows crisisFooterLink in the same sentence (note the leading space and dash): the crisis screen has real phone numbers you can call with one tap. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "heavyDayCouldNotCall": "Couldn't call {number}",
+  "@heavyDayCouldNotCall": {
+    "description": "Snackbar when a phone call could not be started from the heavy-day sheet.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "999"
+      }
+    }
+  },
+  "heavyDayTitle": "That sounds like a heavy day.",
+  "@heavyDayTitle": {
+    "description": "Title of the sheet shown after someone checks in with the lowest mood (\"Awful\"). Gentle and validating. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "heavyDayBody": "You don't have to carry it on your own. A licensed therapist here will listen — $20 a session, booked in a minute.",
+  "@heavyDayBody": {
+    "description": "Body of the heavy-day sheet, offering a therapy session. Keep the price \"$20\" as is. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "heavyDayRightNow": "If you need someone right now",
+  "@heavyDayRightNow": {
+    "description": "Heading above emergency and helpline call buttons on the heavy-day sheet. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "heavyDayEmergency": "Emergency",
+  "@heavyDayEmergency": {
+    "description": "Name on the call button for the local emergency number (e.g. \"Emergency · 112\")."
+  },
+  "heavyDayMoreHelp": "More ways to get help",
+  "@heavyDayMoreHelp": {
+    "description": "Link at the bottom of the heavy-day sheet opening the full crisis resources screen."
+  },
+  "legalLastUpdated": "Last updated: {date}",
+  "@legalLastUpdated": {
+    "description": "At the top of the Privacy Policy and Terms screens. {date} is the date the document was last changed (shown as written in the document).",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "14 September 2026"
+      }
+    }
+  },
+  "faqSectionUsingApp": "Using the app",
+  "@faqSectionUsingApp": {
+    "description": "FAQ section heading (shown in capitals)."
+  },
+  "faqWhatIsQ": "What is yournotalone?",
+  "@faqWhatIsQ": {
+    "description": "FAQ question (a heading people tap to open the answer). Keep the app name \"yournotalone\" as is."
+  },
+  "faqWhatIsA": "You're not alone — that's the name and the idea. It's a wellbeing companion for the moments between the hard ones. Check in with your mood, keep a private journal, follow guided meditations and breathing exercises, unwind with calming sounds, track your recovery, and reach a licensed therapist when you need one.",
+  "@faqWhatIsA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. The first sentence explains the app name \"yournotalone\" (= \"you're not alone\")."
+  },
+  "faqSubstituteQ": "Is the app a substitute for therapy or medical care?",
+  "@faqSubstituteQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqSubstituteA": "No. The app supports your wellbeing, but it doesn't diagnose or treat anything, and it's not emergency care. If you're in crisis or immediate danger, call your local emergency number right away.",
+  "@faqSubstituteA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "faqRemindersQ": "How do daily reminders work?",
+  "@faqRemindersQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqRemindersA": "Go to Settings → Reminders & notifications to switch on gentle nudges — a morning check-in, a daily pledge, evening pages, and a wind-down. You choose the times, and reminders are scheduled on your phone; they never leave your device.",
+  "@faqRemindersA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. \"Settings → Reminders & notifications\" names a menu path: match the translated Settings row label."
+  },
+  "faqSectionBilling": "Premium & billing",
+  "@faqSectionBilling": {
+    "description": "FAQ section heading (shown in capitals). \"Premium\" is the paid plan."
+  },
+  "faqPremiumQ": "What do I get with Premium?",
+  "@faqPremiumQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqPremiumA": "Every room in the house: the full meditation library, all calming sounds and breathing exercises, unlimited journaling, and the complete recovery toolkit. Plans usually start with a free trial — the price is always shown before you subscribe.",
+  "@faqPremiumA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqCancelSubQ": "How do I cancel my subscription?",
+  "@faqCancelSubQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqCancelSubA": "{store, select, apple{Subscriptions are billed by Apple, so you cancel in your App Store subscription settings — deleting the app doesn't cancel it. You keep Premium until the end of the period you've paid for.} other{Subscriptions are billed by Google, so you cancel in your Google Play subscription settings — deleting the app doesn't cancel it. You keep Premium until the end of the period you've paid for.}}",
+  "@faqCancelSubA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. {store} is \"apple\" on iPhone/Mac and \"google\" on Android; keep each branch a whole sentence and keep the store names (App Store, Google Play, Apple Account) as the stores call them in your language.",
+    "placeholders": {
+      "store": {
+        "type": "String",
+        "example": "google"
+      }
+    }
+  },
+  "faqWrongPlanQ": "I'm a subscriber, but the app says I'm on the Free plan.",
+  "@faqWrongPlanQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqWrongPlanA": "{store, select, apple{Make sure you're signed in to the same Apple Account you subscribed with, then tap Settings → Restore purchases. If it still doesn't unlock, email us and we'll sort it out.} other{Make sure you're signed in to the same Google account you subscribed with, then tap Settings → Restore purchases. If it still doesn't unlock, email us and we'll sort it out.}}",
+  "@faqWrongPlanA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. {store} is \"apple\" on iPhone/Mac and \"google\" on Android; keep each branch a whole sentence and keep the store names (App Store, Google Play, Apple Account) as the stores call them in your language.",
+    "placeholders": {
+      "store": {
+        "type": "String",
+        "example": "google"
+      }
+    }
+  },
+  "faqRefundQ": "Can I get a refund?",
+  "@faqRefundQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqRefundA": "{store, select, apple{Refunds for subscriptions are handled by Apple under its policies — request one from your App Store purchase history. If you get stuck, write to us and we'll point you the right way.} other{Refunds for subscriptions are handled by Google under its policies — request one from your Google Play order history. If you get stuck, write to us and we'll point you the right way.}}",
+  "@faqRefundA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. {store} is \"apple\" on iPhone/Mac and \"google\" on Android; keep each branch a whole sentence and keep the store names (App Store, Google Play, Apple Account) as the stores call them in your language.",
+    "placeholders": {
+      "store": {
+        "type": "String",
+        "example": "google"
+      }
+    }
+  },
+  "faqSectionTherapy": "Therapy sessions",
+  "@faqSectionTherapy": {
+    "description": "FAQ section heading (shown in capitals)."
+  },
+  "faqBookQ": "How do I book a therapy session?",
+  "@faqBookQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqBookA": "Open Talk to a therapist, tell us what you'd like to talk about and when suits you, and send the request. Our care team matches you with a licensed therapist and a time — usually within a day — and you'll see who and when in the app and by email.",
+  "@faqBookA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. \"Talk to a therapist\" is the name of a screen in the app."
+  },
+  "faqCostQ": "How much does a session cost, and when do I pay?",
+  "@faqCostQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqCostA": "Each session is $20, paid securely in the app when you book — that's what sends your request to our care team, and you get a receipt by email straight away. No subscription; you book one session at a time.",
+  "@faqCostA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Keep the price \"$20\" as is."
+  },
+  "faqMoveQ": "What if I need to cancel or move my session?",
+  "@faqMoveQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqMoveA": "You can cancel in the app up to 24 hours before your session and you'll be refunded in full. To move it, reply to your booking email at least 24 hours before and we'll rebook you. A session cancelled later than that, or one you don't join, isn't refunded — your therapist has set that time aside for you. If we or your therapist have to cancel, you're refunded in full.",
+  "@faqMoveA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Cancellation policy: keep the terms (24 hours, full refund) exact."
+  },
+  "faqHowSessionsQ": "How do sessions work?",
+  "@faqHowSessionsQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqHowSessionsA": "They're private video calls, right in the app. The Join button appears 10 minutes before the start, and you'll need your camera and microphone. Calls aren't recorded.",
+  "@faqHowSessionsA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqRemindedQ": "Will I be reminded?",
+  "@faqRemindedQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqRemindedA": "Yes. You'll get an email and a phone notification when you're matched, if anything changes, and 10 minutes before your session. Phone notifications can arrive a little later than the emails.",
+  "@faqRemindedA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqCancelSessionQ": "Can I cancel a session?",
+  "@faqCancelSessionQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqCancelSessionA": "Yes. You can cancel a request, or a matched session you haven't paid for, from the same screen. To cancel a paid session, contact us before it starts and we'll refund you.",
+  "@faqCancelSessionA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqWhoQ": "Who are the therapists?",
+  "@faqWhoQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqWhoA": "Licensed mental-health professionals. Our care team matches you based on what you share in your request, so you don't have to scroll through directories while you're struggling. Once you're matched, you can see their profile — credentials, experience and what they specialise in.",
+  "@faqWhoA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqRateQ": "Can I rate my session?",
+  "@faqRateQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqRateA": "Yes — after a session, tap it under Past sessions. Your therapist never sees your rating on its own, only an average across several people.",
+  "@faqRateA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person. \"Past sessions\" is a heading on the therapy screen."
+  },
+  "faqSectionPrivacy": "Privacy & your data",
+  "@faqSectionPrivacy": {
+    "description": "FAQ section heading (shown in capitals)."
+  },
+  "faqJournalQ": "Who can read my journal?",
+  "@faqJournalQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqJournalA": "Only you. Your entries are protected by row-level security, which means only your signed-in account can retrieve them — our team doesn't read them.",
+  "@faqJournalA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqSellDataQ": "Do you sell my data or show ads?",
+  "@faqSellDataQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqSellDataA": "Never. No ads, no analytics trackers, no data brokers. We collect only what the app needs to work — the Privacy Policy in Settings spells out every detail.",
+  "@faqSellDataA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqDeleteQ": "How do I delete my account and data?",
+  "@faqDeleteQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqDeleteA": "Settings → Delete account removes your profile, journal, moods, recovery data, and therapy sessions permanently. You can also email us from your registered address and we'll do it for you. Deletion can't be undone.",
+  "@faqDeleteA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqSectionAccount": "Your account",
+  "@faqSectionAccount": {
+    "description": "FAQ section heading (shown in capitals)."
+  },
+  "faqProfileQ": "How do I change my name or profile photo?",
+  "@faqProfileQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqProfileA": "Settings → Edit profile. Tap the photo to take a new one, choose from your library, or remove it.",
+  "@faqProfileA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqPasswordQ": "How do I change my password?",
+  "@faqPasswordQ": {
+    "description": "FAQ question (a heading people tap to open the answer)."
+  },
+  "faqPasswordA": "Settings → Change password sends a secure reset link to your email. Follow the link, choose a new password, and log back in.",
+  "@faqPasswordA": {
+    "description": "FAQ answer, shown when the question is opened. Help text: warm, plain, second person."
+  },
+  "faqEmailCopied": "Email address copied.",
+  "@faqEmailCopied": {
+    "description": "Snackbar after tapping the contact card on the FAQ screen, which copies the support email address."
+  },
+  "faqStillNeedHelp": "Still need help?",
+  "@faqStillNeedHelp": {
+    "description": "Title of the contact card at the end of the FAQ."
+  },
+  "faqWriteToUs": "Write to us at {email} — tap to copy.",
+  "@faqWriteToUs": {
+    "description": "Under faqStillNeedHelp: the support email address; tapping the card copies it.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "support@example.com"
+      }
+    }
+  },
+  "faqTitle": "FAQ",
+  "@faqTitle": {
+    "description": "App bar title of the frequently asked questions screen. Use the usual short form in your language."
+  },
+  "faqIntro": "Quick answers to the questions we hear most. Tap a question to open it.",
+  "@faqIntro": {
+    "description": "Intro at the top of the FAQ screen."
+  },
+  "careClientFallback": "Client",
+  "@careClientFallback": {
+    "description": "Care team: stands in for a client's name when neither their name nor email is known."
+  },
+  "careYourClientFallback": "Your client",
+  "@careYourClientFallback": {
+    "description": "Therapist view: stands in for a client whose first name isn't known."
+  },
+  "careFlagNoShow": "Didn't show up",
+  "@careFlagNoShow": {
+    "description": "Flag a therapist can raise about a session: the client did not join. Therapist-facing screen."
+  },
+  "careFlagLate": "Joined late",
+  "@careFlagLate": {
+    "description": "Flag a therapist can raise about a session: the client joined late. Therapist-facing screen."
+  },
+  "careFlagFollowUp": "Needs a follow-up",
+  "@careFlagFollowUp": {
+    "description": "Flag a therapist can raise about a session: the client needs follow-up care. Therapist-facing screen."
+  },
+  "careFlagSafety": "Safety concern",
+  "@careFlagSafety": {
+    "description": "Flag a therapist can raise about a session: worried about the client's safety. Therapist-facing screen."
+  },
+  "careSignedOut": "You've been signed out. Please log in again.",
+  "@careSignedOut": {
+    "description": "Error shown to staff or therapists when their login session has ended."
+  },
+  "carePaymentFree": "Free",
+  "@carePaymentFree": {
+    "description": "Small badge: this therapy session is free (no payment). Care-team (staff) screen."
+  },
+  "carePaymentRefunded": "Refunded",
+  "@carePaymentRefunded": {
+    "description": "Small badge: the client's payment was refunded. Care-team (staff) screen."
+  },
+  "carePaymentUnpaid": "Unpaid",
+  "@carePaymentUnpaid": {
+    "description": "Small badge: the client hasn't paid yet. Care-team (staff) screen."
+  },
+  "carePaymentPaid": "Paid",
+  "@carePaymentPaid": {
+    "description": "Small badge: the client has paid. Care-team (staff) screen."
+  },
+  "carePaymentWaived": "Waived",
+  "@carePaymentWaived": {
+    "description": "Small badge: the session fee was waived by the care team. Care-team (staff) screen."
+  },
+  "careCouldNotLoad": "Couldn't load — check your connection.",
+  "@careCouldNotLoad": {
+    "description": "Error when a care-team list fails to load."
+  },
+  "careDashboardTitle": "Care team",
+  "@careDashboardTitle": {
+    "description": "App bar title of the care team's dashboard. Care-team (staff) screen."
+  },
+  "careTabRequests": "Requests",
+  "@careTabRequests": {
+    "description": "Tab on the care-team dashboard: therapy requests from clients. Care-team (staff) screen."
+  },
+  "careTabTherapists": "Therapists",
+  "@careTabTherapists": {
+    "description": "Tab on the care-team dashboard: the therapists. Care-team (staff) screen."
+  },
+  "careEmptyToMatch": "Nobody is waiting to be matched.",
+  "@careEmptyToMatch": {
+    "description": "Empty state: no requests are waiting for a therapist. Care-team (staff) screen."
+  },
+  "careEmptyUpcoming": "No sessions booked.",
+  "@careEmptyUpcoming": {
+    "description": "Empty state: no upcoming sessions. Care-team (staff) screen."
+  },
+  "careEmptyPast": "Finished and cancelled sessions show up here.",
+  "@careEmptyPast": {
+    "description": "Empty state of the Past filter. Care-team (staff) screen."
+  },
+  "careFilterToMatch": "To match · {count}",
+  "@careFilterToMatch": {
+    "description": "Filter pill: requests waiting for a therapist, with how many. Care-team (staff) screen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "careFilterUpcoming": "Upcoming · {count}",
+  "@careFilterUpcoming": {
+    "description": "Filter pill: booked sessions to come, with how many. Care-team (staff) screen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "careFilterPast": "Past · {count}",
+  "@careFilterPast": {
+    "description": "Filter pill: finished or cancelled sessions, with how many. Care-team (staff) screen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "careAddTherapist": "Add a therapist",
+  "@careAddTherapist": {
+    "description": "Button on the care-team dashboard. Care-team (staff) screen."
+  },
+  "careNoTherapists": "No therapists yet. Add one to start matching requests.",
+  "@careNoTherapists": {
+    "description": "Empty state of the Therapists tab. Care-team (staff) screen."
+  },
+  "careAskedJustNow": "Asked just now",
+  "@careAskedJustNow": {
+    "description": "On a request waiting to be matched: asked less than an hour ago. Care-team (staff) screen."
+  },
+  "careWaitingHours": "Waiting {hours}h",
+  "@careWaitingHours": {
+    "description": "On a request waiting to be matched: how many hours it has waited (short, \"h\" = hours). Care-team (staff) screen.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "careWaitingDays": "{days, plural, other{Waiting {days} days}}",
+  "@careWaitingDays": {
+    "description": "On a request waiting to be matched: how many days it has waited (always 2 or more). Care-team (staff) screen.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "careTherapistFallback": "Therapist",
+  "@careTherapistFallback": {
+    "description": "Stands in for the therapist's name when it isn't known. Care-team (staff) screen."
+  },
+  "careBookedLine": "{therapist} · {when}",
+  "@careBookedLine": {
+    "description": "On a booked request: therapist name and session date/time. Care-team (staff) screen.",
+    "placeholders": {
+      "therapist": {
+        "type": "String",
+        "example": "Dr Amina Otieno"
+      },
+      "when": {
+        "type": "String",
+        "example": "Mon 3 Nov, 14:00"
+      }
+    }
+  },
+  "careBookedLineNotFinished": "{therapist} · {when} · Not finished",
+  "@careBookedLineNotFinished": {
+    "description": "On a booked request whose time has passed but that nobody marked as finished. Care-team (staff) screen.",
+    "placeholders": {
+      "therapist": {
+        "type": "String",
+        "example": "Dr Amina Otieno"
+      },
+      "when": {
+        "type": "String",
+        "example": "Mon 3 Nov, 14:00"
+      }
+    }
+  },
+  "carePastLine": "{outcome} · {date}",
+  "@carePastLine": {
+    "description": "On a past request: how it ended (e.g. Completed, Cancelled) and the date. Care-team (staff) screen.",
+    "placeholders": {
+      "outcome": {
+        "type": "String",
+        "example": "Completed"
+      },
+      "date": {
+        "type": "String",
+        "example": "3 Nov"
+      }
+    }
+  },
+  "careStatUpcoming": "{count} upcoming",
+  "@careStatUpcoming": {
+    "description": "Therapist stats: number of upcoming sessions. Joined with \" · \". Care-team (staff) screen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "careStatCompleted": "{count} completed",
+  "@careStatCompleted": {
+    "description": "Therapist stats: number of completed sessions. Joined with \" · \". Care-team (staff) screen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "careInactive": "Inactive",
+  "@careInactive": {
+    "description": "Small badge on a therapist who is switched off and not offered for matching. Care-team (staff) screen."
+  },
+  "careNotSignedInYet": "Not signed in yet — {email}",
+  "@careNotSignedInYet": {
+    "description": "Warning on a therapist who hasn't signed in to the app yet, with their email. Care-team (staff) screen.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "amina@example.com"
+      }
+    }
+  },
+  "careMatchCouldNotLoadTherapists": "Couldn't load therapists — check your connection.",
+  "@careMatchCouldNotLoadTherapists": {
+    "description": "Error when the list of therapists fails to load. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchTimePassed": "That time has already passed.",
+  "@careMatchTimePassed": {
+    "description": "Snackbar when the chosen session time is in the past. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchCouldNotBook": "Couldn't book — check your connection.",
+  "@careMatchCouldNotBook": {
+    "description": "Snackbar when booking the session failed. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchTitleNew": "Match request",
+  "@careMatchTitleNew": {
+    "description": "App bar title when matching a new request with a therapist. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchTitleChange": "Change booking",
+  "@careMatchTitleChange": {
+    "description": "App bar title when changing an existing booking. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchFlexible": "Flexible",
+  "@careMatchFlexible": {
+    "description": "Shown instead of preferred times when the client said any time suits them. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchTherapistHeader": "Therapist",
+  "@careMatchTherapistHeader": {
+    "description": "Section header above the list of therapists to choose from. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchNoTherapists": "No active therapists yet. Add one from the Therapists tab first.",
+  "@careMatchNoTherapists": {
+    "description": "Empty state when no therapist can be chosen. \"Therapists\" is the tab name (careTabTherapists). Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchWhenHeader": "When",
+  "@careMatchWhenHeader": {
+    "description": "Section header above the date and time pickers. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchPickDate": "Pick a date",
+  "@careMatchPickDate": {
+    "description": "Button to choose the session date. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchPickTime": "Pick a time",
+  "@careMatchPickTime": {
+    "description": "Button to choose the session time. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchTimeZoneNote": "In this phone's time zone. The client and therapist see it in theirs.",
+  "@careMatchTimeZoneNote": {
+    "description": "Hint under the date and time pickers. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchLengthHeader": "Length",
+  "@careMatchLengthHeader": {
+    "description": "Section header above session length choices. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchMinutes": "{minutes, plural, other{{minutes} min}}",
+  "@careMatchMinutes": {
+    "description": "Session length choice, e.g. \"50 min\". Care-team (staff) screen for matching a client with a therapist.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "careMatchBook": "Book session",
+  "@careMatchBook": {
+    "description": "Button: book the session with the chosen therapist and time. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchSaveChanges": "Save changes",
+  "@careMatchSaveChanges": {
+    "description": "Button: save changes to an existing booking. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchFootFree": "The client and therapist are emailed the details. This is the client's free first session.",
+  "@careMatchFootFree": {
+    "description": "Note under the booking button, for a free first session. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchFootPays": "The client and therapist are emailed the details. The client pays {price} in the app before they can join.",
+  "@careMatchFootPays": {
+    "description": "Note under the booking button, for a paid session. {price} is the formatted price, e.g. \"$20\". Care-team (staff) screen for matching a client with a therapist.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "careMatchFoot": "The client and therapist are emailed the details.",
+  "@careMatchFoot": {
+    "description": "Note under the booking button when no payment is needed. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchSpecialises": "Specialises in this",
+  "@careMatchSpecialises": {
+    "description": "On a therapist option: they specialise in what the client asked about. Joined with \" · \". Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careMatchNotSignedIn": "Not signed in yet — they can't join until they do",
+  "@careMatchNotSignedIn": {
+    "description": "Warning on a therapist who hasn't signed in to the app yet. Care-team (staff) screen for matching a client with a therapist."
+  },
+  "careDetailFailed": "That didn't work — check your connection.",
+  "@careDetailFailed": {
+    "description": "Snackbar when an action failed. Care-team (staff) screen showing one therapy request."
+  },
+  "careDetailBooked": "Booked — the client and therapist have been emailed.",
+  "@careDetailBooked": {
+    "description": "Snackbar after a request is matched and booked. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelSessionTitle": "Cancel this session?",
+  "@careCancelSessionTitle": {
+    "description": "Confirmation dialog title. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelRequestTitle": "Cancel this request?",
+  "@careCancelRequestTitle": {
+    "description": "Confirmation dialog title. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelSessionBody": "The client and therapist are emailed that it's cancelled.",
+  "@careCancelSessionBody": {
+    "description": "Confirmation dialog body when cancelling a booked session. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelSessionPaidBody": "The client and therapist are emailed that it's cancelled. They've paid, so refund them in the Paystack dashboard (Play Console for older in-app payments).",
+  "@careCancelSessionPaidBody": {
+    "description": "Confirmation dialog body when cancelling a booked session the client paid for. Keep \"Paystack\" and \"Play Console\" as is. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelRequestBody": "The client can request again whenever they like.",
+  "@careCancelRequestBody": {
+    "description": "Confirmation dialog body when cancelling a request not yet booked. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelSessionAction": "Cancel session",
+  "@careCancelSessionAction": {
+    "description": "Destructive dialog button. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelRequestAction": "Cancel request",
+  "@careCancelRequestAction": {
+    "description": "Destructive dialog button. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelled": "Cancelled.",
+  "@careCancelled": {
+    "description": "Snackbar after cancelling. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayPaidTitle": "Record a payment?",
+  "@carePayPaidTitle": {
+    "description": "Dialog title before marking a session as paid. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayPaidBody": "Use this when they paid outside the app. The Join button unlocks for them straight away.",
+  "@carePayPaidBody": {
+    "description": "Dialog body before marking a session as paid. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayMarkPaid": "Mark as paid",
+  "@carePayMarkPaid": {
+    "description": "Button and dialog action: record that the client paid. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayWaiveTitle": "Waive the fee?",
+  "@carePayWaiveTitle": {
+    "description": "Dialog title before waiving the session fee. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayWaiveBody": "They won't be charged for this session, and can join straight away.",
+  "@carePayWaiveBody": {
+    "description": "Dialog body before waiving the session fee. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayWaive": "Waive fee",
+  "@carePayWaive": {
+    "description": "Button and dialog action: waive the session fee. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayUnpaidTitle": "Mark as unpaid?",
+  "@carePayUnpaidTitle": {
+    "description": "Dialog title before marking a session unpaid again. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayUnpaidBody": "They'll need to pay before they can join.",
+  "@carePayUnpaidBody": {
+    "description": "Dialog body before marking a session unpaid. Care-team (staff) screen showing one therapy request."
+  },
+  "carePayMarkUnpaid": "Mark as unpaid",
+  "@carePayMarkUnpaid": {
+    "description": "Button and dialog action: mark a session unpaid. Care-team (staff) screen showing one therapy request."
+  },
+  "carePaymentUpdated": "Payment updated.",
+  "@carePaymentUpdated": {
+    "description": "Snackbar after a payment status change. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusAwaitingPayment": "Not sent yet — the client hasn't paid",
+  "@careStatusAwaitingPayment": {
+    "description": "Request status: the client started a request but hasn't paid, so it hasn't reached the care team. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusPending": "Waiting to be matched",
+  "@careStatusPending": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusMatchedUnpaid": "Matched — waiting for payment",
+  "@careStatusMatchedUnpaid": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusBooked": "Booked",
+  "@careStatusBooked": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusMissed": "Completed — the client didn't join, so the session counts as used",
+  "@careStatusMissed": {
+    "description": "Request status: the client missed the session. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusCompleted": "Completed",
+  "@careStatusCompleted": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusCompletedOn": "Completed {date}",
+  "@careStatusCompletedOn": {
+    "description": "Request status with the date it was completed. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "3 Nov"
+      }
+    }
+  },
+  "careStatusTherapistNoShow": "Cancelled — the therapist didn't join the call",
+  "@careStatusTherapistNoShow": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusNobodyJoined": "Cancelled — nobody joined the call",
+  "@careStatusNobodyJoined": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusNeverPaid": "Cancelled — never paid",
+  "@careStatusNeverPaid": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusDiscarded": "Discarded before it was paid for",
+  "@careStatusDiscarded": {
+    "description": "Request status: the client abandoned the request before paying. Care-team (staff) screen showing one therapy request."
+  },
+  "careStatusCancelled": "Cancelled",
+  "@careStatusCancelled": {
+    "description": "Request status. Care-team (staff) screen showing one therapy request."
+  },
+  "careFreeFirstSession": "Free first session",
+  "@careFreeFirstSession": {
+    "description": "Payment line: the client's first session is free. Care-team (staff) screen showing one therapy request."
+  },
+  "carePaidOn": "{price} · paid on {date}",
+  "@carePaidOn": {
+    "description": "Payment line: price, paid on a date. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      },
+      "date": {
+        "type": "String",
+        "example": "3 Nov"
+      }
+    }
+  },
+  "carePaid": "{price} · paid",
+  "@carePaid": {
+    "description": "Payment line: price, paid (date unknown). Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "careWaived": "{price} · waived",
+  "@careWaived": {
+    "description": "Payment line: price, fee waived. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "careRefundedOn": "{price} · refunded on {date}, not paid",
+  "@careRefundedOn": {
+    "description": "Payment line: price, refunded on a date. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      },
+      "date": {
+        "type": "String",
+        "example": "3 Nov"
+      }
+    }
+  },
+  "careNotPaidYet": "{price} · not paid yet",
+  "@careNotPaidYet": {
+    "description": "Payment line: price, not paid yet. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "careSectionClient": "Client",
+  "@careSectionClient": {
+    "description": "Section heading (shown in capitals). Care-team (staff) screen showing one therapy request."
+  },
+  "careNoName": "No name given",
+  "@careNoName": {
+    "description": "Shown when the client gave no name. Care-team (staff) screen showing one therapy request."
+  },
+  "careCopyEmail": "Copy email",
+  "@careCopyEmail": {
+    "description": "Tooltip on the button that copies the client's email. Care-team (staff) screen showing one therapy request."
+  },
+  "careEmailCopied": "Email copied.",
+  "@careEmailCopied": {
+    "description": "Snackbar after copying the client's email. Care-team (staff) screen showing one therapy request."
+  },
+  "careSectionRequest": "Request",
+  "@careSectionRequest": {
+    "description": "Section heading (shown in capitals): what the client asked for. Care-team (staff) screen showing one therapy request."
+  },
+  "careAsked": "Asked {when}",
+  "@careAsked": {
+    "description": "When the client sent the request. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 3 Nov, 14:00"
+      }
+    }
+  },
+  "careSectionSession": "Session",
+  "@careSectionSession": {
+    "description": "Section heading (shown in capitals). Care-team (staff) screen showing one therapy request."
+  },
+  "careSessionWhen": "{when} · {minutes, plural, other{{minutes} min}}",
+  "@careSessionWhen": {
+    "description": "Session date/time and length in minutes. Care-team (staff) screen showing one therapy request.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mon 3 Nov, 14:00"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "careMatchWithTherapist": "Match with a therapist",
+  "@careMatchWithTherapist": {
+    "description": "Button. Care-team (staff) screen showing one therapy request."
+  },
+  "careChangeTherapistOrTime": "Change therapist or time",
+  "@careChangeTherapistOrTime": {
+    "description": "Button. Care-team (staff) screen showing one therapy request."
+  },
+  "careSectionPayment": "Payment",
+  "@careSectionPayment": {
+    "description": "Section heading (shown in capitals). Care-team (staff) screen showing one therapy request."
+  },
+  "careSectionAfter": "After the session",
+  "@careSectionAfter": {
+    "description": "Section heading (shown in capitals): notes and ratings after the session. Care-team (staff) screen showing one therapy request."
+  },
+  "careNoteToClient": "Note to the client",
+  "@careNoteToClient": {
+    "description": "Heading: the note the therapist wrote to the client after the session. Care-team (staff) screen showing one therapy request."
+  },
+  "careNoNote": "No note written.",
+  "@careNoNote": {
+    "description": "Shown when the therapist wrote no note. Care-team (staff) screen showing one therapy request."
+  },
+  "careClientRating": "Client's rating",
+  "@careClientRating": {
+    "description": "Heading: how the client rated the session. Care-team (staff) screen showing one therapy request."
+  },
+  "careNotRatedYet": "Not rated yet.",
+  "@careNotRatedYet": {
+    "description": "Shown when there is no rating yet. Care-team (staff) screen showing one therapy request."
+  },
+  "careTherapistRating": "Therapist's rating — private",
+  "@careTherapistRating": {
+    "description": "Heading: the therapist's private rating of the session (the client never sees it). Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelThisSession": "Cancel this session",
+  "@careCancelThisSession": {
+    "description": "Destructive text button. Care-team (staff) screen showing one therapy request."
+  },
+  "careCancelThisRequest": "Cancel this request",
+  "@careCancelThisRequest": {
+    "description": "Destructive text button. Care-team (staff) screen showing one therapy request."
+  },
+  "careEditorPhotoFailed": "Couldn't open your photo library.",
+  "@careEditorPhotoFailed": {
+    "description": "Snackbar when the photo library could not be opened. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careCouldNotSave": "Couldn't save — check your connection.",
+  "@careCouldNotSave": {
+    "description": "Snackbar/error when saving failed."
+  },
+  "careEditorTitleAdd": "Add a therapist",
+  "@careEditorTitleAdd": {
+    "description": "App bar title. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorTitleEdit": "Edit therapist",
+  "@careEditorTitleEdit": {
+    "description": "App bar title. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorChangePhoto": "Change photo",
+  "@careEditorChangePhoto": {
+    "description": "Button under the therapist's photo. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorAddPhoto": "Add a photo",
+  "@careEditorAddPhoto": {
+    "description": "Button under the photo placeholder. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorFullName": "Full name",
+  "@careEditorFullName": {
+    "description": "Form field label. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorFullNameError": "Enter their full name",
+  "@careEditorFullNameError": {
+    "description": "Validation error under the name field. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorEmail": "Sign-in email",
+  "@careEditorEmail": {
+    "description": "Form field label: the email the therapist signs in with. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorEmailHelp": "They sign in to the app with this address.",
+  "@careEditorEmailHelp": {
+    "description": "Helper text under the sign-in email field. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorEmailError": "Enter a valid email",
+  "@careEditorEmailError": {
+    "description": "Validation error under the email field. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorTitleField": "Title",
+  "@careEditorTitleField": {
+    "description": "Form field label: the therapist's professional title. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorTitleHint": "Counselling psychologist",
+  "@careEditorTitleHint": {
+    "description": "Example placeholder in the professional title field. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorLicence": "Licence or registration",
+  "@careEditorLicence": {
+    "description": "Form field label: professional licence or registration. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorLicenceHint": "Body and registration number",
+  "@careEditorLicenceHint": {
+    "description": "Placeholder in the licence field: the licensing body and the number. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorYears": "Years of experience",
+  "@careEditorYears": {
+    "description": "Form field label. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorYearsError": "A number from 0 to 70",
+  "@careEditorYearsError": {
+    "description": "Validation error under the years-of-experience field. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorLanguages": "Languages",
+  "@careEditorLanguages": {
+    "description": "Form field label: languages the therapist works in. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorLanguagesHint": "English, Swahili",
+  "@careEditorLanguagesHint": {
+    "description": "Example placeholder in the languages field (a comma-separated list of languages). Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorAbout": "About them",
+  "@careEditorAbout": {
+    "description": "Form field label: the therapist's bio. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorAboutHelp": "Clients read this on their profile.",
+  "@careEditorAboutHelp": {
+    "description": "Helper text under the bio field. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorSpecialties": "Specialties",
+  "@careEditorSpecialties": {
+    "description": "Section header above specialty choices. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorTakingClients": "Taking new clients",
+  "@careEditorTakingClients": {
+    "description": "Switch: whether the therapist can be matched. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorTakingClientsHint": "When off, they can't be matched. Their booked and past sessions stay.",
+  "@careEditorTakingClientsHint": {
+    "description": "Under the Taking new clients switch. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorAddButton": "Add therapist",
+  "@careEditorAddButton": {
+    "description": "Save button when adding a new therapist. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorInviteNote": "They'll get an email explaining how to sign in and find their sessions.",
+  "@careEditorInviteNote": {
+    "description": "Note under the add button. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorFeedback": "Client feedback",
+  "@careEditorFeedback": {
+    "description": "Section header above clients' ratings of this therapist. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorFeedbackNote": "Only the care team sees individual ratings. Clients see an average once there are three.",
+  "@careEditorFeedbackNote": {
+    "description": "Note under the Client feedback header. Care-team (staff) form for adding or editing a therapist."
+  },
+  "careEditorStats": "{upcoming} upcoming · {completed} completed",
+  "@careEditorStats": {
+    "description": "Therapist stats: upcoming and completed session counts. Care-team (staff) form for adding or editing a therapist.",
+    "placeholders": {
+      "upcoming": {
+        "type": "int"
+      },
+      "completed": {
+        "type": "int"
+      }
+    }
+  },
+  "careEditorRatingFrom": "{rating} from {count}",
+  "@careEditorRatingFrom": {
+    "description": "Average rating and how many ratings it is from, e.g. \"4.5 from 3\". Care-team (staff) form for adding or editing a therapist.",
+    "placeholders": {
+      "rating": {
+        "type": "String",
+        "example": "4.5"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "careEditorSignedInAs": "Signed in as {email}",
+  "@careEditorSignedInAs": {
+    "description": "The therapist has signed in to the app with this email. Care-team (staff) form for adding or editing a therapist.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "amina@example.com"
+      }
+    }
+  },
+  "careEditorNotSignedIn": "Hasn't signed in yet. They need to sign in to the app with {email} to see and join sessions.",
+  "@careEditorNotSignedIn": {
+    "description": "Warning: the therapist hasn't signed in yet. Care-team (staff) form for adding or editing a therapist.",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "amina@example.com"
+      }
+    }
+  },
+  "careSessionsCouldNotLoad": "Couldn't load your sessions — check your connection.",
+  "@careSessionsCouldNotLoad": {
+    "description": "Error when the therapist's sessions fail to load. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsSaved": "Saved.",
+  "@careSessionsSaved": {
+    "description": "Snackbar after editing a finished session. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsFinished": "Session finished — thank you.",
+  "@careSessionsFinished": {
+    "description": "Snackbar after finishing a session. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsTitle": "My sessions",
+  "@careSessionsTitle": {
+    "description": "App bar title. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsEmpty": "No sessions yet. When the care team books one with you, it shows up here and you'll get an email.",
+  "@careSessionsEmpty": {
+    "description": "Empty state. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsUpcoming": "Upcoming",
+  "@careSessionsUpcoming": {
+    "description": "Section header: sessions to come. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsPast": "Past",
+  "@careSessionsPast": {
+    "description": "Section header: earlier sessions. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsTooEarly": "The call opens 10 minutes before the start.",
+  "@careSessionsTooEarly": {
+    "description": "Hint under the disabled Join button. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsOver": "The call has closed. Finish the session to close it out — otherwise it closes itself in a couple of hours.",
+  "@careSessionsOver": {
+    "description": "Hint under the Join button after the session's time is over. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsUnpaid": "The client hasn't paid yet — the call opens once they do.",
+  "@careSessionsUnpaid": {
+    "description": "Hint under the disabled Join button. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsOpen": "The call is open.",
+  "@careSessionsOpen": {
+    "description": "Hint under the Join button when the call can be joined. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsTheyWrote": "They wrote: “{note}”",
+  "@careSessionsTheyWrote": {
+    "description": "The client's note from their request, quoted. Use your language's quotation marks. Therapist-facing screen listing their own sessions.",
+    "placeholders": {
+      "note": {
+        "type": "String",
+        "example": "Work stress"
+      }
+    }
+  },
+  "careSessionsJoin": "Join session",
+  "@careSessionsJoin": {
+    "description": "Button: join the video call. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsFinish": "Finish session",
+  "@careSessionsFinish": {
+    "description": "Button: mark the session as finished (opens a sheet). Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsClientMissed": "The client didn't join the call.",
+  "@careSessionsClientMissed": {
+    "description": "On a past session the client missed. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsDidNotHappen": "Didn't happen",
+  "@careSessionsDidNotHappen": {
+    "description": "Label on a past session that was closed because nobody joined. Therapist-facing screen listing their own sessions."
+  },
+  "careSessionsRate": "Rate",
+  "@careSessionsRate": {
+    "description": "Small badge on a past session the therapist hasn't rated yet. Therapist-facing screen listing their own sessions."
+  },
+  "careFinishNeedsRating": "Add a star rating to send private feedback.",
+  "@careFinishNeedsRating": {
+    "description": "Error when flags or a private note are given without a star rating. Therapist-facing sheet for finishing a session (note to client, private rating)."
+  },
+  "careFinishTitleDone": "Session with {name}",
+  "@careFinishTitleDone": {
+    "description": "Sheet title when editing a finished session. {name} is the client's first name. Therapist-facing sheet for finishing a session (note to client, private rating).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina"
+      }
+    }
+  },
+  "careFinishTitle": "Finish your session with {name}",
+  "@careFinishTitle": {
+    "description": "Sheet title. {name} is the client's first name. Therapist-facing sheet for finishing a session (note to client, private rating).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina"
+      }
+    }
+  },
+  "careFinishNoteLabel": "A note for {name} (optional)",
+  "@careFinishNoteLabel": {
+    "description": "Field label: a note the client will see. {name} is the client's first name. Therapist-facing sheet for finishing a session (note to client, private rating).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina"
+      }
+    }
+  },
+  "careFinishNoteHelp": "They see this in the app — a takeaway, or something to practise. Keep clinical notes out of it.",
+  "@careFinishNoteHelp": {
+    "description": "Helper text under the note field. Therapist-facing sheet for finishing a session (note to client, private rating)."
+  },
+  "careFinishHowDidItGo": "How did it go?",
+  "@careFinishHowDidItGo": {
+    "description": "Heading above the star rating. Therapist-facing sheet for finishing a session (note to client, private rating)."
+  },
+  "careFinishPrivateNote": "Private note for the care team (optional)",
+  "@careFinishPrivateNote": {
+    "description": "Field label: a note only the care team sees. Therapist-facing sheet for finishing a session (note to client, private rating)."
+  },
+  "careFinishPrivacy": "Only the care team sees your rating, flags and private note. Flagging a safety concern emails them straight away.",
+  "@careFinishPrivacy": {
+    "description": "Note under the private fields. Therapist-facing sheet for finishing a session (note to client, private rating)."
   }
 }

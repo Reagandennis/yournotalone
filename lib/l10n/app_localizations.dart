@@ -2657,6 +2657,1452 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reminders are scheduled on this device and arrive even when the app is closed. Times may shift a few minutes to save battery.'**
   String get remindersFootnote;
+
+  /// Snackbar on the crisis screen when a phone number, text or website could not be opened. {target} is the number or web address.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open {target}'**
+  String crisisCouldNotOpen(String target);
+
+  /// Title of the sheet on the crisis screen for picking the country whose helplines are shown. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Where are you?'**
+  String get crisisWhereAreYou;
+
+  /// Big button on the crisis screen that calls the local emergency number. {number} is e.g. 999 or 112. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {number}'**
+  String crisisCallEmergency(String number);
+
+  /// Under the emergency call button on the crisis screen. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'If you are in immediate danger, this comes first.'**
+  String get crisisEmergencyHint;
+
+  /// Button on a helpline card: call this phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {phone}'**
+  String crisisCallLine(String phone);
+
+  /// Button on a helpline card: send a text message with {keyword} to the short number {number} (e.g. "Text SHOUT to 85258"). Keep {keyword} as is; it is what the service expects.
+  ///
+  /// In en, this message translates to:
+  /// **'Text {keyword} to {number}'**
+  String crisisTextLine(String keyword, String number);
+
+  /// Button on a helpline card: open the service's website. {host} is the web address, e.g. samaritans.org.
+  ///
+  /// In en, this message translates to:
+  /// **'Open {host}'**
+  String crisisOpenSite(String host);
+
+  /// Title of the crisis resources screen, which lists emergency and helpline numbers. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Help right now'**
+  String get crisisTitle;
+
+  /// Intro on the crisis screen: reassurance that anyone can call these lines. Warm, plain, never clinical. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have to explain yourself well, or be in enough trouble to deserve it. Any of these will pick up.'**
+  String get crisisIntro;
+
+  /// Heading on the crisis screen above international helplines, for people outside the chosen country.
+  ///
+  /// In en, this message translates to:
+  /// **'Somewhere else'**
+  String get crisisSomewhereElse;
+
+  /// Small print at the bottom of the crisis screen, before a button to book a therapy session. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'This app can\'t replace emergency care. When the moment has passed, a licensed therapist here can help you work through what led to it.'**
+  String get crisisNotEmergencyCare;
+
+  /// Button at the bottom of the crisis screen and the heavy-day sheet: book a session with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a session'**
+  String get crisisBookSession;
+
+  /// Underlined link at the bottom of several screens, opening the crisis screen. Followed by crisisFooterRest in the same line. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'In crisis or immediate danger? Get help now'**
+  String get crisisFooterLink;
+
+  /// Follows crisisFooterLink in the same sentence (note the leading space and dash): the crisis screen has real phone numbers you can call with one tap. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **' — real numbers, one tap.'**
+  String get crisisFooterRest;
+
+  /// Snackbar when a phone call could not be started from the heavy-day sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t call {number}'**
+  String heavyDayCouldNotCall(String number);
+
+  /// Title of the sheet shown after someone checks in with the lowest mood ("Awful"). Gentle and validating. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'That sounds like a heavy day.'**
+  String get heavyDayTitle;
+
+  /// Body of the heavy-day sheet, offering a therapy session. Keep the price "$20" as is. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have to carry it on your own. A licensed therapist here will listen — \$20 a session, booked in a minute.'**
+  String get heavyDayBody;
+
+  /// Heading above emergency and helpline call buttons on the heavy-day sheet. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'If you need someone right now'**
+  String get heavyDayRightNow;
+
+  /// Name on the call button for the local emergency number (e.g. "Emergency · 112").
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency'**
+  String get heavyDayEmergency;
+
+  /// Link at the bottom of the heavy-day sheet opening the full crisis resources screen.
+  ///
+  /// In en, this message translates to:
+  /// **'More ways to get help'**
+  String get heavyDayMoreHelp;
+
+  /// At the top of the Privacy Policy and Terms screens. {date} is the date the document was last changed (shown as written in the document).
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {date}'**
+  String legalLastUpdated(String date);
+
+  /// FAQ section heading (shown in capitals).
+  ///
+  /// In en, this message translates to:
+  /// **'Using the app'**
+  String get faqSectionUsingApp;
+
+  /// FAQ question (a heading people tap to open the answer). Keep the app name "yournotalone" as is.
+  ///
+  /// In en, this message translates to:
+  /// **'What is yournotalone?'**
+  String get faqWhatIsQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. The first sentence explains the app name "yournotalone" (= "you're not alone").
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not alone — that\'s the name and the idea. It\'s a wellbeing companion for the moments between the hard ones. Check in with your mood, keep a private journal, follow guided meditations and breathing exercises, unwind with calming sounds, track your recovery, and reach a licensed therapist when you need one.'**
+  String get faqWhatIsA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Is the app a substitute for therapy or medical care?'**
+  String get faqSubstituteQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'No. The app supports your wellbeing, but it doesn\'t diagnose or treat anything, and it\'s not emergency care. If you\'re in crisis or immediate danger, call your local emergency number right away.'**
+  String get faqSubstituteA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do daily reminders work?'**
+  String get faqRemindersQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. "Settings → Reminders & notifications" names a menu path: match the translated Settings row label.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Settings → Reminders & notifications to switch on gentle nudges — a morning check-in, a daily pledge, evening pages, and a wind-down. You choose the times, and reminders are scheduled on your phone; they never leave your device.'**
+  String get faqRemindersA;
+
+  /// FAQ section heading (shown in capitals). "Premium" is the paid plan.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium & billing'**
+  String get faqSectionBilling;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'What do I get with Premium?'**
+  String get faqPremiumQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Every room in the house: the full meditation library, all calming sounds and breathing exercises, unlimited journaling, and the complete recovery toolkit. Plans usually start with a free trial — the price is always shown before you subscribe.'**
+  String get faqPremiumA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do I cancel my subscription?'**
+  String get faqCancelSubQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. {store} is "apple" on iPhone/Mac and "google" on Android; keep each branch a whole sentence and keep the store names (App Store, Google Play, Apple Account) as the stores call them in your language.
+  ///
+  /// In en, this message translates to:
+  /// **'{store, select, apple{Subscriptions are billed by Apple, so you cancel in your App Store subscription settings — deleting the app doesn\'t cancel it. You keep Premium until the end of the period you\'ve paid for.} other{Subscriptions are billed by Google, so you cancel in your Google Play subscription settings — deleting the app doesn\'t cancel it. You keep Premium until the end of the period you\'ve paid for.}}'**
+  String faqCancelSubA(String store);
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m a subscriber, but the app says I\'m on the Free plan.'**
+  String get faqWrongPlanQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. {store} is "apple" on iPhone/Mac and "google" on Android; keep each branch a whole sentence and keep the store names (App Store, Google Play, Apple Account) as the stores call them in your language.
+  ///
+  /// In en, this message translates to:
+  /// **'{store, select, apple{Make sure you\'re signed in to the same Apple Account you subscribed with, then tap Settings → Restore purchases. If it still doesn\'t unlock, email us and we\'ll sort it out.} other{Make sure you\'re signed in to the same Google account you subscribed with, then tap Settings → Restore purchases. If it still doesn\'t unlock, email us and we\'ll sort it out.}}'**
+  String faqWrongPlanA(String store);
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Can I get a refund?'**
+  String get faqRefundQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. {store} is "apple" on iPhone/Mac and "google" on Android; keep each branch a whole sentence and keep the store names (App Store, Google Play, Apple Account) as the stores call them in your language.
+  ///
+  /// In en, this message translates to:
+  /// **'{store, select, apple{Refunds for subscriptions are handled by Apple under its policies — request one from your App Store purchase history. If you get stuck, write to us and we\'ll point you the right way.} other{Refunds for subscriptions are handled by Google under its policies — request one from your Google Play order history. If you get stuck, write to us and we\'ll point you the right way.}}'**
+  String faqRefundA(String store);
+
+  /// FAQ section heading (shown in capitals).
+  ///
+  /// In en, this message translates to:
+  /// **'Therapy sessions'**
+  String get faqSectionTherapy;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do I book a therapy session?'**
+  String get faqBookQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. "Talk to a therapist" is the name of a screen in the app.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Talk to a therapist, tell us what you\'d like to talk about and when suits you, and send the request. Our care team matches you with a licensed therapist and a time — usually within a day — and you\'ll see who and when in the app and by email.'**
+  String get faqBookA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How much does a session cost, and when do I pay?'**
+  String get faqCostQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Keep the price "$20" as is.
+  ///
+  /// In en, this message translates to:
+  /// **'Each session is \$20, paid securely in the app when you book — that\'s what sends your request to our care team, and you get a receipt by email straight away. No subscription; you book one session at a time.'**
+  String get faqCostA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'What if I need to cancel or move my session?'**
+  String get faqMoveQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Cancellation policy: keep the terms (24 hours, full refund) exact.
+  ///
+  /// In en, this message translates to:
+  /// **'You can cancel in the app up to 24 hours before your session and you\'ll be refunded in full. To move it, reply to your booking email at least 24 hours before and we\'ll rebook you. A session cancelled later than that, or one you don\'t join, isn\'t refunded — your therapist has set that time aside for you. If we or your therapist have to cancel, you\'re refunded in full.'**
+  String get faqMoveA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do sessions work?'**
+  String get faqHowSessionsQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'re private video calls, right in the app. The Join button appears 10 minutes before the start, and you\'ll need your camera and microphone. Calls aren\'t recorded.'**
+  String get faqHowSessionsA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Will I be reminded?'**
+  String get faqRemindedQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes. You\'ll get an email and a phone notification when you\'re matched, if anything changes, and 10 minutes before your session. Phone notifications can arrive a little later than the emails.'**
+  String get faqRemindedA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Can I cancel a session?'**
+  String get faqCancelSessionQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes. You can cancel a request, or a matched session you haven\'t paid for, from the same screen. To cancel a paid session, contact us before it starts and we\'ll refund you.'**
+  String get faqCancelSessionA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Who are the therapists?'**
+  String get faqWhoQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Licensed mental-health professionals. Our care team matches you based on what you share in your request, so you don\'t have to scroll through directories while you\'re struggling. Once you\'re matched, you can see their profile — credentials, experience and what they specialise in.'**
+  String get faqWhoA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Can I rate my session?'**
+  String get faqRateQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. "Past sessions" is a heading on the therapy screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes — after a session, tap it under Past sessions. Your therapist never sees your rating on its own, only an average across several people.'**
+  String get faqRateA;
+
+  /// FAQ section heading (shown in capitals).
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & your data'**
+  String get faqSectionPrivacy;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Who can read my journal?'**
+  String get faqJournalQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Only you. Your entries are protected by row-level security, which means only your signed-in account can retrieve them — our team doesn\'t read them.'**
+  String get faqJournalA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'Do you sell my data or show ads?'**
+  String get faqSellDataQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Never. No ads, no analytics trackers, no data brokers. We collect only what the app needs to work — the Privacy Policy in Settings spells out every detail.'**
+  String get faqSellDataA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do I delete my account and data?'**
+  String get faqDeleteQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Delete account removes your profile, journal, moods, recovery data, and therapy sessions permanently. You can also email us from your registered address and we\'ll do it for you. Deletion can\'t be undone.'**
+  String get faqDeleteA;
+
+  /// FAQ section heading (shown in capitals).
+  ///
+  /// In en, this message translates to:
+  /// **'Your account'**
+  String get faqSectionAccount;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do I change my name or profile photo?'**
+  String get faqProfileQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Edit profile. Tap the photo to take a new one, choose from your library, or remove it.'**
+  String get faqProfileA;
+
+  /// FAQ question (a heading people tap to open the answer).
+  ///
+  /// In en, this message translates to:
+  /// **'How do I change my password?'**
+  String get faqPasswordQ;
+
+  /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings → Change password sends a secure reset link to your email. Follow the link, choose a new password, and log back in.'**
+  String get faqPasswordA;
+
+  /// Snackbar after tapping the contact card on the FAQ screen, which copies the support email address.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address copied.'**
+  String get faqEmailCopied;
+
+  /// Title of the contact card at the end of the FAQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Still need help?'**
+  String get faqStillNeedHelp;
+
+  /// Under faqStillNeedHelp: the support email address; tapping the card copies it.
+  ///
+  /// In en, this message translates to:
+  /// **'Write to us at {email} — tap to copy.'**
+  String faqWriteToUs(String email);
+
+  /// App bar title of the frequently asked questions screen. Use the usual short form in your language.
+  ///
+  /// In en, this message translates to:
+  /// **'FAQ'**
+  String get faqTitle;
+
+  /// Intro at the top of the FAQ screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick answers to the questions we hear most. Tap a question to open it.'**
+  String get faqIntro;
+
+  /// Care team: stands in for a client's name when neither their name nor email is known.
+  ///
+  /// In en, this message translates to:
+  /// **'Client'**
+  String get careClientFallback;
+
+  /// Therapist view: stands in for a client whose first name isn't known.
+  ///
+  /// In en, this message translates to:
+  /// **'Your client'**
+  String get careYourClientFallback;
+
+  /// Flag a therapist can raise about a session: the client did not join. Therapist-facing screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t show up'**
+  String get careFlagNoShow;
+
+  /// Flag a therapist can raise about a session: the client joined late. Therapist-facing screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined late'**
+  String get careFlagLate;
+
+  /// Flag a therapist can raise about a session: the client needs follow-up care. Therapist-facing screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs a follow-up'**
+  String get careFlagFollowUp;
+
+  /// Flag a therapist can raise about a session: worried about the client's safety. Therapist-facing screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety concern'**
+  String get careFlagSafety;
+
+  /// Error shown to staff or therapists when their login session has ended.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve been signed out. Please log in again.'**
+  String get careSignedOut;
+
+  /// Small badge: this therapy session is free (no payment). Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get carePaymentFree;
+
+  /// Small badge: the client's payment was refunded. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Refunded'**
+  String get carePaymentRefunded;
+
+  /// Small badge: the client hasn't paid yet. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid'**
+  String get carePaymentUnpaid;
+
+  /// Small badge: the client has paid. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get carePaymentPaid;
+
+  /// Small badge: the session fee was waived by the care team. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Waived'**
+  String get carePaymentWaived;
+
+  /// Error when a care-team list fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load — check your connection.'**
+  String get careCouldNotLoad;
+
+  /// App bar title of the care team's dashboard. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Care team'**
+  String get careDashboardTitle;
+
+  /// Tab on the care-team dashboard: therapy requests from clients. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get careTabRequests;
+
+  /// Tab on the care-team dashboard: the therapists. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapists'**
+  String get careTabTherapists;
+
+  /// Empty state: no requests are waiting for a therapist. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody is waiting to be matched.'**
+  String get careEmptyToMatch;
+
+  /// Empty state: no upcoming sessions. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions booked.'**
+  String get careEmptyUpcoming;
+
+  /// Empty state of the Past filter. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished and cancelled sessions show up here.'**
+  String get careEmptyPast;
+
+  /// Filter pill: requests waiting for a therapist, with how many. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'To match · {count}'**
+  String careFilterToMatch(int count);
+
+  /// Filter pill: booked sessions to come, with how many. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming · {count}'**
+  String careFilterUpcoming(int count);
+
+  /// Filter pill: finished or cancelled sessions, with how many. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Past · {count}'**
+  String careFilterPast(int count);
+
+  /// Button on the care-team dashboard. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a therapist'**
+  String get careAddTherapist;
+
+  /// Empty state of the Therapists tab. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'No therapists yet. Add one to start matching requests.'**
+  String get careNoTherapists;
+
+  /// On a request waiting to be matched: asked less than an hour ago. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked just now'**
+  String get careAskedJustNow;
+
+  /// On a request waiting to be matched: how many hours it has waited (short, "h" = hours). Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting {hours}h'**
+  String careWaitingHours(int hours);
+
+  /// On a request waiting to be matched: how many days it has waited (always 2 or more). Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{Waiting {days} days}}'**
+  String careWaitingDays(int days);
+
+  /// Stands in for the therapist's name when it isn't known. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapist'**
+  String get careTherapistFallback;
+
+  /// On a booked request: therapist name and session date/time. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{therapist} · {when}'**
+  String careBookedLine(String therapist, String when);
+
+  /// On a booked request whose time has passed but that nobody marked as finished. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{therapist} · {when} · Not finished'**
+  String careBookedLineNotFinished(String therapist, String when);
+
+  /// On a past request: how it ended (e.g. Completed, Cancelled) and the date. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{outcome} · {date}'**
+  String carePastLine(String outcome, String date);
+
+  /// Therapist stats: number of upcoming sessions. Joined with " · ". Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} upcoming'**
+  String careStatUpcoming(int count);
+
+  /// Therapist stats: number of completed sessions. Joined with " · ". Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} completed'**
+  String careStatCompleted(int count);
+
+  /// Small badge on a therapist who is switched off and not offered for matching. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get careInactive;
+
+  /// Warning on a therapist who hasn't signed in to the app yet, with their email. Care-team (staff) screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in yet — {email}'**
+  String careNotSignedInYet(String email);
+
+  /// Error when the list of therapists fails to load. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load therapists — check your connection.'**
+  String get careMatchCouldNotLoadTherapists;
+
+  /// Snackbar when the chosen session time is in the past. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'That time has already passed.'**
+  String get careMatchTimePassed;
+
+  /// Snackbar when booking the session failed. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t book — check your connection.'**
+  String get careMatchCouldNotBook;
+
+  /// App bar title when matching a new request with a therapist. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Match request'**
+  String get careMatchTitleNew;
+
+  /// App bar title when changing an existing booking. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Change booking'**
+  String get careMatchTitleChange;
+
+  /// Shown instead of preferred times when the client said any time suits them. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible'**
+  String get careMatchFlexible;
+
+  /// Section header above the list of therapists to choose from. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapist'**
+  String get careMatchTherapistHeader;
+
+  /// Empty state when no therapist can be chosen. "Therapists" is the tab name (careTabTherapists). Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'No active therapists yet. Add one from the Therapists tab first.'**
+  String get careMatchNoTherapists;
+
+  /// Section header above the date and time pickers. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'When'**
+  String get careMatchWhenHeader;
+
+  /// Button to choose the session date. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get careMatchPickDate;
+
+  /// Button to choose the session time. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a time'**
+  String get careMatchPickTime;
+
+  /// Hint under the date and time pickers. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'In this phone\'s time zone. The client and therapist see it in theirs.'**
+  String get careMatchTimeZoneNote;
+
+  /// Section header above session length choices. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Length'**
+  String get careMatchLengthHeader;
+
+  /// Session length choice, e.g. "50 min". Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min}}'**
+  String careMatchMinutes(int minutes);
+
+  /// Button: book the session with the chosen therapist and time. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Book session'**
+  String get careMatchBook;
+
+  /// Button: save changes to an existing booking. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Save changes'**
+  String get careMatchSaveChanges;
+
+  /// Note under the booking button, for a free first session. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'The client and therapist are emailed the details. This is the client\'s free first session.'**
+  String get careMatchFootFree;
+
+  /// Note under the booking button, for a paid session. {price} is the formatted price, e.g. "$20". Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'The client and therapist are emailed the details. The client pays {price} in the app before they can join.'**
+  String careMatchFootPays(String price);
+
+  /// Note under the booking button when no payment is needed. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'The client and therapist are emailed the details.'**
+  String get careMatchFoot;
+
+  /// On a therapist option: they specialise in what the client asked about. Joined with " · ". Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialises in this'**
+  String get careMatchSpecialises;
+
+  /// Warning on a therapist who hasn't signed in to the app yet. Care-team (staff) screen for matching a client with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in yet — they can\'t join until they do'**
+  String get careMatchNotSignedIn;
+
+  /// Snackbar when an action failed. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'That didn\'t work — check your connection.'**
+  String get careDetailFailed;
+
+  /// Snackbar after a request is matched and booked. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked — the client and therapist have been emailed.'**
+  String get careDetailBooked;
+
+  /// Confirmation dialog title. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this session?'**
+  String get careCancelSessionTitle;
+
+  /// Confirmation dialog title. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this request?'**
+  String get careCancelRequestTitle;
+
+  /// Confirmation dialog body when cancelling a booked session. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'The client and therapist are emailed that it\'s cancelled.'**
+  String get careCancelSessionBody;
+
+  /// Confirmation dialog body when cancelling a booked session the client paid for. Keep "Paystack" and "Play Console" as is. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'The client and therapist are emailed that it\'s cancelled. They\'ve paid, so refund them in the Paystack dashboard (Play Console for older in-app payments).'**
+  String get careCancelSessionPaidBody;
+
+  /// Confirmation dialog body when cancelling a request not yet booked. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'The client can request again whenever they like.'**
+  String get careCancelRequestBody;
+
+  /// Destructive dialog button. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel session'**
+  String get careCancelSessionAction;
+
+  /// Destructive dialog button. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel request'**
+  String get careCancelRequestAction;
+
+  /// Snackbar after cancelling. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled.'**
+  String get careCancelled;
+
+  /// Dialog title before marking a session as paid. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a payment?'**
+  String get carePayPaidTitle;
+
+  /// Dialog body before marking a session as paid. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Use this when they paid outside the app. The Join button unlocks for them straight away.'**
+  String get carePayPaidBody;
+
+  /// Button and dialog action: record that the client paid. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as paid'**
+  String get carePayMarkPaid;
+
+  /// Dialog title before waiving the session fee. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Waive the fee?'**
+  String get carePayWaiveTitle;
+
+  /// Dialog body before waiving the session fee. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'They won\'t be charged for this session, and can join straight away.'**
+  String get carePayWaiveBody;
+
+  /// Button and dialog action: waive the session fee. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Waive fee'**
+  String get carePayWaive;
+
+  /// Dialog title before marking a session unpaid again. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unpaid?'**
+  String get carePayUnpaidTitle;
+
+  /// Dialog body before marking a session unpaid. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll need to pay before they can join.'**
+  String get carePayUnpaidBody;
+
+  /// Button and dialog action: mark a session unpaid. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unpaid'**
+  String get carePayMarkUnpaid;
+
+  /// Snackbar after a payment status change. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment updated.'**
+  String get carePaymentUpdated;
+
+  /// Request status: the client started a request but hasn't paid, so it hasn't reached the care team. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent yet — the client hasn\'t paid'**
+  String get careStatusAwaitingPayment;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting to be matched'**
+  String get careStatusPending;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched — waiting for payment'**
+  String get careStatusMatchedUnpaid;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Booked'**
+  String get careStatusBooked;
+
+  /// Request status: the client missed the session. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed — the client didn\'t join, so the session counts as used'**
+  String get careStatusMissed;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get careStatusCompleted;
+
+  /// Request status with the date it was completed. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed {date}'**
+  String careStatusCompletedOn(String date);
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled — the therapist didn\'t join the call'**
+  String get careStatusTherapistNoShow;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled — nobody joined the call'**
+  String get careStatusNobodyJoined;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled — never paid'**
+  String get careStatusNeverPaid;
+
+  /// Request status: the client abandoned the request before paying. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Discarded before it was paid for'**
+  String get careStatusDiscarded;
+
+  /// Request status. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get careStatusCancelled;
+
+  /// Payment line: the client's first session is free. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Free first session'**
+  String get careFreeFirstSession;
+
+  /// Payment line: price, paid on a date. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} · paid on {date}'**
+  String carePaidOn(String price, String date);
+
+  /// Payment line: price, paid (date unknown). Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} · paid'**
+  String carePaid(String price);
+
+  /// Payment line: price, fee waived. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} · waived'**
+  String careWaived(String price);
+
+  /// Payment line: price, refunded on a date. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} · refunded on {date}, not paid'**
+  String careRefundedOn(String price, String date);
+
+  /// Payment line: price, not paid yet. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} · not paid yet'**
+  String careNotPaidYet(String price);
+
+  /// Section heading (shown in capitals). Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Client'**
+  String get careSectionClient;
+
+  /// Shown when the client gave no name. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'No name given'**
+  String get careNoName;
+
+  /// Tooltip on the button that copies the client's email. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy email'**
+  String get careCopyEmail;
+
+  /// Snackbar after copying the client's email. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Email copied.'**
+  String get careEmailCopied;
+
+  /// Section heading (shown in capitals): what the client asked for. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Request'**
+  String get careSectionRequest;
+
+  /// When the client sent the request. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Asked {when}'**
+  String careAsked(String when);
+
+  /// Section heading (shown in capitals). Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Session'**
+  String get careSectionSession;
+
+  /// Session date/time and length in minutes. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'{when} · {minutes, plural, other{{minutes} min}}'**
+  String careSessionWhen(String when, int minutes);
+
+  /// Button. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Match with a therapist'**
+  String get careMatchWithTherapist;
+
+  /// Button. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Change therapist or time'**
+  String get careChangeTherapistOrTime;
+
+  /// Section heading (shown in capitals). Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get careSectionPayment;
+
+  /// Section heading (shown in capitals): notes and ratings after the session. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'After the session'**
+  String get careSectionAfter;
+
+  /// Heading: the note the therapist wrote to the client after the session. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Note to the client'**
+  String get careNoteToClient;
+
+  /// Shown when the therapist wrote no note. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'No note written.'**
+  String get careNoNote;
+
+  /// Heading: how the client rated the session. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Client\'s rating'**
+  String get careClientRating;
+
+  /// Shown when there is no rating yet. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Not rated yet.'**
+  String get careNotRatedYet;
+
+  /// Heading: the therapist's private rating of the session (the client never sees it). Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Therapist\'s rating — private'**
+  String get careTherapistRating;
+
+  /// Destructive text button. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this session'**
+  String get careCancelThisSession;
+
+  /// Destructive text button. Care-team (staff) screen showing one therapy request.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel this request'**
+  String get careCancelThisRequest;
+
+  /// Snackbar when the photo library could not be opened. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open your photo library.'**
+  String get careEditorPhotoFailed;
+
+  /// Snackbar/error when saving failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save — check your connection.'**
+  String get careCouldNotSave;
+
+  /// App bar title. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a therapist'**
+  String get careEditorTitleAdd;
+
+  /// App bar title. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit therapist'**
+  String get careEditorTitleEdit;
+
+  /// Button under the therapist's photo. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get careEditorChangePhoto;
+
+  /// Button under the photo placeholder. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo'**
+  String get careEditorAddPhoto;
+
+  /// Form field label. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name'**
+  String get careEditorFullName;
+
+  /// Validation error under the name field. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter their full name'**
+  String get careEditorFullNameError;
+
+  /// Form field label: the email the therapist signs in with. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-in email'**
+  String get careEditorEmail;
+
+  /// Helper text under the sign-in email field. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'They sign in to the app with this address.'**
+  String get careEditorEmailHelp;
+
+  /// Validation error under the email field. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get careEditorEmailError;
+
+  /// Form field label: the therapist's professional title. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get careEditorTitleField;
+
+  /// Example placeholder in the professional title field. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Counselling psychologist'**
+  String get careEditorTitleHint;
+
+  /// Form field label: professional licence or registration. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Licence or registration'**
+  String get careEditorLicence;
+
+  /// Placeholder in the licence field: the licensing body and the number. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Body and registration number'**
+  String get careEditorLicenceHint;
+
+  /// Form field label. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Years of experience'**
+  String get careEditorYears;
+
+  /// Validation error under the years-of-experience field. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'A number from 0 to 70'**
+  String get careEditorYearsError;
+
+  /// Form field label: languages the therapist works in. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Languages'**
+  String get careEditorLanguages;
+
+  /// Example placeholder in the languages field (a comma-separated list of languages). Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'English, Swahili'**
+  String get careEditorLanguagesHint;
+
+  /// Form field label: the therapist's bio. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'About them'**
+  String get careEditorAbout;
+
+  /// Helper text under the bio field. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Clients read this on their profile.'**
+  String get careEditorAboutHelp;
+
+  /// Section header above specialty choices. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Specialties'**
+  String get careEditorSpecialties;
+
+  /// Switch: whether the therapist can be matched. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Taking new clients'**
+  String get careEditorTakingClients;
+
+  /// Under the Taking new clients switch. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'When off, they can\'t be matched. Their booked and past sessions stay.'**
+  String get careEditorTakingClientsHint;
+
+  /// Save button when adding a new therapist. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Add therapist'**
+  String get careEditorAddButton;
+
+  /// Note under the add button. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'They\'ll get an email explaining how to sign in and find their sessions.'**
+  String get careEditorInviteNote;
+
+  /// Section header above clients' ratings of this therapist. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Client feedback'**
+  String get careEditorFeedback;
+
+  /// Note under the Client feedback header. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the care team sees individual ratings. Clients see an average once there are three.'**
+  String get careEditorFeedbackNote;
+
+  /// Therapist stats: upcoming and completed session counts. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'{upcoming} upcoming · {completed} completed'**
+  String careEditorStats(int upcoming, int completed);
+
+  /// Average rating and how many ratings it is from, e.g. "4.5 from 3". Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} from {count}'**
+  String careEditorRatingFrom(String rating, int count);
+
+  /// The therapist has signed in to the app with this email. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in as {email}'**
+  String careEditorSignedInAs(String email);
+
+  /// Warning: the therapist hasn't signed in yet. Care-team (staff) form for adding or editing a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Hasn\'t signed in yet. They need to sign in to the app with {email} to see and join sessions.'**
+  String careEditorNotSignedIn(String email);
+
+  /// Error when the therapist's sessions fail to load. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your sessions — check your connection.'**
+  String get careSessionsCouldNotLoad;
+
+  /// Snackbar after editing a finished session. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved.'**
+  String get careSessionsSaved;
+
+  /// Snackbar after finishing a session. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Session finished — thank you.'**
+  String get careSessionsFinished;
+
+  /// App bar title. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'My sessions'**
+  String get careSessionsTitle;
+
+  /// Empty state. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions yet. When the care team books one with you, it shows up here and you\'ll get an email.'**
+  String get careSessionsEmpty;
+
+  /// Section header: sessions to come. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get careSessionsUpcoming;
+
+  /// Section header: earlier sessions. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Past'**
+  String get careSessionsPast;
+
+  /// Hint under the disabled Join button. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'The call opens 10 minutes before the start.'**
+  String get careSessionsTooEarly;
+
+  /// Hint under the Join button after the session's time is over. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'The call has closed. Finish the session to close it out — otherwise it closes itself in a couple of hours.'**
+  String get careSessionsOver;
+
+  /// Hint under the disabled Join button. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'The client hasn\'t paid yet — the call opens once they do.'**
+  String get careSessionsUnpaid;
+
+  /// Hint under the Join button when the call can be joined. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'The call is open.'**
+  String get careSessionsOpen;
+
+  /// The client's note from their request, quoted. Use your language's quotation marks. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'They wrote: “{note}”'**
+  String careSessionsTheyWrote(String note);
+
+  /// Button: join the video call. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Join session'**
+  String get careSessionsJoin;
+
+  /// Button: mark the session as finished (opens a sheet). Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish session'**
+  String get careSessionsFinish;
+
+  /// On a past session the client missed. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'The client didn\'t join the call.'**
+  String get careSessionsClientMissed;
+
+  /// Label on a past session that was closed because nobody joined. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t happen'**
+  String get careSessionsDidNotHappen;
+
+  /// Small badge on a past session the therapist hasn't rated yet. Therapist-facing screen listing their own sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate'**
+  String get careSessionsRate;
+
+  /// Error when flags or a private note are given without a star rating. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a star rating to send private feedback.'**
+  String get careFinishNeedsRating;
+
+  /// Sheet title when editing a finished session. {name} is the client's first name. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'Session with {name}'**
+  String careFinishTitleDone(String name);
+
+  /// Sheet title. {name} is the client's first name. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'Finish your session with {name}'**
+  String careFinishTitle(String name);
+
+  /// Field label: a note the client will see. {name} is the client's first name. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'A note for {name} (optional)'**
+  String careFinishNoteLabel(String name);
+
+  /// Helper text under the note field. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'They see this in the app — a takeaway, or something to practise. Keep clinical notes out of it.'**
+  String get careFinishNoteHelp;
+
+  /// Heading above the star rating. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'How did it go?'**
+  String get careFinishHowDidItGo;
+
+  /// Field label: a note only the care team sees. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'Private note for the care team (optional)'**
+  String get careFinishPrivateNote;
+
+  /// Note under the private fields. Therapist-facing sheet for finishing a session (note to client, private rating).
+  ///
+  /// In en, this message translates to:
+  /// **'Only the care team sees your rating, flags and private note. Flagging a safety concern emails them straight away.'**
+  String get careFinishPrivacy;
 }
 
 class _AppLocalizationsDelegate

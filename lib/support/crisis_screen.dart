@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../therapy/therapy_screen.dart';
 import 'crisis_resources.dart';
 
@@ -29,7 +30,8 @@ class _CrisisScreenState extends State<CrisisScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Couldn\'t open ${uri.scheme == 'tel' ? uri.path : uri}'),
+          content: Text(context.l10n.crisisCouldNotOpen(
+              uri.scheme == 'tel' ? uri.path : '$uri')),
         ),
       );
     }
@@ -48,7 +50,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
           children: [
             const SizedBox(height: 18),
             Text(
-              'Where are you?',
+              context.l10n.crisisWhereAreYou,
               style: TextStyle(
                 fontSize: 17,
                 fontWeight: FontWeight.w600,
@@ -100,7 +102,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Call ${_region.emergency}',
+                      context.l10n.crisisCallEmergency(_region.emergency),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
@@ -109,7 +111,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'If you are in immediate danger, this comes first.',
+                      context.l10n.crisisEmergencyHint,
                       style: TextStyle(
                         fontSize: 13,
                         color: c.textMuted,
@@ -127,17 +129,18 @@ class _CrisisScreenState extends State<CrisisScreen> {
   }
 
   Widget _lineCard(CrisisLine line) {
+    final l10n = context.l10n;
     final actions = <({IconData icon, String label, Uri uri})>[
       if (line.phone != null)
         (
           icon: Icons.call_rounded,
-          label: 'Call ${line.phone}',
+          label: l10n.crisisCallLine(line.phone!),
           uri: Uri(scheme: 'tel', path: dialable(line.phone!)),
         ),
       if (line.sms != null)
         (
           icon: Icons.sms_rounded,
-          label: 'Text ${line.sms!.$2} to ${line.sms!.$1}',
+          label: l10n.crisisTextLine(line.sms!.$2, line.sms!.$1),
           uri: Uri(
             scheme: 'sms',
             path: line.sms!.$1,
@@ -147,7 +150,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
       if (line.url != null)
         (
           icon: Icons.open_in_new_rounded,
-          label: 'Open ${Uri.parse(line.url!).host}',
+          label: l10n.crisisOpenSite(Uri.parse(line.url!).host),
           uri: Uri.parse(line.url!),
         ),
     ];
@@ -214,6 +217,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final showInternational = _region.code != internationalRegion.code;
     return Scaffold(
       body: SafeArea(
@@ -229,7 +233,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Help right now',
+                  l10n.crisisTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -241,8 +245,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'You do not have to explain yourself well, or be in enough '
-                  'trouble to deserve it. Any of these will pick up.',
+                  l10n.crisisIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -266,7 +269,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                     ),
                     TextButton(
                       onPressed: _pickRegion,
-                      child: const Text('Change'),
+                      child: Text(l10n.commonChange),
                     ),
                   ],
                 ),
@@ -275,7 +278,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 if (showInternational) ...[
                   const SizedBox(height: 10),
                   Text(
-                    'Somewhere else',
+                    l10n.crisisSomewhereElse,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -287,9 +290,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 ],
                 const SizedBox(height: 14),
                 Text(
-                  'This app can\'t replace emergency care. When the moment '
-                  'has passed, a licensed therapist here can help you work '
-                  'through what led to it.',
+                  l10n.crisisNotEmergencyCare,
                   style: TextStyle(
                     fontSize: 12.5,
                     color: c.textMuted,
@@ -300,7 +301,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 TextButton(
                   onPressed: () =>
                       Navigator.of(context).push(TherapyScreen.route()),
-                  child: const Text('Book a session'),
+                  child: Text(l10n.crisisBookSession),
                 ),
               ],
             ),
@@ -338,7 +339,7 @@ class CrisisFooter extends StatelessWidget {
           TextSpan(
             children: [
               TextSpan(
-                text: 'In crisis or immediate danger? Get help now',
+                text: context.l10n.crisisFooterLink,
                 style: TextStyle(
                   color: c.red,
                   fontWeight: FontWeight.w600,
@@ -346,7 +347,8 @@ class CrisisFooter extends StatelessWidget {
                   decorationColor: c.red,
                 ),
               ),
-              TextSpan(text: ' — real numbers, one tap.${trailing ?? ''}'),
+              TextSpan(
+                  text: '${context.l10n.crisisFooterRest}${trailing ?? ''}'),
             ],
           ),
           textAlign: textAlign,

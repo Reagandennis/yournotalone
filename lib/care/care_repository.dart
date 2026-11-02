@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
 import '../therapy/therapy_repository.dart';
 
 /// What the signed-in person can do beyond being a client. Both roles come
@@ -86,7 +87,8 @@ class AdminTherapyRequest {
   final String? therapistComment;
   final List<String> therapistFlags;
 
-  String get clientLabel => clientName ?? clientEmail ?? 'Client';
+  String clientLabel(AppLocalizations l10n) =>
+      clientName ?? clientEmail ?? l10n.careClientFallback;
 }
 
 /// A therapist as the care team manages them.
@@ -124,12 +126,12 @@ class AdminTherapist {
 }
 
 /// Flags a therapist can raise about a session, with how they're shown.
-const therapistFlagLabels = {
-  'no_show': 'Didn\'t show up',
-  'late': 'Joined late',
-  'follow_up': 'Needs a follow-up',
-  'safety_concern': 'Safety concern',
-};
+Map<String, String> therapistFlagLabels(AppLocalizations l10n) => {
+      'no_show': l10n.careFlagNoShow,
+      'late': l10n.careFlagLate,
+      'follow_up': l10n.careFlagFollowUp,
+      'safety_concern': l10n.careFlagSafety,
+    };
 
 /// A session as its therapist sees it: the client's first name and what
 /// they asked for, never their contact details.
@@ -202,7 +204,8 @@ class TherapistSession {
   final String? myComment;
   final List<String> myFlags;
 
-  String get clientLabel => clientFirstName ?? 'Your client';
+  String clientLabel(AppLocalizations l10n) =>
+      clientFirstName ?? l10n.careYourClientFallback;
   bool get isConfirmed => status == 'confirmed';
   bool get isCompleted => status == 'completed';
   bool get isCancelled => status == 'cancelled';
@@ -228,7 +231,7 @@ class TherapistSession {
 String careErrorMessage(Object error, String fallback) => switch (error) {
       PostgrestException(:final message) when message.isNotEmpty => message,
       SessionAccessException() => error.message,
-      StateError() => 'You\'ve been signed out. Please log in again.',
+      StateError() => currentL10n().careSignedOut,
       _ => fallback,
     };
 

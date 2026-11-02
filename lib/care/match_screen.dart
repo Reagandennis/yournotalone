@@ -5,6 +5,7 @@ import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
+import '../l10n/l10n.dart';
 import 'care_repository.dart';
 import 'care_widgets.dart';
 
@@ -70,7 +71,7 @@ class _MatchScreenState extends State<MatchScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _error = careErrorMessage(
-            e, 'Couldn\'t load therapists — check your connection.'));
+            e, context.l10n.careMatchCouldNotLoadTherapists));
       }
     }
   }
@@ -114,7 +115,7 @@ class _MatchScreenState extends State<MatchScreen> {
     final at = _scheduledAt;
     if (therapistId == null || at == null) return;
     if (at.isBefore(DateTime.now())) {
-      _say('That time has already passed.');
+      _say(context.l10n.careMatchTimePassed);
       return;
     }
     setState(() => _saving = true);
@@ -129,26 +130,28 @@ class _MatchScreenState extends State<MatchScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
-      _say(careErrorMessage(e, 'Couldn\'t book — check your connection.'));
+      _say(careErrorMessage(e, context.l10n.careMatchCouldNotBook));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final request = widget.item.request;
     final therapists = _therapists;
     final note = request.note?.trim() ?? '';
-    final payment = request.isFreeSession
-        ? 'This is the client\'s free first session.'
+    final footnote = request.isFreeSession
+        ? l10n.careMatchFootFree
         : request.needsPayment
-            ? 'The client pays ${request.priceLabel} in the app before they '
-                'can join.'
-            : '';
+            ? l10n.careMatchFootPays(request.priceLabel)
+            : l10n.careMatchFoot;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(request.isPending ? 'Match request' : 'Change booking'),
+        title: Text(request.isPending
+            ? l10n.careMatchTitleNew
+            : l10n.careMatchTitleChange),
       ),
       body: therapists == null
           ? _error != null
@@ -174,7 +177,7 @@ class _MatchScreenState extends State<MatchScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.item.clientLabel,
+                          widget.item.clientLabel(l10n),
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -186,7 +189,7 @@ class _MatchScreenState extends State<MatchScreen> {
                         InfoLine(
                           Icons.calendar_month_rounded,
                           request.availability.isEmpty
-                              ? 'Flexible'
+                              ? l10n.careMatchFlexible
                               : request.availability.join(' · '),
                         ),
                         if (note.isNotEmpty) InfoLine(Icons.notes_rounded, note),
@@ -194,12 +197,11 @@ class _MatchScreenState extends State<MatchScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const SectionHeader(title: 'Therapist'),
+                  SectionHeader(title: l10n.careMatchTherapistHeader),
                   const SizedBox(height: 10),
                   if (therapists.isEmpty)
                     Text(
-                      'No active therapists yet. Add one from the Therapists '
-                      'tab first.',
+                      l10n.careMatchNoTherapists,
                       style: TextStyle(
                         fontSize: 13.5,
                         color: c.textMuted,
@@ -217,14 +219,16 @@ class _MatchScreenState extends State<MatchScreen> {
                             setState(() => _therapistId = therapist.profile.id),
                       ),
                   const SizedBox(height: 18),
-                  const SectionHeader(title: 'When'),
+                  SectionHeader(title: l10n.careMatchWhenHeader),
                   const SizedBox(height: 10),
                   Row(
                     children: [
                       Expanded(
                         child: _PickerButton(
                           icon: Icons.event_rounded,
-                          label: _date == null ? 'Pick a date' : formatDate(_date!),
+                          label: _date == null
+                              ? l10n.careMatchPickDate
+                              : formatDate(_date!),
                           onTap: _pickDate,
                         ),
                       ),
@@ -233,7 +237,7 @@ class _MatchScreenState extends State<MatchScreen> {
                         child: _PickerButton(
                           icon: Icons.schedule_rounded,
                           label: _time == null
-                              ? 'Pick a time'
+                              ? l10n.careMatchPickTime
                               : _time!.format(context),
                           onTap: _pickTime,
                         ),
@@ -242,12 +246,11 @@ class _MatchScreenState extends State<MatchScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'In this phone\'s time zone. The client and therapist see '
-                    'it in theirs.',
+                    l10n.careMatchTimeZoneNote,
                     style: TextStyle(fontSize: 12, color: c.textMuted),
                   ),
                   const SizedBox(height: 18),
-                  const SectionHeader(title: 'Length'),
+                  SectionHeader(title: l10n.careMatchLengthHeader),
                   const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
@@ -255,7 +258,7 @@ class _MatchScreenState extends State<MatchScreen> {
                     children: [
                       for (final minutes in _durations)
                         ChoicePill(
-                          label: '$minutes min',
+                          label: l10n.careMatchMinutes(minutes),
                           selected: _duration == minutes,
                           onTap: () => setState(() => _duration = minutes),
                         ),
@@ -277,11 +280,13 @@ class _MatchScreenState extends State<MatchScreen> {
                               color: Colors.white,
                             ),
                           )
-                        : Text(request.isPending ? 'Book session' : 'Save changes'),
+                        : Text(request.isPending
+                            ? l10n.careMatchBook
+                            : l10n.careMatchSaveChanges),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'The client and therapist are emailed the details. $payment',
+                    footnote,
                     style: TextStyle(
                       fontSize: 12.5,
                       color: c.textMuted,
@@ -311,10 +316,11 @@ class _TherapistOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final profile = therapist.profile;
     final detail = [
-      if (fitsTopic) 'Specialises in this',
-      '${therapist.upcomingSessions} upcoming',
+      if (fitsTopic) l10n.careMatchSpecialises,
+      l10n.careStatUpcoming(therapist.upcomingSessions),
     ].join(' · ');
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -361,7 +367,7 @@ class _TherapistOption extends StatelessWidget {
                       ),
                       if (!therapist.hasAccount)
                         Text(
-                          'Not signed in yet — they can\'t join until they do',
+                          l10n.careMatchNotSignedIn,
                           style: TextStyle(fontSize: 12, color: c.red),
                         ),
                     ],

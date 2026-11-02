@@ -1617,4 +1617,893 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get remindersFootnote =>
       'Reminders are scheduled on this device and arrive even when the app is closed. Times may shift a few minutes to save battery.';
+
+  @override
+  String crisisCouldNotOpen(String target) {
+    return 'Couldn\'t open $target';
+  }
+
+  @override
+  String get crisisWhereAreYou => 'Where are you?';
+
+  @override
+  String crisisCallEmergency(String number) {
+    return 'Call $number';
+  }
+
+  @override
+  String get crisisEmergencyHint =>
+      'If you are in immediate danger, this comes first.';
+
+  @override
+  String crisisCallLine(String phone) {
+    return 'Call $phone';
+  }
+
+  @override
+  String crisisTextLine(String keyword, String number) {
+    return 'Text $keyword to $number';
+  }
+
+  @override
+  String crisisOpenSite(String host) {
+    return 'Open $host';
+  }
+
+  @override
+  String get crisisTitle => 'Help right now';
+
+  @override
+  String get crisisIntro =>
+      'You do not have to explain yourself well, or be in enough trouble to deserve it. Any of these will pick up.';
+
+  @override
+  String get crisisSomewhereElse => 'Somewhere else';
+
+  @override
+  String get crisisNotEmergencyCare =>
+      'This app can\'t replace emergency care. When the moment has passed, a licensed therapist here can help you work through what led to it.';
+
+  @override
+  String get crisisBookSession => 'Book a session';
+
+  @override
+  String get crisisFooterLink => 'In crisis or immediate danger? Get help now';
+
+  @override
+  String get crisisFooterRest => ' — real numbers, one tap.';
+
+  @override
+  String heavyDayCouldNotCall(String number) {
+    return 'Couldn\'t call $number';
+  }
+
+  @override
+  String get heavyDayTitle => 'That sounds like a heavy day.';
+
+  @override
+  String get heavyDayBody =>
+      'You don\'t have to carry it on your own. A licensed therapist here will listen — \$20 a session, booked in a minute.';
+
+  @override
+  String get heavyDayRightNow => 'If you need someone right now';
+
+  @override
+  String get heavyDayEmergency => 'Emergency';
+
+  @override
+  String get heavyDayMoreHelp => 'More ways to get help';
+
+  @override
+  String legalLastUpdated(String date) {
+    return 'Last updated: $date';
+  }
+
+  @override
+  String get faqSectionUsingApp => 'Using the app';
+
+  @override
+  String get faqWhatIsQ => 'What is yournotalone?';
+
+  @override
+  String get faqWhatIsA =>
+      'You\'re not alone — that\'s the name and the idea. It\'s a wellbeing companion for the moments between the hard ones. Check in with your mood, keep a private journal, follow guided meditations and breathing exercises, unwind with calming sounds, track your recovery, and reach a licensed therapist when you need one.';
+
+  @override
+  String get faqSubstituteQ =>
+      'Is the app a substitute for therapy or medical care?';
+
+  @override
+  String get faqSubstituteA =>
+      'No. The app supports your wellbeing, but it doesn\'t diagnose or treat anything, and it\'s not emergency care. If you\'re in crisis or immediate danger, call your local emergency number right away.';
+
+  @override
+  String get faqRemindersQ => 'How do daily reminders work?';
+
+  @override
+  String get faqRemindersA =>
+      'Go to Settings → Reminders & notifications to switch on gentle nudges — a morning check-in, a daily pledge, evening pages, and a wind-down. You choose the times, and reminders are scheduled on your phone; they never leave your device.';
+
+  @override
+  String get faqSectionBilling => 'Premium & billing';
+
+  @override
+  String get faqPremiumQ => 'What do I get with Premium?';
+
+  @override
+  String get faqPremiumA =>
+      'Every room in the house: the full meditation library, all calming sounds and breathing exercises, unlimited journaling, and the complete recovery toolkit. Plans usually start with a free trial — the price is always shown before you subscribe.';
+
+  @override
+  String get faqCancelSubQ => 'How do I cancel my subscription?';
+
+  @override
+  String faqCancelSubA(String store) {
+    String _temp0 = intl.Intl.selectLogic(store, {
+      'apple':
+          'Subscriptions are billed by Apple, so you cancel in your App Store subscription settings — deleting the app doesn\'t cancel it. You keep Premium until the end of the period you\'ve paid for.',
+      'other':
+          'Subscriptions are billed by Google, so you cancel in your Google Play subscription settings — deleting the app doesn\'t cancel it. You keep Premium until the end of the period you\'ve paid for.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get faqWrongPlanQ =>
+      'I\'m a subscriber, but the app says I\'m on the Free plan.';
+
+  @override
+  String faqWrongPlanA(String store) {
+    String _temp0 = intl.Intl.selectLogic(store, {
+      'apple':
+          'Make sure you\'re signed in to the same Apple Account you subscribed with, then tap Settings → Restore purchases. If it still doesn\'t unlock, email us and we\'ll sort it out.',
+      'other':
+          'Make sure you\'re signed in to the same Google account you subscribed with, then tap Settings → Restore purchases. If it still doesn\'t unlock, email us and we\'ll sort it out.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get faqRefundQ => 'Can I get a refund?';
+
+  @override
+  String faqRefundA(String store) {
+    String _temp0 = intl.Intl.selectLogic(store, {
+      'apple':
+          'Refunds for subscriptions are handled by Apple under its policies — request one from your App Store purchase history. If you get stuck, write to us and we\'ll point you the right way.',
+      'other':
+          'Refunds for subscriptions are handled by Google under its policies — request one from your Google Play order history. If you get stuck, write to us and we\'ll point you the right way.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get faqSectionTherapy => 'Therapy sessions';
+
+  @override
+  String get faqBookQ => 'How do I book a therapy session?';
+
+  @override
+  String get faqBookA =>
+      'Open Talk to a therapist, tell us what you\'d like to talk about and when suits you, and send the request. Our care team matches you with a licensed therapist and a time — usually within a day — and you\'ll see who and when in the app and by email.';
+
+  @override
+  String get faqCostQ => 'How much does a session cost, and when do I pay?';
+
+  @override
+  String get faqCostA =>
+      'Each session is \$20, paid securely in the app when you book — that\'s what sends your request to our care team, and you get a receipt by email straight away. No subscription; you book one session at a time.';
+
+  @override
+  String get faqMoveQ => 'What if I need to cancel or move my session?';
+
+  @override
+  String get faqMoveA =>
+      'You can cancel in the app up to 24 hours before your session and you\'ll be refunded in full. To move it, reply to your booking email at least 24 hours before and we\'ll rebook you. A session cancelled later than that, or one you don\'t join, isn\'t refunded — your therapist has set that time aside for you. If we or your therapist have to cancel, you\'re refunded in full.';
+
+  @override
+  String get faqHowSessionsQ => 'How do sessions work?';
+
+  @override
+  String get faqHowSessionsA =>
+      'They\'re private video calls, right in the app. The Join button appears 10 minutes before the start, and you\'ll need your camera and microphone. Calls aren\'t recorded.';
+
+  @override
+  String get faqRemindedQ => 'Will I be reminded?';
+
+  @override
+  String get faqRemindedA =>
+      'Yes. You\'ll get an email and a phone notification when you\'re matched, if anything changes, and 10 minutes before your session. Phone notifications can arrive a little later than the emails.';
+
+  @override
+  String get faqCancelSessionQ => 'Can I cancel a session?';
+
+  @override
+  String get faqCancelSessionA =>
+      'Yes. You can cancel a request, or a matched session you haven\'t paid for, from the same screen. To cancel a paid session, contact us before it starts and we\'ll refund you.';
+
+  @override
+  String get faqWhoQ => 'Who are the therapists?';
+
+  @override
+  String get faqWhoA =>
+      'Licensed mental-health professionals. Our care team matches you based on what you share in your request, so you don\'t have to scroll through directories while you\'re struggling. Once you\'re matched, you can see their profile — credentials, experience and what they specialise in.';
+
+  @override
+  String get faqRateQ => 'Can I rate my session?';
+
+  @override
+  String get faqRateA =>
+      'Yes — after a session, tap it under Past sessions. Your therapist never sees your rating on its own, only an average across several people.';
+
+  @override
+  String get faqSectionPrivacy => 'Privacy & your data';
+
+  @override
+  String get faqJournalQ => 'Who can read my journal?';
+
+  @override
+  String get faqJournalA =>
+      'Only you. Your entries are protected by row-level security, which means only your signed-in account can retrieve them — our team doesn\'t read them.';
+
+  @override
+  String get faqSellDataQ => 'Do you sell my data or show ads?';
+
+  @override
+  String get faqSellDataA =>
+      'Never. No ads, no analytics trackers, no data brokers. We collect only what the app needs to work — the Privacy Policy in Settings spells out every detail.';
+
+  @override
+  String get faqDeleteQ => 'How do I delete my account and data?';
+
+  @override
+  String get faqDeleteA =>
+      'Settings → Delete account removes your profile, journal, moods, recovery data, and therapy sessions permanently. You can also email us from your registered address and we\'ll do it for you. Deletion can\'t be undone.';
+
+  @override
+  String get faqSectionAccount => 'Your account';
+
+  @override
+  String get faqProfileQ => 'How do I change my name or profile photo?';
+
+  @override
+  String get faqProfileA =>
+      'Settings → Edit profile. Tap the photo to take a new one, choose from your library, or remove it.';
+
+  @override
+  String get faqPasswordQ => 'How do I change my password?';
+
+  @override
+  String get faqPasswordA =>
+      'Settings → Change password sends a secure reset link to your email. Follow the link, choose a new password, and log back in.';
+
+  @override
+  String get faqEmailCopied => 'Email address copied.';
+
+  @override
+  String get faqStillNeedHelp => 'Still need help?';
+
+  @override
+  String faqWriteToUs(String email) {
+    return 'Write to us at $email — tap to copy.';
+  }
+
+  @override
+  String get faqTitle => 'FAQ';
+
+  @override
+  String get faqIntro =>
+      'Quick answers to the questions we hear most. Tap a question to open it.';
+
+  @override
+  String get careClientFallback => 'Client';
+
+  @override
+  String get careYourClientFallback => 'Your client';
+
+  @override
+  String get careFlagNoShow => 'Didn\'t show up';
+
+  @override
+  String get careFlagLate => 'Joined late';
+
+  @override
+  String get careFlagFollowUp => 'Needs a follow-up';
+
+  @override
+  String get careFlagSafety => 'Safety concern';
+
+  @override
+  String get careSignedOut => 'You\'ve been signed out. Please log in again.';
+
+  @override
+  String get carePaymentFree => 'Free';
+
+  @override
+  String get carePaymentRefunded => 'Refunded';
+
+  @override
+  String get carePaymentUnpaid => 'Unpaid';
+
+  @override
+  String get carePaymentPaid => 'Paid';
+
+  @override
+  String get carePaymentWaived => 'Waived';
+
+  @override
+  String get careCouldNotLoad => 'Couldn\'t load — check your connection.';
+
+  @override
+  String get careDashboardTitle => 'Care team';
+
+  @override
+  String get careTabRequests => 'Requests';
+
+  @override
+  String get careTabTherapists => 'Therapists';
+
+  @override
+  String get careEmptyToMatch => 'Nobody is waiting to be matched.';
+
+  @override
+  String get careEmptyUpcoming => 'No sessions booked.';
+
+  @override
+  String get careEmptyPast => 'Finished and cancelled sessions show up here.';
+
+  @override
+  String careFilterToMatch(int count) {
+    return 'To match · $count';
+  }
+
+  @override
+  String careFilterUpcoming(int count) {
+    return 'Upcoming · $count';
+  }
+
+  @override
+  String careFilterPast(int count) {
+    return 'Past · $count';
+  }
+
+  @override
+  String get careAddTherapist => 'Add a therapist';
+
+  @override
+  String get careNoTherapists =>
+      'No therapists yet. Add one to start matching requests.';
+
+  @override
+  String get careAskedJustNow => 'Asked just now';
+
+  @override
+  String careWaitingHours(int hours) {
+    return 'Waiting ${hours}h';
+  }
+
+  @override
+  String careWaitingDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Waiting $days days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get careTherapistFallback => 'Therapist';
+
+  @override
+  String careBookedLine(String therapist, String when) {
+    return '$therapist · $when';
+  }
+
+  @override
+  String careBookedLineNotFinished(String therapist, String when) {
+    return '$therapist · $when · Not finished';
+  }
+
+  @override
+  String carePastLine(String outcome, String date) {
+    return '$outcome · $date';
+  }
+
+  @override
+  String careStatUpcoming(int count) {
+    return '$count upcoming';
+  }
+
+  @override
+  String careStatCompleted(int count) {
+    return '$count completed';
+  }
+
+  @override
+  String get careInactive => 'Inactive';
+
+  @override
+  String careNotSignedInYet(String email) {
+    return 'Not signed in yet — $email';
+  }
+
+  @override
+  String get careMatchCouldNotLoadTherapists =>
+      'Couldn\'t load therapists — check your connection.';
+
+  @override
+  String get careMatchTimePassed => 'That time has already passed.';
+
+  @override
+  String get careMatchCouldNotBook => 'Couldn\'t book — check your connection.';
+
+  @override
+  String get careMatchTitleNew => 'Match request';
+
+  @override
+  String get careMatchTitleChange => 'Change booking';
+
+  @override
+  String get careMatchFlexible => 'Flexible';
+
+  @override
+  String get careMatchTherapistHeader => 'Therapist';
+
+  @override
+  String get careMatchNoTherapists =>
+      'No active therapists yet. Add one from the Therapists tab first.';
+
+  @override
+  String get careMatchWhenHeader => 'When';
+
+  @override
+  String get careMatchPickDate => 'Pick a date';
+
+  @override
+  String get careMatchPickTime => 'Pick a time';
+
+  @override
+  String get careMatchTimeZoneNote =>
+      'In this phone\'s time zone. The client and therapist see it in theirs.';
+
+  @override
+  String get careMatchLengthHeader => 'Length';
+
+  @override
+  String careMatchMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get careMatchBook => 'Book session';
+
+  @override
+  String get careMatchSaveChanges => 'Save changes';
+
+  @override
+  String get careMatchFootFree =>
+      'The client and therapist are emailed the details. This is the client\'s free first session.';
+
+  @override
+  String careMatchFootPays(String price) {
+    return 'The client and therapist are emailed the details. The client pays $price in the app before they can join.';
+  }
+
+  @override
+  String get careMatchFoot =>
+      'The client and therapist are emailed the details.';
+
+  @override
+  String get careMatchSpecialises => 'Specialises in this';
+
+  @override
+  String get careMatchNotSignedIn =>
+      'Not signed in yet — they can\'t join until they do';
+
+  @override
+  String get careDetailFailed => 'That didn\'t work — check your connection.';
+
+  @override
+  String get careDetailBooked =>
+      'Booked — the client and therapist have been emailed.';
+
+  @override
+  String get careCancelSessionTitle => 'Cancel this session?';
+
+  @override
+  String get careCancelRequestTitle => 'Cancel this request?';
+
+  @override
+  String get careCancelSessionBody =>
+      'The client and therapist are emailed that it\'s cancelled.';
+
+  @override
+  String get careCancelSessionPaidBody =>
+      'The client and therapist are emailed that it\'s cancelled. They\'ve paid, so refund them in the Paystack dashboard (Play Console for older in-app payments).';
+
+  @override
+  String get careCancelRequestBody =>
+      'The client can request again whenever they like.';
+
+  @override
+  String get careCancelSessionAction => 'Cancel session';
+
+  @override
+  String get careCancelRequestAction => 'Cancel request';
+
+  @override
+  String get careCancelled => 'Cancelled.';
+
+  @override
+  String get carePayPaidTitle => 'Record a payment?';
+
+  @override
+  String get carePayPaidBody =>
+      'Use this when they paid outside the app. The Join button unlocks for them straight away.';
+
+  @override
+  String get carePayMarkPaid => 'Mark as paid';
+
+  @override
+  String get carePayWaiveTitle => 'Waive the fee?';
+
+  @override
+  String get carePayWaiveBody =>
+      'They won\'t be charged for this session, and can join straight away.';
+
+  @override
+  String get carePayWaive => 'Waive fee';
+
+  @override
+  String get carePayUnpaidTitle => 'Mark as unpaid?';
+
+  @override
+  String get carePayUnpaidBody => 'They\'ll need to pay before they can join.';
+
+  @override
+  String get carePayMarkUnpaid => 'Mark as unpaid';
+
+  @override
+  String get carePaymentUpdated => 'Payment updated.';
+
+  @override
+  String get careStatusAwaitingPayment =>
+      'Not sent yet — the client hasn\'t paid';
+
+  @override
+  String get careStatusPending => 'Waiting to be matched';
+
+  @override
+  String get careStatusMatchedUnpaid => 'Matched — waiting for payment';
+
+  @override
+  String get careStatusBooked => 'Booked';
+
+  @override
+  String get careStatusMissed =>
+      'Completed — the client didn\'t join, so the session counts as used';
+
+  @override
+  String get careStatusCompleted => 'Completed';
+
+  @override
+  String careStatusCompletedOn(String date) {
+    return 'Completed $date';
+  }
+
+  @override
+  String get careStatusTherapistNoShow =>
+      'Cancelled — the therapist didn\'t join the call';
+
+  @override
+  String get careStatusNobodyJoined => 'Cancelled — nobody joined the call';
+
+  @override
+  String get careStatusNeverPaid => 'Cancelled — never paid';
+
+  @override
+  String get careStatusDiscarded => 'Discarded before it was paid for';
+
+  @override
+  String get careStatusCancelled => 'Cancelled';
+
+  @override
+  String get careFreeFirstSession => 'Free first session';
+
+  @override
+  String carePaidOn(String price, String date) {
+    return '$price · paid on $date';
+  }
+
+  @override
+  String carePaid(String price) {
+    return '$price · paid';
+  }
+
+  @override
+  String careWaived(String price) {
+    return '$price · waived';
+  }
+
+  @override
+  String careRefundedOn(String price, String date) {
+    return '$price · refunded on $date, not paid';
+  }
+
+  @override
+  String careNotPaidYet(String price) {
+    return '$price · not paid yet';
+  }
+
+  @override
+  String get careSectionClient => 'Client';
+
+  @override
+  String get careNoName => 'No name given';
+
+  @override
+  String get careCopyEmail => 'Copy email';
+
+  @override
+  String get careEmailCopied => 'Email copied.';
+
+  @override
+  String get careSectionRequest => 'Request';
+
+  @override
+  String careAsked(String when) {
+    return 'Asked $when';
+  }
+
+  @override
+  String get careSectionSession => 'Session';
+
+  @override
+  String careSessionWhen(String when, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return '$when · $_temp0';
+  }
+
+  @override
+  String get careMatchWithTherapist => 'Match with a therapist';
+
+  @override
+  String get careChangeTherapistOrTime => 'Change therapist or time';
+
+  @override
+  String get careSectionPayment => 'Payment';
+
+  @override
+  String get careSectionAfter => 'After the session';
+
+  @override
+  String get careNoteToClient => 'Note to the client';
+
+  @override
+  String get careNoNote => 'No note written.';
+
+  @override
+  String get careClientRating => 'Client\'s rating';
+
+  @override
+  String get careNotRatedYet => 'Not rated yet.';
+
+  @override
+  String get careTherapistRating => 'Therapist\'s rating — private';
+
+  @override
+  String get careCancelThisSession => 'Cancel this session';
+
+  @override
+  String get careCancelThisRequest => 'Cancel this request';
+
+  @override
+  String get careEditorPhotoFailed => 'Couldn\'t open your photo library.';
+
+  @override
+  String get careCouldNotSave => 'Couldn\'t save — check your connection.';
+
+  @override
+  String get careEditorTitleAdd => 'Add a therapist';
+
+  @override
+  String get careEditorTitleEdit => 'Edit therapist';
+
+  @override
+  String get careEditorChangePhoto => 'Change photo';
+
+  @override
+  String get careEditorAddPhoto => 'Add a photo';
+
+  @override
+  String get careEditorFullName => 'Full name';
+
+  @override
+  String get careEditorFullNameError => 'Enter their full name';
+
+  @override
+  String get careEditorEmail => 'Sign-in email';
+
+  @override
+  String get careEditorEmailHelp =>
+      'They sign in to the app with this address.';
+
+  @override
+  String get careEditorEmailError => 'Enter a valid email';
+
+  @override
+  String get careEditorTitleField => 'Title';
+
+  @override
+  String get careEditorTitleHint => 'Counselling psychologist';
+
+  @override
+  String get careEditorLicence => 'Licence or registration';
+
+  @override
+  String get careEditorLicenceHint => 'Body and registration number';
+
+  @override
+  String get careEditorYears => 'Years of experience';
+
+  @override
+  String get careEditorYearsError => 'A number from 0 to 70';
+
+  @override
+  String get careEditorLanguages => 'Languages';
+
+  @override
+  String get careEditorLanguagesHint => 'English, Swahili';
+
+  @override
+  String get careEditorAbout => 'About them';
+
+  @override
+  String get careEditorAboutHelp => 'Clients read this on their profile.';
+
+  @override
+  String get careEditorSpecialties => 'Specialties';
+
+  @override
+  String get careEditorTakingClients => 'Taking new clients';
+
+  @override
+  String get careEditorTakingClientsHint =>
+      'When off, they can\'t be matched. Their booked and past sessions stay.';
+
+  @override
+  String get careEditorAddButton => 'Add therapist';
+
+  @override
+  String get careEditorInviteNote =>
+      'They\'ll get an email explaining how to sign in and find their sessions.';
+
+  @override
+  String get careEditorFeedback => 'Client feedback';
+
+  @override
+  String get careEditorFeedbackNote =>
+      'Only the care team sees individual ratings. Clients see an average once there are three.';
+
+  @override
+  String careEditorStats(int upcoming, int completed) {
+    return '$upcoming upcoming · $completed completed';
+  }
+
+  @override
+  String careEditorRatingFrom(String rating, int count) {
+    return '$rating from $count';
+  }
+
+  @override
+  String careEditorSignedInAs(String email) {
+    return 'Signed in as $email';
+  }
+
+  @override
+  String careEditorNotSignedIn(String email) {
+    return 'Hasn\'t signed in yet. They need to sign in to the app with $email to see and join sessions.';
+  }
+
+  @override
+  String get careSessionsCouldNotLoad =>
+      'Couldn\'t load your sessions — check your connection.';
+
+  @override
+  String get careSessionsSaved => 'Saved.';
+
+  @override
+  String get careSessionsFinished => 'Session finished — thank you.';
+
+  @override
+  String get careSessionsTitle => 'My sessions';
+
+  @override
+  String get careSessionsEmpty =>
+      'No sessions yet. When the care team books one with you, it shows up here and you\'ll get an email.';
+
+  @override
+  String get careSessionsUpcoming => 'Upcoming';
+
+  @override
+  String get careSessionsPast => 'Past';
+
+  @override
+  String get careSessionsTooEarly =>
+      'The call opens 10 minutes before the start.';
+
+  @override
+  String get careSessionsOver =>
+      'The call has closed. Finish the session to close it out — otherwise it closes itself in a couple of hours.';
+
+  @override
+  String get careSessionsUnpaid =>
+      'The client hasn\'t paid yet — the call opens once they do.';
+
+  @override
+  String get careSessionsOpen => 'The call is open.';
+
+  @override
+  String careSessionsTheyWrote(String note) {
+    return 'They wrote: “$note”';
+  }
+
+  @override
+  String get careSessionsJoin => 'Join session';
+
+  @override
+  String get careSessionsFinish => 'Finish session';
+
+  @override
+  String get careSessionsClientMissed => 'The client didn\'t join the call.';
+
+  @override
+  String get careSessionsDidNotHappen => 'Didn\'t happen';
+
+  @override
+  String get careSessionsRate => 'Rate';
+
+  @override
+  String get careFinishNeedsRating =>
+      'Add a star rating to send private feedback.';
+
+  @override
+  String careFinishTitleDone(String name) {
+    return 'Session with $name';
+  }
+
+  @override
+  String careFinishTitle(String name) {
+    return 'Finish your session with $name';
+  }
+
+  @override
+  String careFinishNoteLabel(String name) {
+    return 'A note for $name (optional)';
+  }
+
+  @override
+  String get careFinishNoteHelp =>
+      'They see this in the app — a takeaway, or something to practise. Keep clinical notes out of it.';
+
+  @override
+  String get careFinishHowDidItGo => 'How did it go?';
+
+  @override
+  String get careFinishPrivateNote =>
+      'Private note for the care team (optional)';
+
+  @override
+  String get careFinishPrivacy =>
+      'Only the care team sees your rating, flags and private note. Flagging a safety concern emails them straight away.';
 }

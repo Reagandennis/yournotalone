@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../l10n/l10n.dart';
 import '../therapy/session_format.dart';
 import '../therapy/session_widgets.dart';
 import '../therapy/therapy_repository.dart';
@@ -54,7 +55,7 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _error =
-            careErrorMessage(e, 'Couldn\'t load — check your connection.'));
+            careErrorMessage(e, context.l10n.careCouldNotLoad));
       }
     }
   }
@@ -96,14 +97,17 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Care team'),
+          title: Text(context.l10n.careDashboardTitle),
           bottom: TabBar(
             labelColor: c.ink,
             unselectedLabelColor: c.textMuted,
             indicatorColor: c.ink,
             labelStyle:
                 const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-            tabs: const [Tab(text: 'Requests'), Tab(text: 'Therapists')],
+            tabs: [
+              Tab(text: context.l10n.careTabRequests),
+              Tab(text: context.l10n.careTabTherapists),
+            ],
           ),
         ),
         body: requests == null
@@ -142,11 +146,11 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
       for (final item in all)
         if (!item.request.isActive) item,
     ];
+    final l10n = context.l10n;
     final (shown, empty) = switch (_filter) {
-      _RequestFilter.toMatch => (toMatch, 'Nobody is waiting to be matched.'),
-      _RequestFilter.upcoming => (upcoming, 'No sessions booked.'),
-      _RequestFilter.past =>
-        (past, 'Finished and cancelled sessions show up here.'),
+      _RequestFilter.toMatch => (toMatch, l10n.careEmptyToMatch),
+      _RequestFilter.upcoming => (upcoming, l10n.careEmptyUpcoming),
+      _RequestFilter.past => (past, l10n.careEmptyPast),
     };
     final now = _now();
 
@@ -159,13 +163,14 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final (filter, label, count) in [
-                (_RequestFilter.toMatch, 'To match', toMatch.length),
-                (_RequestFilter.upcoming, 'Upcoming', upcoming.length),
-                (_RequestFilter.past, 'Past', past.length),
+              for (final (filter, label) in [
+                (_RequestFilter.toMatch, l10n.careFilterToMatch(toMatch.length)),
+                (_RequestFilter.upcoming,
+                    l10n.careFilterUpcoming(upcoming.length)),
+                (_RequestFilter.past, l10n.careFilterPast(past.length)),
               ])
                 ChoicePill(
-                  label: '$label · $count',
+                  label: label,
                   selected: _filter == filter,
                   onTap: () => setState(() => _filter = filter),
                 ),
@@ -203,14 +208,14 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
           ElevatedButton.icon(
             onPressed: () => _openTherapist(null),
             icon: const Icon(Icons.person_add_alt_1_rounded),
-            label: const Text('Add a therapist'),
+            label: Text(context.l10n.careAddTherapist),
           ),
           const SizedBox(height: 16),
           if (_therapists.isEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 24),
               child: Text(
-                'No therapists yet. Add one to start matching requests.',
+                context.l10n.careNoTherapists,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: c.textMuted),
               ),
@@ -241,28 +246,31 @@ class _RequestTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final request = item.request;
     var lineColor = c.textMuted;
     final String line;
     if (request.isPending) {
       final hours = now.difference(request.createdAt).inHours;
       line = hours < 1
-          ? 'Asked just now'
+          ? l10n.careAskedJustNow
           : hours < 48
-              ? 'Waiting ${hours}h'
-              : 'Waiting ${hours ~/ 24} days';
+              ? l10n.careWaitingHours(hours)
+              : l10n.careWaitingDays(hours ~/ 24);
       // Clients are told to expect a match within a day.
       if (hours >= 20) lineColor = c.red;
     } else if (request.isConfirmed && request.scheduledAt != null) {
       final ended = request.hasElapsedAt(now);
-      line = '${item.therapistName ?? 'Therapist'} · '
-          '${formatDateTime(request.scheduledAt!)}'
-          '${ended ? ' · Not finished' : ''}';
+      final therapist = item.therapistName ?? l10n.careTherapistFallback;
+      final when = formatDateTime(request.scheduledAt!);
+      line = ended
+          ? l10n.careBookedLineNotFinished(therapist, when)
+          : l10n.careBookedLine(therapist, when);
       // Someone should tap Finish before the server closes it out.
       if (ended) lineColor = c.red;
     } else {
-      line = '${sessionOutcomeLabel(request)} · '
-          '${formatDate(request.scheduledAt ?? request.createdAt)}';
+      line = l10n.carePastLine(sessionOutcomeLabel(request),
+          formatDate(request.scheduledAt ?? request.createdAt));
     }
 
     return Padding(
@@ -285,7 +293,7 @@ class _RequestTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.clientLabel,
+                        item.clientLabel(l10n),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -318,7 +326,8 @@ class _RequestTile extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    paymentBadge(request, refunded: item.refundedAt != null),
+                    paymentBadge(l10n, request,
+                        refunded: item.refundedAt != null),
                     if (request.isCompleted && item.clientRating != null) ...[
                       const SizedBox(height: 6),
                       StarRow(rating: item.clientRating!.toDouble(), size: 12),
@@ -343,11 +352,12 @@ class _TherapistTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final profile = therapist.profile;
     final rating = profile.ratingAverage;
     final stats = [
-      '${therapist.upcomingSessions} upcoming',
-      '${therapist.completedSessions} completed',
+      l10n.careStatUpcoming(therapist.upcomingSessions),
+      l10n.careStatCompleted(therapist.completedSessions),
       if (rating != null)
         '★ ${rating.toStringAsFixed(1)} (${profile.ratingCount})',
     ].join(' · ');
@@ -392,7 +402,7 @@ class _TherapistTile extends StatelessWidget {
                           ),
                           if (!profile.active) ...[
                             const SizedBox(width: 6),
-                            const StatusBadge('Inactive'),
+                            StatusBadge(l10n.careInactive),
                           ],
                         ],
                       ),
@@ -415,7 +425,7 @@ class _TherapistTile extends StatelessWidget {
                       if (!therapist.hasAccount) ...[
                         const SizedBox(height: 4),
                         Text(
-                          'Not signed in yet — ${therapist.email}',
+                          l10n.careNotSignedInYet(therapist.email),
                           style: TextStyle(
                             fontSize: 12,
                             color: c.red,
