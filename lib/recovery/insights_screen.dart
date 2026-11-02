@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'recovery_repository.dart';
 
 /// What the craving log adds up to: which triggers keep coming back,
@@ -19,7 +20,7 @@ class TriggerInsightsScreen extends StatefulWidget {
 
 class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
   static const _days = 90;
-  static const _partsOfDay = ['Morning', 'Afternoon', 'Evening', 'Night'];
+  static const _partsOfDay = CravingLog.partsOfDay;
 
   late final _repo = widget.repository ?? RecoveryRepository();
   List<CravingLog>? _logs;
@@ -142,16 +143,17 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
 
   Widget _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Couldn\'t load your craving log.',
+            l10n.triggerInsightsLoadError,
             style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
-          OutlinedButton(onPressed: _load, child: const Text('Try again')),
+          OutlinedButton(onPressed: _load, child: Text(l10n.commonTryAgain)),
         ],
       );
     }
@@ -164,9 +166,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
     }
     if (logs.isEmpty) {
       return Text(
-        'Nothing logged in the last three months. Log a craving as it '
-        'happens and the pattern shows up here — usually sooner than '
-        'you\'d expect.',
+        l10n.triggerInsightsEmpty,
         style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
@@ -191,10 +191,19 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
           ),
           child: Row(
             children: [
-              _stat('${logs.length}', 'logged'),
-              _stat(average.toStringAsFixed(1), 'average'),
-              _stat('$worst', 'strongest'),
-              _stat(times.first.key, 'usual time'),
+              _stat(
+                '${logs.length}',
+                l10n.triggerInsightsStatLogged(logs.length),
+              ),
+              _stat(
+                average.toStringAsFixed(1),
+                l10n.triggerInsightsStatAverage,
+              ),
+              _stat('$worst', l10n.triggerInsightsStatStrongest),
+              _stat(
+                CravingLog.partOfDayLabel(l10n, times.first.key),
+                l10n.triggerInsightsStatUsualTime,
+              ),
             ],
           ),
         ),
@@ -211,9 +220,10 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  '${triggers.first.key} in the '
-                  '${times.first.key.toLowerCase()} is your pattern. '
-                  'That\'s the one worth planning for.',
+                  l10n.triggerInsightsPattern(
+                    recoveryTriggerLabel(l10n, triggers.first.key),
+                    times.first.key,
+                  ),
                   style: TextStyle(
                     fontSize: 12.5,
                     color: c.ink,
@@ -225,19 +235,28 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
           ),
         ),
         const SizedBox(height: 26),
-        const SectionHeader(title: 'What sets them off'),
+        SectionHeader(title: l10n.triggerInsightsWhatSetsThemOff),
         const SizedBox(height: 12),
         for (final entry in triggers)
-          _bar(entry.key, entry.value, maxTrigger, Pillars.red),
+          _bar(
+            recoveryTriggerLabel(l10n, entry.key),
+            entry.value,
+            maxTrigger,
+            Pillars.red,
+          ),
         const SizedBox(height: 20),
-        const SectionHeader(title: 'When they land'),
+        SectionHeader(title: l10n.triggerInsightsWhenTheyLand),
         const SizedBox(height: 12),
         for (final part in _partsOfDay)
-          _bar(part, timeCounts[part] ?? 0, maxTime, Pillars.blue),
+          _bar(
+            CravingLog.partOfDayLabel(l10n, part),
+            timeCounts[part] ?? 0,
+            maxTime,
+            Pillars.blue,
+          ),
         const SizedBox(height: 22),
         Text(
-          'Every one of these was a craving you sat with instead of acting '
-          'on. That is the whole skill.',
+          l10n.triggerInsightsFooter,
           style: TextStyle(
             fontSize: 12.5,
             color: c.textMuted,
@@ -265,7 +284,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Trigger insights',
+                  context.l10n.triggerInsightsTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -277,9 +296,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'Cravings feel random from the inside. Logged, they stop '
-                  'being random — and a pattern you can see is one you can '
-                  'plan around.',
+                  context.l10n.triggerInsightsSubtitle,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,

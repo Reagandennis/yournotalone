@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'rhythm.dart';
 import 'rhythm_card.dart';
 import 'sunrise_art.dart';
@@ -31,9 +32,10 @@ class _RhythmScreenState extends State<RhythmScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final r = _rhythm;
     return Scaffold(
-      appBar: AppBar(title: const Text('Your rhythm')),
+      appBar: AppBar(title: Text(l10n.rhythmTitle)),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
         children: [
@@ -44,7 +46,7 @@ class _RhythmScreenState extends State<RhythmScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            rhythmHeadline(r),
+            rhythmHeadline(r, l10n),
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w600,
@@ -54,17 +56,16 @@ class _RhythmScreenState extends State<RhythmScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            rhythmDetail(r),
+            rhythmDetail(r, l10n),
             style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.4),
           ),
           const SizedBox(height: 18),
           RhythmWeek(rhythm: r, size: 28),
           const SizedBox(height: 28),
-          _heading(context, 'Your weekly goal'),
+          _heading(context, l10n.rhythmWeeklyGoalHeading),
           const SizedBox(height: 6),
           Text(
-            'How many days a week feels right? The other days are rest '
-            'days — they\'re part of the rhythm too.',
+            l10n.rhythmWeeklyGoalBody,
             style: TextStyle(fontSize: 13.5, color: c.textMuted, height: 1.4),
           ),
           const SizedBox(height: 12),
@@ -82,11 +83,11 @@ class _RhythmScreenState extends State<RhythmScreen> {
           ),
           const SizedBox(height: 6),
           Text(
-            '${r.goal} ${r.goal == 1 ? 'day' : 'days'} a week',
+            l10n.rhythmDaysAWeek(r.goal),
             style: TextStyle(fontSize: 12.5, color: c.textMuted),
           ),
           const SizedBox(height: 28),
-          _heading(context, 'The last twelve weeks'),
+          _heading(context, l10n.rhythmLastTwelveWeeks),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -101,22 +102,31 @@ class _RhythmScreenState extends State<RhythmScreen> {
           const SizedBox(height: 16),
           Row(
             children: [
-              _stat(context, '${r.weeksInRhythm}', 'week rhythm'),
-              _stat(context, '${r.bestWeeks}', 'longest'),
-              _stat(context, '${r.totalDays}', 'days in total'),
+              _stat(
+                context,
+                '${r.weeksInRhythm}',
+                l10n.rhythmStatWeekRhythm(r.weeksInRhythm),
+              ),
+              _stat(
+                context,
+                '${r.bestWeeks}',
+                l10n.rhythmStatLongest(r.bestWeeks),
+              ),
+              _stat(
+                context,
+                '${r.totalDays}',
+                l10n.rhythmStatDaysInTotal(r.totalDays),
+              ),
             ],
           ),
           const SizedBox(height: 28),
-          _heading(context, 'What counts'),
+          _heading(context, l10n.rhythmWhatCounts),
           const SizedBox(height: 8),
-          for (final (icon, text) in const [
-            (Icons.mood_rounded, 'A mood check-in'),
-            (
-              Icons.self_improvement_rounded,
-              'A meditation or breathing exercise',
-            ),
-            (Icons.graphic_eq_rounded, 'Listening to a sound'),
-            (Icons.edit_note_rounded, 'A journal entry'),
+          for (final (icon, text) in [
+            (Icons.mood_rounded, l10n.rhythmCountsMood),
+            (Icons.self_improvement_rounded, l10n.rhythmCountsPractice),
+            (Icons.graphic_eq_rounded, l10n.rhythmCountsSound),
+            (Icons.edit_note_rounded, l10n.rhythmCountsJournal),
           ])
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
@@ -135,8 +145,7 @@ class _RhythmScreenState extends State<RhythmScreen> {
             ),
           const SizedBox(height: 8),
           Text(
-            'One small step is enough for the day. Nothing is lost when you '
-            'take a break — every day you\'ve shown up stays counted.',
+            l10n.rhythmNothingIsLost,
             style: TextStyle(fontSize: 13, color: c.textMuted, height: 1.4),
           ),
         ],

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'feeling_store.dart';
 import 'practice_repository.dart';
 
@@ -27,7 +29,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   /// "You felt better after 8 of your last 10 sessions", once there are
   /// enough answers to say it.
-  String? _feelingLine;
+  FeelingSummary? _feelings;
 
   @override
   void initState() {
@@ -35,7 +37,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     _load();
     FeelingStore.instance.recent().then((records) {
       if (mounted) {
-        setState(() => _feelingLine = FeelingStore.summarise(records).line);
+        setState(() => _feelings = FeelingStore.summarise(records));
       }
     });
   }
@@ -54,18 +56,17 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   String _dateLabel(DateTime d) {
+    final l10n = context.l10n;
     final now = DateTime.now();
     final days = DateTime(now.year, now.month, now.day)
         .difference(DateTime(d.year, d.month, d.day))
         .inDays;
-    if (days == 0) return 'Today';
-    if (days == 1) return 'Yesterday';
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final year = d.year == now.year ? '' : ' ${d.year}';
-    return '${d.day} ${months[d.month - 1]}$year';
+    if (days == 0) return l10n.practiceToday;
+    if (days == 1) return l10n.practiceYesterday;
+    final pattern = d.year == now.year
+        ? l10n.practiceDatePattern
+        : l10n.practiceDatePatternWithYear;
+    return DateFormat(pattern, l10n.localeName).format(d);
   }
 
   /// Minutes per day for the last month — taller bars for longer practice,
@@ -174,8 +175,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${session.kind.label} · '
-                    '${_dateLabel(session.completedAt)}',
+                    context.l10n.practiceSessionMeta(
+                      session.kind.label(context.l10n),
+                      _dateLabel(session.completedAt),
+                    ),
                     style: TextStyle(
                       fontSize: 12,
                       color: c.textMuted,
@@ -185,7 +188,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               ),
             ),
             Text(
-              '${session.minutes.round()} min',
+              context.l10n.practiceMinutesShort(session.minutes.round()),
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -200,16 +203,17 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Widget _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Couldn\'t load your practice history.',
+            l10n.practiceLoadError,
             style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
-          OutlinedButton(onPressed: _load, child: const Text('Try again')),
+          OutlinedButton(onPressed: _load, child: Text(l10n.commonTryAgain)),
         ],
       );
     }
@@ -222,8 +226,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     }
     if (sessions.isEmpty) {
       return Text(
-        'Nothing here yet. Finish a meditation, a breathing session, or a '
-        'few minutes of sound, and it starts filling in.',
+        l10n.practiceEmpty,
         style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
@@ -238,7 +241,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader(title: 'Last 30 days'),
+        SectionHeader(title: l10n.practiceLast30Days),
         const SizedBox(height: 12),
         _strip(minutesByDay),
         const SizedBox(height: 22),
@@ -250,14 +253,18 @@ class _PracticeScreenState extends State<PracticeScreen> {
           ),
           child: Row(
             children: [
-              _stat('${summary.sessions}', 'sessions'),
-              _stat('${summary.totalMinutes.round()}', 'minutes'),
-              _stat('${summary.dayStreak}', 'day streak'),
-              _stat('${summary.minutesThisWeek.round()}', 'this week'),
+              _stat('${summary.sessions}',
+                  l10n.practiceStatSessions(summary.sessions)),
+              _stat('${summary.totalMinutes.round()}',
+                  l10n.practiceStatMinutes(summary.totalMinutes.round())),
+              _stat('${summary.dayStreak}',
+                  l10n.practiceStatDayStreak(summary.dayStreak)),
+              _stat('${summary.minutesThisWeek.round()}',
+                  l10n.practiceStatThisWeek(summary.minutesThisWeek.round())),
             ],
           ),
         ),
-        if (_feelingLine != null) ...[
+        if (_feelings?.lineFor(l10n) case final feelingLine?) ...[
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(14),
@@ -271,7 +278,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    _feelingLine!,
+                    feelingLine,
                     style: TextStyle(fontSize: 13.5, color: c.ink, height: 1.4),
                   ),
                 ),
@@ -280,7 +287,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
           ),
         ],
         const SizedBox(height: 24),
-        const SectionHeader(title: 'Every session'),
+        SectionHeader(title: l10n.practiceEverySession),
         const SizedBox(height: 12),
         for (final session in sessions) _sessionRow(session),
       ],
@@ -304,7 +311,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Your practice',
+                  context.l10n.practiceTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -316,7 +323,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'Minutes nobody else counted. They still happened.',
+                  context.l10n.practiceSubtitle,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,

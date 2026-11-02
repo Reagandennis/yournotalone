@@ -6086,6 +6086,1240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A private place for whatever\'s on your mind · {count}/{limit} free entries used.'**
   String journalIntroFree(int count, int limit);
+
+  /// Kind of practice session, shown in the practice history list (e.g. 'Meditation · Today').
+  ///
+  /// In en, this message translates to:
+  /// **'Meditation'**
+  String get practiceKindMeditation;
+
+  /// Kind of practice session: a breathing exercise. Shown in the practice history list.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing'**
+  String get practiceKindBreathing;
+
+  /// Kind of practice session: listening to a calming sound. Shown in the practice history list.
+  ///
+  /// In en, this message translates to:
+  /// **'Sound'**
+  String get practiceKindSound;
+
+  /// Answer after a session to 'How do you feel now?' compared with before. Short; fits a small button.
+  ///
+  /// In en, this message translates to:
+  /// **'Worse'**
+  String get feelingWorse;
+
+  /// Answer after a session to 'How do you feel now?': no change. Short; fits a small button.
+  ///
+  /// In en, this message translates to:
+  /// **'About the same'**
+  String get feelingSame;
+
+  /// Answer after a session to 'How do you feel now?': feels better. Short; fits a small button.
+  ///
+  /// In en, this message translates to:
+  /// **'Better'**
+  String get feelingBetter;
+
+  /// Encouraging summary on the practice and mood-insights screens. answered is always 3 or more.
+  ///
+  /// In en, this message translates to:
+  /// **'{answered, plural, other{You felt better after {better} of your last {answered} sessions.}}'**
+  String feelingSummaryLine(int answered, int better);
+
+  /// Title of the upgrade sheet shown after someone completes their second free session.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve finished your free sessions'**
+  String get practiceFreeSessionsDoneTitle;
+
+  /// Body of the upgrade sheet after the free sessions. offer is the intro offer phrase, already translated, e.g. 'a 7-day free trial'.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium opens all 20 meditations and every breathing exercise, with the sounds to go with them — and {offer}.'**
+  String practiceFreeSessionsDoneMessage(String offer);
+
+  /// Question at the end of a meditation/breathing/sound session.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you feel now?'**
+  String get closeOutHowDoYouFeel;
+
+  /// Replaces closeOutHowDoYouFeel once the person has answered. Warm and brief.
+  ///
+  /// In en, this message translates to:
+  /// **'Noted. Thank you.'**
+  String get closeOutNoted;
+
+  /// Hint under 'How do you feel now?': compare with the start of the session.
+  ///
+  /// In en, this message translates to:
+  /// **'Compared with when you started.'**
+  String get closeOutCompared;
+
+  /// Button at the end of a session: opens a new journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Write about it'**
+  String get closeOutWriteAboutIt;
+
+  /// Opening words placed in a new journal entry after a session; the person keeps writing from here. Keep the trailing space. title is the session's name in lower case.
+  ///
+  /// In en, this message translates to:
+  /// **'After {title}, I noticed '**
+  String closeOutJournalSeed(String title);
+
+  /// Date label in the practice history list for a session done today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get practiceToday;
+
+  /// Date label in the practice history list for a session done yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get practiceYesterday;
+
+  /// ICU/intl DateFormat pattern for a session date this year (English shows '5 Jan'). Translate as a date pattern for your language, e.g. 'd. MMM' or 'M月d日'. Do not translate the letters as words.
+  ///
+  /// In en, this message translates to:
+  /// **'d MMM'**
+  String get practiceDatePattern;
+
+  /// ICU/intl DateFormat pattern for a session date in an earlier year (English shows '5 Jan 2025'). A date pattern, not words.
+  ///
+  /// In en, this message translates to:
+  /// **'d MMM y'**
+  String get practiceDatePatternWithYear;
+
+  /// Line under a session in the practice history: the kind of practice and when.
+  ///
+  /// In en, this message translates to:
+  /// **'{kind} · {date}'**
+  String practiceSessionMeta(String kind, String date);
+
+  /// How long a session lasted, abbreviated minutes, right-aligned in the history list.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min}}'**
+  String practiceMinutesShort(int minutes);
+
+  /// Error on the practice screen when the session history fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your practice history.'**
+  String get practiceLoadError;
+
+  /// Empty state of the practice history screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing here yet. Finish a meditation, a breathing session, or a few minutes of sound, and it starts filling in.'**
+  String get practiceEmpty;
+
+  /// Section heading above a bar strip of daily practice minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get practiceLast30Days;
+
+  /// Small label under a big number on the practice screen: number of sessions in the last 30 days. Only the word; the number is shown above it.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{sessions}}'**
+  String practiceStatSessions(int count);
+
+  /// Small label under a big number: total minutes practised. Only the word.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{minutes}}'**
+  String practiceStatMinutes(int count);
+
+  /// Small label under a big number: how many days in a row someone has practised. Only the words.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{day streak}}'**
+  String practiceStatDayStreak(int count);
+
+  /// Small label under a big number: minutes practised this week. Only the words.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{this week}}'**
+  String practiceStatThisWeek(int count);
+
+  /// Section heading above the full list of past sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Every session'**
+  String get practiceEverySession;
+
+  /// Title of the practice history screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Your practice'**
+  String get practiceTitle;
+
+  /// Gentle subtitle on the practice history screen: the time spent counts even if no one saw it.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes nobody else counted. They still happened.'**
+  String get practiceSubtitle;
+
+  /// Status on a day of a multi-day course: this day is completed. Short label beside the day.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get courseDayDone;
+
+  /// Status on the next day of a course: it unlocks tomorrow (one new day per day). Short label.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens tomorrow'**
+  String get courseDayOpensTomorrow;
+
+  /// Status on a course day that isn't open yet: just its number.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String courseDayNumber(int day);
+
+  /// Under the progress bar on a finished course.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{All {days} days done. Come back to any of them whenever you need.}}'**
+  String courseAllDaysDone(int days);
+
+  /// Under the progress bar on a course in progress.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, other{{done} of {total} days done · one new step each day}}'**
+  String courseDaysDoneProgress(int done, int total);
+
+  /// Line on a course card suggested to the person, before they start it.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{Picked for you · {days} days}}'**
+  String courseCardPickedForYou(int days);
+
+  /// Line on a course card in a list, before it's started.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{{days} days · a step a day}}'**
+  String courseCardStepADay(int days);
+
+  /// Line on a course card once every day is done.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{Finished · all {days} days}}'**
+  String courseCardFinished(int days);
+
+  /// Line on a course card: the next day is open now.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, other{Day {day} of {total} · ready today}}'**
+  String courseCardReadyToday(int day, int total);
+
+  /// Line on a course card: the next day unlocks tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} opens tomorrow'**
+  String courseCardOpensTomorrow(int day);
+
+  /// Milestone headline on the weekly 'rhythm' (sunrise) card when the weekly goal is met for the first week. Warm, celebratory, never pressuring.
+  ///
+  /// In en, this message translates to:
+  /// **'A first week of looking after yourself.'**
+  String get rhythmMilestoneWeek1;
+
+  /// Rhythm milestone headline: 4 weeks in a row of meeting the weekly goal.
+  ///
+  /// In en, this message translates to:
+  /// **'A month of looking after yourself.'**
+  String get rhythmMilestoneWeek4;
+
+  /// Rhythm milestone headline: 12 weeks in a row.
+  ///
+  /// In en, this message translates to:
+  /// **'Three months of showing up for yourself.'**
+  String get rhythmMilestoneWeek12;
+
+  /// Rhythm milestone headline: 26 weeks in a row.
+  ///
+  /// In en, this message translates to:
+  /// **'Half a year of small, steady steps.'**
+  String get rhythmMilestoneWeek26;
+
+  /// Rhythm milestone headline: 52 weeks in a row. The card shows a sunrise picture that rises as the week fills.
+  ///
+  /// In en, this message translates to:
+  /// **'A whole year of sunrises.'**
+  String get rhythmMilestoneWeek52;
+
+  /// Rhythm card headline when someone returns after 3+ days away. Never about loss.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get rhythmWelcomeBack;
+
+  /// Rhythm card headline when the weekly goal is met (the sunrise picture is fully risen).
+  ///
+  /// In en, this message translates to:
+  /// **'Your sun is up this week'**
+  String get rhythmSunIsUp;
+
+  /// Rhythm card headline at the start of a week with nothing done yet.
+  ///
+  /// In en, this message translates to:
+  /// **'A new week, a new sunrise'**
+  String get rhythmNewWeek;
+
+  /// Rhythm card headline: progress towards the weekly goal of days.
+  ///
+  /// In en, this message translates to:
+  /// **'{goal, plural, other{{days} of {goal} days this week}}'**
+  String rhythmDaysThisWeek(int days, int goal);
+
+  /// Line under the rhythm headline before anything has been done: any small action (mood check-in, breathing exercise, journal entry) counts.
+  ///
+  /// In en, this message translates to:
+  /// **'Any small step counts — a check-in, a breath, a few lines.'**
+  String get rhythmAnyStepCounts;
+
+  /// Line under 'Welcome back' on the rhythm card: total days shown up, and an invitation to count today.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{You\'ve shown up 1 day in total. Today can count too.} other{You\'ve shown up {days} days in total. Today can count too.}}'**
+  String rhythmShownUpWelcomeBack(int days);
+
+  /// Line under the rhythm headline: how many weeks in a row the goal was met, and total days shown up.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{{weeks}-week rhythm · 1 day in total} other{{weeks}-week rhythm · {days} days in total}}'**
+  String rhythmWeeksAndTotal(int weeks, int days);
+
+  /// Line under the rhythm headline: total days someone has shown up.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day in total} other{{days} days in total}}'**
+  String rhythmDaysInTotal(int days);
+
+  /// Screen-reader label for the rhythm card: the headline and the line under it.
+  ///
+  /// In en, this message translates to:
+  /// **'{headline}. {detail}'**
+  String rhythmCardSemantics(String headline, String detail);
+
+  /// Title of the rhythm screen (weekly goal of days looking after yourself, shown as a sunrise).
+  ///
+  /// In en, this message translates to:
+  /// **'Your rhythm'**
+  String get rhythmTitle;
+
+  /// Heading above the choice of how many days a week to aim for.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weekly goal'**
+  String get rhythmWeeklyGoalHeading;
+
+  /// Explains the weekly goal; missed days are rest days, not failures.
+  ///
+  /// In en, this message translates to:
+  /// **'How many days a week feels right? The other days are rest days — they\'re part of the rhythm too.'**
+  String get rhythmWeeklyGoalBody;
+
+  /// Under the 1–7 goal chips: the chosen weekly goal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day a week} other{{count} days a week}}'**
+  String rhythmDaysAWeek(int count);
+
+  /// Heading above twelve small suns, one per past week.
+  ///
+  /// In en, this message translates to:
+  /// **'The last twelve weeks'**
+  String get rhythmLastTwelveWeeks;
+
+  /// Small label under a big number: weeks in a row the goal was met. Only the words; the number is shown above.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{week rhythm}}'**
+  String rhythmStatWeekRhythm(int count);
+
+  /// Small label under a big number: the longest run of weeks. Only the word.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{longest}}'**
+  String rhythmStatLongest(int count);
+
+  /// Small label under a big number: total days shown up. Only the words.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{days in total}}'**
+  String rhythmStatDaysInTotal(int count);
+
+  /// Heading above the list of actions that count as showing up for the day.
+  ///
+  /// In en, this message translates to:
+  /// **'What counts'**
+  String get rhythmWhatCounts;
+
+  /// Item in 'What counts' on the rhythm screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A mood check-in'**
+  String get rhythmCountsMood;
+
+  /// Item in 'What counts' on the rhythm screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A meditation or breathing exercise'**
+  String get rhythmCountsPractice;
+
+  /// Item in 'What counts' on the rhythm screen (calming sounds).
+  ///
+  /// In en, this message translates to:
+  /// **'Listening to a sound'**
+  String get rhythmCountsSound;
+
+  /// Item in 'What counts' on the rhythm screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A journal entry'**
+  String get rhythmCountsJournal;
+
+  /// Reassurance at the bottom of the rhythm screen.
+  ///
+  /// In en, this message translates to:
+  /// **'One small step is enough for the day. Nothing is lost when you take a break — every day you\'ve shown up stays counted.'**
+  String get rhythmNothingIsLost;
+
+  /// Name of the first milestone on a recovery streak (the day someone starts). Shown in milestone lists.
+  ///
+  /// In en, this message translates to:
+  /// **'Day one'**
+  String get recoveryMilestoneDayOne;
+
+  /// Name of a recovery-streak milestone measured in days (e.g. '3 days', '90 days').
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String recoveryMilestoneDays(int count);
+
+  /// Name of a recovery-streak milestone in weeks (e.g. '1 week', '2 weeks').
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 week} other{{count} weeks}}'**
+  String recoveryMilestoneWeeks(int count);
+
+  /// Name of a recovery-streak milestone in months (e.g. '1 month', '6 months').
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String recoveryMilestoneMonths(int count);
+
+  /// Name of a recovery-streak milestone in years ('1 year').
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String recoveryMilestoneYears(int count);
+
+  /// What set off a craving: stress. Choice chip in the craving log, also in charts.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress'**
+  String get recoveryTriggerStress;
+
+  /// What set off a craving: boredom. Choice chip in the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Boredom'**
+  String get recoveryTriggerBoredom;
+
+  /// What set off a craving: loneliness. Choice chip in the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Loneliness'**
+  String get recoveryTriggerLoneliness;
+
+  /// What set off a craving: pressure from people around you. Choice chip in the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Social pressure'**
+  String get recoveryTriggerSocialPressure;
+
+  /// What set off a craving: tiredness. Choice chip in the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Tiredness'**
+  String get recoveryTriggerTiredness;
+
+  /// What set off a craving: plain habit/routine. Choice chip in the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit'**
+  String get recoveryTriggerHabit;
+
+  /// What set off a craving: something else. Choice chip in the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get recoveryTriggerOther;
+
+  /// Part of the day a craving was logged (6:00–12:00). Label in the trigger insights chart; can be a single word.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning'**
+  String get recoveryPartOfDayMorning;
+
+  /// Part of the day a craving was logged (12:00–18:00).
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon'**
+  String get recoveryPartOfDayAfternoon;
+
+  /// Part of the day a craving was logged (18:00–24:00).
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get recoveryPartOfDayEvening;
+
+  /// Part of the day a craving was logged (0:00–6:00).
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get recoveryPartOfDayNight;
+
+  /// Title of the upgrade sheet when a free user taps a premium recovery tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery tracking is part of Premium'**
+  String get recoveryPremiumTitle;
+
+  /// Body of the recovery upgrade sheet. offer is the intro offer phrase, already translated, e.g. 'a 7-day free trial'.
+  ///
+  /// In en, this message translates to:
+  /// **'Urge surfing is free for everyone, always. Premium adds commitment streaks, daily pledges, and the trigger tracker — and {offer}.'**
+  String recoveryPremiumMessage(String offer);
+
+  /// Title of the sheet for adding a recovery commitment (a habit or substance someone is stopping). Gentle, non-judgemental.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you leaving behind?'**
+  String get recoveryAddHabitTitle;
+
+  /// Label/hint of the text field for what someone is quitting.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Alcohol, smoking, gambling…'**
+  String get recoveryAddHabitHint;
+
+  /// Label above the choice of the streak's start date (Today, Yesterday, Pick a date).
+  ///
+  /// In en, this message translates to:
+  /// **'Counting from'**
+  String get recoveryCountingFrom;
+
+  /// Start-date choice chip when adding a recovery commitment.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get recoveryToday;
+
+  /// Start-date choice chip when adding a recovery commitment.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get recoveryYesterday;
+
+  /// Chip that opens a date picker for the streak's start date.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get recoveryPickADate;
+
+  /// Snackbar when saving recovery data (or a journal entry from a recovery tool) fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save — check your connection.'**
+  String get recoverySaveFailed;
+
+  /// Snackbar when deleting a recovery commitment fails.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete — check your connection.'**
+  String get recoveryDeleteFailed;
+
+  /// Button that saves a new recovery commitment and starts its day count.
+  ///
+  /// In en, this message translates to:
+  /// **'Start counting'**
+  String get recoveryStartCounting;
+
+  /// Snackbar after the daily pledge. habit is what the person is leaving behind, as they typed it (lower-cased), e.g. 'Pledged: today, not alcohol.'
+  ///
+  /// In en, this message translates to:
+  /// **'Pledged: today, not {habit}.'**
+  String recoveryPledgedSnack(String habit);
+
+  /// Title of the dialog for resetting a streak after a slip. Kind, no blame.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting again?'**
+  String get recoveryResetTitle;
+
+  /// Body of the reset-streak dialog: compassionate; the best streak is kept.
+  ///
+  /// In en, this message translates to:
+  /// **'{best, plural, other{Slips happen — they don\'t erase what you learned. Your best streak ({best} days) stays on record, and day one starts now.}}'**
+  String recoveryResetBody(int best);
+
+  /// Confirm button in the reset-streak dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to day one'**
+  String get recoveryResetConfirm;
+
+  /// Title of the dialog for deleting a recovery commitment. habit is its name as the person typed it.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove \"{habit}\"?'**
+  String recoveryRemoveTitle(String habit);
+
+  /// Body of the delete-commitment dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Its streak and pledges will be deleted.'**
+  String get recoveryRemoveBody;
+
+  /// Big counter on a recovery commitment: which day of the streak it is.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day}'**
+  String recoveryDayNumber(int day);
+
+  /// Menu item on a recovery commitment: start the count again after a slip.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset day one'**
+  String get recoveryResetDayOne;
+
+  /// Under a commitment's progress bar once every milestone (up to 1 year) is behind them.
+  ///
+  /// In en, this message translates to:
+  /// **'Past every milestone — extraordinary.'**
+  String get recoveryPastEveryMilestone;
+
+  /// Under a commitment's progress bar. milestone is a milestone name such as '2 weeks'.
+  ///
+  /// In en, this message translates to:
+  /// **'{daysLeft, plural, =1{Next milestone: {milestone} (1 day to go)} other{Next milestone: {milestone} ({daysLeft} days to go)}}'**
+  String recoveryNextMilestone(String milestone, int daysLeft);
+
+  /// Like recoveryNextMilestone, plus the best streak so far in days (just the number).
+  ///
+  /// In en, this message translates to:
+  /// **'{daysLeft, plural, =1{Next milestone: {milestone} (1 day to go) · best {best}} other{Next milestone: {milestone} ({daysLeft} days to go) · best {best}}}'**
+  String recoveryNextMilestoneWithBest(
+    String milestone,
+    int daysLeft,
+    int best,
+  );
+
+  /// Shown on a commitment once today's pledge is made.
+  ///
+  /// In en, this message translates to:
+  /// **'Pledged for today'**
+  String get recoveryPledgedForToday;
+
+  /// Button to make today's pledge (commit to not doing the habit today). First person, encouraging.
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m in for today'**
+  String get recoveryPledgeButton;
+
+  /// Title of the sheet for logging a craving.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a craving'**
+  String get recoveryLogCravingTitle;
+
+  /// Subtitle of the log-a-craving sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Noticing is progress — patterns lose power once you can see them.'**
+  String get recoveryLogCravingSubtitle;
+
+  /// Label above a 1–5 craving strength scale.
+  ///
+  /// In en, this message translates to:
+  /// **'How strong was it?'**
+  String get recoveryLogCravingStrength;
+
+  /// Label above the craving trigger chips.
+  ///
+  /// In en, this message translates to:
+  /// **'What set it off?'**
+  String get recoveryLogCravingTrigger;
+
+  /// Label of the optional note field when logging a craving.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else? (optional)'**
+  String get recoveryLogCravingNote;
+
+  /// Snackbar after logging a craving: affirming that resisting it counts.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged. You rode it out — that counts.'**
+  String get recoveryCravingLogged;
+
+  /// When a craving was logged, minutes ago (abbreviated).
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min ago}}'**
+  String recoveryMinutesAgo(int minutes);
+
+  /// When a craving was logged, hours ago (abbreviated).
+  ///
+  /// In en, this message translates to:
+  /// **'{hours, plural, other{{hours} h ago}}'**
+  String recoveryHoursAgo(int hours);
+
+  /// When a craving was logged: yesterday. Lower case in English because it sits at the end of a row.
+  ///
+  /// In en, this message translates to:
+  /// **'yesterday'**
+  String get recoveryYesterdayLower;
+
+  /// When a craving was logged, days ago (always 2 or more).
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, other{{days} days ago}}'**
+  String recoveryDaysAgo(int days);
+
+  /// Title of the recovery hub (tools for quitting a habit or substance).
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get recoveryTitle;
+
+  /// Subtitle on the recovery hub.
+  ///
+  /// In en, this message translates to:
+  /// **'One day at a time — with tools for the hard minutes.'**
+  String get recoverySubtitle;
+
+  /// Title of the SOS card that opens the guided urge-surfing session.
+  ///
+  /// In en, this message translates to:
+  /// **'Craving right now?'**
+  String get recoveryCravingNowTitle;
+
+  /// Body of the SOS card. 'Surf' refers to 'urge surfing', riding out an urge like a wave.
+  ///
+  /// In en, this message translates to:
+  /// **'Urges pass. Surf this one — 8 guided minutes.'**
+  String get recoveryCravingNowBody;
+
+  /// Section heading above tools for an urge that's happening now.
+  ///
+  /// In en, this message translates to:
+  /// **'In the moment'**
+  String get recoveryInTheMoment;
+
+  /// Card title for the HALT tool (Hungry, Angry, Lonely, Tired). HALT is a well-known recovery acronym; keep it or use the established local equivalent.
+  ///
+  /// In en, this message translates to:
+  /// **'HALT check'**
+  String get recoveryHaltCardTitle;
+
+  /// Card description for the HALT tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Hungry, angry, lonely, tired — find out what the craving is standing in for.'**
+  String get recoveryHaltCardDetail;
+
+  /// Card title for the 'play the tape forward' tool: imagine what happens after giving in. Use the established phrase in your language if there is one.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the tape forward'**
+  String get recoveryTapeCardTitle;
+
+  /// Card description for the play-the-tape-forward tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch the rest of the film before you decide, then keep it in your journal.'**
+  String get recoveryTapeCardDetail;
+
+  /// Section heading above the person's recovery commitments (habits they're quitting, each with a day count).
+  ///
+  /// In en, this message translates to:
+  /// **'My commitments'**
+  String get recoveryMyCommitments;
+
+  /// Small text button that adds a recovery commitment.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add'**
+  String get recoveryAddButton;
+
+  /// Locked (Premium) card in place of the commitments list.
+  ///
+  /// In en, this message translates to:
+  /// **'Count every day, pledge each morning, and celebrate milestones.'**
+  String get recoveryCommitmentsLocked;
+
+  /// Error when the recovery hub fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your recovery data.'**
+  String get recoveryLoadError;
+
+  /// Empty state of the commitments list.
+  ///
+  /// In en, this message translates to:
+  /// **'What are you leaving behind? Add it — we\'ll count every day with you.'**
+  String get recoveryCommitmentsEmpty;
+
+  /// Card title opening the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get recoveryMilestonesCardTitle;
+
+  /// Card description for the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Every marker, reached and ahead, for each commitment.'**
+  String get recoveryMilestonesCardDetail;
+
+  /// Section heading above the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger tracker'**
+  String get recoveryTriggerTracker;
+
+  /// Small text button that opens the log-a-craving sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Log'**
+  String get recoveryLogButton;
+
+  /// Locked (Premium) card in place of the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Log cravings as they happen and learn what sets them off.'**
+  String get recoveryTrackerLocked;
+
+  /// Insight above the craving log. trigger is a trigger name in lower case, e.g. 'boredom'.
+  ///
+  /// In en, this message translates to:
+  /// **'Your most common trigger lately: {trigger}. Naming it is half the battle.'**
+  String recoveryTopTrigger(String trigger);
+
+  /// Empty state of the craving log.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing logged yet. Next time a craving hits, ride it out and note it here.'**
+  String get recoveryCravingsEmpty;
+
+  /// Card title opening the trigger insights screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger insights'**
+  String get recoveryInsightsCardTitle;
+
+  /// Card description for trigger insights ('them' = cravings).
+  ///
+  /// In en, this message translates to:
+  /// **'What sets them off, when they land, and how hard — over the last 90 days.'**
+  String get recoveryInsightsCardDetail;
+
+  /// Appended to the crisis footer at the bottom of the recovery hub. Keep the leading space.
+  ///
+  /// In en, this message translates to:
+  /// **' Recovery is easier with backup — a licensed therapist here is never far away.'**
+  String get recoveryCrisisFooterTrailing;
+
+  /// ICU/intl DateFormat pattern for the date a milestone was reached, this year (English '5 Jan'). A date pattern, not words — e.g. 'd. MMM' or 'M月d日'.
+  ///
+  /// In en, this message translates to:
+  /// **'d MMM'**
+  String get recoveryDatePattern;
+
+  /// ICU/intl DateFormat pattern for a milestone date in an earlier year (English '5 Jan 2025'). A date pattern, not words.
+  ///
+  /// In en, this message translates to:
+  /// **'d MMM y'**
+  String get recoveryDatePatternWithYear;
+
+  /// Under a reached milestone: the date it was reached.
+  ///
+  /// In en, this message translates to:
+  /// **'Reached {date}'**
+  String milestonesReachedOn(String date);
+
+  /// Under a milestone not reached yet.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day to go} other{{days} days to go}}'**
+  String milestonesDaysToGo(int days);
+
+  /// Under a commitment's name on the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, other{{reached} of {total} reached}}'**
+  String milestonesReached(int reached, int total);
+
+  /// Like milestonesReached, plus the best streak in days when it's longer than the current one.
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, other{{reached} of {total} reached · best {best} days}}'**
+  String milestonesReachedWithBest(int reached, int total, int best);
+
+  /// Error on the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your commitments.'**
+  String get milestonesLoadError;
+
+  /// Empty state of the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'No commitments yet. Add one on the recovery screen and every marker below starts counting from today.'**
+  String get milestonesEmpty;
+
+  /// Title of the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get milestonesTitle;
+
+  /// Subtitle of the milestones screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Days add up whether or not anyone claps. Here they are, counted.'**
+  String get milestonesSubtitle;
+
+  /// Error on the trigger insights screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your craving log.'**
+  String get triggerInsightsLoadError;
+
+  /// Empty state of the trigger insights screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing logged in the last three months. Log a craving as it happens and the pattern shows up here — usually sooner than you\'d expect.'**
+  String get triggerInsightsEmpty;
+
+  /// Small label under a big number: cravings logged in 90 days. Only the word.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{logged}}'**
+  String triggerInsightsStatLogged(int count);
+
+  /// Small label under a number: average craving strength (1–5).
+  ///
+  /// In en, this message translates to:
+  /// **'average'**
+  String get triggerInsightsStatAverage;
+
+  /// Small label under a number: the strongest craving (1–5).
+  ///
+  /// In en, this message translates to:
+  /// **'strongest'**
+  String get triggerInsightsStatStrongest;
+
+  /// Small label under a part of the day (e.g. 'Evening'): when cravings usually land.
+  ///
+  /// In en, this message translates to:
+  /// **'usual time'**
+  String get triggerInsightsStatUsualTime;
+
+  /// Insight on the trigger insights screen: the most common trigger and part of the day. trigger is a trigger name such as 'Boredom'. part is a fixed key (morning/afternoon/evening/night) — translate only the text inside the braces.
+  ///
+  /// In en, this message translates to:
+  /// **'{part, select, morning{{trigger} in the morning is your pattern. That\'s the one worth planning for.} afternoon{{trigger} in the afternoon is your pattern. That\'s the one worth planning for.} evening{{trigger} in the evening is your pattern. That\'s the one worth planning for.} other{{trigger} in the night is your pattern. That\'s the one worth planning for.}}'**
+  String triggerInsightsPattern(String trigger, String part);
+
+  /// Section heading above a bar chart of craving triggers.
+  ///
+  /// In en, this message translates to:
+  /// **'What sets them off'**
+  String get triggerInsightsWhatSetsThemOff;
+
+  /// Section heading above a bar chart of the part of day cravings happen.
+  ///
+  /// In en, this message translates to:
+  /// **'When they land'**
+  String get triggerInsightsWhenTheyLand;
+
+  /// Encouraging line at the bottom of trigger insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Every one of these was a craving you sat with instead of acting on. That is the whole skill.'**
+  String get triggerInsightsFooter;
+
+  /// Title of the trigger insights screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Trigger insights'**
+  String get triggerInsightsTitle;
+
+  /// Subtitle of the trigger insights screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Cravings feel random from the inside. Logged, they stop being random — and a pattern you can see is one you can plan around.'**
+  String get triggerInsightsSubtitle;
+
+  /// HALT check: the H, hunger. Title of an option.
+  ///
+  /// In en, this message translates to:
+  /// **'Hungry'**
+  String get haltHungryTitle;
+
+  /// HALT check: question under 'Hungry'.
+  ///
+  /// In en, this message translates to:
+  /// **'When did you last eat something proper?'**
+  String get haltHungryQuestion;
+
+  /// HALT check: advice shown when 'Hungry' is ticked.
+  ///
+  /// In en, this message translates to:
+  /// **'Low blood sugar feels a lot like craving, and it argues with you the same way. Eat something first — a real meal if you can, anything if you can\'t — then see what\'s left of the urge.'**
+  String get haltHungryAdvice;
+
+  /// HALT check: button under the hunger advice; opens a short meditation.
+  ///
+  /// In en, this message translates to:
+  /// **'Steady the breath while you eat'**
+  String get haltHungryAction;
+
+  /// HALT check: the A, anger. Title of an option.
+  ///
+  /// In en, this message translates to:
+  /// **'Angry'**
+  String get haltAngryTitle;
+
+  /// HALT check: question under 'Angry'.
+  ///
+  /// In en, this message translates to:
+  /// **'Is something still sitting unsaid?'**
+  String get haltAngryQuestion;
+
+  /// HALT check: advice shown when 'Angry' is ticked.
+  ///
+  /// In en, this message translates to:
+  /// **'Anger wants somewhere to go, and the old habit is the easiest door. Give it a different one for nine minutes and see if it still wants the same thing.'**
+  String get haltAngryAdvice;
+
+  /// HALT check: button opening the 9-minute meditation 'Letting go of anger'.
+  ///
+  /// In en, this message translates to:
+  /// **'Letting go of anger · 9 min'**
+  String get haltAngryAction;
+
+  /// HALT check: the L, loneliness. Title of an option.
+  ///
+  /// In en, this message translates to:
+  /// **'Lonely'**
+  String get haltLonelyTitle;
+
+  /// HALT check: question under 'Lonely'.
+  ///
+  /// In en, this message translates to:
+  /// **'Who have you actually spoken to today?'**
+  String get haltLonelyQuestion;
+
+  /// HALT check: advice shown when 'Lonely' is ticked. 'A session' = a session with a therapist in the app.
+  ///
+  /// In en, this message translates to:
+  /// **'This is the one that most often gets answered with the habit. A real person beats anything else here — and if there isn\'t one right now, a session is a person.'**
+  String get haltLonelyAdvice;
+
+  /// HALT check: button opening the therapy screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Talk to a therapist'**
+  String get haltLonelyAction;
+
+  /// HALT check: the T, tiredness. Title of an option.
+  ///
+  /// In en, this message translates to:
+  /// **'Tired'**
+  String get haltTiredTitle;
+
+  /// HALT check: question under 'Tired'.
+  ///
+  /// In en, this message translates to:
+  /// **'Have you slept properly this week?'**
+  String get haltTiredQuestion;
+
+  /// HALT check: advice shown when 'Tired' is ticked.
+  ///
+  /// In en, this message translates to:
+  /// **'Tired makes every urge louder and every reason quieter. Nothing you decide right now will be as good as what you decide after some rest.'**
+  String get haltTiredAdvice;
+
+  /// HALT check: button opening a sleep sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Wind down and sleep'**
+  String get haltTiredAction;
+
+  /// Letter on the disc next to 'Hungry' — the H of the HALT acronym. Keep 'H' unless your language uses its own acronym; one character.
+  ///
+  /// In en, this message translates to:
+  /// **'H'**
+  String get haltHungryLetter;
+
+  /// Letter on the disc next to 'Angry' — the A of HALT. One character.
+  ///
+  /// In en, this message translates to:
+  /// **'A'**
+  String get haltAngryLetter;
+
+  /// Letter on the disc next to 'Lonely' — the L of HALT. One character.
+  ///
+  /// In en, this message translates to:
+  /// **'L'**
+  String get haltLonelyLetter;
+
+  /// Letter on the disc next to 'Tired' — the T of HALT. One character.
+  ///
+  /// In en, this message translates to:
+  /// **'T'**
+  String get haltTiredLetter;
+
+  /// Title of the HALT check screen (Hungry, Angry, Lonely, Tired).
+  ///
+  /// In en, this message translates to:
+  /// **'HALT check'**
+  String get haltTitle;
+
+  /// Intro on the HALT check screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A craving is often something else wearing a disguise. Before you decide anything, check the four it\'s usually hiding behind — tick whichever are true.'**
+  String get haltIntro;
+
+  /// HALT check: shown when nothing is ticked.
+  ///
+  /// In en, this message translates to:
+  /// **'None of them? Then it\'s the urge on its own — and those pass on their own too. Ride it out.'**
+  String get haltNoneOfThem;
+
+  /// HALT check: heading above the advice for the ticked needs.
+  ///
+  /// In en, this message translates to:
+  /// **'What that means'**
+  String get haltWhatThatMeans;
+
+  /// Play the tape forward, step 1 heading: imagine an hour after giving in. Also written into the saved journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'In an hour'**
+  String get tapeForwardHourWhen;
+
+  /// Play the tape forward, step 1 question.
+  ///
+  /// In en, this message translates to:
+  /// **'You gave in. What does the next hour actually look like?'**
+  String get tapeForwardHourQuestion;
+
+  /// Play the tape forward, step 1 hint in the text field.
+  ///
+  /// In en, this message translates to:
+  /// **'Not the first five minutes — the hour.'**
+  String get tapeForwardHourHint;
+
+  /// Play the tape forward, step 2 heading. Also written into the saved journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow morning'**
+  String get tapeForwardMorningWhen;
+
+  /// Play the tape forward, step 2 question.
+  ///
+  /// In en, this message translates to:
+  /// **'You wake up. What\'s the first thing you remember?'**
+  String get tapeForwardMorningQuestion;
+
+  /// Play the tape forward, step 2 hint in the text field.
+  ///
+  /// In en, this message translates to:
+  /// **'How does the day start from there?'**
+  String get tapeForwardMorningHint;
+
+  /// Play the tape forward, step 3 heading. Also written into the saved journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'A week from now'**
+  String get tapeForwardWeekWhen;
+
+  /// Play the tape forward, step 3 question.
+  ///
+  /// In en, this message translates to:
+  /// **'Where has this put you by next week?'**
+  String get tapeForwardWeekQuestion;
+
+  /// Play the tape forward, step 3 hint in the text field.
+  ///
+  /// In en, this message translates to:
+  /// **'And what would the other choice have bought you?'**
+  String get tapeForwardWeekHint;
+
+  /// Title of the journal entry saved from the play-the-tape-forward tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing the tape forward'**
+  String get tapeForwardJournalTitle;
+
+  /// Snackbar after saving the play-the-tape-forward answers to the journal.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your journal.'**
+  String get tapeForwardSaved;
+
+  /// Title of the play-the-tape-forward screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Play the tape forward'**
+  String get tapeForwardTitle;
+
+  /// Intro on the play-the-tape-forward screen.
+  ///
+  /// In en, this message translates to:
+  /// **'A craving only ever shows you the first five minutes. Watch the rest of the film before you decide — in your own words, because yours are the ones you believe.'**
+  String get tapeForwardIntro;
+
+  /// Button label while the answers are being saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get tapeForwardSaving;
+
+  /// Button that saves the answers as a journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this in my journal'**
+  String get tapeForwardKeep;
+
+  /// Line under the save button: the entry will be there for the next craving.
+  ///
+  /// In en, this message translates to:
+  /// **'Next time, this is waiting for you — written by the one person the craving can\'t argue with.'**
+  String get tapeForwardFooter;
+
+  /// One-letter (or one-character) names of the weekdays, Monday first, separated by single spaces — exactly 7 items. Shown under seven small suns on the rhythm card.
+  ///
+  /// In en, this message translates to:
+  /// **'M T W T F S S'**
+  String get rhythmWeekdayLetters;
 }
 
 class _AppLocalizationsDelegate

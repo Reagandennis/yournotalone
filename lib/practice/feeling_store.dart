@@ -5,19 +5,26 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
 import 'practice_repository.dart';
 
 /// How someone felt after a session, compared with when they started.
 enum Feeling {
-  worse(-1, 'Worse'),
-  same(0, 'About the same'),
-  better(1, 'Better');
+  worse(-1),
+  same(0),
+  better(1);
 
-  const Feeling(this.score, this.label);
+  const Feeling(this.score);
 
   /// Stored in the database — never change these.
   final int score;
-  final String label;
+
+  /// The answer's wording on the close-out card.
+  String label(AppLocalizations l10n) => switch (this) {
+    worse => l10n.feelingWorse,
+    same => l10n.feelingSame,
+    better => l10n.feelingBetter,
+  };
 
   static Feeling fromScore(int score) =>
       values.firstWhere((f) => f.score == score, orElse: () => same);
@@ -60,9 +67,11 @@ class FeelingSummary {
 
   /// "You felt better after 8 of your last 10 sessions." Null until there
   /// are enough answers to say anything.
-  String? get line => answered < 3
-      ? null
-      : 'You felt better after $better of your last $answered sessions.';
+  String? get line => lineFor(currentL10n());
+
+  /// [line] in the language of [l10n].
+  String? lineFor(AppLocalizations l10n) =>
+      answered < 3 ? null : l10n.feelingSummaryLine(answered, better);
 }
 
 /// Keeps the answers on the device (so they count straight away, offline

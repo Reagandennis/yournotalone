@@ -5135,5 +5135,1155 @@
         "example": "5"
       }
     }
+  },
+  "practiceKindMeditation": "Meditation",
+  "@practiceKindMeditation": {
+    "description": "Kind of practice session, shown in the practice history list (e.g. 'Meditation · Today')."
+  },
+  "practiceKindBreathing": "Breathing",
+  "@practiceKindBreathing": {
+    "description": "Kind of practice session: a breathing exercise. Shown in the practice history list."
+  },
+  "practiceKindSound": "Sound",
+  "@practiceKindSound": {
+    "description": "Kind of practice session: listening to a calming sound. Shown in the practice history list."
+  },
+  "feelingWorse": "Worse",
+  "@feelingWorse": {
+    "description": "Answer after a session to 'How do you feel now?' compared with before. Short; fits a small button."
+  },
+  "feelingSame": "About the same",
+  "@feelingSame": {
+    "description": "Answer after a session to 'How do you feel now?': no change. Short; fits a small button."
+  },
+  "feelingBetter": "Better",
+  "@feelingBetter": {
+    "description": "Answer after a session to 'How do you feel now?': feels better. Short; fits a small button."
+  },
+  "feelingSummaryLine": "{answered, plural, other{You felt better after {better} of your last {answered} sessions.}}",
+  "@feelingSummaryLine": {
+    "description": "Encouraging summary on the practice and mood-insights screens. answered is always 3 or more.",
+    "placeholders": {
+      "answered": {
+        "type": "int",
+        "example": "10"
+      },
+      "better": {
+        "type": "int",
+        "example": "8"
+      }
+    }
+  },
+  "practiceFreeSessionsDoneTitle": "You've finished your free sessions",
+  "@practiceFreeSessionsDoneTitle": {
+    "description": "Title of the upgrade sheet shown after someone completes their second free session."
+  },
+  "practiceFreeSessionsDoneMessage": "Premium opens all 20 meditations and every breathing exercise, with the sounds to go with them — and {offer}.",
+  "@practiceFreeSessionsDoneMessage": {
+    "description": "Body of the upgrade sheet after the free sessions. offer is the intro offer phrase, already translated, e.g. 'a 7-day free trial'.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "a 7-day free trial"
+      }
+    }
+  },
+  "closeOutHowDoYouFeel": "How do you feel now?",
+  "@closeOutHowDoYouFeel": {
+    "description": "Question at the end of a meditation/breathing/sound session."
+  },
+  "closeOutNoted": "Noted. Thank you.",
+  "@closeOutNoted": {
+    "description": "Replaces closeOutHowDoYouFeel once the person has answered. Warm and brief."
+  },
+  "closeOutCompared": "Compared with when you started.",
+  "@closeOutCompared": {
+    "description": "Hint under 'How do you feel now?': compare with the start of the session."
+  },
+  "closeOutWriteAboutIt": "Write about it",
+  "@closeOutWriteAboutIt": {
+    "description": "Button at the end of a session: opens a new journal entry."
+  },
+  "closeOutJournalSeed": "After {title}, I noticed ",
+  "@closeOutJournalSeed": {
+    "description": "Opening words placed in a new journal entry after a session; the person keeps writing from here. Keep the trailing space. title is the session's name in lower case.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "body scan"
+      }
+    }
+  },
+  "practiceToday": "Today",
+  "@practiceToday": {
+    "description": "Date label in the practice history list for a session done today."
+  },
+  "practiceYesterday": "Yesterday",
+  "@practiceYesterday": {
+    "description": "Date label in the practice history list for a session done yesterday."
+  },
+  "practiceDatePattern": "d MMM",
+  "@practiceDatePattern": {
+    "description": "ICU/intl DateFormat pattern for a session date this year (English shows '5 Jan'). Translate as a date pattern for your language, e.g. 'd. MMM' or 'M月d日'. Do not translate the letters as words."
+  },
+  "practiceDatePatternWithYear": "d MMM y",
+  "@practiceDatePatternWithYear": {
+    "description": "ICU/intl DateFormat pattern for a session date in an earlier year (English shows '5 Jan 2025'). A date pattern, not words."
+  },
+  "practiceSessionMeta": "{kind} · {date}",
+  "@practiceSessionMeta": {
+    "description": "Line under a session in the practice history: the kind of practice and when.",
+    "placeholders": {
+      "kind": {
+        "type": "String",
+        "example": "Meditation"
+      },
+      "date": {
+        "type": "String",
+        "example": "Yesterday"
+      }
+    }
+  },
+  "practiceMinutesShort": "{minutes, plural, other{{minutes} min}}",
+  "@practiceMinutesShort": {
+    "description": "How long a session lasted, abbreviated minutes, right-aligned in the history list.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "10"
+      }
+    }
+  },
+  "practiceLoadError": "Couldn't load your practice history.",
+  "@practiceLoadError": {
+    "description": "Error on the practice screen when the session history fails to load."
+  },
+  "practiceEmpty": "Nothing here yet. Finish a meditation, a breathing session, or a few minutes of sound, and it starts filling in.",
+  "@practiceEmpty": {
+    "description": "Empty state of the practice history screen."
+  },
+  "practiceLast30Days": "Last 30 days",
+  "@practiceLast30Days": {
+    "description": "Section heading above a bar strip of daily practice minutes."
+  },
+  "practiceStatSessions": "{count, plural, other{sessions}}",
+  "@practiceStatSessions": {
+    "description": "Small label under a big number on the practice screen: number of sessions in the last 30 days. Only the word; the number is shown above it.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "practiceStatMinutes": "{count, plural, other{minutes}}",
+  "@practiceStatMinutes": {
+    "description": "Small label under a big number: total minutes practised. Only the word.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "practiceStatDayStreak": "{count, plural, other{day streak}}",
+  "@practiceStatDayStreak": {
+    "description": "Small label under a big number: how many days in a row someone has practised. Only the words.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "practiceStatThisWeek": "{count, plural, other{this week}}",
+  "@practiceStatThisWeek": {
+    "description": "Small label under a big number: minutes practised this week. Only the words.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "practiceEverySession": "Every session",
+  "@practiceEverySession": {
+    "description": "Section heading above the full list of past sessions."
+  },
+  "practiceTitle": "Your practice",
+  "@practiceTitle": {
+    "description": "Title of the practice history screen."
+  },
+  "practiceSubtitle": "Minutes nobody else counted. They still happened.",
+  "@practiceSubtitle": {
+    "description": "Gentle subtitle on the practice history screen: the time spent counts even if no one saw it."
+  },
+  "courseDayDone": "Done",
+  "@courseDayDone": {
+    "description": "Status on a day of a multi-day course: this day is completed. Short label beside the day."
+  },
+  "courseDayOpensTomorrow": "Opens tomorrow",
+  "@courseDayOpensTomorrow": {
+    "description": "Status on the next day of a course: it unlocks tomorrow (one new day per day). Short label."
+  },
+  "courseDayNumber": "Day {day}",
+  "@courseDayNumber": {
+    "description": "Status on a course day that isn't open yet: just its number.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "courseAllDaysDone": "{days, plural, other{All {days} days done. Come back to any of them whenever you need.}}",
+  "@courseAllDaysDone": {
+    "description": "Under the progress bar on a finished course.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "courseDaysDoneProgress": "{total, plural, other{{done} of {total} days done · one new step each day}}",
+  "@courseDaysDoneProgress": {
+    "description": "Under the progress bar on a course in progress.",
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "courseCardPickedForYou": "{days, plural, other{Picked for you · {days} days}}",
+  "@courseCardPickedForYou": {
+    "description": "Line on a course card suggested to the person, before they start it.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "courseCardStepADay": "{days, plural, other{{days} days · a step a day}}",
+  "@courseCardStepADay": {
+    "description": "Line on a course card in a list, before it's started.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "courseCardFinished": "{days, plural, other{Finished · all {days} days}}",
+  "@courseCardFinished": {
+    "description": "Line on a course card once every day is done.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "courseCardReadyToday": "{total, plural, other{Day {day} of {total} · ready today}}",
+  "@courseCardReadyToday": {
+    "description": "Line on a course card: the next day is open now.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "7"
+      }
+    }
+  },
+  "courseCardOpensTomorrow": "Day {day} opens tomorrow",
+  "@courseCardOpensTomorrow": {
+    "description": "Line on a course card: the next day unlocks tomorrow.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "rhythmMilestoneWeek1": "A first week of looking after yourself.",
+  "@rhythmMilestoneWeek1": {
+    "description": "Milestone headline on the weekly 'rhythm' (sunrise) card when the weekly goal is met for the first week. Warm, celebratory, never pressuring."
+  },
+  "rhythmMilestoneWeek4": "A month of looking after yourself.",
+  "@rhythmMilestoneWeek4": {
+    "description": "Rhythm milestone headline: 4 weeks in a row of meeting the weekly goal."
+  },
+  "rhythmMilestoneWeek12": "Three months of showing up for yourself.",
+  "@rhythmMilestoneWeek12": {
+    "description": "Rhythm milestone headline: 12 weeks in a row."
+  },
+  "rhythmMilestoneWeek26": "Half a year of small, steady steps.",
+  "@rhythmMilestoneWeek26": {
+    "description": "Rhythm milestone headline: 26 weeks in a row."
+  },
+  "rhythmMilestoneWeek52": "A whole year of sunrises.",
+  "@rhythmMilestoneWeek52": {
+    "description": "Rhythm milestone headline: 52 weeks in a row. The card shows a sunrise picture that rises as the week fills."
+  },
+  "rhythmWelcomeBack": "Welcome back",
+  "@rhythmWelcomeBack": {
+    "description": "Rhythm card headline when someone returns after 3+ days away. Never about loss."
+  },
+  "rhythmSunIsUp": "Your sun is up this week",
+  "@rhythmSunIsUp": {
+    "description": "Rhythm card headline when the weekly goal is met (the sunrise picture is fully risen)."
+  },
+  "rhythmNewWeek": "A new week, a new sunrise",
+  "@rhythmNewWeek": {
+    "description": "Rhythm card headline at the start of a week with nothing done yet."
+  },
+  "rhythmDaysThisWeek": "{goal, plural, other{{days} of {goal} days this week}}",
+  "@rhythmDaysThisWeek": {
+    "description": "Rhythm card headline: progress towards the weekly goal of days.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "2"
+      },
+      "goal": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "rhythmAnyStepCounts": "Any small step counts — a check-in, a breath, a few lines.",
+  "@rhythmAnyStepCounts": {
+    "description": "Line under the rhythm headline before anything has been done: any small action (mood check-in, breathing exercise, journal entry) counts."
+  },
+  "rhythmShownUpWelcomeBack": "{days, plural, =1{You've shown up 1 day in total. Today can count too.} other{You've shown up {days} days in total. Today can count too.}}",
+  "@rhythmShownUpWelcomeBack": {
+    "description": "Line under 'Welcome back' on the rhythm card: total days shown up, and an invitation to count today.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "rhythmWeeksAndTotal": "{days, plural, =1{{weeks}-week rhythm · 1 day in total} other{{weeks}-week rhythm · {days} days in total}}",
+  "@rhythmWeeksAndTotal": {
+    "description": "Line under the rhythm headline: how many weeks in a row the goal was met, and total days shown up.",
+    "placeholders": {
+      "weeks": {
+        "type": "int",
+        "example": "3"
+      },
+      "days": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "rhythmDaysInTotal": "{days, plural, =1{1 day in total} other{{days} days in total}}",
+  "@rhythmDaysInTotal": {
+    "description": "Line under the rhythm headline: total days someone has shown up.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "rhythmCardSemantics": "{headline}. {detail}",
+  "@rhythmCardSemantics": {
+    "description": "Screen-reader label for the rhythm card: the headline and the line under it.",
+    "placeholders": {
+      "headline": {
+        "type": "String",
+        "example": "Welcome back"
+      },
+      "detail": {
+        "type": "String",
+        "example": "12 days in total"
+      }
+    }
+  },
+  "rhythmTitle": "Your rhythm",
+  "@rhythmTitle": {
+    "description": "Title of the rhythm screen (weekly goal of days looking after yourself, shown as a sunrise)."
+  },
+  "rhythmWeeklyGoalHeading": "Your weekly goal",
+  "@rhythmWeeklyGoalHeading": {
+    "description": "Heading above the choice of how many days a week to aim for."
+  },
+  "rhythmWeeklyGoalBody": "How many days a week feels right? The other days are rest days — they're part of the rhythm too.",
+  "@rhythmWeeklyGoalBody": {
+    "description": "Explains the weekly goal; missed days are rest days, not failures."
+  },
+  "rhythmDaysAWeek": "{count, plural, =1{1 day a week} other{{count} days a week}}",
+  "@rhythmDaysAWeek": {
+    "description": "Under the 1–7 goal chips: the chosen weekly goal.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "rhythmLastTwelveWeeks": "The last twelve weeks",
+  "@rhythmLastTwelveWeeks": {
+    "description": "Heading above twelve small suns, one per past week."
+  },
+  "rhythmStatWeekRhythm": "{count, plural, other{week rhythm}}",
+  "@rhythmStatWeekRhythm": {
+    "description": "Small label under a big number: weeks in a row the goal was met. Only the words; the number is shown above.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rhythmStatLongest": "{count, plural, other{longest}}",
+  "@rhythmStatLongest": {
+    "description": "Small label under a big number: the longest run of weeks. Only the word.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rhythmStatDaysInTotal": "{count, plural, other{days in total}}",
+  "@rhythmStatDaysInTotal": {
+    "description": "Small label under a big number: total days shown up. Only the words.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rhythmWhatCounts": "What counts",
+  "@rhythmWhatCounts": {
+    "description": "Heading above the list of actions that count as showing up for the day."
+  },
+  "rhythmCountsMood": "A mood check-in",
+  "@rhythmCountsMood": {
+    "description": "Item in 'What counts' on the rhythm screen."
+  },
+  "rhythmCountsPractice": "A meditation or breathing exercise",
+  "@rhythmCountsPractice": {
+    "description": "Item in 'What counts' on the rhythm screen."
+  },
+  "rhythmCountsSound": "Listening to a sound",
+  "@rhythmCountsSound": {
+    "description": "Item in 'What counts' on the rhythm screen (calming sounds)."
+  },
+  "rhythmCountsJournal": "A journal entry",
+  "@rhythmCountsJournal": {
+    "description": "Item in 'What counts' on the rhythm screen."
+  },
+  "rhythmNothingIsLost": "One small step is enough for the day. Nothing is lost when you take a break — every day you've shown up stays counted.",
+  "@rhythmNothingIsLost": {
+    "description": "Reassurance at the bottom of the rhythm screen."
+  },
+  "recoveryMilestoneDayOne": "Day one",
+  "@recoveryMilestoneDayOne": {
+    "description": "Name of the first milestone on a recovery streak (the day someone starts). Shown in milestone lists."
+  },
+  "recoveryMilestoneDays": "{count, plural, =1{1 day} other{{count} days}}",
+  "@recoveryMilestoneDays": {
+    "description": "Name of a recovery-streak milestone measured in days (e.g. '3 days', '90 days').",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "recoveryMilestoneWeeks": "{count, plural, =1{1 week} other{{count} weeks}}",
+  "@recoveryMilestoneWeeks": {
+    "description": "Name of a recovery-streak milestone in weeks (e.g. '1 week', '2 weeks').",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "recoveryMilestoneMonths": "{count, plural, =1{1 month} other{{count} months}}",
+  "@recoveryMilestoneMonths": {
+    "description": "Name of a recovery-streak milestone in months (e.g. '1 month', '6 months').",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "recoveryMilestoneYears": "{count, plural, =1{1 year} other{{count} years}}",
+  "@recoveryMilestoneYears": {
+    "description": "Name of a recovery-streak milestone in years ('1 year').",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "recoveryTriggerStress": "Stress",
+  "@recoveryTriggerStress": {
+    "description": "What set off a craving: stress. Choice chip in the craving log, also in charts."
+  },
+  "recoveryTriggerBoredom": "Boredom",
+  "@recoveryTriggerBoredom": {
+    "description": "What set off a craving: boredom. Choice chip in the craving log."
+  },
+  "recoveryTriggerLoneliness": "Loneliness",
+  "@recoveryTriggerLoneliness": {
+    "description": "What set off a craving: loneliness. Choice chip in the craving log."
+  },
+  "recoveryTriggerSocialPressure": "Social pressure",
+  "@recoveryTriggerSocialPressure": {
+    "description": "What set off a craving: pressure from people around you. Choice chip in the craving log."
+  },
+  "recoveryTriggerTiredness": "Tiredness",
+  "@recoveryTriggerTiredness": {
+    "description": "What set off a craving: tiredness. Choice chip in the craving log."
+  },
+  "recoveryTriggerHabit": "Habit",
+  "@recoveryTriggerHabit": {
+    "description": "What set off a craving: plain habit/routine. Choice chip in the craving log."
+  },
+  "recoveryTriggerOther": "Other",
+  "@recoveryTriggerOther": {
+    "description": "What set off a craving: something else. Choice chip in the craving log."
+  },
+  "recoveryPartOfDayMorning": "Morning",
+  "@recoveryPartOfDayMorning": {
+    "description": "Part of the day a craving was logged (6:00–12:00). Label in the trigger insights chart; can be a single word."
+  },
+  "recoveryPartOfDayAfternoon": "Afternoon",
+  "@recoveryPartOfDayAfternoon": {
+    "description": "Part of the day a craving was logged (12:00–18:00)."
+  },
+  "recoveryPartOfDayEvening": "Evening",
+  "@recoveryPartOfDayEvening": {
+    "description": "Part of the day a craving was logged (18:00–24:00)."
+  },
+  "recoveryPartOfDayNight": "Night",
+  "@recoveryPartOfDayNight": {
+    "description": "Part of the day a craving was logged (0:00–6:00)."
+  },
+  "recoveryPremiumTitle": "Recovery tracking is part of Premium",
+  "@recoveryPremiumTitle": {
+    "description": "Title of the upgrade sheet when a free user taps a premium recovery tool."
+  },
+  "recoveryPremiumMessage": "Urge surfing is free for everyone, always. Premium adds commitment streaks, daily pledges, and the trigger tracker — and {offer}.",
+  "@recoveryPremiumMessage": {
+    "description": "Body of the recovery upgrade sheet. offer is the intro offer phrase, already translated, e.g. 'a 7-day free trial'.",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "a 7-day free trial"
+      }
+    }
+  },
+  "recoveryAddHabitTitle": "What are you leaving behind?",
+  "@recoveryAddHabitTitle": {
+    "description": "Title of the sheet for adding a recovery commitment (a habit or substance someone is stopping). Gentle, non-judgemental."
+  },
+  "recoveryAddHabitHint": "e.g. Alcohol, smoking, gambling…",
+  "@recoveryAddHabitHint": {
+    "description": "Label/hint of the text field for what someone is quitting."
+  },
+  "recoveryCountingFrom": "Counting from",
+  "@recoveryCountingFrom": {
+    "description": "Label above the choice of the streak's start date (Today, Yesterday, Pick a date)."
+  },
+  "recoveryToday": "Today",
+  "@recoveryToday": {
+    "description": "Start-date choice chip when adding a recovery commitment."
+  },
+  "recoveryYesterday": "Yesterday",
+  "@recoveryYesterday": {
+    "description": "Start-date choice chip when adding a recovery commitment."
+  },
+  "recoveryPickADate": "Pick a date",
+  "@recoveryPickADate": {
+    "description": "Chip that opens a date picker for the streak's start date."
+  },
+  "recoverySaveFailed": "Couldn't save — check your connection.",
+  "@recoverySaveFailed": {
+    "description": "Snackbar when saving recovery data (or a journal entry from a recovery tool) fails."
+  },
+  "recoveryDeleteFailed": "Couldn't delete — check your connection.",
+  "@recoveryDeleteFailed": {
+    "description": "Snackbar when deleting a recovery commitment fails."
+  },
+  "recoveryStartCounting": "Start counting",
+  "@recoveryStartCounting": {
+    "description": "Button that saves a new recovery commitment and starts its day count."
+  },
+  "recoveryPledgedSnack": "Pledged: today, not {habit}.",
+  "@recoveryPledgedSnack": {
+    "description": "Snackbar after the daily pledge. habit is what the person is leaving behind, as they typed it (lower-cased), e.g. 'Pledged: today, not alcohol.'",
+    "placeholders": {
+      "habit": {
+        "type": "String",
+        "example": "alcohol"
+      }
+    }
+  },
+  "recoveryResetTitle": "Starting again?",
+  "@recoveryResetTitle": {
+    "description": "Title of the dialog for resetting a streak after a slip. Kind, no blame."
+  },
+  "recoveryResetBody": "{best, plural, other{Slips happen — they don't erase what you learned. Your best streak ({best} days) stays on record, and day one starts now.}}",
+  "@recoveryResetBody": {
+    "description": "Body of the reset-streak dialog: compassionate; the best streak is kept.",
+    "placeholders": {
+      "best": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "recoveryResetConfirm": "Reset to day one",
+  "@recoveryResetConfirm": {
+    "description": "Confirm button in the reset-streak dialog."
+  },
+  "recoveryRemoveTitle": "Remove \"{habit}\"?",
+  "@recoveryRemoveTitle": {
+    "description": "Title of the dialog for deleting a recovery commitment. habit is its name as the person typed it.",
+    "placeholders": {
+      "habit": {
+        "type": "String",
+        "example": "Alcohol"
+      }
+    }
+  },
+  "recoveryRemoveBody": "Its streak and pledges will be deleted.",
+  "@recoveryRemoveBody": {
+    "description": "Body of the delete-commitment dialog."
+  },
+  "recoveryDayNumber": "Day {day}",
+  "@recoveryDayNumber": {
+    "description": "Big counter on a recovery commitment: which day of the streak it is.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "12"
+      }
+    }
+  },
+  "recoveryResetDayOne": "Reset day one",
+  "@recoveryResetDayOne": {
+    "description": "Menu item on a recovery commitment: start the count again after a slip."
+  },
+  "recoveryPastEveryMilestone": "Past every milestone — extraordinary.",
+  "@recoveryPastEveryMilestone": {
+    "description": "Under a commitment's progress bar once every milestone (up to 1 year) is behind them."
+  },
+  "recoveryNextMilestone": "{daysLeft, plural, =1{Next milestone: {milestone} (1 day to go)} other{Next milestone: {milestone} ({daysLeft} days to go)}}",
+  "@recoveryNextMilestone": {
+    "description": "Under a commitment's progress bar. milestone is a milestone name such as '2 weeks'.",
+    "placeholders": {
+      "milestone": {
+        "type": "String",
+        "example": "2 weeks"
+      },
+      "daysLeft": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "recoveryNextMilestoneWithBest": "{daysLeft, plural, =1{Next milestone: {milestone} (1 day to go) · best {best}} other{Next milestone: {milestone} ({daysLeft} days to go) · best {best}}}",
+  "@recoveryNextMilestoneWithBest": {
+    "description": "Like recoveryNextMilestone, plus the best streak so far in days (just the number).",
+    "placeholders": {
+      "milestone": {
+        "type": "String",
+        "example": "2 weeks"
+      },
+      "daysLeft": {
+        "type": "int",
+        "example": "3"
+      },
+      "best": {
+        "type": "int",
+        "example": "40"
+      }
+    }
+  },
+  "recoveryPledgedForToday": "Pledged for today",
+  "@recoveryPledgedForToday": {
+    "description": "Shown on a commitment once today's pledge is made."
+  },
+  "recoveryPledgeButton": "I'm in for today",
+  "@recoveryPledgeButton": {
+    "description": "Button to make today's pledge (commit to not doing the habit today). First person, encouraging."
+  },
+  "recoveryLogCravingTitle": "Log a craving",
+  "@recoveryLogCravingTitle": {
+    "description": "Title of the sheet for logging a craving."
+  },
+  "recoveryLogCravingSubtitle": "Noticing is progress — patterns lose power once you can see them.",
+  "@recoveryLogCravingSubtitle": {
+    "description": "Subtitle of the log-a-craving sheet."
+  },
+  "recoveryLogCravingStrength": "How strong was it?",
+  "@recoveryLogCravingStrength": {
+    "description": "Label above a 1–5 craving strength scale."
+  },
+  "recoveryLogCravingTrigger": "What set it off?",
+  "@recoveryLogCravingTrigger": {
+    "description": "Label above the craving trigger chips."
+  },
+  "recoveryLogCravingNote": "Anything else? (optional)",
+  "@recoveryLogCravingNote": {
+    "description": "Label of the optional note field when logging a craving."
+  },
+  "recoveryCravingLogged": "Logged. You rode it out — that counts.",
+  "@recoveryCravingLogged": {
+    "description": "Snackbar after logging a craving: affirming that resisting it counts."
+  },
+  "recoveryMinutesAgo": "{minutes, plural, other{{minutes} min ago}}",
+  "@recoveryMinutesAgo": {
+    "description": "When a craving was logged, minutes ago (abbreviated).",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "recoveryHoursAgo": "{hours, plural, other{{hours} h ago}}",
+  "@recoveryHoursAgo": {
+    "description": "When a craving was logged, hours ago (abbreviated).",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "recoveryYesterdayLower": "yesterday",
+  "@recoveryYesterdayLower": {
+    "description": "When a craving was logged: yesterday. Lower case in English because it sits at the end of a row."
+  },
+  "recoveryDaysAgo": "{days, plural, other{{days} days ago}}",
+  "@recoveryDaysAgo": {
+    "description": "When a craving was logged, days ago (always 2 or more).",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "recoveryTitle": "Recovery",
+  "@recoveryTitle": {
+    "description": "Title of the recovery hub (tools for quitting a habit or substance)."
+  },
+  "recoverySubtitle": "One day at a time — with tools for the hard minutes.",
+  "@recoverySubtitle": {
+    "description": "Subtitle on the recovery hub."
+  },
+  "recoveryCravingNowTitle": "Craving right now?",
+  "@recoveryCravingNowTitle": {
+    "description": "Title of the SOS card that opens the guided urge-surfing session."
+  },
+  "recoveryCravingNowBody": "Urges pass. Surf this one — 8 guided minutes.",
+  "@recoveryCravingNowBody": {
+    "description": "Body of the SOS card. 'Surf' refers to 'urge surfing', riding out an urge like a wave."
+  },
+  "recoveryInTheMoment": "In the moment",
+  "@recoveryInTheMoment": {
+    "description": "Section heading above tools for an urge that's happening now."
+  },
+  "recoveryHaltCardTitle": "HALT check",
+  "@recoveryHaltCardTitle": {
+    "description": "Card title for the HALT tool (Hungry, Angry, Lonely, Tired). HALT is a well-known recovery acronym; keep it or use the established local equivalent."
+  },
+  "recoveryHaltCardDetail": "Hungry, angry, lonely, tired — find out what the craving is standing in for.",
+  "@recoveryHaltCardDetail": {
+    "description": "Card description for the HALT tool."
+  },
+  "recoveryTapeCardTitle": "Play the tape forward",
+  "@recoveryTapeCardTitle": {
+    "description": "Card title for the 'play the tape forward' tool: imagine what happens after giving in. Use the established phrase in your language if there is one."
+  },
+  "recoveryTapeCardDetail": "Watch the rest of the film before you decide, then keep it in your journal.",
+  "@recoveryTapeCardDetail": {
+    "description": "Card description for the play-the-tape-forward tool."
+  },
+  "recoveryMyCommitments": "My commitments",
+  "@recoveryMyCommitments": {
+    "description": "Section heading above the person's recovery commitments (habits they're quitting, each with a day count)."
+  },
+  "recoveryAddButton": "+ Add",
+  "@recoveryAddButton": {
+    "description": "Small text button that adds a recovery commitment."
+  },
+  "recoveryCommitmentsLocked": "Count every day, pledge each morning, and celebrate milestones.",
+  "@recoveryCommitmentsLocked": {
+    "description": "Locked (Premium) card in place of the commitments list."
+  },
+  "recoveryLoadError": "Couldn't load your recovery data.",
+  "@recoveryLoadError": {
+    "description": "Error when the recovery hub fails to load."
+  },
+  "recoveryCommitmentsEmpty": "What are you leaving behind? Add it — we'll count every day with you.",
+  "@recoveryCommitmentsEmpty": {
+    "description": "Empty state of the commitments list."
+  },
+  "recoveryMilestonesCardTitle": "Milestones",
+  "@recoveryMilestonesCardTitle": {
+    "description": "Card title opening the milestones screen."
+  },
+  "recoveryMilestonesCardDetail": "Every marker, reached and ahead, for each commitment.",
+  "@recoveryMilestonesCardDetail": {
+    "description": "Card description for the milestones screen."
+  },
+  "recoveryTriggerTracker": "Trigger tracker",
+  "@recoveryTriggerTracker": {
+    "description": "Section heading above the craving log."
+  },
+  "recoveryLogButton": "+ Log",
+  "@recoveryLogButton": {
+    "description": "Small text button that opens the log-a-craving sheet."
+  },
+  "recoveryTrackerLocked": "Log cravings as they happen and learn what sets them off.",
+  "@recoveryTrackerLocked": {
+    "description": "Locked (Premium) card in place of the craving log."
+  },
+  "recoveryTopTrigger": "Your most common trigger lately: {trigger}. Naming it is half the battle.",
+  "@recoveryTopTrigger": {
+    "description": "Insight above the craving log. trigger is a trigger name in lower case, e.g. 'boredom'.",
+    "placeholders": {
+      "trigger": {
+        "type": "String",
+        "example": "boredom"
+      }
+    }
+  },
+  "recoveryCravingsEmpty": "Nothing logged yet. Next time a craving hits, ride it out and note it here.",
+  "@recoveryCravingsEmpty": {
+    "description": "Empty state of the craving log."
+  },
+  "recoveryInsightsCardTitle": "Trigger insights",
+  "@recoveryInsightsCardTitle": {
+    "description": "Card title opening the trigger insights screen."
+  },
+  "recoveryInsightsCardDetail": "What sets them off, when they land, and how hard — over the last 90 days.",
+  "@recoveryInsightsCardDetail": {
+    "description": "Card description for trigger insights ('them' = cravings)."
+  },
+  "recoveryCrisisFooterTrailing": " Recovery is easier with backup — a licensed therapist here is never far away.",
+  "@recoveryCrisisFooterTrailing": {
+    "description": "Appended to the crisis footer at the bottom of the recovery hub. Keep the leading space."
+  },
+  "recoveryDatePattern": "d MMM",
+  "@recoveryDatePattern": {
+    "description": "ICU/intl DateFormat pattern for the date a milestone was reached, this year (English '5 Jan'). A date pattern, not words — e.g. 'd. MMM' or 'M月d日'."
+  },
+  "recoveryDatePatternWithYear": "d MMM y",
+  "@recoveryDatePatternWithYear": {
+    "description": "ICU/intl DateFormat pattern for a milestone date in an earlier year (English '5 Jan 2025'). A date pattern, not words."
+  },
+  "milestonesReachedOn": "Reached {date}",
+  "@milestonesReachedOn": {
+    "description": "Under a reached milestone: the date it was reached.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "5 Jan"
+      }
+    }
+  },
+  "milestonesDaysToGo": "{days, plural, =1{1 day to go} other{{days} days to go}}",
+  "@milestonesDaysToGo": {
+    "description": "Under a milestone not reached yet.",
+    "placeholders": {
+      "days": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "milestonesReached": "{total, plural, other{{reached} of {total} reached}}",
+  "@milestonesReached": {
+    "description": "Under a commitment's name on the milestones screen.",
+    "placeholders": {
+      "reached": {
+        "type": "int",
+        "example": "4"
+      },
+      "total": {
+        "type": "int",
+        "example": "9"
+      }
+    }
+  },
+  "milestonesReachedWithBest": "{total, plural, other{{reached} of {total} reached · best {best} days}}",
+  "@milestonesReachedWithBest": {
+    "description": "Like milestonesReached, plus the best streak in days when it's longer than the current one.",
+    "placeholders": {
+      "reached": {
+        "type": "int",
+        "example": "4"
+      },
+      "total": {
+        "type": "int",
+        "example": "9"
+      },
+      "best": {
+        "type": "int",
+        "example": "40"
+      }
+    }
+  },
+  "milestonesLoadError": "Couldn't load your commitments.",
+  "@milestonesLoadError": {
+    "description": "Error on the milestones screen."
+  },
+  "milestonesEmpty": "No commitments yet. Add one on the recovery screen and every marker below starts counting from today.",
+  "@milestonesEmpty": {
+    "description": "Empty state of the milestones screen."
+  },
+  "milestonesTitle": "Milestones",
+  "@milestonesTitle": {
+    "description": "Title of the milestones screen."
+  },
+  "milestonesSubtitle": "Days add up whether or not anyone claps. Here they are, counted.",
+  "@milestonesSubtitle": {
+    "description": "Subtitle of the milestones screen."
+  },
+  "triggerInsightsLoadError": "Couldn't load your craving log.",
+  "@triggerInsightsLoadError": {
+    "description": "Error on the trigger insights screen."
+  },
+  "triggerInsightsEmpty": "Nothing logged in the last three months. Log a craving as it happens and the pattern shows up here — usually sooner than you'd expect.",
+  "@triggerInsightsEmpty": {
+    "description": "Empty state of the trigger insights screen."
+  },
+  "triggerInsightsStatLogged": "{count, plural, other{logged}}",
+  "@triggerInsightsStatLogged": {
+    "description": "Small label under a big number: cravings logged in 90 days. Only the word.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "triggerInsightsStatAverage": "average",
+  "@triggerInsightsStatAverage": {
+    "description": "Small label under a number: average craving strength (1–5)."
+  },
+  "triggerInsightsStatStrongest": "strongest",
+  "@triggerInsightsStatStrongest": {
+    "description": "Small label under a number: the strongest craving (1–5)."
+  },
+  "triggerInsightsStatUsualTime": "usual time",
+  "@triggerInsightsStatUsualTime": {
+    "description": "Small label under a part of the day (e.g. 'Evening'): when cravings usually land."
+  },
+  "triggerInsightsPattern": "{part, select, morning{{trigger} in the morning is your pattern. That's the one worth planning for.} afternoon{{trigger} in the afternoon is your pattern. That's the one worth planning for.} evening{{trigger} in the evening is your pattern. That's the one worth planning for.} other{{trigger} in the night is your pattern. That's the one worth planning for.}}",
+  "@triggerInsightsPattern": {
+    "description": "Insight on the trigger insights screen: the most common trigger and part of the day. trigger is a trigger name such as 'Boredom'. part is a fixed key (morning/afternoon/evening/night) — translate only the text inside the braces.",
+    "placeholders": {
+      "trigger": {
+        "type": "String",
+        "example": "Boredom"
+      },
+      "part": {
+        "type": "String",
+        "example": "evening"
+      }
+    }
+  },
+  "triggerInsightsWhatSetsThemOff": "What sets them off",
+  "@triggerInsightsWhatSetsThemOff": {
+    "description": "Section heading above a bar chart of craving triggers."
+  },
+  "triggerInsightsWhenTheyLand": "When they land",
+  "@triggerInsightsWhenTheyLand": {
+    "description": "Section heading above a bar chart of the part of day cravings happen."
+  },
+  "triggerInsightsFooter": "Every one of these was a craving you sat with instead of acting on. That is the whole skill.",
+  "@triggerInsightsFooter": {
+    "description": "Encouraging line at the bottom of trigger insights."
+  },
+  "triggerInsightsTitle": "Trigger insights",
+  "@triggerInsightsTitle": {
+    "description": "Title of the trigger insights screen."
+  },
+  "triggerInsightsSubtitle": "Cravings feel random from the inside. Logged, they stop being random — and a pattern you can see is one you can plan around.",
+  "@triggerInsightsSubtitle": {
+    "description": "Subtitle of the trigger insights screen."
+  },
+  "haltHungryTitle": "Hungry",
+  "@haltHungryTitle": {
+    "description": "HALT check: the H, hunger. Title of an option."
+  },
+  "haltHungryQuestion": "When did you last eat something proper?",
+  "@haltHungryQuestion": {
+    "description": "HALT check: question under 'Hungry'."
+  },
+  "haltHungryAdvice": "Low blood sugar feels a lot like craving, and it argues with you the same way. Eat something first — a real meal if you can, anything if you can't — then see what's left of the urge.",
+  "@haltHungryAdvice": {
+    "description": "HALT check: advice shown when 'Hungry' is ticked."
+  },
+  "haltHungryAction": "Steady the breath while you eat",
+  "@haltHungryAction": {
+    "description": "HALT check: button under the hunger advice; opens a short meditation."
+  },
+  "haltAngryTitle": "Angry",
+  "@haltAngryTitle": {
+    "description": "HALT check: the A, anger. Title of an option."
+  },
+  "haltAngryQuestion": "Is something still sitting unsaid?",
+  "@haltAngryQuestion": {
+    "description": "HALT check: question under 'Angry'."
+  },
+  "haltAngryAdvice": "Anger wants somewhere to go, and the old habit is the easiest door. Give it a different one for nine minutes and see if it still wants the same thing.",
+  "@haltAngryAdvice": {
+    "description": "HALT check: advice shown when 'Angry' is ticked."
+  },
+  "haltAngryAction": "Letting go of anger · 9 min",
+  "@haltAngryAction": {
+    "description": "HALT check: button opening the 9-minute meditation 'Letting go of anger'."
+  },
+  "haltLonelyTitle": "Lonely",
+  "@haltLonelyTitle": {
+    "description": "HALT check: the L, loneliness. Title of an option."
+  },
+  "haltLonelyQuestion": "Who have you actually spoken to today?",
+  "@haltLonelyQuestion": {
+    "description": "HALT check: question under 'Lonely'."
+  },
+  "haltLonelyAdvice": "This is the one that most often gets answered with the habit. A real person beats anything else here — and if there isn't one right now, a session is a person.",
+  "@haltLonelyAdvice": {
+    "description": "HALT check: advice shown when 'Lonely' is ticked. 'A session' = a session with a therapist in the app."
+  },
+  "haltLonelyAction": "Talk to a therapist",
+  "@haltLonelyAction": {
+    "description": "HALT check: button opening the therapy screen."
+  },
+  "haltTiredTitle": "Tired",
+  "@haltTiredTitle": {
+    "description": "HALT check: the T, tiredness. Title of an option."
+  },
+  "haltTiredQuestion": "Have you slept properly this week?",
+  "@haltTiredQuestion": {
+    "description": "HALT check: question under 'Tired'."
+  },
+  "haltTiredAdvice": "Tired makes every urge louder and every reason quieter. Nothing you decide right now will be as good as what you decide after some rest.",
+  "@haltTiredAdvice": {
+    "description": "HALT check: advice shown when 'Tired' is ticked."
+  },
+  "haltTiredAction": "Wind down and sleep",
+  "@haltTiredAction": {
+    "description": "HALT check: button opening a sleep sound."
+  },
+  "haltHungryLetter": "H",
+  "@haltHungryLetter": {
+    "description": "Letter on the disc next to 'Hungry' — the H of the HALT acronym. Keep 'H' unless your language uses its own acronym; one character."
+  },
+  "haltAngryLetter": "A",
+  "@haltAngryLetter": {
+    "description": "Letter on the disc next to 'Angry' — the A of HALT. One character."
+  },
+  "haltLonelyLetter": "L",
+  "@haltLonelyLetter": {
+    "description": "Letter on the disc next to 'Lonely' — the L of HALT. One character."
+  },
+  "haltTiredLetter": "T",
+  "@haltTiredLetter": {
+    "description": "Letter on the disc next to 'Tired' — the T of HALT. One character."
+  },
+  "haltTitle": "HALT check",
+  "@haltTitle": {
+    "description": "Title of the HALT check screen (Hungry, Angry, Lonely, Tired)."
+  },
+  "haltIntro": "A craving is often something else wearing a disguise. Before you decide anything, check the four it's usually hiding behind — tick whichever are true.",
+  "@haltIntro": {
+    "description": "Intro on the HALT check screen."
+  },
+  "haltNoneOfThem": "None of them? Then it's the urge on its own — and those pass on their own too. Ride it out.",
+  "@haltNoneOfThem": {
+    "description": "HALT check: shown when nothing is ticked."
+  },
+  "haltWhatThatMeans": "What that means",
+  "@haltWhatThatMeans": {
+    "description": "HALT check: heading above the advice for the ticked needs."
+  },
+  "tapeForwardHourWhen": "In an hour",
+  "@tapeForwardHourWhen": {
+    "description": "Play the tape forward, step 1 heading: imagine an hour after giving in. Also written into the saved journal entry."
+  },
+  "tapeForwardHourQuestion": "You gave in. What does the next hour actually look like?",
+  "@tapeForwardHourQuestion": {
+    "description": "Play the tape forward, step 1 question."
+  },
+  "tapeForwardHourHint": "Not the first five minutes — the hour.",
+  "@tapeForwardHourHint": {
+    "description": "Play the tape forward, step 1 hint in the text field."
+  },
+  "tapeForwardMorningWhen": "Tomorrow morning",
+  "@tapeForwardMorningWhen": {
+    "description": "Play the tape forward, step 2 heading. Also written into the saved journal entry."
+  },
+  "tapeForwardMorningQuestion": "You wake up. What's the first thing you remember?",
+  "@tapeForwardMorningQuestion": {
+    "description": "Play the tape forward, step 2 question."
+  },
+  "tapeForwardMorningHint": "How does the day start from there?",
+  "@tapeForwardMorningHint": {
+    "description": "Play the tape forward, step 2 hint in the text field."
+  },
+  "tapeForwardWeekWhen": "A week from now",
+  "@tapeForwardWeekWhen": {
+    "description": "Play the tape forward, step 3 heading. Also written into the saved journal entry."
+  },
+  "tapeForwardWeekQuestion": "Where has this put you by next week?",
+  "@tapeForwardWeekQuestion": {
+    "description": "Play the tape forward, step 3 question."
+  },
+  "tapeForwardWeekHint": "And what would the other choice have bought you?",
+  "@tapeForwardWeekHint": {
+    "description": "Play the tape forward, step 3 hint in the text field."
+  },
+  "tapeForwardJournalTitle": "Playing the tape forward",
+  "@tapeForwardJournalTitle": {
+    "description": "Title of the journal entry saved from the play-the-tape-forward tool."
+  },
+  "tapeForwardSaved": "Saved to your journal.",
+  "@tapeForwardSaved": {
+    "description": "Snackbar after saving the play-the-tape-forward answers to the journal."
+  },
+  "tapeForwardTitle": "Play the tape forward",
+  "@tapeForwardTitle": {
+    "description": "Title of the play-the-tape-forward screen."
+  },
+  "tapeForwardIntro": "A craving only ever shows you the first five minutes. Watch the rest of the film before you decide — in your own words, because yours are the ones you believe.",
+  "@tapeForwardIntro": {
+    "description": "Intro on the play-the-tape-forward screen."
+  },
+  "tapeForwardSaving": "Saving…",
+  "@tapeForwardSaving": {
+    "description": "Button label while the answers are being saved."
+  },
+  "tapeForwardKeep": "Keep this in my journal",
+  "@tapeForwardKeep": {
+    "description": "Button that saves the answers as a journal entry."
+  },
+  "tapeForwardFooter": "Next time, this is waiting for you — written by the one person the craving can't argue with.",
+  "@tapeForwardFooter": {
+    "description": "Line under the save button: the entry will be there for the next craving."
+  },
+  "rhythmWeekdayLetters": "M T W T F S S",
+  "@rhythmWeekdayLetters": {
+    "description": "One-letter (or one-character) names of the weekdays, Monday first, separated by single spaces — exactly 7 items. Shown under seven small suns on the rhythm card."
   }
 }

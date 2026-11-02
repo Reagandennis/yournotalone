@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
 import '../sounds/sounds_catalog.dart';
@@ -23,13 +24,16 @@ class _Need {
     required this.open,
   });
 
+  /// Which of the four this is; the HALT letter in English.
   final String letter;
-  final String title;
-  final String question;
+
+  /// The words, in the language being shown.
+  final String Function(AppLocalizations) title;
+  final String Function(AppLocalizations) question;
   final IconData icon;
   final Color accent;
-  final String advice;
-  final String action;
+  final String Function(AppLocalizations) advice;
+  final String Function(AppLocalizations) action;
   final void Function(BuildContext) open;
 }
 
@@ -55,14 +59,12 @@ const haltSoundTitles = ['Pink noise'];
 final _needs = <_Need>[
   _Need(
     letter: 'H',
-    title: 'Hungry',
-    question: 'When did you last eat something proper?',
+    title: (l) => l.haltHungryTitle,
+    question: (l) => l.haltHungryQuestion,
     icon: Icons.restaurant_rounded,
     accent: Pillars.yellow,
-    advice: 'Low blood sugar feels a lot like craving, and it argues with '
-        'you the same way. Eat something first — a real meal if you can, '
-        'anything if you can\'t — then see what\'s left of the urge.',
-    action: 'Steady the breath while you eat',
+    advice: (l) => l.haltHungryAdvice,
+    action: (l) => l.haltHungryAction,
     open: (context) => Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => MeditationScreen(meditation: _meditation('Midday reset')),
@@ -71,14 +73,12 @@ final _needs = <_Need>[
   ),
   _Need(
     letter: 'A',
-    title: 'Angry',
-    question: 'Is something still sitting unsaid?',
+    title: (l) => l.haltAngryTitle,
+    question: (l) => l.haltAngryQuestion,
     icon: Icons.local_fire_department_rounded,
     accent: Pillars.red,
-    advice: 'Anger wants somewhere to go, and the old habit is the easiest '
-        'door. Give it a different one for nine minutes and see if it '
-        'still wants the same thing.',
-    action: 'Letting go of anger · 9 min',
+    advice: (l) => l.haltAngryAdvice,
+    action: (l) => l.haltAngryAction,
     open: (context) => Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) =>
@@ -88,26 +88,22 @@ final _needs = <_Need>[
   ),
   _Need(
     letter: 'L',
-    title: 'Lonely',
-    question: 'Who have you actually spoken to today?',
+    title: (l) => l.haltLonelyTitle,
+    question: (l) => l.haltLonelyQuestion,
     icon: Icons.people_alt_rounded,
     accent: Pillars.blue,
-    advice: 'This is the one that most often gets answered with the habit. '
-        'A real person beats anything else here — and if there isn\'t one '
-        'right now, a session is a person.',
-    action: 'Talk to a therapist',
+    advice: (l) => l.haltLonelyAdvice,
+    action: (l) => l.haltLonelyAction,
     open: (context) => Navigator.of(context).push(TherapyScreen.route()),
   ),
   _Need(
     letter: 'T',
-    title: 'Tired',
-    question: 'Have you slept properly this week?',
+    title: (l) => l.haltTiredTitle,
+    question: (l) => l.haltTiredQuestion,
     icon: Icons.bedtime_rounded,
     accent: Pillars.black,
-    advice: 'Tired makes every urge louder and every reason quieter. '
-        'Nothing you decide right now will be as good as what you decide '
-        'after some rest.',
-    action: 'Wind down and sleep',
+    advice: (l) => l.haltTiredAdvice,
+    action: (l) => l.haltTiredAction,
     open: (context) => Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => PlayerScreen(sound: _sound('Pink noise'))),
     ),
@@ -125,6 +121,15 @@ class HaltScreen extends StatefulWidget {
 
 class _HaltScreenState extends State<HaltScreen> {
   final _picked = <String>{};
+
+  /// The letter on a need's disc, which a language can change to fit its
+  /// own words for the four.
+  String _letter(AppLocalizations l10n, String letter) => switch (letter) {
+        'H' => l10n.haltHungryLetter,
+        'A' => l10n.haltAngryLetter,
+        'L' => l10n.haltLonelyLetter,
+        _ => l10n.haltTiredLetter,
+      };
 
   Widget _option(_Need need) {
     final c = context.brand;
@@ -164,7 +169,7 @@ class _HaltScreenState extends State<HaltScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      need.letter,
+                      _letter(context.l10n, need.letter),
                       style: TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
@@ -179,7 +184,7 @@ class _HaltScreenState extends State<HaltScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        need.title,
+                        need.title(context.l10n),
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -188,7 +193,7 @@ class _HaltScreenState extends State<HaltScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        need.question,
+                        need.question(context.l10n),
                         style: TextStyle(
                           fontSize: 12.5,
                           color: c.textMuted,
@@ -233,7 +238,7 @@ class _HaltScreenState extends State<HaltScreen> {
                 Icon(need.icon, size: 19, color: accent),
                 const SizedBox(width: 10),
                 Text(
-                  need.title,
+                  need.title(context.l10n),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -244,7 +249,7 @@ class _HaltScreenState extends State<HaltScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              need.advice,
+              need.advice(context.l10n),
               style: TextStyle(
                 fontSize: 13.5,
                 color: c.ink,
@@ -263,7 +268,7 @@ class _HaltScreenState extends State<HaltScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: Text(need.action),
+                child: Text(need.action(context.l10n)),
               ),
             ),
           ],
@@ -290,7 +295,7 @@ class _HaltScreenState extends State<HaltScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'HALT check',
+                  context.l10n.haltTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -302,9 +307,7 @@ class _HaltScreenState extends State<HaltScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'A craving is often something else wearing a disguise. '
-                  'Before you decide anything, check the four it\'s usually '
-                  'hiding behind — tick whichever are true.',
+                  context.l10n.haltIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -322,8 +325,7 @@ class _HaltScreenState extends State<HaltScreen> {
                       borderRadius: BorderRadius.circular(18),
                     ),
                     child: Text(
-                      'None of them? Then it\'s the urge on its own — and '
-                      'those pass on their own too. Ride it out.',
+                      context.l10n.haltNoneOfThem,
                       style: TextStyle(
                         fontSize: 13.5,
                         color: c.textMuted,
@@ -332,7 +334,7 @@ class _HaltScreenState extends State<HaltScreen> {
                     ),
                   )
                 else ...[
-                  const SectionHeader(title: 'What that means'),
+                  SectionHeader(title: context.l10n.haltWhatThatMeans),
                   const SizedBox(height: 12),
                   for (final need in picked) _answer(need),
                 ],

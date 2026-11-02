@@ -8,15 +8,17 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
 
 /// Rhythm milestones, in weeks, each with the line that marks it.
-const rhythmMilestones = {
-  1: 'A first week of looking after yourself.',
-  4: 'A month of looking after yourself.',
-  12: 'Three months of showing up for yourself.',
-  26: 'Half a year of small, steady steps.',
-  52: 'A whole year of sunrises.',
+String? rhythmMilestone(AppLocalizations l10n, int weeks) => switch (weeks) {
+  1 => l10n.rhythmMilestoneWeek1,
+  4 => l10n.rhythmMilestoneWeek4,
+  12 => l10n.rhythmMilestoneWeek12,
+  26 => l10n.rhythmMilestoneWeek26,
+  52 => l10n.rhythmMilestoneWeek52,
+  _ => null,
 };
 
 /// How often someone has shown up for themselves: a weekly goal rather than
@@ -80,7 +82,11 @@ class Rhythm {
       !showedUpToday && daysSinceLast != null && daysSinceLast! >= 3;
 
   /// The milestone line, in the week it's reached.
-  String? get milestone => goalMet ? rhythmMilestones[weeksInRhythm] : null;
+  String? get milestone => milestoneIn(currentL10n());
+
+  /// [milestone] in the language of [l10n].
+  String? milestoneIn(AppLocalizations l10n) =>
+      goalMet ? rhythmMilestone(l10n, weeksInRhythm) : null;
 
   /// The same history with today counted — for the moment a check-in is
   /// made, before anything is fetched again.

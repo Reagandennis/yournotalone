@@ -3713,4 +3713,946 @@ class AppLocalizationsEn extends AppLocalizations {
   String journalIntroFree(int count, int limit) {
     return 'A private place for whatever\'s on your mind · $count/$limit free entries used.';
   }
+
+  @override
+  String get practiceKindMeditation => 'Meditation';
+
+  @override
+  String get practiceKindBreathing => 'Breathing';
+
+  @override
+  String get practiceKindSound => 'Sound';
+
+  @override
+  String get feelingWorse => 'Worse';
+
+  @override
+  String get feelingSame => 'About the same';
+
+  @override
+  String get feelingBetter => 'Better';
+
+  @override
+  String feelingSummaryLine(int answered, int better) {
+    String _temp0 = intl.Intl.pluralLogic(
+      answered,
+      locale: localeName,
+      other: 'You felt better after $better of your last $answered sessions.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get practiceFreeSessionsDoneTitle =>
+      'You\'ve finished your free sessions';
+
+  @override
+  String practiceFreeSessionsDoneMessage(String offer) {
+    return 'Premium opens all 20 meditations and every breathing exercise, with the sounds to go with them — and $offer.';
+  }
+
+  @override
+  String get closeOutHowDoYouFeel => 'How do you feel now?';
+
+  @override
+  String get closeOutNoted => 'Noted. Thank you.';
+
+  @override
+  String get closeOutCompared => 'Compared with when you started.';
+
+  @override
+  String get closeOutWriteAboutIt => 'Write about it';
+
+  @override
+  String closeOutJournalSeed(String title) {
+    return 'After $title, I noticed ';
+  }
+
+  @override
+  String get practiceToday => 'Today';
+
+  @override
+  String get practiceYesterday => 'Yesterday';
+
+  @override
+  String get practiceDatePattern => 'd MMM';
+
+  @override
+  String get practiceDatePatternWithYear => 'd MMM y';
+
+  @override
+  String practiceSessionMeta(String kind, String date) {
+    return '$kind · $date';
+  }
+
+  @override
+  String practiceMinutesShort(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get practiceLoadError => 'Couldn\'t load your practice history.';
+
+  @override
+  String get practiceEmpty =>
+      'Nothing here yet. Finish a meditation, a breathing session, or a few minutes of sound, and it starts filling in.';
+
+  @override
+  String get practiceLast30Days => 'Last 30 days';
+
+  @override
+  String practiceStatSessions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'sessions',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String practiceStatMinutes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'minutes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String practiceStatDayStreak(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'day streak',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String practiceStatThisWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'this week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get practiceEverySession => 'Every session';
+
+  @override
+  String get practiceTitle => 'Your practice';
+
+  @override
+  String get practiceSubtitle =>
+      'Minutes nobody else counted. They still happened.';
+
+  @override
+  String get courseDayDone => 'Done';
+
+  @override
+  String get courseDayOpensTomorrow => 'Opens tomorrow';
+
+  @override
+  String courseDayNumber(int day) {
+    return 'Day $day';
+  }
+
+  @override
+  String courseAllDaysDone(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'All $days days done. Come back to any of them whenever you need.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String courseDaysDoneProgress(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$done of $total days done · one new step each day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String courseCardPickedForYou(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Picked for you · $days days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String courseCardStepADay(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days · a step a day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String courseCardFinished(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Finished · all $days days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String courseCardReadyToday(int day, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: 'Day $day of $total · ready today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String courseCardOpensTomorrow(int day) {
+    return 'Day $day opens tomorrow';
+  }
+
+  @override
+  String get rhythmMilestoneWeek1 => 'A first week of looking after yourself.';
+
+  @override
+  String get rhythmMilestoneWeek4 => 'A month of looking after yourself.';
+
+  @override
+  String get rhythmMilestoneWeek12 =>
+      'Three months of showing up for yourself.';
+
+  @override
+  String get rhythmMilestoneWeek26 => 'Half a year of small, steady steps.';
+
+  @override
+  String get rhythmMilestoneWeek52 => 'A whole year of sunrises.';
+
+  @override
+  String get rhythmWelcomeBack => 'Welcome back';
+
+  @override
+  String get rhythmSunIsUp => 'Your sun is up this week';
+
+  @override
+  String get rhythmNewWeek => 'A new week, a new sunrise';
+
+  @override
+  String rhythmDaysThisWeek(int days, int goal) {
+    String _temp0 = intl.Intl.pluralLogic(
+      goal,
+      locale: localeName,
+      other: '$days of $goal days this week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rhythmAnyStepCounts =>
+      'Any small step counts — a check-in, a breath, a few lines.';
+
+  @override
+  String rhythmShownUpWelcomeBack(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'You\'ve shown up $days days in total. Today can count too.',
+      one: 'You\'ve shown up 1 day in total. Today can count too.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rhythmWeeksAndTotal(int weeks, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$weeks-week rhythm · $days days in total',
+      one: '$weeks-week rhythm · 1 day in total',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rhythmDaysInTotal(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days in total',
+      one: '1 day in total',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rhythmCardSemantics(String headline, String detail) {
+    return '$headline. $detail';
+  }
+
+  @override
+  String get rhythmTitle => 'Your rhythm';
+
+  @override
+  String get rhythmWeeklyGoalHeading => 'Your weekly goal';
+
+  @override
+  String get rhythmWeeklyGoalBody =>
+      'How many days a week feels right? The other days are rest days — they\'re part of the rhythm too.';
+
+  @override
+  String rhythmDaysAWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days a week',
+      one: '1 day a week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rhythmLastTwelveWeeks => 'The last twelve weeks';
+
+  @override
+  String rhythmStatWeekRhythm(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'week rhythm',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rhythmStatLongest(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'longest',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String rhythmStatDaysInTotal(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'days in total',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rhythmWhatCounts => 'What counts';
+
+  @override
+  String get rhythmCountsMood => 'A mood check-in';
+
+  @override
+  String get rhythmCountsPractice => 'A meditation or breathing exercise';
+
+  @override
+  String get rhythmCountsSound => 'Listening to a sound';
+
+  @override
+  String get rhythmCountsJournal => 'A journal entry';
+
+  @override
+  String get rhythmNothingIsLost =>
+      'One small step is enough for the day. Nothing is lost when you take a break — every day you\'ve shown up stays counted.';
+
+  @override
+  String get recoveryMilestoneDayOne => 'Day one';
+
+  @override
+  String recoveryMilestoneDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recoveryMilestoneWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weeks',
+      one: '1 week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recoveryMilestoneMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recoveryMilestoneYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recoveryTriggerStress => 'Stress';
+
+  @override
+  String get recoveryTriggerBoredom => 'Boredom';
+
+  @override
+  String get recoveryTriggerLoneliness => 'Loneliness';
+
+  @override
+  String get recoveryTriggerSocialPressure => 'Social pressure';
+
+  @override
+  String get recoveryTriggerTiredness => 'Tiredness';
+
+  @override
+  String get recoveryTriggerHabit => 'Habit';
+
+  @override
+  String get recoveryTriggerOther => 'Other';
+
+  @override
+  String get recoveryPartOfDayMorning => 'Morning';
+
+  @override
+  String get recoveryPartOfDayAfternoon => 'Afternoon';
+
+  @override
+  String get recoveryPartOfDayEvening => 'Evening';
+
+  @override
+  String get recoveryPartOfDayNight => 'Night';
+
+  @override
+  String get recoveryPremiumTitle => 'Recovery tracking is part of Premium';
+
+  @override
+  String recoveryPremiumMessage(String offer) {
+    return 'Urge surfing is free for everyone, always. Premium adds commitment streaks, daily pledges, and the trigger tracker — and $offer.';
+  }
+
+  @override
+  String get recoveryAddHabitTitle => 'What are you leaving behind?';
+
+  @override
+  String get recoveryAddHabitHint => 'e.g. Alcohol, smoking, gambling…';
+
+  @override
+  String get recoveryCountingFrom => 'Counting from';
+
+  @override
+  String get recoveryToday => 'Today';
+
+  @override
+  String get recoveryYesterday => 'Yesterday';
+
+  @override
+  String get recoveryPickADate => 'Pick a date';
+
+  @override
+  String get recoverySaveFailed => 'Couldn\'t save — check your connection.';
+
+  @override
+  String get recoveryDeleteFailed =>
+      'Couldn\'t delete — check your connection.';
+
+  @override
+  String get recoveryStartCounting => 'Start counting';
+
+  @override
+  String recoveryPledgedSnack(String habit) {
+    return 'Pledged: today, not $habit.';
+  }
+
+  @override
+  String get recoveryResetTitle => 'Starting again?';
+
+  @override
+  String recoveryResetBody(int best) {
+    String _temp0 = intl.Intl.pluralLogic(
+      best,
+      locale: localeName,
+      other:
+          'Slips happen — they don\'t erase what you learned. Your best streak ($best days) stays on record, and day one starts now.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recoveryResetConfirm => 'Reset to day one';
+
+  @override
+  String recoveryRemoveTitle(String habit) {
+    return 'Remove \"$habit\"?';
+  }
+
+  @override
+  String get recoveryRemoveBody => 'Its streak and pledges will be deleted.';
+
+  @override
+  String recoveryDayNumber(int day) {
+    return 'Day $day';
+  }
+
+  @override
+  String get recoveryResetDayOne => 'Reset day one';
+
+  @override
+  String get recoveryPastEveryMilestone =>
+      'Past every milestone — extraordinary.';
+
+  @override
+  String recoveryNextMilestone(String milestone, int daysLeft) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysLeft,
+      locale: localeName,
+      other: 'Next milestone: $milestone ($daysLeft days to go)',
+      one: 'Next milestone: $milestone (1 day to go)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recoveryNextMilestoneWithBest(
+    String milestone,
+    int daysLeft,
+    int best,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysLeft,
+      locale: localeName,
+      other: 'Next milestone: $milestone ($daysLeft days to go) · best $best',
+      one: 'Next milestone: $milestone (1 day to go) · best $best',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recoveryPledgedForToday => 'Pledged for today';
+
+  @override
+  String get recoveryPledgeButton => 'I\'m in for today';
+
+  @override
+  String get recoveryLogCravingTitle => 'Log a craving';
+
+  @override
+  String get recoveryLogCravingSubtitle =>
+      'Noticing is progress — patterns lose power once you can see them.';
+
+  @override
+  String get recoveryLogCravingStrength => 'How strong was it?';
+
+  @override
+  String get recoveryLogCravingTrigger => 'What set it off?';
+
+  @override
+  String get recoveryLogCravingNote => 'Anything else? (optional)';
+
+  @override
+  String get recoveryCravingLogged => 'Logged. You rode it out — that counts.';
+
+  @override
+  String recoveryMinutesAgo(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recoveryHoursAgo(int hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours h ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recoveryYesterdayLower => 'yesterday';
+
+  @override
+  String recoveryDaysAgo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recoveryTitle => 'Recovery';
+
+  @override
+  String get recoverySubtitle =>
+      'One day at a time — with tools for the hard minutes.';
+
+  @override
+  String get recoveryCravingNowTitle => 'Craving right now?';
+
+  @override
+  String get recoveryCravingNowBody =>
+      'Urges pass. Surf this one — 8 guided minutes.';
+
+  @override
+  String get recoveryInTheMoment => 'In the moment';
+
+  @override
+  String get recoveryHaltCardTitle => 'HALT check';
+
+  @override
+  String get recoveryHaltCardDetail =>
+      'Hungry, angry, lonely, tired — find out what the craving is standing in for.';
+
+  @override
+  String get recoveryTapeCardTitle => 'Play the tape forward';
+
+  @override
+  String get recoveryTapeCardDetail =>
+      'Watch the rest of the film before you decide, then keep it in your journal.';
+
+  @override
+  String get recoveryMyCommitments => 'My commitments';
+
+  @override
+  String get recoveryAddButton => '+ Add';
+
+  @override
+  String get recoveryCommitmentsLocked =>
+      'Count every day, pledge each morning, and celebrate milestones.';
+
+  @override
+  String get recoveryLoadError => 'Couldn\'t load your recovery data.';
+
+  @override
+  String get recoveryCommitmentsEmpty =>
+      'What are you leaving behind? Add it — we\'ll count every day with you.';
+
+  @override
+  String get recoveryMilestonesCardTitle => 'Milestones';
+
+  @override
+  String get recoveryMilestonesCardDetail =>
+      'Every marker, reached and ahead, for each commitment.';
+
+  @override
+  String get recoveryTriggerTracker => 'Trigger tracker';
+
+  @override
+  String get recoveryLogButton => '+ Log';
+
+  @override
+  String get recoveryTrackerLocked =>
+      'Log cravings as they happen and learn what sets them off.';
+
+  @override
+  String recoveryTopTrigger(String trigger) {
+    return 'Your most common trigger lately: $trigger. Naming it is half the battle.';
+  }
+
+  @override
+  String get recoveryCravingsEmpty =>
+      'Nothing logged yet. Next time a craving hits, ride it out and note it here.';
+
+  @override
+  String get recoveryInsightsCardTitle => 'Trigger insights';
+
+  @override
+  String get recoveryInsightsCardDetail =>
+      'What sets them off, when they land, and how hard — over the last 90 days.';
+
+  @override
+  String get recoveryCrisisFooterTrailing =>
+      ' Recovery is easier with backup — a licensed therapist here is never far away.';
+
+  @override
+  String get recoveryDatePattern => 'd MMM';
+
+  @override
+  String get recoveryDatePatternWithYear => 'd MMM y';
+
+  @override
+  String milestonesReachedOn(String date) {
+    return 'Reached $date';
+  }
+
+  @override
+  String milestonesDaysToGo(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days to go',
+      one: '1 day to go',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesReached(int reached, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$reached of $total reached',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String milestonesReachedWithBest(int reached, int total, int best) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$reached of $total reached · best $best days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get milestonesLoadError => 'Couldn\'t load your commitments.';
+
+  @override
+  String get milestonesEmpty =>
+      'No commitments yet. Add one on the recovery screen and every marker below starts counting from today.';
+
+  @override
+  String get milestonesTitle => 'Milestones';
+
+  @override
+  String get milestonesSubtitle =>
+      'Days add up whether or not anyone claps. Here they are, counted.';
+
+  @override
+  String get triggerInsightsLoadError => 'Couldn\'t load your craving log.';
+
+  @override
+  String get triggerInsightsEmpty =>
+      'Nothing logged in the last three months. Log a craving as it happens and the pattern shows up here — usually sooner than you\'d expect.';
+
+  @override
+  String triggerInsightsStatLogged(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'logged',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get triggerInsightsStatAverage => 'average';
+
+  @override
+  String get triggerInsightsStatStrongest => 'strongest';
+
+  @override
+  String get triggerInsightsStatUsualTime => 'usual time';
+
+  @override
+  String triggerInsightsPattern(String trigger, String part) {
+    String _temp0 = intl.Intl.selectLogic(part, {
+      'morning':
+          '$trigger in the morning is your pattern. That\'s the one worth planning for.',
+      'afternoon':
+          '$trigger in the afternoon is your pattern. That\'s the one worth planning for.',
+      'evening':
+          '$trigger in the evening is your pattern. That\'s the one worth planning for.',
+      'other':
+          '$trigger in the night is your pattern. That\'s the one worth planning for.',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get triggerInsightsWhatSetsThemOff => 'What sets them off';
+
+  @override
+  String get triggerInsightsWhenTheyLand => 'When they land';
+
+  @override
+  String get triggerInsightsFooter =>
+      'Every one of these was a craving you sat with instead of acting on. That is the whole skill.';
+
+  @override
+  String get triggerInsightsTitle => 'Trigger insights';
+
+  @override
+  String get triggerInsightsSubtitle =>
+      'Cravings feel random from the inside. Logged, they stop being random — and a pattern you can see is one you can plan around.';
+
+  @override
+  String get haltHungryTitle => 'Hungry';
+
+  @override
+  String get haltHungryQuestion => 'When did you last eat something proper?';
+
+  @override
+  String get haltHungryAdvice =>
+      'Low blood sugar feels a lot like craving, and it argues with you the same way. Eat something first — a real meal if you can, anything if you can\'t — then see what\'s left of the urge.';
+
+  @override
+  String get haltHungryAction => 'Steady the breath while you eat';
+
+  @override
+  String get haltAngryTitle => 'Angry';
+
+  @override
+  String get haltAngryQuestion => 'Is something still sitting unsaid?';
+
+  @override
+  String get haltAngryAdvice =>
+      'Anger wants somewhere to go, and the old habit is the easiest door. Give it a different one for nine minutes and see if it still wants the same thing.';
+
+  @override
+  String get haltAngryAction => 'Letting go of anger · 9 min';
+
+  @override
+  String get haltLonelyTitle => 'Lonely';
+
+  @override
+  String get haltLonelyQuestion => 'Who have you actually spoken to today?';
+
+  @override
+  String get haltLonelyAdvice =>
+      'This is the one that most often gets answered with the habit. A real person beats anything else here — and if there isn\'t one right now, a session is a person.';
+
+  @override
+  String get haltLonelyAction => 'Talk to a therapist';
+
+  @override
+  String get haltTiredTitle => 'Tired';
+
+  @override
+  String get haltTiredQuestion => 'Have you slept properly this week?';
+
+  @override
+  String get haltTiredAdvice =>
+      'Tired makes every urge louder and every reason quieter. Nothing you decide right now will be as good as what you decide after some rest.';
+
+  @override
+  String get haltTiredAction => 'Wind down and sleep';
+
+  @override
+  String get haltHungryLetter => 'H';
+
+  @override
+  String get haltAngryLetter => 'A';
+
+  @override
+  String get haltLonelyLetter => 'L';
+
+  @override
+  String get haltTiredLetter => 'T';
+
+  @override
+  String get haltTitle => 'HALT check';
+
+  @override
+  String get haltIntro =>
+      'A craving is often something else wearing a disguise. Before you decide anything, check the four it\'s usually hiding behind — tick whichever are true.';
+
+  @override
+  String get haltNoneOfThem =>
+      'None of them? Then it\'s the urge on its own — and those pass on their own too. Ride it out.';
+
+  @override
+  String get haltWhatThatMeans => 'What that means';
+
+  @override
+  String get tapeForwardHourWhen => 'In an hour';
+
+  @override
+  String get tapeForwardHourQuestion =>
+      'You gave in. What does the next hour actually look like?';
+
+  @override
+  String get tapeForwardHourHint => 'Not the first five minutes — the hour.';
+
+  @override
+  String get tapeForwardMorningWhen => 'Tomorrow morning';
+
+  @override
+  String get tapeForwardMorningQuestion =>
+      'You wake up. What\'s the first thing you remember?';
+
+  @override
+  String get tapeForwardMorningHint => 'How does the day start from there?';
+
+  @override
+  String get tapeForwardWeekWhen => 'A week from now';
+
+  @override
+  String get tapeForwardWeekQuestion => 'Where has this put you by next week?';
+
+  @override
+  String get tapeForwardWeekHint =>
+      'And what would the other choice have bought you?';
+
+  @override
+  String get tapeForwardJournalTitle => 'Playing the tape forward';
+
+  @override
+  String get tapeForwardSaved => 'Saved to your journal.';
+
+  @override
+  String get tapeForwardTitle => 'Play the tape forward';
+
+  @override
+  String get tapeForwardIntro =>
+      'A craving only ever shows you the first five minutes. Watch the rest of the film before you decide — in your own words, because yours are the ones you believe.';
+
+  @override
+  String get tapeForwardSaving => 'Saving…';
+
+  @override
+  String get tapeForwardKeep => 'Keep this in my journal';
+
+  @override
+  String get tapeForwardFooter =>
+      'Next time, this is waiting for you — written by the one person the craving can\'t argue with.';
+
+  @override
+  String get rhythmWeekdayLetters => 'M T W T F S S';
 }

@@ -4,6 +4,7 @@ import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
+import '../l10n/l10n.dart';
 
 class _Step {
   const _Step(this.when, this.question, this.hint, this.icon, this.accent);
@@ -15,29 +16,32 @@ class _Step {
   final Color accent;
 }
 
-const _steps = [
+List<_Step> _stepsIn(AppLocalizations l10n) => [
   _Step(
-    'In an hour',
-    'You gave in. What does the next hour actually look like?',
-    'Not the first five minutes — the hour.',
+    l10n.tapeForwardHourWhen,
+    l10n.tapeForwardHourQuestion,
+    l10n.tapeForwardHourHint,
     Icons.schedule_rounded,
     Pillars.yellow,
   ),
   _Step(
-    'Tomorrow morning',
-    'You wake up. What\'s the first thing you remember?',
-    'How does the day start from there?',
+    l10n.tapeForwardMorningWhen,
+    l10n.tapeForwardMorningQuestion,
+    l10n.tapeForwardMorningHint,
     Icons.wb_twilight_rounded,
     Pillars.red,
   ),
   _Step(
-    'A week from now',
-    'Where has this put you by next week?',
-    'And what would the other choice have bought you?',
+    l10n.tapeForwardWeekWhen,
+    l10n.tapeForwardWeekQuestion,
+    l10n.tapeForwardWeekHint,
     Icons.calendar_month_rounded,
     Pillars.blue,
   ),
 ];
+
+/// How many steps [_stepsIn] has, in any language.
+const _stepCount = 3;
 
 /// Play the tape forward: cravings only ever show you the first frame.
 /// This walks the rest of the film, then keeps it in the journal so the
@@ -55,7 +59,7 @@ class TapeForwardScreen extends StatefulWidget {
 class _TapeForwardScreenState extends State<TapeForwardScreen> {
   late final _journal = widget.journal ?? JournalRepository();
   final _controllers = [
-    for (var i = 0; i < _steps.length; i++) TextEditingController(),
+    for (var i = 0; i < _stepCount; i++) TextEditingController(),
   ];
   bool _saving = false;
 
@@ -80,8 +84,9 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
 
   Future<void> _save() async {
     setState(() => _saving = true);
+    final l10n = context.l10n;
     final body = StringBuffer();
-    for (final (i, step) in _steps.indexed) {
+    for (final (i, step) in _stepsIn(l10n).indexed) {
       final answer = _controllers[i].text.trim();
       if (answer.isEmpty) continue;
       body.writeln(step.when);
@@ -90,12 +95,12 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
     }
     try {
       await _journal.create(
-        title: 'Playing the tape forward',
+        title: l10n.tapeForwardJournalTitle,
         content: body.toString().trim(),
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved to your journal.')),
+        SnackBar(content: Text(l10n.tapeForwardSaved)),
       );
       Navigator.of(context).pop();
     } catch (e) {
@@ -103,7 +108,7 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
       setState(() => _saving = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(errorMessage(e, 'Couldn\'t save — check your connection.')),
+            content: Text(errorMessage(e, l10n.recoverySaveFailed)),
         ),
       );
     }
@@ -111,7 +116,7 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
 
   Widget _stepCard(int index) {
     final c = context.brand;
-    final step = _steps[index];
+    final step = _stepsIn(context.l10n)[index];
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Container(
@@ -183,6 +188,7 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -197,7 +203,7 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Play the tape forward',
+                  l10n.tapeForwardTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -209,9 +215,7 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'A craving only ever shows you the first five minutes. '
-                  'Watch the rest of the film before you decide — in your '
-                  'own words, because yours are the ones you believe.',
+                  l10n.tapeForwardIntro,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,
@@ -219,16 +223,17 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                for (var i = 0; i < _steps.length; i++) _stepCard(i),
+                for (var i = 0; i < _stepCount; i++) _stepCard(i),
                 const SizedBox(height: 4),
                 ElevatedButton(
                   onPressed: _hasAnything && !_saving ? _save : null,
-                  child: Text(_saving ? 'Saving…' : 'Keep this in my journal'),
+                  child: Text(
+                    _saving ? l10n.tapeForwardSaving : l10n.tapeForwardKeep,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Next time, this is waiting for you — written by the one '
-                  'person the craving can\'t argue with.',
+                  l10n.tapeForwardFooter,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12.5,

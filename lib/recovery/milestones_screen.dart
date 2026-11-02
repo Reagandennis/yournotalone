@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'recovery_repository.dart';
 
 /// Every marker on the way, per commitment: the ones already behind you,
@@ -41,20 +43,19 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
   }
 
   String _reachedOn(RecoveryHabit habit, int days) {
+    final l10n = context.l10n;
     final day = habit.dayOne.add(Duration(days: days - 1));
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final year = day.year == DateTime.now().year ? '' : ' ${day.year}';
-    return '${day.day} ${months[day.month - 1]}$year';
+    final pattern = day.year == DateTime.now().year
+        ? l10n.recoveryDatePattern
+        : l10n.recoveryDatePatternWithYear;
+    return DateFormat(pattern, l10n.localeName).format(day);
   }
 
   Widget _milestoneRow(RecoveryHabit habit, int days, String label,
       {required bool last}) {
     final c = context.brand;
     final reached = habit.daysIn >= days;
-    final isNext = habit.nextMilestone?.$1 == days;
+    final isNext = habit.nextMilestoneIn(context.l10n)?.$1 == days;
     final color = reached
         ? c.blue
         : isNext
@@ -109,9 +110,9 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                   const SizedBox(height: 2),
                   Text(
                     reached
-                        ? 'Reached ${_reachedOn(habit, days)}'
-                        : '${days - habit.daysIn} '
-                            '${days - habit.daysIn == 1 ? 'day' : 'days'} to go',
+                        ? context.l10n
+                            .milestonesReachedOn(_reachedOn(habit, days))
+                        : context.l10n.milestonesDaysToGo(days - habit.daysIn),
                     style: TextStyle(
                       fontSize: 12,
                       color: isNext ? c.ink : c.textMuted,
@@ -128,8 +129,9 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
 
   Widget _habitCard(RecoveryHabit habit) {
     final c = context.brand;
-    final reached =
-        recoveryMilestones.where((m) => habit.daysIn >= m.$1).length;
+    final l10n = context.l10n;
+    final milestones = recoveryMilestonesIn(l10n);
+    final reached = milestones.where((m) => habit.daysIn >= m.$1).length;
     return Padding(
       padding: const EdgeInsets.only(bottom: 18),
       child: Container(
@@ -160,9 +162,14 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '$reached of ${recoveryMilestones.length} reached'
-                        '${habit.bestStreakDays > habit.daysIn ? ' · best '
-                            '${habit.bestStreakDays} days' : ''}',
+                        habit.bestStreakDays > habit.daysIn
+                            ? l10n.milestonesReachedWithBest(
+                                reached,
+                                milestones.length,
+                                habit.bestStreakDays,
+                              )
+                            : l10n.milestonesReached(
+                                reached, milestones.length),
                         style: TextStyle(
                           fontSize: 12.5,
                           color: c.textMuted,
@@ -172,7 +179,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                   ),
                 ),
                 Text(
-                  'Day ${habit.daysIn}',
+                  l10n.recoveryDayNumber(habit.daysIn),
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
@@ -182,12 +189,12 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
               ],
             ),
             const SizedBox(height: 18),
-            for (final (i, milestone) in recoveryMilestones.indexed)
+            for (final (i, milestone) in milestones.indexed)
               _milestoneRow(
                 habit,
                 milestone.$1,
                 milestone.$2,
-                last: i == recoveryMilestones.length - 1,
+                last: i == milestones.length - 1,
               ),
           ],
         ),
@@ -197,16 +204,17 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
 
   Widget _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_error) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Couldn\'t load your commitments.',
+            l10n.milestonesLoadError,
             style: TextStyle(fontSize: 14, color: c.textMuted),
           ),
           const SizedBox(height: 10),
-          OutlinedButton(onPressed: _load, child: const Text('Try again')),
+          OutlinedButton(onPressed: _load, child: Text(l10n.commonTryAgain)),
         ],
       );
     }
@@ -219,8 +227,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
     }
     if (habits.isEmpty) {
       return Text(
-        'No commitments yet. Add one on the recovery screen and every '
-        'marker below starts counting from today.',
+        l10n.milestonesEmpty,
         style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
       );
     }
@@ -247,7 +254,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Milestones',
+                  context.l10n.milestonesTitle,
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -259,8 +266,7 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
                 const PillarStripe(),
                 const SizedBox(height: 16),
                 Text(
-                  'Days add up whether or not anyone claps. Here they are, '
-                  'counted.',
+                  context.l10n.milestonesSubtitle,
                   style: TextStyle(
                     fontSize: 14,
                     color: c.textMuted,

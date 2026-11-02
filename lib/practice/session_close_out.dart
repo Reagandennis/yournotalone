@@ -7,6 +7,7 @@ import '../billing/pricing_copy.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
 import '../journal/new_entry.dart';
+import '../l10n/l10n.dart';
 import 'feeling_store.dart';
 import 'practice_repository.dart';
 
@@ -61,12 +62,12 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
       final summary = await PracticeRepository().fetchSummary();
       if (summary.sessions < 2 || !mounted) return;
       if (!await Nudges.claim('practice2') || !mounted) return;
+      final l10n = context.l10n;
       showUpgradeSheet(
         context,
         source: 'nudge:practice2',
-        title: 'You\'ve finished your free sessions',
-        message: 'Premium opens all 20 meditations and every breathing '
-            'exercise, with the sounds to go with them — and $introOffer.',
+        title: l10n.practiceFreeSessionsDoneTitle,
+        message: l10n.practiceFreeSessionsDoneMessage(introOffer),
       );
     } catch (e) {
       debugPrint('Practice nudge skipped: $e');
@@ -110,7 +111,7 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
                   Icon(icon, size: 22, color: c.accent(widget.accent)),
                   const SizedBox(height: 4),
                   Text(
-                    feeling.label,
+                    feeling.label(context.l10n),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -131,11 +132,12 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          _picked == null ? 'How do you feel now?' : 'Noted. Thank you.',
+          _picked == null ? l10n.closeOutHowDoYouFeel : l10n.closeOutNoted,
           style: TextStyle(
             fontSize: 14.5,
             fontWeight: FontWeight.w600,
@@ -144,7 +146,7 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
         ),
         const SizedBox(height: 2),
         Text(
-          'Compared with when you started.',
+          l10n.closeOutCompared,
           style: TextStyle(fontSize: 12.5, color: c.textMuted),
         ),
         const SizedBox(height: 10),
@@ -160,16 +162,16 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
         const SizedBox(height: 20),
         ElevatedButton(
           onPressed: () => Navigator.of(context).maybePop(),
-          child: const Text('Done'),
+          child: Text(l10n.commonDone),
         ),
         const SizedBox(height: 2),
         TextButton(
           onPressed: () => openNewJournalEntry(
             context,
             title: widget.title,
-            content: 'After ${widget.title.toLowerCase()}, I noticed ',
+            content: l10n.closeOutJournalSeed(widget.title.toLowerCase()),
           ),
-          child: const Text('Write about it'),
+          child: Text(l10n.closeOutWriteAboutIt),
         ),
       ],
     );
