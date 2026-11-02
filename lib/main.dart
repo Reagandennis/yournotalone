@@ -15,6 +15,7 @@ import 'auth/auth_gate.dart';
 import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
+import 'content/content_catalog.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
 import 'notifications/local_notifications.dart';
@@ -117,6 +118,7 @@ Future<void> _start() async {
   await PurchasesService.instance.init();
   await initOnboardingFlags();
   await AppearanceSetting.instance.load();
+  await ContentCatalog.instance.load();
   await _initSessionNotifications();
   runApp(SentryWidget(child: const MyApp()));
 }

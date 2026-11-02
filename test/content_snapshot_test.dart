@@ -38,12 +38,12 @@ void main() {
   test('lists every index item, in the same order', () {
     expect(
       [for (final i in snapshot.items) i.id],
-      [for (final i in contentIndex) i.id],
+      [for (final i in builtInContentIndex) i.id],
     );
   });
 
   test('matches every index item field for field', () {
-    for (final item in contentIndex) {
+    for (final item in builtInContentIndex) {
       final s = byId[item.id]!;
       final en = s.textFor('en');
       final reason = item.id;
@@ -126,10 +126,11 @@ void main() {
   });
 
   test('matches the courses', () {
-    expect([for (final c in snapshot.courses) c.id], [
-      for (final c in courses) c.id,
-    ]);
-    for (final c in courses) {
+    expect(
+      [for (final c in snapshot.courses) c.id],
+      [for (final c in builtInCourses) c.id],
+    );
+    for (final c in builtInCourses) {
       final s = snapshot.courses.firstWhere((x) => x.id == c.id);
       final en = s.textFor('en');
       expect(en.title, c.title);

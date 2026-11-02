@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:yournotalone/cbt/cbt_catalog.dart';
 import 'package:yournotalone/cbt/cbt_content.dart';
 import 'package:yournotalone/content/catalog_snapshot.dart';
+import 'package:yournotalone/content/content_catalog.dart';
 import 'package:yournotalone/content/content_icons.dart';
 import 'package:yournotalone/courses/course_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
@@ -97,7 +98,7 @@ void _write(StringBuffer out, Map<String, Object?> map, int indent) {
   }
 }
 
-final _byId = {for (final i in contentIndex) i.id: i};
+final _byId = {for (final i in builtInContentIndex) i.id: i};
 
 /// The fields every item shares, read from the index so the tags are the
 /// final merged ones (catalogue defaults plus `content_tags.dart`).
@@ -114,7 +115,7 @@ Map<String, Object?> _item(
     'kind': item.kind.name,
     'status': 'published',
     // Where it sits in lists; gaps of 10 leave room to slot new items in.
-    'order': (contentIndex.indexOf(item) + 1) * 10,
+    'order': (builtInContentIndex.indexOf(item) + 1) * 10,
     'premium': item.premium,
     'addedOn': added == null
         ? null
@@ -160,7 +161,11 @@ List<Map<String, Object?>> _toolkit(
       _item(
         'tool:${t.title}',
         text: {'meta': t.meta},
-        body: {'type': 'native', 'screen': _slug(t.title), 'art': t.art.name},
+        body: {
+          'type': 'native',
+          'screen': screenKey(t.title),
+          'art': t.art.name,
+        },
       ),
   for (final l in lessons)
     _item(
@@ -253,12 +258,12 @@ void main() {
         ..writeAsStringSync(out.toString());
     }
 
-    for (final c in courses) {
+    for (final c in builtInCourses) {
       final out = StringBuffer();
       _write(out, {
         'id': c.id,
         'status': 'published',
-        'order': (courses.indexOf(c) + 1) * 10,
+        'order': (builtInCourses.indexOf(c) + 1) * 10,
         'icon': _icon(c.icon),
         'accent': _accent(c.accent),
         'need': c.need.name,

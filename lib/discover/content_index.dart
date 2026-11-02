@@ -11,6 +11,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
 import '../cbt/cbt_catalog.dart';
+import '../content/content_catalog.dart';
 import '../cbt/cbt_content.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_prompts.dart';
@@ -292,9 +293,14 @@ List<ContentItem> _toolkit(
     ),
 ];
 
-/// Built once from the real catalogues, so it covers exactly what the app
-/// offers today.
-final List<ContentItem> contentIndex = [
+/// Everything the app offers: from the catalogue snapshot when one is in
+/// use (see `content_catalog.dart`), otherwise [builtInContentIndex].
+List<ContentItem> get contentIndex =>
+    ContentCatalog.instance.items ?? builtInContentIndex;
+
+/// Built once from the Dart catalogues, so it covers exactly what this
+/// build ships with.
+final List<ContentItem> builtInContentIndex = [
   for (final p in breathPatterns)
     _tagged(
       ContentItem(

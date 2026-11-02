@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../cbt/cbt_content.dart';
+import '../content/content_catalog.dart';
 import '../discover/content_index.dart';
 import '../sleep/sleep_content.dart';
 import '../stress/stress_content.dart';
@@ -44,7 +45,11 @@ class Course {
   final List<CourseDay> days;
 }
 
-const courses = <Course>[
+/// The courses on offer: from the catalogue snapshot when one is in use,
+/// otherwise [builtInCourses].
+List<Course> get courses => ContentCatalog.instance.courses ?? builtInCourses;
+
+const builtInCourses = <Course>[
   Course(
     id: 'sleep7',
     title: '7 days to better sleep',
