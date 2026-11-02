@@ -3,6 +3,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'apple_auth.dart';
 import 'apple_button.dart';
 import 'auth_gate.dart';
@@ -53,26 +54,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AuthScaffold(
       footer: Wrap(
         alignment: WrapAlignment.center,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           Text(
-            'New here?',
+            l10n.authNewHere,
             style: TextStyle(fontSize: 14, color: context.brand.textMuted),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const SignupScreen()),
             ),
-            child: const Text('Create an account'),
+            child: Text(l10n.authCreateAnAccount),
           ),
         ],
       ),
-      title: 'Welcome back',
-      subtitle:
-          'You are not alone. Log in to pick up right where you left off.',
+      title: l10n.authLoginTitle,
+      subtitle: l10n.authLoginSubtitle,
       children: [
         Form(
           key: _formKey,
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               AuthTextField(
                 controller: _email,
-                label: 'Email',
+                label: l10n.authEmail,
                 icon: Icons.mail_outline_rounded,
                 keyboardType: TextInputType.emailAddress,
                 validator: validateEmail,
@@ -89,12 +90,12 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               AuthTextField(
                 controller: _password,
-                label: 'Password',
+                label: l10n.authPassword,
                 icon: Icons.lock_outline_rounded,
                 isPassword: true,
                 textInputAction: TextInputAction.done,
                 validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Enter your password' : null,
+                    (v == null || v.isEmpty) ? l10n.authPasswordRequired : null,
               ),
               const SizedBox(height: 6),
               Align(
@@ -105,12 +106,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       builder: (_) => const ResetPasswordScreen(),
                     ),
                   ),
-                  child: const Text('Forgot password?'),
+                  child: Text(l10n.authForgotPassword),
                 ),
               ),
               const SizedBox(height: 18),
               AuthSubmitButton(
-                label: 'Log in',
+                label: l10n.authLogIn,
                 loading: _loading,
                 onPressed: _submit,
               ),

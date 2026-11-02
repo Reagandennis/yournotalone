@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
 import 'google_auth.dart';
@@ -88,7 +89,7 @@ class _GoogleAuthButtonState extends State<GoogleAuthButton> {
                     filterQuality: FilterQuality.medium,
                   ),
                   const SizedBox(width: 12),
-                  const Text('Continue with Google'),
+                  Text(context.l10n.authContinueWithGoogle),
                 ],
               ),
             ),

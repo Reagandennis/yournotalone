@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
 import '../home/home_shell.dart';
+import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import 'notifications_screen.dart';
 
@@ -46,7 +47,7 @@ class OnboardingScaffold extends StatelessWidget {
                       child: IconButton(
                         icon: const Icon(Icons.close_rounded),
                         color: c.textMuted,
-                        tooltip: 'Close',
+                        tooltip: context.l10n.commonClose,
                         onPressed: () => Navigator.of(context).maybePop(),
                       ),
                     ),

@@ -4,6 +4,7 @@ import '../brand.dart';
 import '../discover/content_index.dart';
 import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
+import '../l10n/l10n.dart';
 import 'onboarding_ui.dart';
 import 'paywall_screen.dart';
 import 'therapy_offer_screen.dart';
@@ -14,38 +15,38 @@ class _CheckinOption {
 
   final String key;
   final IconData icon;
-  final String label;
-  final String detail;
+  final String Function(AppLocalizations l10n) label;
+  final String Function(AppLocalizations l10n) detail;
 
   /// True for answers that should lead to the human-therapy offer.
   final bool needsSupport;
 }
 
-const _options = [
+final _options = [
   _CheckinOption(
     'steady',
     Icons.sentiment_satisfied_alt_rounded,
-    'Doing okay',
-    'I\'m here to keep my balance and build good habits.',
+    (l10n) => l10n.onboardingCheckinSteady,
+    (l10n) => l10n.onboardingCheckinSteadyDetail,
   ),
   _CheckinOption(
     'stressed',
     Icons.sentiment_neutral_rounded,
-    'Stressed or low lately',
-    'Work, life, or my mood has been weighing on me.',
+    (l10n) => l10n.onboardingCheckinStressed,
+    (l10n) => l10n.onboardingCheckinStressedDetail,
   ),
   _CheckinOption(
     'struggling',
     Icons.sentiment_dissatisfied_rounded,
-    'Struggling',
-    'It\'s been heavy for a while and I could use support.',
+    (l10n) => l10n.onboardingCheckinStruggling,
+    (l10n) => l10n.onboardingCheckinStrugglingDetail,
     needsSupport: true,
   ),
   _CheckinOption(
     'dark_place',
     Icons.sentiment_very_dissatisfied_rounded,
-    'In a dark place',
-    'I\'m going through something serious right now.',
+    (l10n) => l10n.onboardingCheckinDarkPlace,
+    (l10n) => l10n.onboardingCheckinDarkPlaceDetail,
     needsSupport: true,
   ),
 ];
@@ -112,7 +113,7 @@ class _CheckinScreenState extends State<CheckinScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        option.label,
+                        option.label(context.l10n),
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -121,7 +122,7 @@ class _CheckinScreenState extends State<CheckinScreen> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        option.detail,
+                        option.detail(context.l10n),
                         style: TextStyle(
                           fontSize: 13,
                           color: c.textMuted,
@@ -146,11 +147,11 @@ class _CheckinScreenState extends State<CheckinScreen> {
       step: 2,
       bottom: ElevatedButton(
         onPressed: _selected == null ? null : _continue,
-        child: const Text('Continue'),
+        child: Text(context.l10n.commonContinue),
       ),
       children: [
         Text(
-          'How are you feeling these days?',
+          context.l10n.onboardingCheckinTitle,
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
@@ -162,15 +163,14 @@ class _CheckinScreenState extends State<CheckinScreen> {
         const PillarStripe(),
         const SizedBox(height: 16),
         Text(
-          'This helps us point you to the right kind of support first. '
-          'It stays private, and you can change it anytime.',
+          context.l10n.onboardingCheckinIntro,
           style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
         ),
         const SizedBox(height: 26),
         for (final option in _options) _optionCard(option),
         const SizedBox(height: 18),
         Text(
-          'What would help most?',
+          context.l10n.onboardingGoalsTitle,
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -179,7 +179,7 @@ class _CheckinScreenState extends State<CheckinScreen> {
         ),
         const SizedBox(height: 4),
         Text(
-          'Pick any. We\'ll put these first for you.',
+          context.l10n.onboardingGoalsHint,
           style: TextStyle(fontSize: 13, color: c.textMuted),
         ),
         const SizedBox(height: 12),

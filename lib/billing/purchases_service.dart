@@ -7,6 +7,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
 import 'trial_reminder.dart';
 
 /// Must match the entitlement identifier in the RevenueCat dashboard.
@@ -173,22 +174,19 @@ bool isAlreadyOwnedError(Object error) =>
 
 /// A user-facing message for a purchase failure, or null when the user
 /// just cancelled and nothing should be shown.
-String? purchaseErrorMessage(Object error) {
+String? purchaseErrorMessage(Object error, [AppLocalizations? l10n]) {
+  l10n ??= currentL10n();
   if (error is PlatformException) {
     final code = PurchasesErrorHelper.getErrorCode(error);
     if (code == PurchasesErrorCode.purchaseCancelledError) return null;
     return switch (code) {
-      PurchasesErrorCode.purchaseNotAllowedError =>
-        'Purchases aren\'t allowed on this device.',
-      PurchasesErrorCode.paymentPendingError =>
-        'Your payment is pending — premium unlocks once it clears.',
-      PurchasesErrorCode.networkError =>
-        'Network trouble — check your connection and try again.',
+      PurchasesErrorCode.purchaseNotAllowedError => l10n.billingErrorNotAllowed,
+      PurchasesErrorCode.paymentPendingError => l10n.billingErrorPending,
+      PurchasesErrorCode.networkError => l10n.billingErrorNetwork,
       PurchasesErrorCode.productAlreadyPurchasedError =>
-        'This store account already has a subscription. Sign in with the '
-            'account you bought it with, or contact support.',
-      _ => 'The purchase didn\'t go through. Please try again.',
+        l10n.billingErrorAlreadyOwned,
+      _ => l10n.billingErrorGeneric,
     };
   }
-  return 'The purchase didn\'t go through. Please try again.';
+  return l10n.billingErrorGeneric;
 }

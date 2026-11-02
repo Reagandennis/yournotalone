@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 
 /// Edit profile: name and profile picture.
 ///
@@ -79,8 +80,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(source == ImageSource.camera
-              ? 'The camera isn\'t available right now.'
-              : 'Couldn\'t open your photo library.'),
+              ? context.l10n.profileCameraUnavailable
+              : context.l10n.profileLibraryUnavailable),
         ),
       );
     }
@@ -102,7 +103,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ListTile(
                 leading: Icon(Icons.photo_library_outlined,
                     color: c.textMuted),
-                title: Text('Choose from library',
+                title: Text(sheetContext.l10n.profileChooseFromLibrary,
                     style: TextStyle(fontSize: 14.5, color: c.ink)),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
@@ -112,7 +113,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ListTile(
                 leading: Icon(Icons.photo_camera_outlined,
                     color: c.textMuted),
-                title: Text('Take a photo',
+                title: Text(sheetContext.l10n.profileTakePhoto,
                     style: TextStyle(fontSize: 14.5, color: c.ink)),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
@@ -122,7 +123,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               if (_hasPhoto)
                 ListTile(
                   leading: Icon(Icons.delete_outline_rounded, color: c.red),
-                  title: Text('Remove photo',
+                  title: Text(sheetContext.l10n.profileRemovePhoto,
                       style: TextStyle(fontSize: 14.5, color: c.red)),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
@@ -175,14 +176,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Profile updated.')));
+        ..showSnackBar(
+          SnackBar(content: Text(context.l10n.profileUpdated)),
+        );
       Navigator.of(context).pop(true);
     } on StorageException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text('Couldn\'t save your photo: ${e.message}')),
+          SnackBar(
+            content: Text(context.l10n.profilePhotoSaveFailed(e.message)),
+          ),
         );
     } catch (e) {
       if (mounted) showAuthError(context, e);
@@ -267,9 +272,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final email = _client.auth.currentUser?.email;
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit profile')),
+      appBar: AppBar(title: Text(l10n.profileEditTitle)),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -284,17 +290,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Center(
                     child: TextButton(
                       onPressed: _saving ? null : _showPhotoSheet,
-                      child: Text(_hasPhoto ? 'Change photo' : 'Add a photo'),
+                      child: Text(
+                        _hasPhoto
+                            ? l10n.profileChangePhoto
+                            : l10n.profileAddPhoto,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 22),
                   AuthTextField(
                     controller: _name,
-                    label: 'Your name',
+                    label: l10n.profileYourName,
                     icon: Icons.person_outline_rounded,
                     textInputAction: TextInputAction.done,
                     validator: (value) =>
-                        (value?.trim().isEmpty ?? true) ? 'Enter your name' : null,
+                        (value?.trim().isEmpty ?? true)
+                            ? l10n.authNameRequired
+                            : null,
                   ),
                   if (email != null) ...[
                     const SizedBox(height: 14),
@@ -329,7 +341,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Padding(
                       padding: const EdgeInsets.only(left: 4),
                       child: Text(
-                        'Your email can\'t be changed here.',
+                        l10n.profileEmailFixed,
                         style:
                             TextStyle(fontSize: 12, color: c.textMuted),
                       ),
@@ -337,7 +349,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ],
                   const SizedBox(height: 28),
                   AuthSubmitButton(
-                    label: 'Save changes',
+                    label: l10n.profileSaveChanges,
                     loading: _saving,
                     onPressed: _save,
                   ),

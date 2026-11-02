@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../l10n/l10n.dart';
 
 /// Layout shared by all auth screens: the pillars mark up top, a heading
 /// underlined by the [PillarStripe], a muted subtitle, then the form.
@@ -221,9 +222,10 @@ class AuthSubmitButton extends StatelessWidget {
 /// Hairline rule with a word set into it, separating the email form from the
 /// Google button.
 class AuthDivider extends StatelessWidget {
-  const AuthDivider({super.key, this.label = 'or'});
+  const AuthDivider({super.key, this.label});
 
-  final String label;
+  /// Defaults to "or".
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +237,7 @@ class AuthDivider extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Text(
-            label,
+            label ?? context.l10n.authOr,
             style: TextStyle(
               fontSize: 13,
               color: c.textMuted,
@@ -253,7 +255,7 @@ class AuthDivider extends StatelessWidget {
 void showAuthError(BuildContext context, Object error) {
   final message = error is AuthException
       ? error.message
-      : 'Something went wrong. Please try again.';
+      : context.l10n.authErrorGeneric;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
     ..showSnackBar(SnackBar(content: Text(message)));
@@ -263,14 +265,14 @@ final _emailRe = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$');
 
 String? validateEmail(String? value) {
   final v = value?.trim() ?? '';
-  if (v.isEmpty) return 'Enter your email';
-  if (!_emailRe.hasMatch(v)) return 'Enter a valid email address';
+  if (v.isEmpty) return currentL10n().authEmailRequired;
+  if (!_emailRe.hasMatch(v)) return currentL10n().authEmailInvalid;
   return null;
 }
 
 String? validatePassword(String? value) {
   final v = value ?? '';
-  if (v.isEmpty) return 'Enter your password';
-  if (v.length < 8) return 'Use at least 8 characters';
+  if (v.isEmpty) return currentL10n().authPasswordRequired;
+  if (v.length < 8) return currentL10n().authPasswordTooShort(8);
   return null;
 }

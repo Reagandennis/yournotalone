@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'checkin_screen.dart';
 import 'onboarding_ui.dart';
 
@@ -9,49 +10,46 @@ class _Feature {
 
   final IconData icon;
   final Color accent;
-  final String title;
-  final String benefit;
+  final String Function(AppLocalizations l10n) title;
+  final String Function(AppLocalizations l10n) benefit;
 }
 
-const _features = [
+final _features = [
   _Feature(
     Icons.edit_note_rounded,
     Pillars.red,
-    'Mood tracking & journaling',
-    'Check in with yourself daily and put feelings into words, in a space '
-        'that\'s completely private.',
+    (l10n) => l10n.onboardingFeatureMoodTitle,
+    (l10n) => l10n.onboardingFeatureMoodBenefit,
   ),
   _Feature(
     Icons.self_improvement_rounded,
     Pillars.blue,
-    'Guided meditations & breathing',
-    'Short guided sessions that steady your breath and quiet a racing mind.',
+    (l10n) => l10n.onboardingFeatureMeditationTitle,
+    (l10n) => l10n.onboardingFeatureMeditationBenefit,
   ),
   _Feature(
     Icons.graphic_eq_rounded,
     Pillars.yellow,
-    'Wellbeing sounds',
-    'Soundscapes for focus, sleep, and calming down — whenever you need '
-        'to reset.',
+    (l10n) => l10n.onboardingFeatureSoundsTitle,
+    (l10n) => l10n.onboardingFeatureSoundsBenefit,
   ),
   _Feature(
     Icons.insights_rounded,
     Pillars.black,
-    'Progress insights & reminders',
-    'See your patterns over time and get gentle nudges that keep you going.',
+    (l10n) => l10n.onboardingFeatureInsightsTitle,
+    (l10n) => l10n.onboardingFeatureInsightsBenefit,
   ),
   _Feature(
     Icons.healing_rounded,
     Pillars.red,
-    'Addiction recovery tools',
-    'Practical resources for fighting addiction — one day at a time.',
+    (l10n) => l10n.onboardingFeatureRecoveryTitle,
+    (l10n) => l10n.onboardingFeatureRecoveryBenefit,
   ),
   _Feature(
     Icons.support_agent_rounded,
     Pillars.blue,
-    'Real human therapy',
-    'Talk with a licensed therapist in private one-on-one sessions, right '
-        'from the app.',
+    (l10n) => l10n.onboardingFeatureTherapyTitle,
+    (l10n) => l10n.onboardingFeatureTherapyBenefit,
   ),
 ];
 
@@ -128,7 +126,7 @@ class _FeaturesScreenState extends State<FeaturesScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    feature.title,
+                    feature.title(context.l10n),
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -137,7 +135,7 @@ class _FeaturesScreenState extends State<FeaturesScreen>
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    feature.benefit,
+                    feature.benefit(context.l10n),
                     style: TextStyle(
                       fontSize: 13,
                       color: c.textMuted,
@@ -162,11 +160,11 @@ class _FeaturesScreenState extends State<FeaturesScreen>
         onPressed: () => Navigator.of(context).push(
           MaterialPageRoute(builder: (_) => const CheckinScreen()),
         ),
-        child: const Text('Continue'),
+        child: Text(context.l10n.commonContinue),
       ),
       children: [
         Text(
-          'Here to hold you up',
+          context.l10n.onboardingFeaturesTitle,
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
@@ -178,8 +176,7 @@ class _FeaturesScreenState extends State<FeaturesScreen>
         const PillarStripe(),
         const SizedBox(height: 16),
         Text(
-          'A quick look at what\'s inside — and how each piece helps you '
-          'feel better, day by day.',
+          context.l10n.onboardingFeaturesIntro,
           style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.55),
         ),
         const SizedBox(height: 26),

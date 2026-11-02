@@ -5,6 +5,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../l10n/l10n.dart';
+
 /// OAuth client IDs from the app's Google Cloud project (497109017811).
 /// These are public identifiers, not secrets — they ship inside the binary.
 ///
@@ -56,9 +58,7 @@ abstract final class GoogleAuth {
   static Future<bool> signIn() async {
     await _ensureInitialized();
     if (!GoogleSignIn.instance.supportsAuthenticate()) {
-      throw const AuthException(
-        'Google sign-in isn\'t available on this device.',
-      );
+      throw AuthException(currentL10n().authGoogleUnavailable);
     }
 
     final GoogleSignInAccount account;
@@ -77,9 +77,7 @@ abstract final class GoogleAuth {
 
     final idToken = account.authentication.idToken;
     if (idToken == null) {
-      throw const AuthException(
-        'Google didn\'t return a sign-in token. Please try again.',
-      );
+      throw AuthException(currentL10n().authGoogleNoToken);
     }
 
     // Strictly optional: lets Supabase read the profile Google already
@@ -151,20 +149,17 @@ abstract final class GoogleAuth {
   /// pass back when sign-in fails on a phone nobody can plug into adb, so it
   /// rides along in brackets after the friendly sentence.
   static String _messageFor(GoogleSignInException e) {
+    final l10n = currentL10n();
     final message = switch (e.code) {
       GoogleSignInExceptionCode.canceled ||
       GoogleSignInExceptionCode.interrupted =>
-        'Google couldn\'t finish signing you in. Please try again, or use '
-            'your email instead.',
+        l10n.authGoogleInterrupted,
       GoogleSignInExceptionCode.clientConfigurationError ||
       GoogleSignInExceptionCode.providerConfigurationError =>
-        'Google sign-in isn\'t set up correctly for this app.',
-      GoogleSignInExceptionCode.uiUnavailable =>
-        'Google sign-in isn\'t available on this device.',
-      GoogleSignInExceptionCode.userMismatch =>
-        'That\'s a different Google account than the one expected.',
-      GoogleSignInExceptionCode.unknownError =>
-        'Couldn\'t sign in with Google. Please try again.',
+        l10n.authGoogleMisconfigured,
+      GoogleSignInExceptionCode.uiUnavailable => l10n.authGoogleUnavailable,
+      GoogleSignInExceptionCode.userMismatch => l10n.authGoogleWrongAccount,
+      GoogleSignInExceptionCode.unknownError => l10n.authGoogleFailed,
     };
     var detail = e.description?.trim() ?? '';
     if (detail.isEmpty) return message;

@@ -10,6 +10,7 @@ import '../courses/course_progress.dart';
 import '../discover/content_index.dart';
 import '../discover/saved_store.dart';
 import '../journal/journal_hub_screen.dart';
+import '../l10n/l10n.dart';
 import '../notifications/local_notifications.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
@@ -170,21 +171,21 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           child: NavigationBar(
             selectedIndex: _index,
             onDestinationSelected: (i) => setState(() => _index = i),
-            destinations: const [
+            destinations: [
               NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home_rounded),
-                label: 'Home',
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home_rounded),
+                label: context.l10n.shellTabHome,
               ),
               NavigationDestination(
-                icon: Icon(Icons.explore_outlined),
-                selectedIcon: Icon(Icons.explore_rounded),
-                label: 'Explore',
+                icon: const Icon(Icons.explore_outlined),
+                selectedIcon: const Icon(Icons.explore_rounded),
+                label: context.l10n.shellTabExplore,
               ),
               NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings_rounded),
-                label: 'Settings',
+                icon: const Icon(Icons.settings_outlined),
+                selectedIcon: const Icon(Icons.settings_rounded),
+                label: context.l10n.shellTabSettings,
               ),
             ],
           ),

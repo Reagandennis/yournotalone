@@ -31,5 +31,919 @@
   "languageSystemDefaultHint": "Follows your phone's language.",
   "@languageSystemDefaultHint": {
     "description": "Subtitle under languageSystemDefault in the language picker."
+  },
+  "commonTryAgain": "Try again",
+  "@commonTryAgain": {
+    "description": "Button: retry an action that failed (usually loading or saving)."
+  },
+  "commonCancel": "Cancel",
+  "@commonCancel": {
+    "description": "Button: close a dialog or sheet without doing anything."
+  },
+  "commonDone": "Done",
+  "@commonDone": {
+    "description": "Button: finish a step or close a screen when finished."
+  },
+  "commonContinue": "Continue",
+  "@commonContinue": {
+    "description": "Button: go on to the next step."
+  },
+  "commonRemove": "Remove",
+  "@commonRemove": {
+    "description": "Button: remove an item (e.g. from a list)."
+  },
+  "commonNotNow": "Not now",
+  "@commonNotNow": {
+    "description": "Button: decline an offer or prompt for now, politely."
+  },
+  "commonBack": "Back",
+  "@commonBack": {
+    "description": "Button: go back to the previous step."
+  },
+  "commonStop": "Stop",
+  "@commonStop": {
+    "description": "Button: stop an exercise, timer or sound."
+  },
+  "commonSave": "Save",
+  "@commonSave": {
+    "description": "Button: save changes."
+  },
+  "commonClose": "Close",
+  "@commonClose": {
+    "description": "Button or tooltip: close a screen, sheet or dialog."
+  },
+  "commonChange": "Change",
+  "@commonChange": {
+    "description": "Button: change a choice already made."
+  },
+  "commonDelete": "Delete",
+  "@commonDelete": {
+    "description": "Button: delete something permanently."
+  },
+  "onboardingWelcomeTitle": "Welcome, {name}",
+  "@onboardingWelcomeTitle": {
+    "description": "First onboarding screen heading, greeting the person by first name.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Amina"
+      }
+    }
+  },
+  "onboardingWelcomeFriend": "friend",
+  "@onboardingWelcomeFriend": {
+    "description": "Used in place of a first name in onboardingWelcomeTitle when we don't know the person's name (\"Welcome, friend\")."
+  },
+  "onboardingWelcomeStory": "It's Greek for \"you're not alone\" — the promise this app is built on. Like the four pillars in our logo, support stands strongest side by side. Whatever you're carrying, from today you don't carry it by yourself.",
+  "@onboardingWelcomeStory": {
+    "description": "First onboarding screen, under the app name \"yournotalone\": the story behind the name. The app name itself stays in English; the quoted phrase is its meaning. Warm, reassuring."
+  },
+  "onboardingFeatureMoodTitle": "Mood tracking & journaling",
+  "@onboardingFeatureMoodTitle": {
+    "description": "Onboarding \"what's inside\" screen: title of one feature card. Short."
+  },
+  "onboardingFeatureMoodBenefit": "Check in with yourself daily and put feelings into words, in a space that's completely private.",
+  "@onboardingFeatureMoodBenefit": {
+    "description": "Onboarding \"what's inside\" screen: one-sentence benefit under the feature card \"Mood tracking & journaling\"."
+  },
+  "onboardingFeatureMeditationTitle": "Guided meditations & breathing",
+  "@onboardingFeatureMeditationTitle": {
+    "description": "Onboarding \"what's inside\" screen: title of one feature card. Short."
+  },
+  "onboardingFeatureMeditationBenefit": "Short guided sessions that steady your breath and quiet a racing mind.",
+  "@onboardingFeatureMeditationBenefit": {
+    "description": "Onboarding \"what's inside\" screen: one-sentence benefit under the feature card \"Guided meditations & breathing\"."
+  },
+  "onboardingFeatureSoundsTitle": "Wellbeing sounds",
+  "@onboardingFeatureSoundsTitle": {
+    "description": "Onboarding \"what's inside\" screen: title of one feature card. Short."
+  },
+  "onboardingFeatureSoundsBenefit": "Soundscapes for focus, sleep, and calming down — whenever you need to reset.",
+  "@onboardingFeatureSoundsBenefit": {
+    "description": "Onboarding \"what's inside\" screen: one-sentence benefit under the feature card \"Wellbeing sounds\"."
+  },
+  "onboardingFeatureInsightsTitle": "Progress insights & reminders",
+  "@onboardingFeatureInsightsTitle": {
+    "description": "Onboarding \"what's inside\" screen: title of one feature card. Short."
+  },
+  "onboardingFeatureInsightsBenefit": "See your patterns over time and get gentle nudges that keep you going.",
+  "@onboardingFeatureInsightsBenefit": {
+    "description": "Onboarding \"what's inside\" screen: one-sentence benefit under the feature card \"Progress insights & reminders\"."
+  },
+  "onboardingFeatureRecoveryTitle": "Addiction recovery tools",
+  "@onboardingFeatureRecoveryTitle": {
+    "description": "Onboarding \"what's inside\" screen: title of one feature card. Short."
+  },
+  "onboardingFeatureRecoveryBenefit": "Practical resources for fighting addiction — one day at a time.",
+  "@onboardingFeatureRecoveryBenefit": {
+    "description": "Onboarding \"what's inside\" screen: one-sentence benefit under the feature card \"Addiction recovery tools\"."
+  },
+  "onboardingFeatureTherapyTitle": "Real human therapy",
+  "@onboardingFeatureTherapyTitle": {
+    "description": "Onboarding \"what's inside\" screen: title of one feature card. Short."
+  },
+  "onboardingFeatureTherapyBenefit": "Talk with a licensed therapist in private one-on-one sessions, right from the app.",
+  "@onboardingFeatureTherapyBenefit": {
+    "description": "Onboarding \"what's inside\" screen: one-sentence benefit under the feature card \"Real human therapy\"."
+  },
+  "onboardingFeaturesTitle": "Here to hold you up",
+  "@onboardingFeaturesTitle": {
+    "description": "Heading of the second onboarding screen, which lists what the app offers. Warm, supportive."
+  },
+  "onboardingFeaturesIntro": "A quick look at what's inside — and how each piece helps you feel better, day by day.",
+  "@onboardingFeaturesIntro": {
+    "description": "Intro under onboardingFeaturesTitle."
+  },
+  "onboardingCheckinSteady": "Doing okay",
+  "@onboardingCheckinSteady": {
+    "description": "Onboarding wellbeing check-in: one answer to \"How are you feeling these days?\", written in the first person. Short."
+  },
+  "onboardingCheckinSteadyDetail": "I'm here to keep my balance and build good habits.",
+  "@onboardingCheckinSteadyDetail": {
+    "description": "Onboarding check-in: first-person explanation under the answer \"Doing okay\". Sensitive mental-health wording; keep it gentle."
+  },
+  "onboardingCheckinStressed": "Stressed or low lately",
+  "@onboardingCheckinStressed": {
+    "description": "Onboarding wellbeing check-in: one answer to \"How are you feeling these days?\", written in the first person. Short."
+  },
+  "onboardingCheckinStressedDetail": "Work, life, or my mood has been weighing on me.",
+  "@onboardingCheckinStressedDetail": {
+    "description": "Onboarding check-in: first-person explanation under the answer \"Stressed or low lately\". Sensitive mental-health wording; keep it gentle."
+  },
+  "onboardingCheckinStruggling": "Struggling",
+  "@onboardingCheckinStruggling": {
+    "description": "Onboarding wellbeing check-in: one answer to \"How are you feeling these days?\", written in the first person. Short."
+  },
+  "onboardingCheckinStrugglingDetail": "It's been heavy for a while and I could use support.",
+  "@onboardingCheckinStrugglingDetail": {
+    "description": "Onboarding check-in: first-person explanation under the answer \"Struggling\". Sensitive mental-health wording; keep it gentle."
+  },
+  "onboardingCheckinDarkPlace": "In a dark place",
+  "@onboardingCheckinDarkPlace": {
+    "description": "Onboarding wellbeing check-in: one answer to \"How are you feeling these days?\", written in the first person. Short."
+  },
+  "onboardingCheckinDarkPlaceDetail": "I'm going through something serious right now.",
+  "@onboardingCheckinDarkPlaceDetail": {
+    "description": "Onboarding check-in: first-person explanation under the answer \"In a dark place\". Sensitive mental-health wording; keep it gentle."
+  },
+  "onboardingCheckinTitle": "How are you feeling these days?",
+  "@onboardingCheckinTitle": {
+    "description": "Heading of the onboarding wellbeing check-in."
+  },
+  "onboardingCheckinIntro": "This helps us point you to the right kind of support first. It stays private, and you can change it anytime.",
+  "@onboardingCheckinIntro": {
+    "description": "Intro under onboardingCheckinTitle."
+  },
+  "onboardingGoalsTitle": "What would help most?",
+  "@onboardingGoalsTitle": {
+    "description": "Onboarding check-in: heading above chips of goals (sleep, anxiety, stress…) the person can pick."
+  },
+  "onboardingGoalsHint": "Pick any. We'll put these first for you.",
+  "@onboardingGoalsHint": {
+    "description": "Hint under onboardingGoalsTitle: any number of goals can be picked and matching suggestions are shown first."
+  },
+  "onboardingNotificationsSessionsTitle": "Your therapy sessions",
+  "@onboardingNotificationsSessionsTitle": {
+    "description": "Notification permission screen: first kind of notification we send. Short title."
+  },
+  "onboardingNotificationsSessionsDetail": "When you're matched, if the time moves, and ten minutes before the call — so a paid session is never missed.",
+  "@onboardingNotificationsSessionsDetail": {
+    "description": "Notification permission screen: explains therapy-session notifications."
+  },
+  "onboardingNotificationsRemindersTitle": "Reminders you choose",
+  "@onboardingNotificationsRemindersTitle": {
+    "description": "Notification permission screen: second kind of notification. Short title."
+  },
+  "onboardingNotificationsRemindersDetail": "A morning check-in, evening pages, a wind-down. Each one is a switch in Settings; none is on until you say.",
+  "@onboardingNotificationsRemindersDetail": {
+    "description": "Notification permission screen: explains optional reminders. \"Evening pages\" = evening journaling."
+  },
+  "onboardingNotificationsNothingElseTitle": "Nothing else",
+  "@onboardingNotificationsNothingElseTitle": {
+    "description": "Notification permission screen: third point — we send no other notifications. Short title."
+  },
+  "onboardingNotificationsNothingElseDetail": "No marketing, no streak guilt, no \"we miss you\". If it isn't about your care, it isn't sent.",
+  "@onboardingNotificationsNothingElseDetail": {
+    "description": "Notification permission screen: promise that no marketing notifications are sent."
+  },
+  "onboardingNotificationsTurnOn": "Turn on notifications",
+  "@onboardingNotificationsTurnOn": {
+    "description": "Button on the notification permission screen; triggers the system permission prompt."
+  },
+  "onboardingNotificationsMaybeLater": "Maybe later",
+  "@onboardingNotificationsMaybeLater": {
+    "description": "Button on the notification permission screen: skip for now."
+  },
+  "onboardingNotificationsTitle": "Don't miss what matters",
+  "@onboardingNotificationsTitle": {
+    "description": "Heading of the notification permission screen (last onboarding step)."
+  },
+  "onboardingNotificationsIntro": "Your phone will ask once. Here's exactly what a yes means.",
+  "@onboardingNotificationsIntro": {
+    "description": "Intro on the notification permission screen, before the system prompt."
+  },
+  "onboardingTherapyCrisisTrailing": " This app can't replace emergency care.",
+  "@onboardingTherapyCrisisTrailing": {
+    "description": "Appended (note the leading space) to the crisis-help footer sentence on the onboarding therapy offer screen. Keep the leading space unless your language joins sentences without spaces."
+  },
+  "onboardingTherapyYes": "I'd like that",
+  "@onboardingTherapyYes": {
+    "description": "Button on the onboarding therapy offer: yes, interested in therapy sessions."
+  },
+  "onboardingTherapyNo": "Not right now",
+  "@onboardingTherapyNo": {
+    "description": "Button on the onboarding therapy offer: not interested for now. Gentle."
+  },
+  "onboardingTherapyTitle": "You don't have to do this alone",
+  "@onboardingTherapyTitle": {
+    "description": "Heading of the onboarding therapy offer, shown to people who said they are struggling. Warm and supportive."
+  },
+  "onboardingTherapyIntro": "Some seasons are too heavy to carry with an app alone — and that's exactly why we work with real people. yournotalone offers private one-on-one sessions with licensed therapists, right from here.",
+  "@onboardingTherapyIntro": {
+    "description": "Onboarding therapy offer intro. \"yournotalone\" is the app name — keep it as is."
+  },
+  "onboardingTherapyPrice": "A real therapist, {price} a session",
+  "@onboardingTherapyPrice": {
+    "description": "Onboarding therapy offer card title. {price} is a formatted price such as \"$20\".",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "$20"
+      }
+    }
+  },
+  "onboardingTherapyHowItWorks": "One session at a time, no subscription. You pay when you book, from Talk to a therapist on your Home screen, and our care team matches you within a day.",
+  "@onboardingTherapyHowItWorks": {
+    "description": "Onboarding therapy offer card body. \"Talk to a therapist\" is the name of a button on the Home screen — translate it the same way as that button."
+  },
+  "billingIntroOffer": "you can try it free first",
+  "@billingIntroOffer": {
+    "description": "Clause about the free trial, inserted at the end of other sentences such as \"Unlock every session — and {introOffer}.\" Starts lower-case, no final full stop. Never names a trial length."
+  },
+  "billingIntroOfferSentence": "Every plan starts with a free trial.",
+  "@billingIntroOfferSentence": {
+    "description": "Stand-alone sentence about the free trial, shown on the paywall when store prices are unavailable. Never names a trial length."
+  },
+  "billingErrorNotAllowed": "Purchases aren't allowed on this device.",
+  "@billingErrorNotAllowed": {
+    "description": "Snackbar when the app store refuses purchases on this device (e.g. parental controls)."
+  },
+  "billingErrorPending": "Your payment is pending — premium unlocks once it clears.",
+  "@billingErrorPending": {
+    "description": "Snackbar when a subscription payment is pending. \"premium\" = the Premium subscription."
+  },
+  "billingErrorNetwork": "Network trouble — check your connection and try again.",
+  "@billingErrorNetwork": {
+    "description": "Snackbar when a purchase fails for network reasons."
+  },
+  "billingErrorAlreadyOwned": "This store account already has a subscription. Sign in with the account you bought it with, or contact support.",
+  "@billingErrorAlreadyOwned": {
+    "description": "Snackbar when the app-store account already owns the subscription under a different app account."
+  },
+  "billingErrorGeneric": "The purchase didn't go through. Please try again.",
+  "@billingErrorGeneric": {
+    "description": "Snackbar for any other purchase failure."
+  },
+  "billingTrialChannelName": "Subscription",
+  "@billingTrialChannelName": {
+    "description": "Android notification channel name (shown in the phone's notification settings) for subscription reminders."
+  },
+  "billingTrialChannelDescription": "A heads-up before a free trial ends",
+  "@billingTrialChannelDescription": {
+    "description": "Android notification channel description for subscription reminders."
+  },
+  "billingStoreAppStore": "the App Store",
+  "@billingStoreAppStore": {
+    "description": "Apple's store, as used inside billingTrialReminderBody (\"cancel any time in the App Store\"). Brand name; adapt article/grammar only."
+  },
+  "billingStoreGooglePlay": "Google Play",
+  "@billingStoreGooglePlay": {
+    "description": "Google's store, as used inside billingTrialReminderBody. Brand name."
+  },
+  "billingTrialReminderTitle": "Your Premium trial ends soon",
+  "@billingTrialReminderTitle": {
+    "description": "Notification title, two days before a free trial turns into a paid subscription."
+  },
+  "billingTrialReminderBody": "From {date} it continues at the plan price. Keep it, or cancel any time in {store}.",
+  "@billingTrialReminderBody": {
+    "description": "Notification body before a free trial ends. {date} is a formatted date like \"Wed 1 Oct\"; {store} is billingStoreAppStore or billingStoreGooglePlay.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Wed 1 Oct"
+      },
+      "store": {
+        "type": "String",
+        "example": "Google Play"
+      }
+    }
+  },
+  "paywallHardWeeksHeadline": "Support for the hard weeks",
+  "@paywallHardWeeksHeadline": {
+    "description": "Paywall headline for people who said at onboarding they are struggling or in a dark place. Gentle, not salesy."
+  },
+  "paywallHardWeeksDetail": "Somewhere to put the day down, every day: guided meditations for the nights that won't settle, a journal that keeps up, and a record of how the weeks actually go — so the next hard one is easier to see coming.",
+  "@paywallHardWeeksDetail": {
+    "description": "Paywall text under paywallHardWeeksHeadline. Gentle, not salesy."
+  },
+  "paywallStressedHeadline": "Somewhere to put it down",
+  "@paywallStressedHeadline": {
+    "description": "Paywall headline for people who said at onboarding they are stressed or low. \"it\" = the stress they carry."
+  },
+  "paywallStressedDetail": "Ten minutes that are yours: breathing for the middle of a bad afternoon, sounds to fall asleep to, and a journal that keeps up — with a record of how the weeks actually go.",
+  "@paywallStressedDetail": {
+    "description": "Paywall text under paywallStressedHeadline."
+  },
+  "paywallSteadyHeadline": "Keep the good days coming",
+  "@paywallSteadyHeadline": {
+    "description": "Paywall headline for people who said at onboarding they are doing okay (and the default)."
+  },
+  "paywallSteadyDetail": "The habits that keep you steady, all in one place: every meditation and sound, an unlimited journal, and a record of how the weeks actually go.",
+  "@paywallSteadyDetail": {
+    "description": "Paywall text under paywallSteadyHeadline."
+  },
+  "billingTrialDays": "{count, plural, =1{1 day} other{{count} days}}",
+  "@billingTrialDays": {
+    "description": "Length of a free trial, used in the paywall button \"Try free for {trial}\" (paywallTryFreeFor).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billingTrialWeeks": "{count, plural, =1{1 week} other{{count} weeks}}",
+  "@billingTrialWeeks": {
+    "description": "Length of a free trial, used in the paywall button \"Try free for {trial}\" (paywallTryFreeFor).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billingTrialMonths": "{count, plural, =1{1 month} other{{count} months}}",
+  "@billingTrialMonths": {
+    "description": "Length of a free trial, used in the paywall button \"Try free for {trial}\" (paywallTryFreeFor).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billingTrialYears": "{count, plural, =1{1 year} other{{count} years}}",
+  "@billingTrialYears": {
+    "description": "Length of a free trial, used in the paywall button \"Try free for {trial}\" (paywallTryFreeFor).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "billingSuffixWeek": "/week",
+  "@billingSuffixWeek": {
+    "description": "Suffix after a store price: \"Ksh 400/week\". Keep it short."
+  },
+  "billingSuffixMonth": "/month",
+  "@billingSuffixMonth": {
+    "description": "Suffix after a store price: \"Ksh 1,500/month\". Keep it short."
+  },
+  "billingSuffixYear": "/year",
+  "@billingSuffixYear": {
+    "description": "Suffix after a store price: \"Ksh 9,000/year\". Keep it short."
+  },
+  "paywallTimelineToday": "Today",
+  "@paywallTimelineToday": {
+    "description": "Paywall free-trial timeline: first step label."
+  },
+  "paywallTimelineTodayDetail": "Full access to everything in Premium.",
+  "@paywallTimelineTodayDetail": {
+    "description": "Paywall free-trial timeline: what happens today when the trial starts."
+  },
+  "paywallTimelineDay": "Day {day}",
+  "@paywallTimelineDay": {
+    "description": "Paywall free-trial timeline: step label for a day of the trial, e.g. \"Day 5\".",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallTimelineReminderDetail": "We remind you that the trial is about to end.",
+  "@paywallTimelineReminderDetail": {
+    "description": "Paywall free-trial timeline: two days before the end, a reminder notification is sent."
+  },
+  "paywallTimelineChargeDetail": "{price} starts. Cancel any time before and pay nothing.",
+  "@paywallTimelineChargeDetail": {
+    "description": "Paywall free-trial timeline: last day, the paid plan begins. {price} is a store price with period, e.g. \"Ksh 1,500/month\".",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Ksh 1,500/month"
+      }
+    }
+  },
+  "paywallRowMeditations": "Guided meditations & breathing",
+  "@paywallRowMeditations": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowJournaling": "Journaling",
+  "@paywallRowJournaling": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowMoodHistory": "Mood history & progress",
+  "@paywallRowMoodHistory": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowSounds": "Wellbeing sounds — focus, sleep, calm",
+  "@paywallRowSounds": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowPrompts": "Journal prompts",
+  "@paywallRowPrompts": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowRecovery": "Recovery tracking & insights",
+  "@paywallRowRecovery": {
+    "description": "Paywall Free-vs-Premium table: feature row (addiction recovery)."
+  },
+  "paywallRowCheckins": "Daily mood check-ins",
+  "@paywallRowCheckins": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowReminders": "Daily reminders",
+  "@paywallRowReminders": {
+    "description": "Paywall Free-vs-Premium table: feature row."
+  },
+  "paywallRowUrgeSurfing": "Urge surfing, any time",
+  "@paywallRowUrgeSurfing": {
+    "description": "Paywall Free-vs-Premium table: feature row. \"Urge surfing\" is a recovery technique: riding out a craving."
+  },
+  "paywallCellUnlimited": "Unlimited",
+  "@paywallCellUnlimited": {
+    "description": "Paywall table cell in the Premium column (narrow, ~76px)."
+  },
+  "paywallCellFree": "{count} free",
+  "@paywallCellFree": {
+    "description": "Paywall table cell in the Free column (narrow, ~64px): how many items are free, e.g. \"2 free\".",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallCellAll": "All {count}",
+  "@paywallCellAll": {
+    "description": "Paywall table cell in the Premium column (narrow, ~76px): all items, e.g. \"All 20\".",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallCellEntries": "{count, plural, =1{1 entry} other{{count} entries}}",
+  "@paywallCellEntries": {
+    "description": "Paywall table cell in the Free column (narrow, ~64px): journal entries allowed for free.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallAlreadyPremium": "You already have Premium — everything is unlocked.",
+  "@paywallAlreadyPremium": {
+    "description": "Snackbar on the paywall when the person already subscribes."
+  },
+  "paywallPurchasesUnavailable": "Purchases aren't available on this device yet — you can upgrade later from Settings.",
+  "@paywallPurchasesUnavailable": {
+    "description": "Snackbar when the store has no plans to sell (e.g. offline or unsupported device)."
+  },
+  "paywallNotActivated": "Purchase completed, but premium didn't activate. Try \"Restore purchases\", or contact support.",
+  "@paywallNotActivated": {
+    "description": "Snackbar when a purchase succeeded but Premium did not unlock. \"Restore purchases\" names a button (paywallRestore) — use the same wording."
+  },
+  "paywallNoPurchases": "No previous purchases found.",
+  "@paywallNoPurchases": {
+    "description": "Snackbar after \"Restore purchases\" finds nothing to restore."
+  },
+  "paywallPlanWeekly": "Weekly",
+  "@paywallPlanWeekly": {
+    "description": "Paywall plan card title (narrow card, one of three side by side)."
+  },
+  "paywallPlanMonthly": "Monthly",
+  "@paywallPlanMonthly": {
+    "description": "Paywall plan card title (narrow card, one of three side by side)."
+  },
+  "paywallPlanYearly": "Yearly",
+  "@paywallPlanYearly": {
+    "description": "Paywall plan card title (narrow card, one of three side by side)."
+  },
+  "paywallPerWeek": "per week",
+  "@paywallPerWeek": {
+    "description": "Small note under the weekly plan price on the paywall (one line, narrow)."
+  },
+  "paywallPerMonth": "per month",
+  "@paywallPerMonth": {
+    "description": "Small note under the monthly plan price on the paywall (one line, narrow)."
+  },
+  "paywallPerYear": "per year",
+  "@paywallPerYear": {
+    "description": "Small note under a yearly plan price on the paywall (one line, narrow)."
+  },
+  "paywallTrustTherapists": "Licensed therapists",
+  "@paywallTrustTherapists": {
+    "description": "Paywall trust badge (small chip)."
+  },
+  "paywallTrustPrivate": "Private by design",
+  "@paywallTrustPrivate": {
+    "description": "Paywall trust badge (small chip)."
+  },
+  "paywallTrustCancel": "Cancel anytime",
+  "@paywallTrustCancel": {
+    "description": "Paywall trust badge (small chip): the subscription can be cancelled at any time."
+  },
+  "paywallSave": "SAVE {percent}%",
+  "@paywallSave": {
+    "description": "Badge on the yearly plan card: percent saved versus paying monthly. All capitals in English; tiny badge, keep short.",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "paywallColumnFree": "Free",
+  "@paywallColumnFree": {
+    "description": "Paywall table column heading: the free plan (narrow, ~64px)."
+  },
+  "paywallColumnPremium": "Premium",
+  "@paywallColumnPremium": {
+    "description": "Paywall table column heading: the Premium plan (narrow, ~76px). Product name; may stay \"Premium\"."
+  },
+  "paywallShowLess": "Show less",
+  "@paywallShowLess": {
+    "description": "Paywall button folding the feature table back to three rows."
+  },
+  "paywallSeeEverything": "See everything",
+  "@paywallSeeEverything": {
+    "description": "Paywall button unfolding the full feature table."
+  },
+  "paywallTerms": "Terms of Use",
+  "@paywallTerms": {
+    "description": "Link at the bottom of the paywall to the terms of use (required by the app stores)."
+  },
+  "paywallPrivacy": "Privacy Policy",
+  "@paywallPrivacy": {
+    "description": "Link at the bottom of the paywall to the privacy policy (required by the app stores)."
+  },
+  "paywallTryFreeFor": "Try free for {trial}",
+  "@paywallTryFreeFor": {
+    "description": "Main paywall button when the plan has a free trial. {trial} is a length such as \"7 days\" or \"1 month\" (billingTrialDays etc.).",
+    "placeholders": {
+      "trial": {
+        "type": "String",
+        "example": "7 days"
+      }
+    }
+  },
+  "paywallStartPremiumPrice": "Start Premium — {price}",
+  "@paywallStartPremiumPrice": {
+    "description": "Main paywall button when the plan has no trial. {price} is the store price, e.g. \"Ksh 1,500\".",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Ksh 1,500"
+      }
+    }
+  },
+  "paywallStartPremium": "Start Premium",
+  "@paywallStartPremium": {
+    "description": "Main paywall button when no plan is loaded."
+  },
+  "paywallThenPriceCancelAnytime": "then {price} · cancel anytime",
+  "@paywallThenPriceCancelAnytime": {
+    "description": "Small line under the paywall button when the plan has a free trial: after the trial, this price. {price} is like \"Ksh 1,500/month\". Starts lower-case.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Ksh 1,500/month"
+      }
+    }
+  },
+  "paywallPriceCancelAnytime": "{price} · cancel anytime",
+  "@paywallPriceCancelAnytime": {
+    "description": "Small line under the paywall button when the plan has no trial. {price} is like \"Ksh 1,500/month\".",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Ksh 1,500/month"
+      }
+    }
+  },
+  "paywallCancelAnytime": "Cancel anytime",
+  "@paywallCancelAnytime": {
+    "description": "Small line under the paywall button when no plan is loaded."
+  },
+  "paywallContinueFree": "Continue with Free",
+  "@paywallContinueFree": {
+    "description": "Paywall button at the end of onboarding: carry on with the free plan."
+  },
+  "paywallMaybeLater": "Maybe later",
+  "@paywallMaybeLater": {
+    "description": "Paywall button (reached from Settings/upgrade prompts): close without buying."
+  },
+  "paywallRestore": "Restore purchases",
+  "@paywallRestore": {
+    "description": "Paywall button: restore a subscription bought earlier on this store account."
+  },
+  "paywallTherapyNote": "Therapy sessions are available to everyone and booked separately.",
+  "@paywallTherapyNote": {
+    "description": "Footnote on the paywall: therapy sessions are not part of Premium."
+  },
+  "authOr": "or",
+  "@authOr": {
+    "description": "Word set into a divider line between the email form and the \"Continue with Apple/Google\" buttons on the log-in and sign-up screens."
+  },
+  "authErrorGeneric": "Something went wrong. Please try again.",
+  "@authErrorGeneric": {
+    "description": "Snackbar when signing in, signing up or resetting a password fails for an unexpected reason."
+  },
+  "authEmailRequired": "Enter your email",
+  "@authEmailRequired": {
+    "description": "Form error under an empty email field."
+  },
+  "authEmailInvalid": "Enter a valid email address",
+  "@authEmailInvalid": {
+    "description": "Form error under an email field that is not an email address."
+  },
+  "authPasswordRequired": "Enter your password",
+  "@authPasswordRequired": {
+    "description": "Form error under an empty password field."
+  },
+  "authPasswordTooShort": "Use at least {count} characters",
+  "@authPasswordTooShort": {
+    "description": "Form error when a new password is too short.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "authContinueWithApple": "Continue with Apple",
+  "@authContinueWithApple": {
+    "description": "Sign-in button. Follow Apple's official wording for your language if one exists."
+  },
+  "authContinueWithGoogle": "Continue with Google",
+  "@authContinueWithGoogle": {
+    "description": "Sign-in button. Follow Google's official wording for your language if one exists."
+  },
+  "authGoogleUnavailable": "Google sign-in isn't available on this device.",
+  "@authGoogleUnavailable": {
+    "description": "Snackbar: Google sign-in cannot run on this phone."
+  },
+  "authGoogleNoToken": "Google didn't return a sign-in token. Please try again.",
+  "@authGoogleNoToken": {
+    "description": "Snackbar: Google sign-in failed without giving us credentials."
+  },
+  "authGoogleInterrupted": "Google couldn't finish signing you in. Please try again, or use your email instead.",
+  "@authGoogleInterrupted": {
+    "description": "Snackbar: Google sign-in was interrupted. A technical detail in brackets may follow."
+  },
+  "authGoogleMisconfigured": "Google sign-in isn't set up correctly for this app.",
+  "@authGoogleMisconfigured": {
+    "description": "Snackbar: Google sign-in configuration error. A technical detail in brackets may follow."
+  },
+  "authGoogleWrongAccount": "That's a different Google account than the one expected.",
+  "@authGoogleWrongAccount": {
+    "description": "Snackbar: Google returned a different account than expected."
+  },
+  "authGoogleFailed": "Couldn't sign in with Google. Please try again.",
+  "@authGoogleFailed": {
+    "description": "Snackbar: Google sign-in failed for an unknown reason."
+  },
+  "authAppleUnavailable": "Sign in with Apple isn't available on this device.",
+  "@authAppleUnavailable": {
+    "description": "Snackbar. \"Sign in with Apple\" is Apple's product name — use Apple's official localised name."
+  },
+  "authAppleNoToken": "Apple didn't return a sign-in token. Please try again.",
+  "@authAppleNoToken": {
+    "description": "Snackbar: Apple sign-in failed without giving us credentials."
+  },
+  "authAppleNoAccount": "Couldn't sign in with Apple. Check that this device is signed in to an Apple Account in Settings, then try again.",
+  "@authAppleNoAccount": {
+    "description": "Snackbar: Apple sign-in failed, usually because the phone is not signed in to an Apple Account. \"Settings\" is the iPhone Settings app. A technical detail in brackets may follow."
+  },
+  "authAppleFailed": "Couldn't sign in with Apple. Please try again, or use your email instead.",
+  "@authAppleFailed": {
+    "description": "Snackbar: Apple sign-in failed. A technical detail in brackets may follow."
+  },
+  "authNewHere": "New here?",
+  "@authNewHere": {
+    "description": "Log-in screen footer, before the \"Create an account\" button."
+  },
+  "authCreateAnAccount": "Create an account",
+  "@authCreateAnAccount": {
+    "description": "Log-in screen footer button that opens sign-up."
+  },
+  "authLoginTitle": "Welcome back",
+  "@authLoginTitle": {
+    "description": "Log-in screen heading."
+  },
+  "authLoginSubtitle": "You are not alone. Log in to pick up right where you left off.",
+  "@authLoginSubtitle": {
+    "description": "Log-in screen subtitle. \"You are not alone\" echoes the app name (yournotalone)."
+  },
+  "authEmail": "Email",
+  "@authEmail": {
+    "description": "Label of an email text field."
+  },
+  "authPassword": "Password",
+  "@authPassword": {
+    "description": "Label of a password text field."
+  },
+  "authForgotPassword": "Forgot password?",
+  "@authForgotPassword": {
+    "description": "Log-in screen link to reset the password."
+  },
+  "authLogIn": "Log in",
+  "@authLogIn": {
+    "description": "Button that logs in (log-in screen, and sign-up screen footer)."
+  },
+  "authConfirmEmailTitle": "Confirm your email",
+  "@authConfirmEmailTitle": {
+    "description": "Heading after sign-up, while waiting for the person to tap the confirmation link."
+  },
+  "authConfirmEmailSubtitle": "We sent a confirmation link to verify it's really you. Tap the link, then come back and log in.",
+  "@authConfirmEmailSubtitle": {
+    "description": "Text under authConfirmEmailTitle."
+  },
+  "authBackToLogIn": "Back to log in",
+  "@authBackToLogIn": {
+    "description": "Button returning to the log-in screen."
+  },
+  "authHaveAccount": "Already have an account?",
+  "@authHaveAccount": {
+    "description": "Sign-up screen footer, before the \"Log in\" button."
+  },
+  "authSignupTitle": "Create your account",
+  "@authSignupTitle": {
+    "description": "Sign-up screen heading."
+  },
+  "authSignupSubtitle": "A calmer mind starts here. It only takes a minute.",
+  "@authSignupSubtitle": {
+    "description": "Sign-up screen subtitle."
+  },
+  "authFullName": "Full name",
+  "@authFullName": {
+    "description": "Sign-up text field label for the person's name."
+  },
+  "authNameRequired": "Enter your name",
+  "@authNameRequired": {
+    "description": "Form error under an empty name field."
+  },
+  "authConfirmPassword": "Confirm password",
+  "@authConfirmPassword": {
+    "description": "Label of the second password field, to type the password again."
+  },
+  "authPasswordsDontMatch": "Passwords don't match",
+  "@authPasswordsDontMatch": {
+    "description": "Form error when the two passwords differ."
+  },
+  "authCreateAccount": "Create account",
+  "@authCreateAccount": {
+    "description": "Sign-up submit button."
+  },
+  "authSignupAgreement": "By creating an account you agree to our {terms} and {privacy}.",
+  "@authSignupAgreement": {
+    "description": "Legal notice at the bottom of sign-up. {terms} is replaced by the link authTermsOfService and {privacy} by the link authPrivacyPolicy; put them where your grammar needs them.",
+    "placeholders": {
+      "terms": {
+        "type": "String",
+        "example": "Terms of Service"
+      },
+      "privacy": {
+        "type": "String",
+        "example": "Privacy Policy"
+      }
+    }
+  },
+  "authTermsOfService": "Terms of Service",
+  "@authTermsOfService": {
+    "description": "Link inside authSignupAgreement to the terms of service."
+  },
+  "authPrivacyPolicy": "Privacy Policy",
+  "@authPrivacyPolicy": {
+    "description": "Link inside authSignupAgreement to the privacy policy."
+  },
+  "authPasswordUpdated": "Password updated.",
+  "@authPasswordUpdated": {
+    "description": "Snackbar after setting a new password."
+  },
+  "authNewPasswordTitle": "Choose a new password",
+  "@authNewPasswordTitle": {
+    "description": "Heading of the screen opened from a password-reset email."
+  },
+  "authNewPasswordSubtitle": "You're verified — set the password you'll use to log in from now on.",
+  "@authNewPasswordSubtitle": {
+    "description": "Text under authNewPasswordTitle."
+  },
+  "authNewPassword": "New password",
+  "@authNewPassword": {
+    "description": "Password field label on the new-password screen."
+  },
+  "authSavePassword": "Save password",
+  "@authSavePassword": {
+    "description": "Submit button on the new-password screen."
+  },
+  "authCheckInboxTitle": "Check your inbox",
+  "@authCheckInboxTitle": {
+    "description": "Heading after requesting a password-reset email."
+  },
+  "authCheckInboxSubtitle": "If an account exists for that address, the reset link is already on its way.",
+  "@authCheckInboxSubtitle": {
+    "description": "Text under authCheckInboxTitle."
+  },
+  "authTryAnotherEmail": "Try another email",
+  "@authTryAnotherEmail": {
+    "description": "Button to go back and enter a different email for the password reset."
+  },
+  "authResetTitle": "Reset password",
+  "@authResetTitle": {
+    "description": "Heading of the password-reset screen."
+  },
+  "authResetSubtitle": "Enter the email you signed up with and we'll send you a link to set a new password.",
+  "@authResetSubtitle": {
+    "description": "Text under authResetTitle."
+  },
+  "authSendResetLink": "Send reset link",
+  "@authSendResetLink": {
+    "description": "Submit button on the password-reset screen."
+  },
+  "shellTabHome": "Home",
+  "@shellTabHome": {
+    "description": "Bottom navigation tab label. One short word."
+  },
+  "shellTabExplore": "Explore",
+  "@shellTabExplore": {
+    "description": "Bottom navigation tab label: browse all exercises and content. One short word."
+  },
+  "shellTabSettings": "Settings",
+  "@shellTabSettings": {
+    "description": "Bottom navigation tab label. One short word."
+  },
+  "profileCameraUnavailable": "The camera isn't available right now.",
+  "@profileCameraUnavailable": {
+    "description": "Snackbar on Edit profile when the camera cannot be opened."
+  },
+  "profileLibraryUnavailable": "Couldn't open your photo library.",
+  "@profileLibraryUnavailable": {
+    "description": "Snackbar on Edit profile when the photo library cannot be opened."
+  },
+  "profileChooseFromLibrary": "Choose from library",
+  "@profileChooseFromLibrary": {
+    "description": "Edit profile photo sheet option: pick a profile photo from the phone's photos."
+  },
+  "profileTakePhoto": "Take a photo",
+  "@profileTakePhoto": {
+    "description": "Edit profile photo sheet option: take a new profile photo with the camera."
+  },
+  "profileRemovePhoto": "Remove photo",
+  "@profileRemovePhoto": {
+    "description": "Edit profile photo sheet option: remove the profile photo."
+  },
+  "profileUpdated": "Profile updated.",
+  "@profileUpdated": {
+    "description": "Snackbar after saving the profile."
+  },
+  "profilePhotoSaveFailed": "Couldn't save your photo: {error}",
+  "@profilePhotoSaveFailed": {
+    "description": "Snackbar when uploading the profile photo fails. {error} is a technical message from the server (usually English).",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Payload too large"
+      }
+    }
+  },
+  "profileEditTitle": "Edit profile",
+  "@profileEditTitle": {
+    "description": "App bar title of the Edit profile screen."
+  },
+  "profileChangePhoto": "Change photo",
+  "@profileChangePhoto": {
+    "description": "Edit profile button under the avatar when a photo is set."
+  },
+  "profileAddPhoto": "Add a photo",
+  "@profileAddPhoto": {
+    "description": "Edit profile button under the avatar when no photo is set."
+  },
+  "profileYourName": "Your name",
+  "@profileYourName": {
+    "description": "Edit profile text field label."
+  },
+  "profileEmailFixed": "Your email can't be changed here.",
+  "@profileEmailFixed": {
+    "description": "Note under the (read-only) email on Edit profile."
+  },
+  "profileSaveChanges": "Save changes",
+  "@profileSaveChanges": {
+    "description": "Edit profile save button."
   }
 }

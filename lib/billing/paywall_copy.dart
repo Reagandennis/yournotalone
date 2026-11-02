@@ -1,33 +1,33 @@
 import 'package:purchases_flutter/purchases_flutter.dart';
 
+import '../l10n/l10n.dart';
+
 /// What the paywall says to *this* person.
 ///
 /// The onboarding check-in ("steady", "stressed", "struggling",
 /// "dark_place") used to be saved at the paywall and never read. It is the
 /// one thing the app knows about someone before asking them to pay, so
 /// the headline speaks to it instead of to "Premium" in the abstract.
-({String headline, String detail}) paywallCopy(String checkin) =>
-    switch (checkin) {
-      'struggling' || 'dark_place' => (
-          headline: 'Support for the hard weeks',
-          detail: 'Somewhere to put the day down, every day: guided '
-              'meditations for the nights that won\'t settle, a journal '
-              'that keeps up, and a record of how the weeks actually go — '
-              'so the next hard one is easier to see coming.',
-        ),
-      'stressed' => (
-          headline: 'Somewhere to put it down',
-          detail: 'Ten minutes that are yours: breathing for the middle of '
-              'a bad afternoon, sounds to fall asleep to, and a journal '
-              'that keeps up — with a record of how the weeks actually go.',
-        ),
-      _ => (
-          headline: 'Keep the good days coming',
-          detail: 'The habits that keep you steady, all in one place: every '
-              'meditation and sound, an unlimited journal, and a record of '
-              'how the weeks actually go.',
-        ),
-    };
+({String headline, String detail}) paywallCopy(
+  String checkin, [
+  AppLocalizations? l10n,
+]) {
+  l10n ??= currentL10n();
+  return switch (checkin) {
+    'struggling' || 'dark_place' => (
+        headline: l10n.paywallHardWeeksHeadline,
+        detail: l10n.paywallHardWeeksDetail,
+      ),
+    'stressed' => (
+        headline: l10n.paywallStressedHeadline,
+        detail: l10n.paywallStressedDetail,
+      ),
+    _ => (
+        headline: l10n.paywallSteadyHeadline,
+        detail: l10n.paywallSteadyDetail,
+      ),
+  };
+}
 
 /// Which plan to start with selected.
 ///
@@ -54,37 +54,38 @@ int? trialDays(Package package) {
 }
 
 /// "3 days" / "1 week" / "1 month" for a package's free trial.
-String? trialLabel(Package package) {
+String? trialLabel(Package package, [AppLocalizations? l10n]) {
+  l10n ??= currentL10n();
   final intro = package.storeProduct.introductoryPrice;
   if (intro == null || intro.price > 0) return null;
-  final unit = switch (intro.periodUnit) {
-    PeriodUnit.day => 'day',
-    PeriodUnit.week => 'week',
-    PeriodUnit.month => 'month',
-    PeriodUnit.year => 'year',
-    _ => 'day',
-  };
   final n = intro.periodNumberOfUnits;
-  return n == 1 ? '1 $unit' : '$n ${unit}s';
+  return switch (intro.periodUnit) {
+    PeriodUnit.week => l10n.billingTrialWeeks(n),
+    PeriodUnit.month => l10n.billingTrialMonths(n),
+    PeriodUnit.year => l10n.billingTrialYears(n),
+    _ => l10n.billingTrialDays(n),
+  };
 }
 
 /// A yearly price as "Ksh 750/month", in the store's own currency and
 /// symbol placement. The symbol is whatever is left of the store's price
 /// string once digits and separators go, so "Ksh 9,000.00" gives "Ksh",
 /// "$79.99" gives "$", and the app never hard-codes a currency.
-String perMonthLabel(Package yearly) {
+String perMonthLabel(Package yearly, [AppLocalizations? l10n]) {
+  l10n ??= currentL10n();
+  final perMonth = l10n.billingSuffixMonth;
   final priceString = yearly.storeProduct.priceString;
   final amount = yearly.storeProduct.price / 12;
   final symbol = priceString.replaceAll(RegExp(r'[\d.,\s]'), '');
   final number = amount == amount.roundToDouble()
       ? amount.toStringAsFixed(0)
       : amount.toStringAsFixed(2);
-  if (symbol.isEmpty) return '$number/month';
+  if (symbol.isEmpty) return '$number$perMonth';
   if (priceString.trim().startsWith(symbol)) {
     final spaced = priceString.trim().startsWith('$symbol ');
-    return '$symbol${spaced ? ' ' : ''}$number/month';
+    return '$symbol${spaced ? ' ' : ''}$number$perMonth';
   }
-  return '$number $symbol/month';
+  return '$number $symbol$perMonth';
 }
 
 /// The paywall's three-step trial timeline, from the trial's length.
@@ -92,19 +93,21 @@ String perMonthLabel(Package yearly) {
 List<({String day, String detail})> trialTimeline(
   int days,
   String price,
-  String suffix,
-) {
+  String suffix, [
+  AppLocalizations? l10n,
+]) {
+  l10n ??= currentL10n();
   final reminderDay = days - 2;
   return [
-    (day: 'Today', detail: 'Full access to everything in Premium.'),
+    (day: l10n.paywallTimelineToday, detail: l10n.paywallTimelineTodayDetail),
     if (reminderDay >= 1)
       (
-        day: 'Day $reminderDay',
-        detail: 'We remind you that the trial is about to end.',
+        day: l10n.paywallTimelineDay(reminderDay),
+        detail: l10n.paywallTimelineReminderDetail,
       ),
     (
-      day: 'Day $days',
-      detail: '$price$suffix starts. Cancel any time before and pay nothing.',
+      day: l10n.paywallTimelineDay(days),
+      detail: l10n.paywallTimelineChargeDetail('$price$suffix'),
     ),
   ];
 }

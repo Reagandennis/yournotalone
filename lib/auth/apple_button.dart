@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'apple_auth.dart';
 import 'auth_gate.dart';
 import 'auth_ui.dart';
@@ -73,14 +74,14 @@ class _AppleAuthButtonState extends State<AppleAuthButton> {
                 color: dimmed,
               ),
             )
-          : const FittedBox(
+          : FittedBox(
               fit: BoxFit.scaleDown,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.apple, size: 22),
-                  SizedBox(width: 10),
-                  Text('Continue with Apple'),
+                  const Icon(Icons.apple, size: 22),
+                  const SizedBox(width: 10),
+                  Text(context.l10n.authContinueWithApple),
                 ],
               ),
             ),

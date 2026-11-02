@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../support/crisis_screen.dart';
 import '../therapy/therapy_repository.dart';
 import 'onboarding_ui.dart';
@@ -41,13 +42,10 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
-  static const _crisisNote = CrisisFooter(
-    trailing: ' This app can\'t replace emergency care.',
-  );
-
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     final price = formatPrice(therapySessionPriceCents);
     return OnboardingScaffold(
       bottom: Column(
@@ -55,20 +53,20 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
         children: [
           ElevatedButton(
             onPressed: _loading ? null : () => _finish(interested: true),
-            child: const Text('I\'d like that'),
+            child: Text(l10n.onboardingTherapyYes),
           ),
           const SizedBox(height: 6),
           TextButton(
             onPressed: _loading ? null : () => _finish(interested: false),
-            child: const Text('Not right now'),
+            child: Text(l10n.onboardingTherapyNo),
           ),
           const SizedBox(height: 10),
-          _crisisNote,
+          CrisisFooter(trailing: l10n.onboardingTherapyCrisisTrailing),
         ],
       ),
       children: [
         Text(
-          'You don\'t have to do this alone',
+          l10n.onboardingTherapyTitle,
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.w600,
@@ -80,10 +78,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
         const PillarStripe(),
         const SizedBox(height: 16),
         Text(
-          'Some seasons are too heavy to carry with an app alone — and '
-          'that\'s exactly why we work with real people. yournotalone '
-          'offers private one-on-one sessions with licensed therapists, '
-          'right from here.',
+          l10n.onboardingTherapyIntro,
           style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 26),
@@ -115,7 +110,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'A real therapist, $price a session',
+                      l10n.onboardingTherapyPrice(price),
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -124,9 +119,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'One session at a time, no subscription. You pay when '
-                      'you book, from Talk to a therapist on your Home '
-                      'screen, and our care team matches you within a day.',
+                      l10n.onboardingTherapyHowItWorks,
                       style: TextStyle(
                         fontSize: 13,
                         color: c.textMuted,
