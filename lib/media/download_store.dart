@@ -90,7 +90,8 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
        _entriesFor = entriesFor ?? ContentCatalog.instance.downloadableFor,
        super(const {});
 
-  static final instance = DownloadStore._();
+  /// Replaceable so widget tests can use a store on fakes.
+  static DownloadStore instance = DownloadStore._();
 
   @visibleForTesting
   factory DownloadStore.forTest({
@@ -171,7 +172,7 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
     }
     _networkSub ??= _network.changes.listen((_) {
       if (_queue.isNotEmpty) unawaited(_pump());
-    });
+    }, onError: (Object e) => debugPrint('Connection changes unavailable: $e'));
     unawaited(_pump());
   }
 
@@ -374,11 +375,16 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
     final have = await _files.downloaded(entry.ref);
     if (have != null) return have;
     final sha = entry.ref.sha256;
-    return _inFlight[sha] ??= _fetchAndCheck(
-      entry,
-      wifiOnly: wifiOnly,
-      onProgress: onProgress,
-    ).whenComplete(() => _inFlight.remove(sha));
+    return _inFlight[sha] ??=
+        _fetchAndCheck(
+          entry,
+          wifiOnly: wifiOnly,
+          onProgress: onProgress,
+        ).whenComplete(() {
+          // Not `=> remove(sha)`: that returns this future, and whenComplete
+          // would wait on it forever.
+          _inFlight.remove(sha);
+        });
   }
 
   Future<File?> _fetchAndCheck(
@@ -466,6 +472,14 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
     } catch (_) {
       return {};
     }
+  }
+
+  @override
+  void dispose() {
+    _networkSub?.cancel();
+    wifiOnly.dispose();
+    waiting.dispose();
+    super.dispose();
   }
 
   @visibleForTesting
