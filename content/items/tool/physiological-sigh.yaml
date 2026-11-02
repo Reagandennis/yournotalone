@@ -9,6 +9,8 @@ accent: stress
 tags:
   needs: [panic, stressed, angry]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Physiological sigh"

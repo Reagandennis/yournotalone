@@ -4,6 +4,7 @@ import type { AppEnv } from './env';
 import { requireAuth } from './auth';
 import { getCatalog } from './catalog';
 import { registerSign } from './sign';
+import { registerRecommendations } from './recommend/route';
 import { HttpError, jsonError } from './http';
 import { logError } from './log';
 
@@ -30,7 +31,7 @@ export function createApp() {
   // Everything under /v1 needs a Supabase access token.
   app.use('/v1/*', requireAuth);
   registerSign(app);
-  // Next: registerRecommendations(app);  (POST /v1/recommendations, design §5)
+  registerRecommendations(app);
 
   app.notFound((c) => jsonError(c, 404, 'not_found'));
   app.onError((error, c) => {

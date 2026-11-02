@@ -9,6 +9,8 @@ accent: blue
 tags:
   needs: [anxious, stressed, focus]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Box breathing"

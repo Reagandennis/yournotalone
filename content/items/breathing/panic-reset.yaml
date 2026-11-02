@@ -9,6 +9,8 @@ accent: red
 tags:
   needs: [anxious, panic]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Panic reset"

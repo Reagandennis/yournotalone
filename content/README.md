@@ -28,6 +28,15 @@ flutter test tool/export_content_test.dart   # Dart catalogues → content/
   item is a screen built into the app and only gets its tags from here.
 - Every item needs at least one need. Tags must come from `vocab.yaml`.
   Icons must come from `lib/content/content_icons.dart`.
+- Three optional tags feed the recommendation safety rules (design §5) and
+  exist only here, not in Dart (the export carries them over):
+  - `intensity`: `gentle`, `moderate` or `deep`. Deep items dig into
+    what's hard (worst-case writing, thought records).
+  - `calmingSafe: true`: allowed straight after an awful or low check-in.
+    Never on a `deep` item or one for `good`. Tag conservatively: breathing
+    without long holds, grounding, soft sounds.
+  - `support: true`: crisis and support content. Must be free; never
+    ranked down.
 - `order` sets the position in lists. Use gaps of 10 so there's room to
   slot items in later.
 - `status` is `published`, `draft` or `retired`. Drafts and retired items

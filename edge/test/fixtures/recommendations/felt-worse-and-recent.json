@@ -1,0 +1,59 @@
+{
+  "description": "Felt worse after focus sounds, and did Rainfall an hour ago: both rank down.",
+  "signals": {
+    "now": "2026-11-02T18:30:00Z",
+    "localTime": "2026-11-02T21:30",
+    "premium": true,
+    "goals": [
+      "sleep",
+      "focus"
+    ],
+    "feelings": [
+      {
+        "id": "sound:Deep focus",
+        "feeling": -1,
+        "at": "2026-11-01T10:00:00Z"
+      },
+      {
+        "id": "sound:Deep focus",
+        "feeling": -1,
+        "at": "2026-10-31T10:00:00Z"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "sound:Rainfall",
+        "at": "2026-11-02T17:30:00Z"
+      }
+    ]
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight"
+      },
+      {
+        "id": "med-morning-reset",
+        "reason": "Because you're working on focus"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "Something to try"
+      },
+      {
+        "id": "sound:Deep focus",
+        "reason": "Because you're working on focus"
+      },
+      {
+        "id": "lesson:Why avoiding things keeps anxiety alive",
+        "reason": "Something to try"
+      },
+      {
+        "id": "prompt:Worst case",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

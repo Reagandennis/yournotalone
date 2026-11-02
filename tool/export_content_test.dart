@@ -124,7 +124,7 @@ Map<String, Object?> _item(
     'minutes': item.minutes,
     'icon': _icon(item.icon),
     'accent': _accent(item.accent),
-    'tags': {
+    'tags': <String, Object?>{
       'needs': [
         for (final n in Need.values)
           if (item.needs.contains(n)) n.name,
@@ -174,6 +174,25 @@ List<Map<String, Object?>> _toolkit(
       body: {'type': 'lesson', 'art': l.art.name},
     ),
 ];
+
+/// `intensity`, `calmingSafe` and `support` from the item files already in
+/// content/, by path. They have no Dart equivalent.
+Map<String, Map<String, Object>> _safetyTags() {
+  final dir = Directory('content/items');
+  if (!dir.existsSync()) return {};
+  final line = RegExp(
+    r'^  (intensity|calmingSafe|support): (\S+)$',
+    multiLine: true,
+  );
+  return {
+    for (final f in dir.listSync(recursive: true).whereType<File>())
+      if (f.path.endsWith('.yaml'))
+        f.path: {
+          for (final m in line.allMatches(f.readAsStringSync()))
+            m[1]!: m[2] == 'true' ? true : m[2]!,
+        },
+  };
+}
 
 void main() {
   test('export catalogues to content/', () {
@@ -256,6 +275,10 @@ void main() {
       }
     }
 
+    // The safety tags are edited in content/ only (design §5), so carry
+    // them over from the files about to be rewritten.
+    final safety = _safetyTags();
+
     // Only what this writes: README, backgrounds/ and anything else in
     // content/ stays.
     for (final dir in ['content/items', 'content/courses']) {
@@ -270,6 +293,7 @@ void main() {
       final path = 'content/items/$kind/${_slug(title)}.yaml';
       expect(names.add(path), isTrue, reason: 'two items would share $path');
       item['background'] = backgrounds[path];
+      (item['tags']! as Map<String, Object?>).addAll(safety[path] ?? const {});
       final out = StringBuffer();
       _write(out, item, 0);
       File(path)
@@ -306,6 +330,7 @@ void main() {
       'kinds': [for (final k in ContentKind.values) k.name],
       'needs': [for (final n in Need.values) n.name],
       'dayParts': [for (final d in DayPart.values) d.name],
+      'intensities': ['gentle', 'moderate', 'deep'],
       'accents': [...contentAccents.keys],
       'soundCategories': [for (final c in SoundCategory.values) c.name],
       'promptGroups': promptGroups,

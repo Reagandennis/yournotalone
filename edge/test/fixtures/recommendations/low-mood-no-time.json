@@ -1,0 +1,38 @@
+{
+  "description": "Low mood with no time given counts as recent.",
+  "signals": {
+    "now": "2026-11-02T18:30:00Z",
+    "localTime": "2026-11-02T21:30",
+    "premium": true,
+    "lastMood": 1
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "breathing:Panic reset",
+        "reason": "For right now"
+      },
+      {
+        "id": "support-crisis-lines",
+        "reason": "Here whenever you need it"
+      },
+      {
+        "id": "meditation:Self-compassion",
+        "reason": "For right now"
+      },
+      {
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight"
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "For tonight"
+      },
+      {
+        "id": "tool:Physiological sigh",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

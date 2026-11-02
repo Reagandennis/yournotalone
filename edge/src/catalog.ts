@@ -6,10 +6,11 @@
 //   GET {PUBLIC_BASE_URL}/{path}
 //     -> {format, version, hash, items[{id, premium, …}], courses[], media{…}}
 //
-// The Worker only needs ids, premium flags and media refs, so that is all
-// it keeps.
+// The Worker keeps ids, premium flags and media refs for signing, and the
+// tags, titles and courses that recommendations score with.
 
 import { logError } from './log';
+import type { ScoreCatalog, ScoreCourse, ScoreItem } from './recommend/score';
 
 export type Access = 'public' | 'premium';
 export type MediaSlot = 'audio' | 'narration';
@@ -22,9 +23,7 @@ export interface MediaRef {
   access: Access;
 }
 
-export interface CatalogItem {
-  id: string;
-  premium: boolean;
+export interface CatalogItem extends ScoreItem {
   media: Partial<Record<MediaSlot, MediaRef>>;
 }
 
@@ -32,6 +31,8 @@ export interface Catalog {
   version: number;
   path: string;
   items: Map<string, CatalogItem>;
+  /** What the scorer reads, built once per snapshot. */
+  scoring: ScoreCatalog;
 }
 
 const REFRESH_MS = 60_000;
@@ -128,7 +129,29 @@ export function parseSnapshot(raw: any, version: number, path: string): Catalog 
       const ref = parseRef(media[it.id]?.[slot]);
       if (ref) refs[slot] = ref;
     }
-    items.set(it.id, { id: it.id, premium: it.premium === true, media: refs });
+    const tags = it.tags && typeof it.tags === 'object' ? it.tags : {};
+    items.set(it.id, {
+      id: it.id,
+      kind: typeof it.kind === 'string' ? it.kind : '',
+      title: str(it.text?.en?.title) ?? it.id,
+      order: Number.isFinite(it.order) ? it.order : 0,
+      premium: it.premium === true,
+      addedOn: str(it.addedOn),
+      needs: strings(tags.needs),
+      dayParts: strings(tags.dayParts),
+      intensity: str(tags.intensity),
+      calmingSafe: tags.calmingSafe === true,
+      support: tags.support === true,
+      media: refs,
+    });
   }
-  return { version, path, items };
+  const courses: ScoreCourse[] = [];
+  for (const c of Array.isArray(raw.courses) ? raw.courses : []) {
+    if (!c || typeof c.id !== 'string') continue;
+    courses.push({ id: c.id, title: str(c.text?.en?.title) ?? c.id, days: strings(c.days) });
+  }
+  return { version, path, items, scoring: { items: [...items.values()], courses } };
 }
+
+const str = (x: unknown): string | null => (typeof x === 'string' ? x : null);
+const strings = (x: unknown): string[] => (Array.isArray(x) ? x.filter((v) => typeof v === 'string') : []);

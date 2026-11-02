@@ -19,6 +19,7 @@ needs:
   - reflect
   - good
 dayParts: [morning, afternoon, evening, night]
+intensities: [gentle, moderate, deep]
 accents:
   - red
   - blue

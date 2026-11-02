@@ -9,6 +9,8 @@ accent: yellow
 tags:
   needs: [anxious, focus]
   dayParts: [morning]
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Morning grounding"

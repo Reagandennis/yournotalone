@@ -9,6 +9,8 @@ accent: black
 tags:
   needs: [stressed, angry]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Slow exhale"

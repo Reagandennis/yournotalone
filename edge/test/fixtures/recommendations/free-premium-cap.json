@@ -1,0 +1,41 @@
+{
+  "description": "Free user whose goals point at premium items: at most 2 premium in the top 6.",
+  "signals": {
+    "now": "2026-11-02T18:30:00Z",
+    "localTime": "2026-11-02T21:30",
+    "premium": false,
+    "goals": [
+      "sleep",
+      "anxious"
+    ]
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "breathing:4-7-8 calm",
+        "reason": "Because you're working on sleep"
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "For tonight"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "Because you're working on anxiety"
+      },
+      {
+        "id": "lesson:What CBT actually is",
+        "reason": "Because you're working on anxiety"
+      },
+      {
+        "id": "sound:Deep focus",
+        "reason": "Something to try"
+      },
+      {
+        "id": "tool:Physiological sigh",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

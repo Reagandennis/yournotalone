@@ -1,0 +1,53 @@
+{
+  "description": "Support content done recently and \"felt worse\" keeps a score of at least 0, and is never a locked slot.",
+  "signals": {
+    "now": "2026-11-02T18:30:00Z",
+    "localTime": "2026-11-02T21:30",
+    "premium": false,
+    "goals": [
+      "low"
+    ],
+    "feelings": [
+      {
+        "id": "support-crisis-lines",
+        "feeling": -1,
+        "at": "2026-11-02T10:00:00Z"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "support-crisis-lines",
+        "at": "2026-11-02T18:00:00Z"
+      }
+    ]
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight"
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "For tonight"
+      },
+      {
+        "id": "support-crisis-lines",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "lesson:What CBT actually is",
+        "reason": "Because you're working on low moods"
+      },
+      {
+        "id": "sound:Deep focus",
+        "reason": "Something to try"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "Something to try"
+      }
+    ],
+    "rules": "v1"
+  }
+}

@@ -32,6 +32,23 @@ test('rejects an item with no needs', () => {
   assert.match(errors.join('\n'), /at least one need/);
 });
 
+test('a calmingSafe item is never deep or for feeling good', () => {
+  const deep = withItem(box[0], (i) => (i.tags.intensity = 'deep'));
+  assert.match(deep.errors.join('\n'), /calmingSafe item can't be deep/);
+  const good = withItem(box[0], (i) => i.tags.needs.push('good'));
+  assert.match(good.errors.join('\n'), /calmingSafe item can't be for feeling good/);
+});
+
+test('rejects an intensity outside the vocabulary', () => {
+  const { errors } = withItem(bodyScan[0], (i) => (i.tags.intensity = 'extreme'));
+  assert.match(errors.join('\n'), /tags\.intensity/);
+});
+
+test('support items are always free', () => {
+  const { errors } = withItem(bodyScan[0], (i) => (i.tags.support = true));
+  assert.match(errors.join('\n'), /support items are always free/);
+});
+
 test('rejects an icon the app does not know', () => {
   const { errors } = withItem(box[0], (i) => (i.icon = 'not_an_icon'));
   assert.match(errors.join('\n'), /content_icons\.dart/);
