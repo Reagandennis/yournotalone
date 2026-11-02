@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../media/download_buttons.dart';
+import '../media/download_strings.dart';
+import '../media/media_links.dart';
 import 'sound_player.dart';
 import 'sounds_catalog.dart';
 
@@ -49,9 +52,14 @@ class _PlayerScreenState extends State<PlayerScreen>
     } catch (e) {
       debugPrint('Sound playback failed for ${sound.asset}: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Couldn\'t play that sound.')),
-        );
+        final message = switch (e) {
+          PremiumRequired() => DownloadStrings.premiumNeeded,
+          MediaUnavailable() => DownloadStrings.needsConnection,
+          _ => DownloadStrings.couldNotPlay,
+        };
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     }
   }
@@ -160,6 +168,11 @@ class _PlayerScreenState extends State<PlayerScreen>
                         children: [
                           const BackChip(),
                           const Spacer(),
+                          DownloadButton(
+                            itemId: downloadableItemAt(sound.asset),
+                            accent: accent,
+                          ),
+                          const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
@@ -250,6 +263,37 @@ class _PlayerScreenState extends State<PlayerScreen>
                           height: 1.5,
                         ),
                       ),
+                    ),
+                    // A sound that isn't in the app is fetched whole first.
+                    ValueListenableBuilder<String?>(
+                      valueListenable: player.preparing,
+                      builder: (context, preparing, _) => preparing ==
+                              sound.asset
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 12),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 14,
+                                    height: 14,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: c.accent(accent),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    DownloadStrings.preparing,
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      color: c.textMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : const SizedBox.shrink(),
                     ),
                     const SizedBox(height: 24),
                     // The living wave

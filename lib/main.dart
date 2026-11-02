@@ -17,6 +17,7 @@ import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
 import 'content/content_catalog.dart';
 import 'discover/saved_store.dart';
+import 'media/download_store.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
 import 'notifications/local_notifications.dart';
@@ -120,6 +121,8 @@ Future<void> _start() async {
   await initOnboardingFlags();
   await AppearanceSetting.instance.load();
   await ContentCatalog.instance.load();
+  // Carries on with downloads queued last time.
+  if (catalogSnapshotEnabled) unawaited(DownloadStore.instance.load());
   await _initSessionNotifications();
   runApp(SentryWidget(child: const MyApp()));
 }
