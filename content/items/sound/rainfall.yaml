@@ -22,3 +22,4 @@ body:
   waveSpeed: 3
   waveHeight: 0.4
   pulse: false
+background: night-aurora

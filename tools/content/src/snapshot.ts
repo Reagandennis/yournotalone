@@ -2,7 +2,7 @@
 // `publish` uploads. One JSON file, published items only, in list order,
 // with only the translations that have been reviewed.
 import { createHash } from 'node:crypto';
-import type { Course, Item } from './content.ts';
+import type { Background, Course, Item } from './content.ts';
 
 /// Bumped when the app needs new code to read the file.
 export const snapshotFormat = 1;
@@ -36,7 +36,14 @@ export type MediaRef = {
 /// has none, because the app plays bundled audio from its assets.
 export type MediaMap = Record<string, { audio?: MediaRef; narration?: MediaRef }>;
 
-export function snapshot(items: Item[], courses: Course[], version: number, media?: MediaMap) {
+/// What goes in a snapshot; `check()`'s result will do.
+export type Content = { items: Item[]; courses: Course[]; backgrounds: Background[] };
+
+export function snapshot(
+  { items, courses, backgrounds }: Content,
+  version: number,
+  media?: MediaMap,
+) {
   const body = {
     items: items
       .filter((i) => i.status === 'published')
@@ -46,6 +53,12 @@ export function snapshot(items: Item[], courses: Course[], version: number, medi
       .filter((c) => c.status === 'published')
       .sort(byOrder)
       .map(({ status: _, ...c }) => ({ ...c, text: reviewedText(c.text) })),
+    // Scene parameters, not files: the app draws them (lib/backgrounds/).
+    // Apps from before backgrounds ignore the field.
+    backgrounds: backgrounds
+      .filter((b) => b.status === 'published')
+      .sort(byOrder)
+      .map(({ status: _, ...b }) => ({ ...b, text: reviewedText(b.text) })),
   };
   // With media, the hash covers it too, so a re-recorded file publishes a
   // new version even when the YAML didn't change. Without it, the hash and

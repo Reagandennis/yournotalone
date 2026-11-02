@@ -2,7 +2,7 @@
 // (plan), then upload it in a safe order (execute). See
 // docs/backend-design.md §4 "Object keys" and "Published catalogue
 // snapshot", and §8.
-import type { Course, Item } from './content.ts';
+import type { Background, Course, Item } from './content.ts';
 import { type EnvConfig, privatePrefix } from './config.ts';
 import { type MediaMap, type MediaRef, snapshot } from './snapshot.ts';
 import type { Store } from './store.ts';
@@ -86,6 +86,7 @@ export async function readLatest(store: Store, env: EnvConfig) {
 export type PlanOptions = {
   items: Item[];
   courses: Course[];
+  backgrounds: Background[];
   env: EnvConfig;
   minApp: string;
   /// null for a dry run: no reads, so nothing is checked against the bucket.
@@ -134,7 +135,7 @@ export async function plan(o: PlanOptions): Promise<Plan> {
   const version = (latest?.version ?? 0) + 1;
 
   // 3. The snapshot, with the media map.
-  const snap = snapshot(o.items, o.courses, version, media);
+  const snap = snapshot(o, version, media);
   const snapKey = `catalog/v${version}-${snap.hash}.json`;
   const unchanged = latest?.hash === snap.hash;
 

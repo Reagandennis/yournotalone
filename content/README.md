@@ -39,4 +39,36 @@ flutter test tool/export_content_test.dart   # Dart catalogues → content/
 - A meditation needs one prompt line for each `promptAt` time, in every
   language.
 
+## Backgrounds
+
+`backgrounds/` holds the animated scenes behind the sound player and the
+meditation and breathing screens (design: `docs/backend-design.md` §7).
+Each one picks a code-drawn engine in the app (`waves`, `aurora`,
+`particles` or `gradient`) and tunes it, so a new background is just a
+file here: nothing is downloaded and it works offline.
+
+```yaml
+id: dusk-waves
+status: published
+order: 20
+engine: waves
+defaultFor: [sound]          # optional: kinds that open with it
+params:
+  palette: ["#5E8BDD", "#3764CD", "#1A2238"]   # 2–6 colours, back to front
+  speed: 0.8                 # 1 is the engine's usual pace
+  density: 1                 # 1 is its usual amount
+  seed: 7                    # moves things around
+  intensity: 0.8             # optional, 0–1
+text:
+  en:
+    title: Dusk waves
+```
+
+- Keep palettes calm and low in contrast: the app draws them faintly over
+  the page, and text sits on top.
+- An item can prefer one with `background: <id>`; otherwise it gets its
+  kind's `defaultFor`. A kind can have only one default.
+- The export (`tool/export_content_test.dart`) keeps an item's
+  `background:` line when it rewrites the file.
+
 Publishing to R2 is covered in `tools/content/README.md`.

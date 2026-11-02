@@ -242,7 +242,22 @@ void main() {
     final missing = _byId.keys.where((id) => !exported.contains(id)).toList();
     expect(missing, isEmpty, reason: 'index items with no export');
 
-    // Only what this writes: README and anything else in content/ stays.
+    // An item's preferred background is set in content/ only (the Dart
+    // catalogues have no such field), so carry it over from the old file.
+    final backgrounds = <String, String>{};
+    final itemsDir = Directory('content/items');
+    if (itemsDir.existsSync()) {
+      for (final f in itemsDir.listSync(recursive: true).whereType<File>()) {
+        final m = RegExp(
+          r'^background: (\S+)$',
+          multiLine: true,
+        ).firstMatch(f.readAsStringSync());
+        if (m != null) backgrounds[f.path] = m[1]!;
+      }
+    }
+
+    // Only what this writes: README, backgrounds/ and anything else in
+    // content/ stays.
     for (final dir in ['content/items', 'content/courses']) {
       final d = Directory(dir);
       if (d.existsSync()) d.deleteSync(recursive: true);
@@ -254,6 +269,7 @@ void main() {
       final title = ((item['text']! as Map)['en'] as Map)['title'] as String;
       final path = 'content/items/$kind/${_slug(title)}.yaml';
       expect(names.add(path), isTrue, reason: 'two items would share $path');
+      item['background'] = backgrounds[path];
       final out = StringBuffer();
       _write(out, item, 0);
       File(path)

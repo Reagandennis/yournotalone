@@ -1,0 +1,13 @@
+id: morning-mist
+status: published
+order: 50
+engine: gradient
+params:
+  palette: ["#FAB414", "#EF7418", "#5E8BDD"]
+  speed: 0.6
+  density: 0.8
+  seed: 5
+  intensity: 0.8
+text:
+  en:
+    title: Morning mist

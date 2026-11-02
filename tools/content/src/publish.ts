@@ -30,7 +30,7 @@ if (!envName || !envNames.includes(envName)) {
 const env = envs[envName];
 const dryRun = values['dry-run'];
 
-const { items, courses, errors } = check(load());
+const { items, courses, backgrounds, errors } = check(load());
 if (errors.length) {
   console.error(errors.join('\n'));
   fail(`\n${errors.length} problem(s); nothing published.`);
@@ -49,6 +49,7 @@ const cacheDir = join(toolDir, '.cache');
 const p = await plan({
   items,
   courses,
+  backgrounds,
   env,
   minApp,
   store,

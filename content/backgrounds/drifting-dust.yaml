@@ -1,0 +1,13 @@
+id: drifting-dust
+status: published
+order: 60
+engine: particles
+params:
+  palette: ["#5E8BDD", "#8E7CC3", "#1A2238"]
+  speed: 0.4
+  density: 1.6
+  seed: 23
+  intensity: 0.8
+text:
+  en:
+    title: Drifting dust
