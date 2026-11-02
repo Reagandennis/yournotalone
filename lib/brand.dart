@@ -308,6 +308,15 @@ class PillarStripe extends StatelessWidget {
   }
 }
 
+/// Where text goes for glyphs Poppins doesn't have — Chinese, above all:
+/// the system's CJK font, PingFang on iOS and Noto Sans CJK on Android, in
+/// its Simplified Chinese cut.
+const appFontFallback = <String>[
+  'PingFang SC',
+  'Noto Sans CJK SC',
+  'Noto Sans SC',
+];
+
 /// App-wide theme: Poppins everywhere, navy-ink on paper (or off-white on
 /// navy), with the pillar colours as accents.
 ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
@@ -331,6 +340,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
   final base = ThemeData(
     colorScheme: scheme,
     fontFamily: 'Poppins',
+    fontFamilyFallback: appFontFallback,
     scaffoldBackgroundColor: c.background,
     canvasColor: c.background,
     extensions: [c],
@@ -343,6 +353,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       systemOverlayStyle: c.systemOverlayStyle,
       titleTextStyle: TextStyle(
         fontFamily: 'Poppins',
+        fontFamilyFallback: appFontFallback,
         fontSize: 17,
         fontWeight: FontWeight.w600,
         color: c.ink,
@@ -392,6 +403,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         textStyle: const TextStyle(
           fontFamily: 'Poppins',
+          fontFamilyFallback: appFontFallback,
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
@@ -405,6 +417,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         textStyle: const TextStyle(
           fontFamily: 'Poppins',
+          fontFamilyFallback: appFontFallback,
           fontSize: 14,
           fontWeight: FontWeight.w600,
         ),
@@ -424,6 +437,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       labelTextStyle: WidgetStateProperty.resolveWith(
         (states) => TextStyle(
           fontFamily: 'Poppins',
+          fontFamilyFallback: appFontFallback,
           fontSize: 12,
           fontWeight: states.contains(WidgetState.selected)
               ? FontWeight.w600
@@ -466,12 +480,14 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       titleTextStyle: TextStyle(
         fontFamily: 'Poppins',
+        fontFamilyFallback: appFontFallback,
         fontSize: 17,
         fontWeight: FontWeight.w600,
         color: c.ink,
       ),
       contentTextStyle: TextStyle(
         fontFamily: 'Poppins',
+        fontFamilyFallback: appFontFallback,
         fontSize: 14,
         color: c.textMuted,
         height: 1.55,
@@ -497,6 +513,7 @@ ThemeData buildAppTheme([Brightness brightness = Brightness.light]) {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       contentTextStyle: TextStyle(
         fontFamily: 'Poppins',
+        fontFamilyFallback: appFontFallback,
         fontSize: 14,
         color: c.onInk,
       ),
