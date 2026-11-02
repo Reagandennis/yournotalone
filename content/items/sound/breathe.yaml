@@ -8,6 +8,8 @@ accent: blue
 tags:
   needs: [anxious, panic, stressed]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Breathe"

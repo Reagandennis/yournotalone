@@ -13,6 +13,7 @@ export type Vocab = {
   kinds: string[];
   needs: string[];
   dayParts: string[];
+  intensities: string[];
   accents: string[];
   soundCategories: string[];
   promptGroups: string[];
@@ -31,6 +32,7 @@ const vocabSchema = z.strictObject({
   kinds: z.array(z.string()).min(1),
   needs: z.array(z.string()).min(1),
   dayParts: z.array(z.string()).min(1),
+  intensities: z.array(z.string()).min(1),
   accents: z.array(z.string()).min(1),
   soundCategories: z.array(z.string()).min(1),
   promptGroups: z.array(z.string()).min(1),
@@ -134,6 +136,12 @@ function schemas(v: Vocab) {
     tags: z.strictObject({
       needs: z.array(z.enum(v.needs)).min(1, 'every item needs at least one need'),
       dayParts: z.array(z.enum(v.dayParts)),
+      // What the recommendations' safety rules read (design §5).
+      intensity: z.enum(v.intensities).optional(),
+      // Allowed straight after a distressed check-in.
+      calmingSafe: z.boolean().optional(),
+      // Crisis and support content: always free, never ranked down.
+      support: z.boolean().optional(),
     }),
     text: z.partialRecord(z.enum(v.locales), text),
     body,
@@ -217,6 +225,17 @@ export function check(
     if (other) fail(path, `id "${item.id}" is also used by ${itemPaths.get(other)}`);
     byId.set(item.id, item);
     common(path, item);
+
+    const { tags } = item;
+    if (tags.calmingSafe && tags.intensity === 'deep') {
+      fail(path, 'a calmingSafe item can\'t be deep');
+    }
+    if (tags.calmingSafe && tags.needs.includes('good')) {
+      fail(path, 'a calmingSafe item can\'t be for feeling good');
+    }
+    if (tags.support && item.premium) {
+      fail(path, 'support items are always free');
+    }
 
     const { body } = item;
     if (!bodiesFor[item.kind]?.includes(body.type)) {

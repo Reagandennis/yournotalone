@@ -9,6 +9,8 @@ accent: blue
 tags:
   needs: [urges]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Urge surfing"

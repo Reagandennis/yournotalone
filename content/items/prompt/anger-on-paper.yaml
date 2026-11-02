@@ -8,6 +8,7 @@ accent: red
 tags:
   needs: [low, angry, reflect]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "Anger on paper"

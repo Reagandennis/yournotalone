@@ -8,6 +8,7 @@ accent: blue
 tags:
   needs: [panic, low, reflect]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "After a panic"

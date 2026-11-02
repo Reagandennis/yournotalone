@@ -9,6 +9,7 @@ accent: cbt
 tags:
   needs: [anxious, low]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "Thought record"

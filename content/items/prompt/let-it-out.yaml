@@ -8,6 +8,7 @@ accent: red
 tags:
   needs: [stressed, angry, reflect]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "Let it out"

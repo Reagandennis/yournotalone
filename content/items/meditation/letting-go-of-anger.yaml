@@ -9,6 +9,7 @@ accent: red
 tags:
   needs: [angry]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "Letting go of anger"

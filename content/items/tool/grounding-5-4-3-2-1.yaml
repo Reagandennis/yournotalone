@@ -9,6 +9,8 @@ accent: cbt
 tags:
   needs: [anxious, panic]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Grounding: 5-4-3-2-1"

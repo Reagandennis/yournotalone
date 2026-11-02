@@ -9,6 +9,8 @@ accent: red
 tags:
   needs: [low]
   dayParts: []
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Self-compassion"
