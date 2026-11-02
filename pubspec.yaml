@@ -57,6 +57,7 @@ dependencies:
   flutter_foreground_task: ^11.0.3
   sign_in_with_apple: ^8.2.0
   crypto: ^3.0.7
+  http: ^1.6.0
 
 dev_dependencies:
   sentry_dart_plugin: ^3.4.0

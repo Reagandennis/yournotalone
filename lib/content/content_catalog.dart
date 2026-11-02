@@ -6,8 +6,15 @@
 /// exactly as before.
 library;
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../cbt/cbt_catalog.dart';
 import '../courses/course_catalog.dart';
@@ -53,6 +60,14 @@ final _recoveryScreens = <String, WidgetBuilder>{
   'recovery-hub': (_) => const RecoveryScreen(),
 };
 
+/// Asset paths built into this app, once [ContentCatalog.load] has read
+/// them; null means "don't check" (tests).
+Set<String>? _bundledAssets;
+
+/// Whether [path] can be played: until audio is downloaded on demand,
+/// only files shipped inside the app can.
+bool _playable(String path) => _bundledAssets?.contains(path) ?? true;
+
 final _tools = {
   for (final t in [...cbtTools, ...sleepTools, ...stressTools])
     screenKey(t.title): t,
@@ -91,10 +106,16 @@ WidgetBuilder? screenFor(CatalogItem item) {
             for (var i = 0; i < at.length; i++)
               (at[i].toDouble(), t.prompts[i]),
           ],
-          narration: body['narration'] as String?,
+          // Without its recording a meditation still runs on its text.
+          narration: switch (body['narration']) {
+            final String path when _playable(path) => path,
+            _ => null,
+          },
         );
         return (_) => MeditationScreen(meditation: meditation);
       case 'sound':
+        // A sound published after this build can't play yet: leave it out.
+        if (!_playable(body['audio'] as String)) return null;
         final sound = Sound(
           t.title,
           t.blurb,
@@ -185,11 +206,50 @@ List<Course> coursesFrom(CatalogSnapshot snapshot, List<ContentItem> items) {
   ];
 }
 
+/// Where published catalogues are fetched from.
+const catalogBaseUrl = String.fromEnvironment(
+  'CATALOG_BASE_URL',
+  defaultValue: 'https://database.techgetafrica.com',
+);
+
+/// Whether [version] (`1.2.0`) is at least [minimum].
+bool appVersionAtLeast(String version, String minimum) {
+  List<int> parts(String v) => [
+    for (final p in v.split('+').first.split('.')) int.tryParse(p) ?? 0,
+  ];
+  final a = parts(version), b = parts(minimum);
+  for (var i = 0; i < 3; i++) {
+    final x = i < a.length ? a[i] : 0, y = i < b.length ? b[i] : 0;
+    if (x != y) return x > y;
+  }
+  return true;
+}
+
 /// The catalogue the screens read, when it comes from a snapshot.
+///
+/// At launch it uses the newest of the bundled snapshot and the last one
+/// downloaded, then checks in the background for a newer published one.
+/// A download takes effect at the next launch, so nothing changes under
+/// someone mid-session.
 class ContentCatalog {
-  ContentCatalog._();
+  ContentCatalog._([this._client, Future<String> Function()? appVersion])
+    : _appVersion = appVersion ?? _platformVersion;
 
   static final instance = ContentCatalog._();
+
+  @visibleForTesting
+  factory ContentCatalog.forTest({
+    required http.Client client,
+    required String appVersion,
+  }) => ContentCatalog._(client, () async => appVersion);
+
+  static Future<String> _platformVersion() async =>
+      (await PackageInfo.fromPlatform()).version;
+
+  static const _cacheKey = 'catalog.snapshot';
+
+  final http.Client? _client;
+  final Future<String> Function() _appVersion;
 
   CatalogSnapshot? _snapshot;
   List<ContentItem>? _items;
@@ -200,15 +260,80 @@ class ContentCatalog {
   List<Course>? get courses => _courses;
   int? get version => _snapshot?.version;
 
-  /// Loads the bundled snapshot when the flag is on. Never throws: on any
-  /// problem the Dart catalogues stay in use.
+  /// Picks the snapshot to use when the flag is on, then looks for a newer
+  /// one in the background. Never throws: on any problem the bundled
+  /// snapshot, or failing that the Dart catalogues, stay in use.
   Future<void> load() async {
     if (!catalogSnapshotEnabled) return;
     try {
-      use(await CatalogSnapshot.bundled());
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
+      _bundledAssets = manifest.listAssets().toSet();
+      await loadFrom(await CatalogSnapshot.bundled());
     } catch (error, stackTrace) {
       debugPrint('Catalogue snapshot unavailable: $error');
       await Sentry.captureException(error, stackTrace: stackTrace);
+    }
+    unawaited(refresh());
+  }
+
+  /// Uses [bundled], or the downloaded snapshot if that's newer.
+  @visibleForTesting
+  Future<void> loadFrom(CatalogSnapshot bundled) async {
+    var best = bundled;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_cacheKey);
+      if (raw != null) {
+        final cached = CatalogSnapshot.fromJson(
+          jsonDecode(raw) as Map<String, dynamic>,
+        );
+        if (cached != null && cached.version > bundled.version) best = cached;
+      }
+    } catch (e) {
+      debugPrint('Downloaded catalogue unreadable, using the bundled one: $e');
+    }
+    use(best);
+  }
+
+  /// Downloads the published catalogue if it's newer than the one in use
+  /// and this app is new enough to read it. Returns whether it did. Never
+  /// throws.
+  Future<bool> refresh() async {
+    final client = _client ?? http.Client();
+    try {
+      final base = Uri.parse(catalogBaseUrl);
+      final latest = await client
+          .get(base.resolve('catalog/latest.json'))
+          .timeout(const Duration(seconds: 10));
+      if (latest.statusCode != 200) return false;
+      final pointer = jsonDecode(latest.body) as Map<String, dynamic>;
+      final version = pointer['version'] as int;
+      final path = pointer['path'] as String;
+      final minApp = pointer['minApp'] as String? ?? '0.0.0';
+      if (version <= (_snapshot?.version ?? -1)) return false;
+      if (!appVersionAtLeast(await _appVersion(), minApp)) return false;
+
+      final res = await client
+          .get(base.resolve(path))
+          .timeout(const Duration(seconds: 30));
+      if (res.statusCode != 200) return false;
+      final json =
+          jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;
+      final snapshot = CatalogSnapshot.fromJson(json);
+      // The file named in latest.json, whole and in a format we read.
+      if (snapshot == null ||
+          snapshot.version != version ||
+          !path.endsWith('-${snapshot.hash}.json')) {
+        return false;
+      }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_cacheKey, utf8.decode(res.bodyBytes));
+      return true;
+    } catch (e) {
+      debugPrint('Catalogue check failed: $e');
+      return false;
+    } finally {
+      if (_client == null) client.close();
     }
   }
 
@@ -226,3 +351,6 @@ class ContentCatalog {
     _courses = null;
   }
 }
+
+@visibleForTesting
+set bundledAssetsForTest(Set<String>? assets) => _bundledAssets = assets;

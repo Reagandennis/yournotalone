@@ -199,12 +199,37 @@ class CatalogCourse {
   CourseText textFor(String locale) => _localised(text, locale);
 }
 
+/// Where a published audio file lives. Public files are at
+/// `<public base>/<key>`; premium ones are fetched through a signed link
+/// from the Worker.
+class MediaRef {
+  const MediaRef({
+    required this.key,
+    required this.sha256,
+    required this.bytes,
+    required this.premium,
+  });
+
+  factory MediaRef.fromJson(Map<String, dynamic> json) => MediaRef(
+    key: json['key'] as String,
+    sha256: json['sha256'] as String,
+    bytes: json['bytes'] as int,
+    premium: json['access'] == 'premium',
+  );
+
+  final String key;
+  final String sha256;
+  final int bytes;
+  final bool premium;
+}
+
 class CatalogSnapshot {
   const CatalogSnapshot({
     required this.version,
     required this.hash,
     required this.items,
     required this.courses,
+    this.media = const {},
   });
 
   /// Null when the file is in a format this build can't read.
@@ -221,6 +246,15 @@ class CatalogSnapshot {
         for (final c in json['courses'] as List)
           CatalogCourse.fromJson(c as Map<String, dynamic>),
       ],
+      media: {
+        for (final MapEntry(key: id, value: refs)
+            in ((json['media'] as Map<String, dynamic>?) ?? const {}).entries)
+          id: {
+            for (final MapEntry(key: role, value: ref)
+                in (refs as Map<String, dynamic>).entries)
+              role: MediaRef.fromJson(ref as Map<String, dynamic>),
+          },
+      },
     );
   }
 
@@ -237,4 +271,8 @@ class CatalogSnapshot {
   /// Published items, in list order.
   final List<CatalogItem> items;
   final List<CatalogCourse> courses;
+
+  /// Published audio by item id, then role (`audio`, `narration`). Empty
+  /// in the bundled copy, whose audio ships inside the app.
+  final Map<String, Map<String, MediaRef>> media;
 }
