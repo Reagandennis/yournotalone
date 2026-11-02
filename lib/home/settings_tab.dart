@@ -18,6 +18,8 @@ import '../care/care_repository.dart';
 import '../care/therapist_sessions_screen.dart';
 import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
+import '../l10n/l10n.dart';
+import '../l10n/language_picker.dart';
 import '../legal/legal_content.dart';
 import '../notifications/session_notifications.dart';
 import '../legal/legal_screen.dart';
@@ -573,7 +575,7 @@ class _SettingsTabState extends State<SettingsTab> {
                       ),
                       leading: Icon(icon, color: c.textMuted),
                       title: Text(
-                        appearanceLabel(mode),
+                        appearanceLabel(sheetContext.l10n, mode),
                         style: TextStyle(fontSize: 14.5, color: c.ink),
                       ),
                       subtitle: mode == ThemeMode.system
@@ -679,8 +681,18 @@ class _SettingsTabState extends State<SettingsTab> {
             context,
             Icons.contrast_rounded,
             'Appearance',
-            value: appearanceLabel(mode),
+            value: appearanceLabel(context.l10n, mode),
             onTap: () => _chooseAppearance(context),
+          ),
+        ),
+        ValueListenableBuilder<String?>(
+          valueListenable: LocaleSetting.instance,
+          builder: (context, tag, _) => _row(
+            context,
+            Icons.translate_rounded,
+            context.l10n.languageTitle,
+            value: languageSummary(context, tag),
+            onTap: () => showLanguagePicker(context),
           ),
         ),
         _row(

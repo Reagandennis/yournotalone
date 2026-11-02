@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,6 +20,7 @@ import 'content/content_catalog.dart';
 import 'discover/saved_store.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
+import 'l10n/l10n.dart';
 import 'notifications/local_notifications.dart';
 import 'notifications/session_notifications.dart';
 import 'onboarding/onboarding_ui.dart';
@@ -119,6 +121,7 @@ Future<void> _start() async {
   await PurchasesService.instance.init();
   await initOnboardingFlags();
   await AppearanceSetting.instance.load();
+  await LocaleSetting.instance.load();
   await ContentCatalog.instance.load();
   await _initSessionNotifications();
   runApp(SentryWidget(child: const MyApp()));
@@ -215,9 +218,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: AppearanceSetting.instance,
-      builder: (context, themeMode, _) => MaterialApp(
+    return ListenableBuilder(
+      listenable: Listenable.merge(
+        [AppearanceSetting.instance, LocaleSetting.instance],
+      ),
+      builder: (context, _) => MaterialApp(
         navigatorKey: appNavigatorKey,
         // Gives Sentry the app-start transaction and one per named route;
         // the app's routes are unnamed today, so screens show up once they
@@ -227,7 +232,19 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         title: 'yournotalone',
         theme: buildAppTheme(Brightness.light),
         darkTheme: buildAppTheme(Brightness.dark),
-        themeMode: themeMode,
+        themeMode: AppearanceSetting.instance.value,
+        // The phone's language unless one is picked in Settings; only the
+        // languages this build offers (see l10n/l10n.dart).
+        locale: LocaleSetting.instance.locale,
+        supportedLocales: enabledLocales,
+        localeListResolutionCallback: (preferred, _) =>
+            resolveDeviceLocale(preferred),
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         // Status-bar icons for screens without an app bar: dark on paper,
         // light on navy. An AppBar sets its own over this.
         builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
@@ -247,6 +264,7 @@ class _SomethingWentWrong extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return Material(
       color: c.background,
       child: Center(
@@ -259,7 +277,7 @@ class _SomethingWentWrong extends StatelessWidget {
                   size: 40, color: c.textMuted),
               const SizedBox(height: 14),
               Text(
-                'Something went wrong here.',
+                l10n.somethingWentWrongTitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 15,
@@ -269,7 +287,7 @@ class _SomethingWentWrong extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Go back and try again — nothing you saved is affected.',
+                l10n.somethingWentWrongBody,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,

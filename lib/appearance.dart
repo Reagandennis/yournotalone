@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'l10n/l10n.dart';
+
 /// Light, dark, or following the phone — the person's choice, kept on this
 /// device. Following the phone is the default, so the app goes dark at
 /// night along with everything else.
@@ -35,8 +37,9 @@ class AppearanceSetting extends ValueNotifier<ThemeMode> {
 }
 
 /// How each choice is named in Settings.
-String appearanceLabel(ThemeMode mode) => switch (mode) {
-      ThemeMode.system => 'Match my phone',
-      ThemeMode.light => 'Light',
-      ThemeMode.dark => 'Dark',
+String appearanceLabel(AppLocalizations l10n, ThemeMode mode) =>
+    switch (mode) {
+      ThemeMode.system => l10n.appearanceSystem,
+      ThemeMode.light => l10n.appearanceLight,
+      ThemeMode.dark => l10n.appearanceDark,
     };

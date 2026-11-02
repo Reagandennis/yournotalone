@@ -1,0 +1,35 @@
+{
+  "@@locale": "en",
+  "somethingWentWrongTitle": "Something went wrong here.",
+  "@somethingWentWrongTitle": {
+    "description": "Shown in place of a part of a screen that failed to draw."
+  },
+  "somethingWentWrongBody": "Go back and try again — nothing you saved is affected.",
+  "@somethingWentWrongBody": {
+    "description": "Under somethingWentWrongTitle: reassurance that no data was lost."
+  },
+  "appearanceSystem": "Match my phone",
+  "@appearanceSystem": {
+    "description": "Appearance choice in Settings: follow the phone's light/dark setting."
+  },
+  "appearanceLight": "Light",
+  "@appearanceLight": {
+    "description": "Appearance choice in Settings: always light theme."
+  },
+  "appearanceDark": "Dark",
+  "@appearanceDark": {
+    "description": "Appearance choice in Settings: always dark theme."
+  },
+  "languageTitle": "Language",
+  "@languageTitle": {
+    "description": "Settings row and picker title for choosing the app's language."
+  },
+  "languageSystemDefault": "System default",
+  "@languageSystemDefault": {
+    "description": "Language choice in Settings: follow the phone's language."
+  },
+  "languageSystemDefaultHint": "Follows your phone's language.",
+  "@languageSystemDefaultHint": {
+    "description": "Subtitle under languageSystemDefault in the language picker."
+  }
+}

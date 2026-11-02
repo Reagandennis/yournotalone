@@ -1,0 +1,10 @@
+# App UI strings (see lib/l10n/README.md). English is the template; the
+# generated AppLocalizations classes sit next to the ARB files.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-dir: lib/l10n
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+preferred-supported-locales: [en]
+format: true
