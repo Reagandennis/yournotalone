@@ -11,6 +11,7 @@ import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
 import '../discover/usage_store.dart';
 import '../journal/journal_hub_screen.dart';
+import '../l10n/l10n.dart';
 import '../meditation/meditations_screen.dart';
 import '../recovery/recovery_screen.dart';
 import '../sleep/sleep_catalog.dart';
@@ -40,7 +41,7 @@ const _radius = 16.0;
 class _Pillar {
   const _Pillar(this.title, this.image, this.open);
 
-  final String title;
+  final String Function(AppLocalizations l10n) title;
   final String image;
   final WidgetBuilder open;
 }
@@ -50,10 +51,26 @@ String _art(String name) => 'assets/explore/$name.png';
 const _bookArt = 'assets/explore/book.png';
 
 final _pillars = <_Pillar>[
-  _Pillar('Meditate', _art('meditate'), (_) => const MeditationsScreen()),
-  _Pillar('Well being', _art('wellbeing'), (_) => const SoundsScreen()),
-  _Pillar('Journal & mood', _art('journal'), (_) => const JournalHubScreen()),
-  _Pillar('Recovery tools', _art('recovery'), (_) => const RecoveryScreen()),
+  _Pillar(
+    (l) => l.explorePillarMeditate,
+    _art('meditate'),
+    (_) => const MeditationsScreen(),
+  ),
+  _Pillar(
+    (l) => l.explorePillarWellbeing,
+    _art('wellbeing'),
+    (_) => const SoundsScreen(),
+  ),
+  _Pillar(
+    (l) => l.explorePillarJournal,
+    _art('journal'),
+    (_) => const JournalHubScreen(),
+  ),
+  _Pillar(
+    (l) => l.explorePillarRecovery,
+    _art('recovery'),
+    (_) => const RecoveryScreen(),
+  ),
 ];
 
 /// A featured programme: a full-width coloured card inside the grey panel.
@@ -67,8 +84,8 @@ class _Program {
     required this.counts,
   });
 
-  final String title;
-  final String blurb;
+  final String Function(AppLocalizations l10n) title;
+  final String Function(AppLocalizations l10n) blurb;
   final String image;
   final Color color;
   final RouteBuilder open;
@@ -84,8 +101,8 @@ typedef RouteBuilder = Route<void> Function();
 
 final _programs = <_Program>[
   _Program(
-    'CBT for Therapy',
-    'Tools and reads for anxious & low thoughts',
+    (l) => l.exploreProgramCbtTitle,
+    (l) => l.exploreProgramCbtBlurb,
     _art('cbt'),
     _cardRed,
     CbtScreen.route,
@@ -95,8 +112,8 @@ final _programs = <_Program>[
     ),
   ),
   _Program(
-    'Sleep better',
-    'A wind-down, the 20-minute rule, a sleep diary',
+    (l) => l.exploreProgramSleepTitle,
+    (l) => l.exploreProgramSleepBlurb,
     _art('sleep'),
     _cardBlue,
     SleepScreen.route,
@@ -106,8 +123,8 @@ final _programs = <_Program>[
     ),
   ),
   _Program(
-    'Manage stress',
-    'Bring the body down, then sort the load',
+    (l) => l.exploreProgramStressTitle,
+    (l) => l.exploreProgramStressBlurb,
     _art('stress'),
     _cardYellow,
     StressScreen.route,
@@ -121,23 +138,43 @@ final _programs = <_Program>[
 /// A collection: everything of some kinds in the index, so the count can
 /// never drift from what the list it opens offers.
 class _Collection {
-  const _Collection(
-    this.title,
-    this.unit,
-    this.color,
-    this.kinds,
-    this.subtitle,
-  );
+  const _Collection(this.unit, this.color, this.kinds);
 
-  final String title;
+  /// Names the collection in the analytics source; never shown.
   final String unit;
 
   /// The pillar colour of whatever the collection holds.
   final Color color;
   final Set<ContentKind> kinds;
 
+  String title(AppLocalizations l10n) => switch (unit) {
+    'rhythms' => l10n.exploreCollectionBreathingTitle,
+    'sessions' => l10n.exploreCollectionMeditationsTitle,
+    'loops' => l10n.exploreCollectionSoundsTitle,
+    'prompts' => l10n.exploreCollectionPromptsTitle,
+    'reads' => l10n.exploreCollectionReadsTitle,
+    _ => l10n.exploreCollectionRecoveryTitle,
+  };
+
   /// The intro on the list it opens.
-  final String subtitle;
+  String subtitle(AppLocalizations l10n) => switch (unit) {
+    'rhythms' => l10n.exploreCollectionBreathingSubtitle,
+    'sessions' => l10n.exploreCollectionMeditationsSubtitle,
+    'loops' => l10n.exploreCollectionSoundsSubtitle,
+    'prompts' => l10n.exploreCollectionPromptsSubtitle,
+    'reads' => l10n.exploreCollectionReadsSubtitle,
+    _ => l10n.exploreCollectionRecoverySubtitle,
+  };
+
+  /// "12 rhythms", in the collection's own word for what it holds.
+  String amount(AppLocalizations l10n, int count) => switch (unit) {
+    'rhythms' => l10n.exploreCollectionBreathingCount(count),
+    'sessions' => l10n.exploreCollectionMeditationsCount(count),
+    'loops' => l10n.exploreCollectionSoundsCount(count),
+    'prompts' => l10n.exploreCollectionPromptsCount(count),
+    'reads' => l10n.exploreCollectionReadsCount(count),
+    _ => l10n.exploreCollectionRecoveryCount(count),
+  };
 
   List<ContentItem> get items => [
     for (final item in contentIndex)
@@ -158,24 +195,12 @@ class _Collection {
 }
 
 const _collections = <_Collection>[
-  _Collection('Breathing exercises', 'rhythms', _cardBlue, {
-    ContentKind.breathing,
-  }, 'A few minutes of paced breathing, each with its own rhythm.'),
-  _Collection('Guided meditations', 'sessions', Pillars.black, {
-    ContentKind.meditation,
-  }, 'Timed sessions with gentle guidance on screen.'),
-  _Collection('Wellbeing sounds', 'loops', _cardYellow, {
-    ContentKind.sound,
-  }, 'Ambient sound for focus, sleep and calm. Plays on with the screen off.'),
-  _Collection('Journal prompts', 'prompts', _cardRed, {
-    ContentKind.prompt,
-  }, 'A first line to get you writing, so the page is never blank.'),
-  _Collection('Short reads', 'reads', _cardBlue, {
-    ContentKind.lesson,
-  }, 'The ideas behind the tools, a few minutes each.'),
-  _Collection('Recovery tools', 'tools', Pillars.black, {
-    ContentKind.recovery,
-  }, 'For cravings and the commitments you\'re keeping.'),
+  _Collection('rhythms', _cardBlue, {ContentKind.breathing}),
+  _Collection('sessions', Pillars.black, {ContentKind.meditation}),
+  _Collection('loops', _cardYellow, {ContentKind.sound}),
+  _Collection('prompts', _cardRed, {ContentKind.prompt}),
+  _Collection('reads', _cardBlue, {ContentKind.lesson}),
+  _Collection('tools', Pillars.black, {ContentKind.recovery}),
 ];
 
 /// Explore tab: search, browse by need, the four pillars as tiles,
@@ -199,7 +224,7 @@ class ExploreTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 10),
           child: Text(
-            'What do you need right now?',
+            context.l10n.exploreNeedsTitle,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -239,8 +264,10 @@ class ExploreTab extends StatelessWidget {
       borderRadius: BorderRadius.circular(_radius),
       child: InkWell(
         borderRadius: BorderRadius.circular(_radius),
-        onTap: () =>
-            showSearch(context: context, delegate: _ExploreSearchDelegate()),
+        onTap: () => showSearch(
+          context: context,
+          delegate: _ExploreSearchDelegate(context.l10n.exploreSearch),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
           child: Row(
@@ -248,7 +275,7 @@ class ExploreTab extends StatelessWidget {
               Icon(Icons.search_rounded, size: 22, color: c.ink),
               const SizedBox(width: 12),
               Text(
-                'Search',
+                context.l10n.exploreSearch,
                 style: TextStyle(
                   fontSize: 14.5,
                   fontWeight: FontWeight.w500,
@@ -282,7 +309,7 @@ class ExploreTab extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  pillar.title,
+                  pillar.title(context.l10n),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -335,7 +362,7 @@ class ExploreTab extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        program.title,
+                        program.title(context.l10n),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -346,7 +373,7 @@ class ExploreTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        program.blurb,
+                        program.blurb(context.l10n),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -396,7 +423,7 @@ class ExploreTab extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              'Our featured programs',
+              context.l10n.exploreFeaturedTitle,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -408,8 +435,7 @@ class ExploreTab extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text(
-              'Step-by-step tools and short reads, each built around one '
-              'thing.',
+              context.l10n.exploreFeaturedSubtitle,
               style: TextStyle(fontSize: 12, color: c.ink, height: 1.4),
             ),
           ),
@@ -422,6 +448,7 @@ class ExploreTab extends StatelessWidget {
 
   Widget _collectionCard(BuildContext context, _Collection collection) {
     final c = context.brand;
+    final l10n = context.l10n;
     final foreground = collection.foreground(c);
     final items = collection.items;
     final fresh = items.any((i) => i.isNewAt(DateTime.now()));
@@ -435,8 +462,8 @@ class ExploreTab extends StatelessWidget {
           onTap: () => Navigator.of(context).push(
             ContentListScreen.route(
               ContentListScreen(
-                title: collection.title,
-                subtitle: collection.subtitle,
+                title: collection.title(l10n),
+                subtitle: collection.subtitle(l10n),
                 items: items,
                 source: 'collection:${collection.unit}',
               ),
@@ -454,7 +481,7 @@ class ExploreTab extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              collection.title,
+                              collection.title(l10n),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -472,8 +499,10 @@ class ExploreTab extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${items.length} ${collection.unit} · '
-                        '${countLine(items)}',
+                        l10n.exploreCollectionMeta(
+                          collection.amount(l10n, items.length),
+                          countLine(items),
+                        ),
                         style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
@@ -521,7 +550,7 @@ class ExploreTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Book a session',
+                      context.l10n.exploreBookTitle,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -530,7 +559,7 @@ class ExploreTab extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Speak to a human therapist',
+                      context.l10n.exploreBookSubtitle,
                       style: TextStyle(fontSize: 12.5, color: c.ink),
                     ),
                   ],
@@ -575,7 +604,7 @@ class ExploreTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 4),
           child: Text(
-            '7-day courses',
+            context.l10n.exploreCoursesTitle,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -586,7 +615,7 @@ class ExploreTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
-            'One step a day, in an order that builds.',
+            context.l10n.exploreCoursesSubtitle,
             style: TextStyle(fontSize: 12.5, color: context.brand.textMuted),
           ),
         ),
@@ -601,7 +630,7 @@ class ExploreTab extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
-            'All collections',
+            context.l10n.exploreCollectionsTitle,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -627,7 +656,7 @@ bool _matches(ContentItem item, String query) =>
 /// Searches the whole index. A result opens the item itself (through the
 /// usual Premium check), not the list it lives in.
 class _ExploreSearchDelegate extends SearchDelegate<void> {
-  _ExploreSearchDelegate() : super(searchFieldLabel: 'Search');
+  _ExploreSearchDelegate(String label) : super(searchFieldLabel: label);
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -641,6 +670,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
       textTheme: theme.textTheme.copyWith(
         titleLarge: TextStyle(
           fontFamily: 'Poppins',
+          fontFamilyFallback: appFontFallback,
           fontSize: 16,
           color: c.ink,
         ),
@@ -705,7 +735,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
             if (recent.isNotEmpty) ...[
               _heading(
                 context,
-                'Recent',
+                context.l10n.exploreSearchRecent,
                 trailing: TextButton(
                   onPressed: () async {
                     await UsageStore.instance.clearSearches();
@@ -713,7 +743,10 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
                     query = '';
                     if (context.mounted) showSuggestions(context);
                   },
-                  child: const Text('Clear', style: TextStyle(fontSize: 13)),
+                  child: Text(
+                    context.l10n.exploreSearchClear,
+                    style: const TextStyle(fontSize: 13),
+                  ),
                 ),
               ),
               for (final r in recent)
@@ -726,7 +759,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
                   },
                 ),
             ],
-            _heading(context, 'Try searching for'),
+            _heading(context, context.l10n.exploreSearchSuggestions),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Wrap(
@@ -769,7 +802,7 @@ class _ExploreSearchDelegate extends SearchDelegate<void> {
         child: Padding(
           padding: const EdgeInsets.all(32),
           child: Text(
-            'Nothing matches that yet.',
+            context.l10n.exploreSearchEmpty,
             style: TextStyle(color: c.textMuted, fontSize: 14),
           ),
         ),

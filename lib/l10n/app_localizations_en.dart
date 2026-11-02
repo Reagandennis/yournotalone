@@ -4655,4 +4655,508 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rhythmWeekdayLetters => 'M T W T F S S';
+
+  @override
+  String get explorePillarMeditate => 'Meditate';
+
+  @override
+  String get explorePillarWellbeing => 'Well being';
+
+  @override
+  String get explorePillarJournal => 'Journal & mood';
+
+  @override
+  String get explorePillarRecovery => 'Recovery tools';
+
+  @override
+  String get exploreProgramCbtTitle => 'CBT for Therapy';
+
+  @override
+  String get exploreProgramCbtBlurb =>
+      'Tools and reads for anxious & low thoughts';
+
+  @override
+  String get exploreProgramSleepTitle => 'Sleep better';
+
+  @override
+  String get exploreProgramSleepBlurb =>
+      'A wind-down, the 20-minute rule, a sleep diary';
+
+  @override
+  String get exploreProgramStressTitle => 'Manage stress';
+
+  @override
+  String get exploreProgramStressBlurb =>
+      'Bring the body down, then sort the load';
+
+  @override
+  String get exploreCollectionBreathingTitle => 'Breathing exercises';
+
+  @override
+  String get exploreCollectionBreathingSubtitle =>
+      'A few minutes of paced breathing, each with its own rhythm.';
+
+  @override
+  String exploreCollectionBreathingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rhythms',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreCollectionMeditationsTitle => 'Guided meditations';
+
+  @override
+  String get exploreCollectionMeditationsSubtitle =>
+      'Timed sessions with gentle guidance on screen.';
+
+  @override
+  String exploreCollectionMeditationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sessions',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreCollectionSoundsTitle => 'Wellbeing sounds';
+
+  @override
+  String get exploreCollectionSoundsSubtitle =>
+      'Ambient sound for focus, sleep and calm. Plays on with the screen off.';
+
+  @override
+  String exploreCollectionSoundsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count loops',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreCollectionPromptsTitle => 'Journal prompts';
+
+  @override
+  String get exploreCollectionPromptsSubtitle =>
+      'A first line to get you writing, so the page is never blank.';
+
+  @override
+  String exploreCollectionPromptsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count prompts',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreCollectionReadsTitle => 'Short reads';
+
+  @override
+  String get exploreCollectionReadsSubtitle =>
+      'The ideas behind the tools, a few minutes each.';
+
+  @override
+  String exploreCollectionReadsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reads',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exploreCollectionRecoveryTitle => 'Recovery tools';
+
+  @override
+  String get exploreCollectionRecoverySubtitle =>
+      'For cravings and the commitments you\'re keeping.';
+
+  @override
+  String exploreCollectionRecoveryCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tools',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String exploreCollectionMeta(String amount, String access) {
+    return '$amount · $access';
+  }
+
+  @override
+  String get exploreNeedsTitle => 'What do you need right now?';
+
+  @override
+  String get exploreSearch => 'Search';
+
+  @override
+  String get exploreFeaturedTitle => 'Our featured programs';
+
+  @override
+  String get exploreFeaturedSubtitle =>
+      'Step-by-step tools and short reads, each built around one thing.';
+
+  @override
+  String get exploreBookTitle => 'Book a session';
+
+  @override
+  String get exploreBookSubtitle => 'Speak to a human therapist';
+
+  @override
+  String get exploreCoursesTitle => '7-day courses';
+
+  @override
+  String get exploreCoursesSubtitle =>
+      'One step a day, in an order that builds.';
+
+  @override
+  String get exploreCollectionsTitle => 'All collections';
+
+  @override
+  String get exploreSearchRecent => 'Recent';
+
+  @override
+  String get exploreSearchClear => 'Clear';
+
+  @override
+  String get exploreSearchSuggestions => 'Try searching for';
+
+  @override
+  String get exploreSearchEmpty => 'Nothing matches that yet.';
+
+  @override
+  String get homeUiFriendFallback => 'friend';
+
+  @override
+  String homeUiUnlockItem(String item) {
+    return 'Unlock “$item”';
+  }
+
+  @override
+  String get homeUiSeePremium => 'See Premium';
+
+  @override
+  String get homeUiUnlockWithPremium => 'Unlock with Premium';
+
+  @override
+  String get homeUiSignedOutError =>
+      'You\'ve been signed out. Please log in again.';
+
+  @override
+  String get homeUiJournalCapTitle => 'You\'ve filled your free pages';
+
+  @override
+  String homeUiJournalCapMessage(int count, String offer) {
+    return 'The free plan includes $count journal entries. Premium unlocks unlimited journaling — and $offer.';
+  }
+
+  @override
+  String homeUiComingSoon(String feature) {
+    return '$feature is coming soon — stay close.';
+  }
+
+  @override
+  String get homeUiSeeAll => 'See all';
+
+  @override
+  String get homeUiPremiumChip => 'Premium';
+
+  @override
+  String get moodAwful => 'Awful';
+
+  @override
+  String get moodLow => 'Low';
+
+  @override
+  String get moodOkay => 'Okay';
+
+  @override
+  String get moodGood => 'Good';
+
+  @override
+  String get moodGreat => 'Great';
+
+  @override
+  String get moodHistoryTitle => 'Mood history';
+
+  @override
+  String get moodHistoryIntro =>
+      'Hard weeks feel permanent while you\'re in them. This is the record that says otherwise.';
+
+  @override
+  String get moodHistoryToday => 'Today';
+
+  @override
+  String get moodHistoryYesterday => 'Yesterday';
+
+  @override
+  String get moodHistoryDatePattern => 'd MMM';
+
+  @override
+  String get moodHistoryDatePatternWithYear => 'd MMM y';
+
+  @override
+  String get moodHistoryLoadError => 'Couldn\'t load your check-ins.';
+
+  @override
+  String get moodHistoryEmpty =>
+      'No check-ins yet. Tap a face on the home screen and this fills in — one day at a time.';
+
+  @override
+  String get moodHistoryLast30Days => 'Last 30 days';
+
+  @override
+  String get moodHistoryStatCheckIns => 'check-ins';
+
+  @override
+  String get moodHistoryStatStreak => 'day streak';
+
+  @override
+  String get moodHistoryStatAverage => 'average';
+
+  @override
+  String get moodHistoryStatMostDays => 'most days';
+
+  @override
+  String get moodHistoryEveryCheckIn => 'Every check-in';
+
+  @override
+  String get moodInsightsUpgradeTitle => 'Insights are part of Premium';
+
+  @override
+  String moodInsightsUpgradeMessage(String offer) {
+    return 'See how your practice, your week and your moods connect — and $offer.';
+  }
+
+  @override
+  String get moodInsightsTitle => 'Your insights';
+
+  @override
+  String get moodInsightsIntro =>
+      'From your check-ins, practice and how sessions left you, over the last 90 days.';
+
+  @override
+  String get moodInsightsEmpty =>
+      'Not enough to go on yet. Check in each day and answer the question at the end of a session — insights start appearing within a week or two.';
+
+  @override
+  String moodInsightCheckedInTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You\'ve checked in $count days this month',
+      one: 'You\'ve checked in 1 day this month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String moodInsightCheckedInStreak(int count) {
+    return 'That\'s $count days in a row right now. Noticing is where change starts.';
+  }
+
+  @override
+  String get moodInsightCheckedInFirst =>
+      'Every check-in makes the picture clearer.';
+
+  @override
+  String get moodInsightPracticeHigherTitle =>
+      'Your mood is higher on days you practise';
+
+  @override
+  String get moodInsightPracticeHigherDetail =>
+      'Days with a meditation, breathing or a sound score better than days without. Worth keeping a small daily habit.';
+
+  @override
+  String get moodInsightPracticeLowerTitle =>
+      'You tend to practise on harder days';
+
+  @override
+  String get moodInsightPracticeLowerDetail =>
+      'Your practice days have lower moods — which may mean you reach for it when you need it. That\'s what it\'s for.';
+
+  @override
+  String get moodInsightPracticeSameTitle =>
+      'Practice days and other days look alike so far';
+
+  @override
+  String get moodInsightPracticeSameDetail =>
+      'Keep checking in — the pattern gets clearer with a few more weeks.';
+
+  @override
+  String moodWeekdays(String day) {
+    String _temp0 = intl.Intl.selectLogic(day, {
+      'mon': 'Mondays',
+      'tue': 'Tuesdays',
+      'wed': 'Wednesdays',
+      'thu': 'Thursdays',
+      'fri': 'Fridays',
+      'sat': 'Saturdays',
+      'other': 'Sundays',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String moodWeekdaysMidSentence(String day) {
+    String _temp0 = intl.Intl.selectLogic(day, {
+      'mon': 'mondays',
+      'tue': 'tuesdays',
+      'wed': 'wednesdays',
+      'thu': 'thursdays',
+      'fri': 'fridays',
+      'sat': 'saturdays',
+      'other': 'sundays',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String moodInsightHardestDayTitle(String weekday) {
+    return '$weekday are usually your hardest days';
+  }
+
+  @override
+  String moodInsightHardestDayDetail(String bestDay, String hardestDay) {
+    return '$bestDay tend to go best. A little something planned for $hardestDay could help.';
+  }
+
+  @override
+  String get moodInsightBetterTitle => 'The last two weeks have been better';
+
+  @override
+  String get moodInsightBetterDetail =>
+      'Your check-ins are up on the fortnight before. Whatever you\'re doing, it\'s worth noticing.';
+
+  @override
+  String get moodInsightHarderTitle => 'The last two weeks have been harder';
+
+  @override
+  String get moodInsightHarderDetail =>
+      'Your check-ins are down on the fortnight before. Be gentle with yourself — and talking to someone can help.';
+
+  @override
+  String get moodInsightFeelingsDetail =>
+      'From how you said you felt at the end of each session.';
+
+  @override
+  String get breathingBreatheIn => 'Breathe in';
+
+  @override
+  String get breathingHold => 'Hold';
+
+  @override
+  String get breathingBreatheOut => 'Breathe out';
+
+  @override
+  String breathingMinutesChip(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get breathingBegin => 'Begin';
+
+  @override
+  String get breathingWellDone => 'Well done';
+
+  @override
+  String breathingDoneSummary(int minutes, int cycles) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes',
+      one: '1 minute',
+    );
+    return '$_temp0 · about $cycles breath cycles.\nNotice how you feel right now.';
+  }
+
+  @override
+  String get breathingAddedToHistory => 'Added to your practice history.';
+
+  @override
+  String get breathingGoAgain => 'Go again';
+
+  @override
+  String get breathingEndSession => 'End session';
+
+  @override
+  String get meditationsUpgradeTitle => 'This session is part of Premium';
+
+  @override
+  String meditationsUpgradeMessage(String offer) {
+    return 'Free includes a taste of each practice. Premium unlocks every session — and $offer.';
+  }
+
+  @override
+  String meditationsItemMeta(int minutes, String detail) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return '$_temp0 · $detail';
+  }
+
+  @override
+  String get meditationsTitle => 'Meditations & breathing';
+
+  @override
+  String get meditationsIntro =>
+      'A few minutes of guided calm — breathe along with the circle, or settle into a quiet session.';
+
+  @override
+  String get meditationsBreathingHeader => 'Breathing exercises';
+
+  @override
+  String get meditationsMeditationsHeader => 'Meditations';
+
+  @override
+  String get soundsUpgradeTitle => 'This sound is part of Premium';
+
+  @override
+  String soundsUpgradeMessage(String offer) {
+    return 'Free includes one sound to try. Premium unlocks the whole library — and $offer.';
+  }
+
+  @override
+  String get soundsPlayError => 'Couldn\'t play that sound.';
+
+  @override
+  String soundsPlayingCategory(String category) {
+    return 'Playing · $category';
+  }
+
+  @override
+  String get soundsTitle => 'Wellbeing sounds';
+
+  @override
+  String get soundsIntro =>
+      'Loops that stay with you — pick one and let it run while you focus, drift off, or settle down.';
+
+  @override
+  String get soundsFilterAll => 'All';
+
+  @override
+  String get soundsStop => 'Stop sound';
+
+  @override
+  String get soundPlayerFallbackTitle => 'Wellbeing sound';
 }

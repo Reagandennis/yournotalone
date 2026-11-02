@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../practice/feeling_store.dart';
 import '../practice/practice_repository.dart';
 import 'home_ui.dart';
@@ -16,10 +17,8 @@ void openMoodInsights(BuildContext context, {required String source}) {
     showUpgradeSheet(
       context,
       source: source,
-      title: 'Insights are part of Premium',
-      message:
-          'See how your practice, your week and your moods connect — '
-          'and $introOffer.',
+      title: context.l10n.moodInsightsUpgradeTitle,
+      message: context.l10n.moodInsightsUpgradeMessage(introOffer),
     );
     return;
   }
@@ -51,6 +50,7 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
   late final Future<List<Insight>> _insights = _load();
 
   Future<List<Insight>> _load() async {
+    final l10n = context.l10n;
     final results = await Future.wait([
       (widget.moods ?? MoodRepository())
           .fetchHistory(days: 90)
@@ -65,6 +65,7 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
       sessions: results[1] as List<PracticeSession>,
       feelings: results[2] as List<FeelingRecord>,
       now: DateTime.now(),
+      l10n: l10n,
     );
   }
 
@@ -142,7 +143,7 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Your insights',
+                    context.l10n.moodInsightsTitle,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
@@ -154,8 +155,7 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
                   const PillarStripe(),
                   const SizedBox(height: 14),
                   Text(
-                    'From your check-ins, practice and how sessions left '
-                    'you, over the last 90 days.',
+                    context.l10n.moodInsightsIntro,
                     style: TextStyle(
                       fontSize: 14,
                       color: c.textMuted,
@@ -170,9 +170,7 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
                     )
                   else if (snapshot.data?.isEmpty ?? true)
                     Text(
-                      'Not enough to go on yet. Check in each day and '
-                      'answer the question at the end of a session — '
-                      'insights start appearing within a week or two.',
+                      context.l10n.moodInsightsEmpty,
                       style: TextStyle(
                         fontSize: 14,
                         color: c.textMuted,

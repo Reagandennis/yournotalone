@@ -7320,6 +7320,726 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'M T W T F S S'**
   String get rhythmWeekdayLetters;
+
+  /// Explore tab: tile opening meditations and breathing. Short; fits a half-width tile, max 2 lines.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditate'**
+  String get explorePillarMeditate;
+
+  /// Explore tab: tile opening the wellbeing sounds (ambient audio loops). Short; fits a half-width tile, max 2 lines.
+  ///
+  /// In en, this message translates to:
+  /// **'Well being'**
+  String get explorePillarWellbeing;
+
+  /// Explore tab: tile opening the journal and mood tracking hub. Short; fits a half-width tile, max 2 lines.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal & mood'**
+  String get explorePillarJournal;
+
+  /// Explore tab: tile opening the addiction-recovery tools (cravings, sober days). Short; fits a half-width tile, max 2 lines.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery tools'**
+  String get explorePillarRecovery;
+
+  /// Explore tab: title of the featured cognitive behavioural therapy (CBT) programme card. One line.
+  ///
+  /// In en, this message translates to:
+  /// **'CBT for Therapy'**
+  String get exploreProgramCbtTitle;
+
+  /// Explore tab: one-line description under the CBT programme title.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools and reads for anxious & low thoughts'**
+  String get exploreProgramCbtBlurb;
+
+  /// Explore tab: title of the featured sleep programme card. One line.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep better'**
+  String get exploreProgramSleepTitle;
+
+  /// Explore tab: description of the sleep programme. 'The 20-minute rule' is a sleep tip: get up if you can't sleep after about 20 minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'A wind-down, the 20-minute rule, a sleep diary'**
+  String get exploreProgramSleepBlurb;
+
+  /// Explore tab: title of the featured stress programme card. One line.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage stress'**
+  String get exploreProgramStressTitle;
+
+  /// Explore tab: description of the stress programme: first calm the body, then deal with what's causing the stress.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring the body down, then sort the load'**
+  String get exploreProgramStressBlurb;
+
+  /// Explore tab: collection card and list title for all breathing exercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing exercises'**
+  String get exploreCollectionBreathingTitle;
+
+  /// Intro at the top of the breathing exercises list.
+  ///
+  /// In en, this message translates to:
+  /// **'A few minutes of paced breathing, each with its own rhythm.'**
+  String get exploreCollectionBreathingSubtitle;
+
+  /// Explore tab: number of breathing exercises in the collection, e.g. '8 rhythms'. Followed by ' · ' and a free/Premium count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} rhythms}}'**
+  String exploreCollectionBreathingCount(int count);
+
+  /// Explore tab: collection card and list title for all guided meditations.
+  ///
+  /// In en, this message translates to:
+  /// **'Guided meditations'**
+  String get exploreCollectionMeditationsTitle;
+
+  /// Intro at the top of the guided meditations list.
+  ///
+  /// In en, this message translates to:
+  /// **'Timed sessions with gentle guidance on screen.'**
+  String get exploreCollectionMeditationsSubtitle;
+
+  /// Explore tab: number of guided meditations, e.g. '9 sessions'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} sessions}}'**
+  String exploreCollectionMeditationsCount(int count);
+
+  /// Explore tab: collection card and list title for all ambient sound loops.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellbeing sounds'**
+  String get exploreCollectionSoundsTitle;
+
+  /// Intro at the top of the wellbeing sounds list.
+  ///
+  /// In en, this message translates to:
+  /// **'Ambient sound for focus, sleep and calm. Plays on with the screen off.'**
+  String get exploreCollectionSoundsSubtitle;
+
+  /// Explore tab: number of sound loops, e.g. '12 loops'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} loops}}'**
+  String exploreCollectionSoundsCount(int count);
+
+  /// Explore tab: collection card and list title for all journal writing prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Journal prompts'**
+  String get exploreCollectionPromptsTitle;
+
+  /// Intro at the top of the journal prompts list.
+  ///
+  /// In en, this message translates to:
+  /// **'A first line to get you writing, so the page is never blank.'**
+  String get exploreCollectionPromptsSubtitle;
+
+  /// Explore tab: number of journal prompts, e.g. '20 prompts'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} prompts}}'**
+  String exploreCollectionPromptsCount(int count);
+
+  /// Explore tab: collection card and list title for all short articles/lessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Short reads'**
+  String get exploreCollectionReadsTitle;
+
+  /// Intro at the top of the short reads list.
+  ///
+  /// In en, this message translates to:
+  /// **'The ideas behind the tools, a few minutes each.'**
+  String get exploreCollectionReadsSubtitle;
+
+  /// Explore tab: number of short reads, e.g. '9 reads'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} reads}}'**
+  String exploreCollectionReadsCount(int count);
+
+  /// Explore tab: collection card and list title for all addiction-recovery tools.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery tools'**
+  String get exploreCollectionRecoveryTitle;
+
+  /// Intro at the top of the recovery tools list: for people recovering from addiction.
+  ///
+  /// In en, this message translates to:
+  /// **'For cravings and the commitments you\'re keeping.'**
+  String get exploreCollectionRecoverySubtitle;
+
+  /// Explore tab: number of recovery tools, e.g. '5 tools'.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} tools}}'**
+  String exploreCollectionRecoveryCount(int count);
+
+  /// Explore tab: line under a collection title. amount is e.g. '8 rhythms'; access is how many are free or Premium, e.g. '3 free · 5 Premium'. Usually keep as is.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} · {access}'**
+  String exploreCollectionMeta(String amount, String access);
+
+  /// Explore tab: heading above chips like 'Sleep', 'Anxious', each opening matching content. Warm, informal.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you need right now?'**
+  String get exploreNeedsTitle;
+
+  /// Explore tab: search bar label and the search field's placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get exploreSearch;
+
+  /// Explore tab: heading over the featured programme cards (CBT, sleep, stress).
+  ///
+  /// In en, this message translates to:
+  /// **'Our featured programs'**
+  String get exploreFeaturedTitle;
+
+  /// Explore tab: line under exploreFeaturedTitle; each programme focuses on one topic.
+  ///
+  /// In en, this message translates to:
+  /// **'Step-by-step tools and short reads, each built around one thing.'**
+  String get exploreFeaturedSubtitle;
+
+  /// Explore tab: floating card title for booking a session with a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Book a session'**
+  String get exploreBookTitle;
+
+  /// Explore tab: under exploreBookTitle; stresses it's a real person, not an app or bot.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak to a human therapist'**
+  String get exploreBookSubtitle;
+
+  /// Explore tab: heading over the week-long courses (one step per day).
+  ///
+  /// In en, this message translates to:
+  /// **'7-day courses'**
+  String get exploreCoursesTitle;
+
+  /// Explore tab: line under exploreCoursesTitle; each day builds on the one before.
+  ///
+  /// In en, this message translates to:
+  /// **'One step a day, in an order that builds.'**
+  String get exploreCoursesSubtitle;
+
+  /// Explore tab: heading over the collection cards (breathing, meditations, sounds, ...).
+  ///
+  /// In en, this message translates to:
+  /// **'All collections'**
+  String get exploreCollectionsTitle;
+
+  /// Explore search: heading over the person's recent searches.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get exploreSearchRecent;
+
+  /// Explore search: button clearing the recent searches list.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get exploreSearchClear;
+
+  /// Explore search: heading over suggestion chips (needs like 'Sleep', 'Anxious') before anything is typed.
+  ///
+  /// In en, this message translates to:
+  /// **'Try searching for'**
+  String get exploreSearchSuggestions;
+
+  /// Explore search: shown when no content matches the search text.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing matches that yet.'**
+  String get exploreSearchEmpty;
+
+  /// Used in place of the person's first name when we don't know it, e.g. in a greeting 'Good morning, friend'. Lowercase, warm.
+  ///
+  /// In en, this message translates to:
+  /// **'friend'**
+  String get homeUiFriendFallback;
+
+  /// Upgrade sheet title when a free user taps a Premium item; item is its title (a meditation, sound, prompt...).
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock “{item}”'**
+  String homeUiUnlockItem(String item);
+
+  /// Upgrade sheet button opening the Premium plans screen. 'Premium' is the paid plan's name.
+  ///
+  /// In en, this message translates to:
+  /// **'See Premium'**
+  String get homeUiSeePremium;
+
+  /// Upgrade sheet button when unlocking a specific item; opens the Premium plans screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Premium'**
+  String get homeUiUnlockWithPremium;
+
+  /// Error shown when an action failed because the person's session ended.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve been signed out. Please log in again.'**
+  String get homeUiSignedOutError;
+
+  /// Upgrade sheet title when a free user has used up their free journal entries.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve filled your free pages'**
+  String get homeUiJournalCapTitle;
+
+  /// Upgrade sheet message under homeUiJournalCapTitle. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).
+  ///
+  /// In en, this message translates to:
+  /// **'The free plan includes {count} journal entries. Premium unlocks unlimited journaling — and {offer}.'**
+  String homeUiJournalCapMessage(int count, String offer);
+
+  /// Snackbar for a feature that isn't built yet; feature is its name, e.g. a Settings row label.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature} is coming soon — stay close.'**
+  String homeUiComingSoon(String feature);
+
+  /// Small button at the end of a section heading, opening the full list.
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get homeUiSeeAll;
+
+  /// Tiny chip with a lock on content that needs the paid Premium plan. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get homeUiPremiumChip;
+
+  /// Mood scale, worst of five: how the day/they feel. Shown under a face and in mood history. One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Awful'**
+  String get moodAwful;
+
+  /// Mood scale, second of five (feeling down). One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get moodLow;
+
+  /// Mood scale, middle of five (neutral). One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Okay'**
+  String get moodOkay;
+
+  /// Mood scale, fourth of five. One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get moodGood;
+
+  /// Mood scale, best of five. One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Great'**
+  String get moodGreat;
+
+  /// Mood history screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood history'**
+  String get moodHistoryTitle;
+
+  /// Mood history screen intro: gentle encouragement that bad times pass.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard weeks feel permanent while you\'re in them. This is the record that says otherwise.'**
+  String get moodHistoryIntro;
+
+  /// Mood history: date label for today, and under the right end of the 30-day chart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get moodHistoryToday;
+
+  /// Mood history: date label for yesterday's check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get moodHistoryYesterday;
+
+  /// Date format pattern (ICU/intl DateFormat: d = day, MMM = short month name, M = month number) for a check-in this year, e.g. '5 Jan'. Use your language's usual order, e.g. 'M月d日' for Chinese. Do not translate the letters.
+  ///
+  /// In en, this message translates to:
+  /// **'d MMM'**
+  String get moodHistoryDatePattern;
+
+  /// Date format pattern like moodHistoryDatePattern but with the year (y), for check-ins from an earlier year, e.g. '5 Jan 2025'. Chinese e.g. 'y年M月d日'. Do not translate the letters.
+  ///
+  /// In en, this message translates to:
+  /// **'d MMM y'**
+  String get moodHistoryDatePatternWithYear;
+
+  /// Mood history: error when the mood check-ins couldn't be loaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your check-ins.'**
+  String get moodHistoryLoadError;
+
+  /// Mood history: empty state before any daily mood check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'No check-ins yet. Tap a face on the home screen and this fills in — one day at a time.'**
+  String get moodHistoryEmpty;
+
+  /// Mood history: section heading over a 30-day bar chart.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get moodHistoryLast30Days;
+
+  /// Mood history stats: small label under a number, the count of mood check-ins. Lowercase, very short.
+  ///
+  /// In en, this message translates to:
+  /// **'check-ins'**
+  String get moodHistoryStatCheckIns;
+
+  /// Mood history stats: small label under a number, how many days in a row they've checked in. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'day streak'**
+  String get moodHistoryStatStreak;
+
+  /// Mood history stats: small label under the average mood score (1–5). Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'average'**
+  String get moodHistoryStatAverage;
+
+  /// Mood history stats: small label under the most common mood (e.g. 'Good'), meaning 'how you felt on most days'. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'most days'**
+  String get moodHistoryStatMostDays;
+
+  /// Mood history: section heading over the list of all mood check-ins.
+  ///
+  /// In en, this message translates to:
+  /// **'Every check-in'**
+  String get moodHistoryEveryCheckIn;
+
+  /// Upgrade sheet title when a free user opens mood insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights are part of Premium'**
+  String get moodInsightsUpgradeTitle;
+
+  /// Upgrade sheet message for mood insights. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).
+  ///
+  /// In en, this message translates to:
+  /// **'See how your practice, your week and your moods connect — and {offer}.'**
+  String moodInsightsUpgradeMessage(String offer);
+
+  /// Mood insights screen title: patterns found in the person's moods and practice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your insights'**
+  String get moodInsightsTitle;
+
+  /// Mood insights intro: what the insights are based on ('how sessions left you' = how they said they felt after each session).
+  ///
+  /// In en, this message translates to:
+  /// **'From your check-ins, practice and how sessions left you, over the last 90 days.'**
+  String get moodInsightsIntro;
+
+  /// Mood insights: empty state when there's too little data.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough to go on yet. Check in each day and answer the question at the end of a session — insights start appearing within a week or two.'**
+  String get moodInsightsEmpty;
+
+  /// Mood insight title: how many days this month they've logged their mood.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{You\'ve checked in 1 day this month} other{You\'ve checked in {count} days this month}}'**
+  String moodInsightCheckedInTitle(int count);
+
+  /// Mood insight detail: their current run of daily check-ins (always 2 or more).
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s {count} days in a row right now. Noticing is where change starts.'**
+  String moodInsightCheckedInStreak(int count);
+
+  /// Mood insight detail when there's no streak yet: encouragement to keep checking in.
+  ///
+  /// In en, this message translates to:
+  /// **'Every check-in makes the picture clearer.'**
+  String get moodInsightCheckedInFirst;
+
+  /// Mood insight title: moods are better on days with a meditation/breathing/sound session.
+  ///
+  /// In en, this message translates to:
+  /// **'Your mood is higher on days you practise'**
+  String get moodInsightPracticeHigherTitle;
+
+  /// Detail under moodInsightPracticeHigherTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Days with a meditation, breathing or a sound score better than days without. Worth keeping a small daily habit.'**
+  String get moodInsightPracticeHigherDetail;
+
+  /// Mood insight title: moods are lower on practice days, framed kindly.
+  ///
+  /// In en, this message translates to:
+  /// **'You tend to practise on harder days'**
+  String get moodInsightPracticeLowerTitle;
+
+  /// Detail under moodInsightPracticeLowerTitle; reassuring, not a judgement.
+  ///
+  /// In en, this message translates to:
+  /// **'Your practice days have lower moods — which may mean you reach for it when you need it. That\'s what it\'s for.'**
+  String get moodInsightPracticeLowerDetail;
+
+  /// Mood insight title: no clear difference in mood between days with and without practice.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice days and other days look alike so far'**
+  String get moodInsightPracticeSameTitle;
+
+  /// Detail under moodInsightPracticeSameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep checking in — the pattern gets clearer with a few more weeks.'**
+  String get moodInsightPracticeSameDetail;
+
+  /// A day of the week in general (plural: 'Mondays' = every Monday), starting a sentence in moodInsightHardestDayTitle and moodInsightHardestDayDetail. Translate only the words inside the braces.
+  ///
+  /// In en, this message translates to:
+  /// **'{day, select, mon{Mondays} tue{Tuesdays} wed{Wednesdays} thu{Thursdays} fri{Fridays} sat{Saturdays} other{Sundays}}'**
+  String moodWeekdays(String day);
+
+  /// Same as moodWeekdays but used mid-sentence ('planned for mondays'). Use your language's normal capitalisation for weekdays in the middle of a sentence. Translate only the words inside the braces.
+  ///
+  /// In en, this message translates to:
+  /// **'{day, select, mon{mondays} tue{tuesdays} wed{wednesdays} thu{thursdays} fri{fridays} sat{saturdays} other{sundays}}'**
+  String moodWeekdaysMidSentence(String day);
+
+  /// Mood insight title; weekday is from moodWeekdays, e.g. 'Mondays'.
+  ///
+  /// In en, this message translates to:
+  /// **'{weekday} are usually your hardest days'**
+  String moodInsightHardestDayTitle(String weekday);
+
+  /// Detail under moodInsightHardestDayTitle. bestDay from moodWeekdays (e.g. 'Fridays'), hardestDay from moodWeekdaysMidSentence (e.g. 'mondays'). 'A little something planned' = something small to look forward to.
+  ///
+  /// In en, this message translates to:
+  /// **'{bestDay} tend to go best. A little something planned for {hardestDay} could help.'**
+  String moodInsightHardestDayDetail(String bestDay, String hardestDay);
+
+  /// Mood insight title: mood in the last 14 days is up on the 14 before.
+  ///
+  /// In en, this message translates to:
+  /// **'The last two weeks have been better'**
+  String get moodInsightBetterTitle;
+
+  /// Detail under moodInsightBetterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-ins are up on the fortnight before. Whatever you\'re doing, it\'s worth noticing.'**
+  String get moodInsightBetterDetail;
+
+  /// Mood insight title: mood in the last 14 days is down on the 14 before.
+  ///
+  /// In en, this message translates to:
+  /// **'The last two weeks have been harder'**
+  String get moodInsightHarderTitle;
+
+  /// Detail under moodInsightHarderTitle. Caring tone; gently suggests talking to someone (e.g. a therapist or friend).
+  ///
+  /// In en, this message translates to:
+  /// **'Your check-ins are down on the fortnight before. Be gentle with yourself — and talking to someone can help.'**
+  String get moodInsightHarderDetail;
+
+  /// Mood insight detail under a summary of how they felt after sessions (answers to 'How do you feel now?').
+  ///
+  /// In en, this message translates to:
+  /// **'From how you said you felt at the end of each session.'**
+  String get moodInsightFeelingsDetail;
+
+  /// Breathing exercise: instruction inside the growing circle. Short, imperative, informal.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in'**
+  String get breathingBreatheIn;
+
+  /// Breathing exercise: instruction to hold the breath. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Hold'**
+  String get breathingHold;
+
+  /// Breathing exercise: instruction inside the shrinking circle. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe out'**
+  String get breathingBreatheOut;
+
+  /// Breathing exercise: chip choosing the length, e.g. '3 min'. Abbreviated, very short.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min}}'**
+  String breathingMinutesChip(int minutes);
+
+  /// Breathing exercise: button starting the exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin'**
+  String get breathingBegin;
+
+  /// Breathing exercise: heading when the exercise finishes. Warm.
+  ///
+  /// In en, this message translates to:
+  /// **'Well done'**
+  String get breathingWellDone;
+
+  /// Breathing exercise finished: how long it lasted and roughly how many breaths (in and out = one cycle), then an invitation to notice how they feel. Keep the line break (\n).
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =1{1 minute} other{{minutes} minutes}} · about {cycles} breath cycles.\nNotice how you feel right now.'**
+  String breathingDoneSummary(int minutes, int cycles);
+
+  /// Breathing exercise finished: confirms the session was logged.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to your practice history.'**
+  String get breathingAddedToHistory;
+
+  /// Breathing exercise finished: button to do it once more.
+  ///
+  /// In en, this message translates to:
+  /// **'Go again'**
+  String get breathingGoAgain;
+
+  /// Breathing exercise: tooltip/accessibility label on the stop button.
+  ///
+  /// In en, this message translates to:
+  /// **'End session'**
+  String get breathingEndSession;
+
+  /// Upgrade sheet subtitle when a free user taps a Premium meditation or breathing exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'This session is part of Premium'**
+  String get meditationsUpgradeTitle;
+
+  /// Upgrade sheet message for meditations. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes a taste of each practice. Premium unlocks every session — and {offer}.'**
+  String meditationsUpgradeMessage(String offer);
+
+  /// Meditations list: line under a meditation's title: its length, then a short description from the content (already in the right language).
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min}} · {detail}'**
+  String meditationsItemMeta(int minutes, String detail);
+
+  /// Meditations hub screen title.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditations & breathing'**
+  String get meditationsTitle;
+
+  /// Meditations hub intro. 'The circle' is the animated breathing circle.
+  ///
+  /// In en, this message translates to:
+  /// **'A few minutes of guided calm — breathe along with the circle, or settle into a quiet session.'**
+  String get meditationsIntro;
+
+  /// Meditations hub: section heading over the breathing exercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathing exercises'**
+  String get meditationsBreathingHeader;
+
+  /// Meditations hub: section heading over the guided meditations.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditations'**
+  String get meditationsMeditationsHeader;
+
+  /// Upgrade sheet subtitle when a free user taps a Premium sound.
+  ///
+  /// In en, this message translates to:
+  /// **'This sound is part of Premium'**
+  String get soundsUpgradeTitle;
+
+  /// Upgrade sheet message for sounds. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes one sound to try. Premium unlocks the whole library — and {offer}.'**
+  String soundsUpgradeMessage(String offer);
+
+  /// Snackbar when a sound fails to play.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t play that sound.'**
+  String get soundsPlayError;
+
+  /// Sounds list: line under the sound that's playing now; category is its group, e.g. 'Nature'.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing · {category}'**
+  String soundsPlayingCategory(String category);
+
+  /// Sounds screen title: ambient audio loops.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellbeing sounds'**
+  String get soundsTitle;
+
+  /// Sounds screen intro.
+  ///
+  /// In en, this message translates to:
+  /// **'Loops that stay with you — pick one and let it run while you focus, drift off, or settle down.'**
+  String get soundsIntro;
+
+  /// Sounds screen: filter chip showing every category. Very short.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get soundsFilterAll;
+
+  /// Sounds screen: button stopping the sound that's playing.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop sound'**
+  String get soundsStop;
+
+  /// Title on the lock screen / media notification for a sound with no name.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellbeing sound'**
+  String get soundPlayerFallbackTitle;
 }
 
 class _AppLocalizationsDelegate

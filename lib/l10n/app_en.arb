@@ -6285,5 +6285,628 @@
   "rhythmWeekdayLetters": "M T W T F S S",
   "@rhythmWeekdayLetters": {
     "description": "One-letter (or one-character) names of the weekdays, Monday first, separated by single spaces — exactly 7 items. Shown under seven small suns on the rhythm card."
+  },
+  "explorePillarMeditate": "Meditate",
+  "@explorePillarMeditate": {
+    "description": "Explore tab: tile opening meditations and breathing. Short; fits a half-width tile, max 2 lines."
+  },
+  "explorePillarWellbeing": "Well being",
+  "@explorePillarWellbeing": {
+    "description": "Explore tab: tile opening the wellbeing sounds (ambient audio loops). Short; fits a half-width tile, max 2 lines."
+  },
+  "explorePillarJournal": "Journal & mood",
+  "@explorePillarJournal": {
+    "description": "Explore tab: tile opening the journal and mood tracking hub. Short; fits a half-width tile, max 2 lines."
+  },
+  "explorePillarRecovery": "Recovery tools",
+  "@explorePillarRecovery": {
+    "description": "Explore tab: tile opening the addiction-recovery tools (cravings, sober days). Short; fits a half-width tile, max 2 lines."
+  },
+  "exploreProgramCbtTitle": "CBT for Therapy",
+  "@exploreProgramCbtTitle": {
+    "description": "Explore tab: title of the featured cognitive behavioural therapy (CBT) programme card. One line."
+  },
+  "exploreProgramCbtBlurb": "Tools and reads for anxious & low thoughts",
+  "@exploreProgramCbtBlurb": {
+    "description": "Explore tab: one-line description under the CBT programme title."
+  },
+  "exploreProgramSleepTitle": "Sleep better",
+  "@exploreProgramSleepTitle": {
+    "description": "Explore tab: title of the featured sleep programme card. One line."
+  },
+  "exploreProgramSleepBlurb": "A wind-down, the 20-minute rule, a sleep diary",
+  "@exploreProgramSleepBlurb": {
+    "description": "Explore tab: description of the sleep programme. 'The 20-minute rule' is a sleep tip: get up if you can't sleep after about 20 minutes."
+  },
+  "exploreProgramStressTitle": "Manage stress",
+  "@exploreProgramStressTitle": {
+    "description": "Explore tab: title of the featured stress programme card. One line."
+  },
+  "exploreProgramStressBlurb": "Bring the body down, then sort the load",
+  "@exploreProgramStressBlurb": {
+    "description": "Explore tab: description of the stress programme: first calm the body, then deal with what's causing the stress."
+  },
+  "exploreCollectionBreathingTitle": "Breathing exercises",
+  "@exploreCollectionBreathingTitle": {
+    "description": "Explore tab: collection card and list title for all breathing exercises."
+  },
+  "exploreCollectionBreathingSubtitle": "A few minutes of paced breathing, each with its own rhythm.",
+  "@exploreCollectionBreathingSubtitle": {
+    "description": "Intro at the top of the breathing exercises list."
+  },
+  "exploreCollectionBreathingCount": "{count, plural, other{{count} rhythms}}",
+  "@exploreCollectionBreathingCount": {
+    "description": "Explore tab: number of breathing exercises in the collection, e.g. '8 rhythms'. Followed by ' · ' and a free/Premium count.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreCollectionMeditationsTitle": "Guided meditations",
+  "@exploreCollectionMeditationsTitle": {
+    "description": "Explore tab: collection card and list title for all guided meditations."
+  },
+  "exploreCollectionMeditationsSubtitle": "Timed sessions with gentle guidance on screen.",
+  "@exploreCollectionMeditationsSubtitle": {
+    "description": "Intro at the top of the guided meditations list."
+  },
+  "exploreCollectionMeditationsCount": "{count, plural, other{{count} sessions}}",
+  "@exploreCollectionMeditationsCount": {
+    "description": "Explore tab: number of guided meditations, e.g. '9 sessions'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreCollectionSoundsTitle": "Wellbeing sounds",
+  "@exploreCollectionSoundsTitle": {
+    "description": "Explore tab: collection card and list title for all ambient sound loops."
+  },
+  "exploreCollectionSoundsSubtitle": "Ambient sound for focus, sleep and calm. Plays on with the screen off.",
+  "@exploreCollectionSoundsSubtitle": {
+    "description": "Intro at the top of the wellbeing sounds list."
+  },
+  "exploreCollectionSoundsCount": "{count, plural, other{{count} loops}}",
+  "@exploreCollectionSoundsCount": {
+    "description": "Explore tab: number of sound loops, e.g. '12 loops'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreCollectionPromptsTitle": "Journal prompts",
+  "@exploreCollectionPromptsTitle": {
+    "description": "Explore tab: collection card and list title for all journal writing prompts."
+  },
+  "exploreCollectionPromptsSubtitle": "A first line to get you writing, so the page is never blank.",
+  "@exploreCollectionPromptsSubtitle": {
+    "description": "Intro at the top of the journal prompts list."
+  },
+  "exploreCollectionPromptsCount": "{count, plural, other{{count} prompts}}",
+  "@exploreCollectionPromptsCount": {
+    "description": "Explore tab: number of journal prompts, e.g. '20 prompts'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreCollectionReadsTitle": "Short reads",
+  "@exploreCollectionReadsTitle": {
+    "description": "Explore tab: collection card and list title for all short articles/lessons."
+  },
+  "exploreCollectionReadsSubtitle": "The ideas behind the tools, a few minutes each.",
+  "@exploreCollectionReadsSubtitle": {
+    "description": "Intro at the top of the short reads list."
+  },
+  "exploreCollectionReadsCount": "{count, plural, other{{count} reads}}",
+  "@exploreCollectionReadsCount": {
+    "description": "Explore tab: number of short reads, e.g. '9 reads'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreCollectionRecoveryTitle": "Recovery tools",
+  "@exploreCollectionRecoveryTitle": {
+    "description": "Explore tab: collection card and list title for all addiction-recovery tools."
+  },
+  "exploreCollectionRecoverySubtitle": "For cravings and the commitments you're keeping.",
+  "@exploreCollectionRecoverySubtitle": {
+    "description": "Intro at the top of the recovery tools list: for people recovering from addiction."
+  },
+  "exploreCollectionRecoveryCount": "{count, plural, other{{count} tools}}",
+  "@exploreCollectionRecoveryCount": {
+    "description": "Explore tab: number of recovery tools, e.g. '5 tools'.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exploreCollectionMeta": "{amount} · {access}",
+  "@exploreCollectionMeta": {
+    "description": "Explore tab: line under a collection title. amount is e.g. '8 rhythms'; access is how many are free or Premium, e.g. '3 free · 5 Premium'. Usually keep as is.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "8 rhythms"
+      },
+      "access": {
+        "type": "String",
+        "example": "3 free · 5 Premium"
+      }
+    }
+  },
+  "exploreNeedsTitle": "What do you need right now?",
+  "@exploreNeedsTitle": {
+    "description": "Explore tab: heading above chips like 'Sleep', 'Anxious', each opening matching content. Warm, informal."
+  },
+  "exploreSearch": "Search",
+  "@exploreSearch": {
+    "description": "Explore tab: search bar label and the search field's placeholder."
+  },
+  "exploreFeaturedTitle": "Our featured programs",
+  "@exploreFeaturedTitle": {
+    "description": "Explore tab: heading over the featured programme cards (CBT, sleep, stress)."
+  },
+  "exploreFeaturedSubtitle": "Step-by-step tools and short reads, each built around one thing.",
+  "@exploreFeaturedSubtitle": {
+    "description": "Explore tab: line under exploreFeaturedTitle; each programme focuses on one topic."
+  },
+  "exploreBookTitle": "Book a session",
+  "@exploreBookTitle": {
+    "description": "Explore tab: floating card title for booking a session with a therapist."
+  },
+  "exploreBookSubtitle": "Speak to a human therapist",
+  "@exploreBookSubtitle": {
+    "description": "Explore tab: under exploreBookTitle; stresses it's a real person, not an app or bot."
+  },
+  "exploreCoursesTitle": "7-day courses",
+  "@exploreCoursesTitle": {
+    "description": "Explore tab: heading over the week-long courses (one step per day)."
+  },
+  "exploreCoursesSubtitle": "One step a day, in an order that builds.",
+  "@exploreCoursesSubtitle": {
+    "description": "Explore tab: line under exploreCoursesTitle; each day builds on the one before."
+  },
+  "exploreCollectionsTitle": "All collections",
+  "@exploreCollectionsTitle": {
+    "description": "Explore tab: heading over the collection cards (breathing, meditations, sounds, ...)."
+  },
+  "exploreSearchRecent": "Recent",
+  "@exploreSearchRecent": {
+    "description": "Explore search: heading over the person's recent searches."
+  },
+  "exploreSearchClear": "Clear",
+  "@exploreSearchClear": {
+    "description": "Explore search: button clearing the recent searches list."
+  },
+  "exploreSearchSuggestions": "Try searching for",
+  "@exploreSearchSuggestions": {
+    "description": "Explore search: heading over suggestion chips (needs like 'Sleep', 'Anxious') before anything is typed."
+  },
+  "exploreSearchEmpty": "Nothing matches that yet.",
+  "@exploreSearchEmpty": {
+    "description": "Explore search: shown when no content matches the search text."
+  },
+  "homeUiFriendFallback": "friend",
+  "@homeUiFriendFallback": {
+    "description": "Used in place of the person's first name when we don't know it, e.g. in a greeting 'Good morning, friend'. Lowercase, warm."
+  },
+  "homeUiUnlockItem": "Unlock “{item}”",
+  "@homeUiUnlockItem": {
+    "description": "Upgrade sheet title when a free user taps a Premium item; item is its title (a meditation, sound, prompt...).",
+    "placeholders": {
+      "item": {
+        "type": "String",
+        "example": "Body scan"
+      }
+    }
+  },
+  "homeUiSeePremium": "See Premium",
+  "@homeUiSeePremium": {
+    "description": "Upgrade sheet button opening the Premium plans screen. 'Premium' is the paid plan's name."
+  },
+  "homeUiUnlockWithPremium": "Unlock with Premium",
+  "@homeUiUnlockWithPremium": {
+    "description": "Upgrade sheet button when unlocking a specific item; opens the Premium plans screen."
+  },
+  "homeUiSignedOutError": "You've been signed out. Please log in again.",
+  "@homeUiSignedOutError": {
+    "description": "Error shown when an action failed because the person's session ended."
+  },
+  "homeUiJournalCapTitle": "You've filled your free pages",
+  "@homeUiJournalCapTitle": {
+    "description": "Upgrade sheet title when a free user has used up their free journal entries."
+  },
+  "homeUiJournalCapMessage": "The free plan includes {count} journal entries. Premium unlocks unlimited journaling — and {offer}.",
+  "@homeUiJournalCapMessage": {
+    "description": "Upgrade sheet message under homeUiJournalCapTitle. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "homeUiComingSoon": "{feature} is coming soon — stay close.",
+  "@homeUiComingSoon": {
+    "description": "Snackbar for a feature that isn't built yet; feature is its name, e.g. a Settings row label.",
+    "placeholders": {
+      "feature": {
+        "type": "String",
+        "example": "Export"
+      }
+    }
+  },
+  "homeUiSeeAll": "See all",
+  "@homeUiSeeAll": {
+    "description": "Small button at the end of a section heading, opening the full list."
+  },
+  "homeUiPremiumChip": "Premium",
+  "@homeUiPremiumChip": {
+    "description": "Tiny chip with a lock on content that needs the paid Premium plan. Very short."
+  },
+  "moodAwful": "Awful",
+  "@moodAwful": {
+    "description": "Mood scale, worst of five: how the day/they feel. Shown under a face and in mood history. One word."
+  },
+  "moodLow": "Low",
+  "@moodLow": {
+    "description": "Mood scale, second of five (feeling down). One word."
+  },
+  "moodOkay": "Okay",
+  "@moodOkay": {
+    "description": "Mood scale, middle of five (neutral). One word."
+  },
+  "moodGood": "Good",
+  "@moodGood": {
+    "description": "Mood scale, fourth of five. One word."
+  },
+  "moodGreat": "Great",
+  "@moodGreat": {
+    "description": "Mood scale, best of five. One word."
+  },
+  "moodHistoryTitle": "Mood history",
+  "@moodHistoryTitle": {
+    "description": "Mood history screen title."
+  },
+  "moodHistoryIntro": "Hard weeks feel permanent while you're in them. This is the record that says otherwise.",
+  "@moodHistoryIntro": {
+    "description": "Mood history screen intro: gentle encouragement that bad times pass."
+  },
+  "moodHistoryToday": "Today",
+  "@moodHistoryToday": {
+    "description": "Mood history: date label for today, and under the right end of the 30-day chart."
+  },
+  "moodHistoryYesterday": "Yesterday",
+  "@moodHistoryYesterday": {
+    "description": "Mood history: date label for yesterday's check-in."
+  },
+  "moodHistoryDatePattern": "d MMM",
+  "@moodHistoryDatePattern": {
+    "description": "Date format pattern (ICU/intl DateFormat: d = day, MMM = short month name, M = month number) for a check-in this year, e.g. '5 Jan'. Use your language's usual order, e.g. 'M月d日' for Chinese. Do not translate the letters."
+  },
+  "moodHistoryDatePatternWithYear": "d MMM y",
+  "@moodHistoryDatePatternWithYear": {
+    "description": "Date format pattern like moodHistoryDatePattern but with the year (y), for check-ins from an earlier year, e.g. '5 Jan 2025'. Chinese e.g. 'y年M月d日'. Do not translate the letters."
+  },
+  "moodHistoryLoadError": "Couldn't load your check-ins.",
+  "@moodHistoryLoadError": {
+    "description": "Mood history: error when the mood check-ins couldn't be loaded."
+  },
+  "moodHistoryEmpty": "No check-ins yet. Tap a face on the home screen and this fills in — one day at a time.",
+  "@moodHistoryEmpty": {
+    "description": "Mood history: empty state before any daily mood check-in."
+  },
+  "moodHistoryLast30Days": "Last 30 days",
+  "@moodHistoryLast30Days": {
+    "description": "Mood history: section heading over a 30-day bar chart."
+  },
+  "moodHistoryStatCheckIns": "check-ins",
+  "@moodHistoryStatCheckIns": {
+    "description": "Mood history stats: small label under a number, the count of mood check-ins. Lowercase, very short."
+  },
+  "moodHistoryStatStreak": "day streak",
+  "@moodHistoryStatStreak": {
+    "description": "Mood history stats: small label under a number, how many days in a row they've checked in. Very short."
+  },
+  "moodHistoryStatAverage": "average",
+  "@moodHistoryStatAverage": {
+    "description": "Mood history stats: small label under the average mood score (1–5). Very short."
+  },
+  "moodHistoryStatMostDays": "most days",
+  "@moodHistoryStatMostDays": {
+    "description": "Mood history stats: small label under the most common mood (e.g. 'Good'), meaning 'how you felt on most days'. Very short."
+  },
+  "moodHistoryEveryCheckIn": "Every check-in",
+  "@moodHistoryEveryCheckIn": {
+    "description": "Mood history: section heading over the list of all mood check-ins."
+  },
+  "moodInsightsUpgradeTitle": "Insights are part of Premium",
+  "@moodInsightsUpgradeTitle": {
+    "description": "Upgrade sheet title when a free user opens mood insights."
+  },
+  "moodInsightsUpgradeMessage": "See how your practice, your week and your moods connect — and {offer}.",
+  "@moodInsightsUpgradeMessage": {
+    "description": "Upgrade sheet message for mood insights. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "moodInsightsTitle": "Your insights",
+  "@moodInsightsTitle": {
+    "description": "Mood insights screen title: patterns found in the person's moods and practice."
+  },
+  "moodInsightsIntro": "From your check-ins, practice and how sessions left you, over the last 90 days.",
+  "@moodInsightsIntro": {
+    "description": "Mood insights intro: what the insights are based on ('how sessions left you' = how they said they felt after each session)."
+  },
+  "moodInsightsEmpty": "Not enough to go on yet. Check in each day and answer the question at the end of a session — insights start appearing within a week or two.",
+  "@moodInsightsEmpty": {
+    "description": "Mood insights: empty state when there's too little data."
+  },
+  "moodInsightCheckedInTitle": "{count, plural, =1{You've checked in 1 day this month} other{You've checked in {count} days this month}}",
+  "@moodInsightCheckedInTitle": {
+    "description": "Mood insight title: how many days this month they've logged their mood.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moodInsightCheckedInStreak": "That's {count} days in a row right now. Noticing is where change starts.",
+  "@moodInsightCheckedInStreak": {
+    "description": "Mood insight detail: their current run of daily check-ins (always 2 or more).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moodInsightCheckedInFirst": "Every check-in makes the picture clearer.",
+  "@moodInsightCheckedInFirst": {
+    "description": "Mood insight detail when there's no streak yet: encouragement to keep checking in."
+  },
+  "moodInsightPracticeHigherTitle": "Your mood is higher on days you practise",
+  "@moodInsightPracticeHigherTitle": {
+    "description": "Mood insight title: moods are better on days with a meditation/breathing/sound session."
+  },
+  "moodInsightPracticeHigherDetail": "Days with a meditation, breathing or a sound score better than days without. Worth keeping a small daily habit.",
+  "@moodInsightPracticeHigherDetail": {
+    "description": "Detail under moodInsightPracticeHigherTitle."
+  },
+  "moodInsightPracticeLowerTitle": "You tend to practise on harder days",
+  "@moodInsightPracticeLowerTitle": {
+    "description": "Mood insight title: moods are lower on practice days, framed kindly."
+  },
+  "moodInsightPracticeLowerDetail": "Your practice days have lower moods — which may mean you reach for it when you need it. That's what it's for.",
+  "@moodInsightPracticeLowerDetail": {
+    "description": "Detail under moodInsightPracticeLowerTitle; reassuring, not a judgement."
+  },
+  "moodInsightPracticeSameTitle": "Practice days and other days look alike so far",
+  "@moodInsightPracticeSameTitle": {
+    "description": "Mood insight title: no clear difference in mood between days with and without practice."
+  },
+  "moodInsightPracticeSameDetail": "Keep checking in — the pattern gets clearer with a few more weeks.",
+  "@moodInsightPracticeSameDetail": {
+    "description": "Detail under moodInsightPracticeSameTitle."
+  },
+  "moodWeekdays": "{day, select, mon{Mondays} tue{Tuesdays} wed{Wednesdays} thu{Thursdays} fri{Fridays} sat{Saturdays} other{Sundays}}",
+  "@moodWeekdays": {
+    "description": "A day of the week in general (plural: 'Mondays' = every Monday), starting a sentence in moodInsightHardestDayTitle and moodInsightHardestDayDetail. Translate only the words inside the braces.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "moodWeekdaysMidSentence": "{day, select, mon{mondays} tue{tuesdays} wed{wednesdays} thu{thursdays} fri{fridays} sat{saturdays} other{sundays}}",
+  "@moodWeekdaysMidSentence": {
+    "description": "Same as moodWeekdays but used mid-sentence ('planned for mondays'). Use your language's normal capitalisation for weekdays in the middle of a sentence. Translate only the words inside the braces.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "moodInsightHardestDayTitle": "{weekday} are usually your hardest days",
+  "@moodInsightHardestDayTitle": {
+    "description": "Mood insight title; weekday is from moodWeekdays, e.g. 'Mondays'.",
+    "placeholders": {
+      "weekday": {
+        "type": "String",
+        "example": "Mondays"
+      }
+    }
+  },
+  "moodInsightHardestDayDetail": "{bestDay} tend to go best. A little something planned for {hardestDay} could help.",
+  "@moodInsightHardestDayDetail": {
+    "description": "Detail under moodInsightHardestDayTitle. bestDay from moodWeekdays (e.g. 'Fridays'), hardestDay from moodWeekdaysMidSentence (e.g. 'mondays'). 'A little something planned' = something small to look forward to.",
+    "placeholders": {
+      "bestDay": {
+        "type": "String",
+        "example": "Fridays"
+      },
+      "hardestDay": {
+        "type": "String",
+        "example": "mondays"
+      }
+    }
+  },
+  "moodInsightBetterTitle": "The last two weeks have been better",
+  "@moodInsightBetterTitle": {
+    "description": "Mood insight title: mood in the last 14 days is up on the 14 before."
+  },
+  "moodInsightBetterDetail": "Your check-ins are up on the fortnight before. Whatever you're doing, it's worth noticing.",
+  "@moodInsightBetterDetail": {
+    "description": "Detail under moodInsightBetterTitle."
+  },
+  "moodInsightHarderTitle": "The last two weeks have been harder",
+  "@moodInsightHarderTitle": {
+    "description": "Mood insight title: mood in the last 14 days is down on the 14 before."
+  },
+  "moodInsightHarderDetail": "Your check-ins are down on the fortnight before. Be gentle with yourself — and talking to someone can help.",
+  "@moodInsightHarderDetail": {
+    "description": "Detail under moodInsightHarderTitle. Caring tone; gently suggests talking to someone (e.g. a therapist or friend)."
+  },
+  "moodInsightFeelingsDetail": "From how you said you felt at the end of each session.",
+  "@moodInsightFeelingsDetail": {
+    "description": "Mood insight detail under a summary of how they felt after sessions (answers to 'How do you feel now?')."
+  },
+  "breathingBreatheIn": "Breathe in",
+  "@breathingBreatheIn": {
+    "description": "Breathing exercise: instruction inside the growing circle. Short, imperative, informal."
+  },
+  "breathingHold": "Hold",
+  "@breathingHold": {
+    "description": "Breathing exercise: instruction to hold the breath. Short."
+  },
+  "breathingBreatheOut": "Breathe out",
+  "@breathingBreatheOut": {
+    "description": "Breathing exercise: instruction inside the shrinking circle. Short."
+  },
+  "breathingMinutesChip": "{minutes, plural, other{{minutes} min}}",
+  "@breathingMinutesChip": {
+    "description": "Breathing exercise: chip choosing the length, e.g. '3 min'. Abbreviated, very short.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "breathingBegin": "Begin",
+  "@breathingBegin": {
+    "description": "Breathing exercise: button starting the exercise."
+  },
+  "breathingWellDone": "Well done",
+  "@breathingWellDone": {
+    "description": "Breathing exercise: heading when the exercise finishes. Warm."
+  },
+  "breathingDoneSummary": "{minutes, plural, =1{1 minute} other{{minutes} minutes}} · about {cycles} breath cycles.\nNotice how you feel right now.",
+  "@breathingDoneSummary": {
+    "description": "Breathing exercise finished: how long it lasted and roughly how many breaths (in and out = one cycle), then an invitation to notice how they feel. Keep the line break (\\n).",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "cycles": {
+        "type": "int"
+      }
+    }
+  },
+  "breathingAddedToHistory": "Added to your practice history.",
+  "@breathingAddedToHistory": {
+    "description": "Breathing exercise finished: confirms the session was logged."
+  },
+  "breathingGoAgain": "Go again",
+  "@breathingGoAgain": {
+    "description": "Breathing exercise finished: button to do it once more."
+  },
+  "breathingEndSession": "End session",
+  "@breathingEndSession": {
+    "description": "Breathing exercise: tooltip/accessibility label on the stop button."
+  },
+  "meditationsUpgradeTitle": "This session is part of Premium",
+  "@meditationsUpgradeTitle": {
+    "description": "Upgrade sheet subtitle when a free user taps a Premium meditation or breathing exercise."
+  },
+  "meditationsUpgradeMessage": "Free includes a taste of each practice. Premium unlocks every session — and {offer}.",
+  "@meditationsUpgradeMessage": {
+    "description": "Upgrade sheet message for meditations. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "meditationsItemMeta": "{minutes, plural, other{{minutes} min}} · {detail}",
+  "@meditationsItemMeta": {
+    "description": "Meditations list: line under a meditation's title: its length, then a short description from the content (already in the right language).",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "detail": {
+        "type": "String",
+        "example": "Ease into sleep"
+      }
+    }
+  },
+  "meditationsTitle": "Meditations & breathing",
+  "@meditationsTitle": {
+    "description": "Meditations hub screen title."
+  },
+  "meditationsIntro": "A few minutes of guided calm — breathe along with the circle, or settle into a quiet session.",
+  "@meditationsIntro": {
+    "description": "Meditations hub intro. 'The circle' is the animated breathing circle."
+  },
+  "meditationsBreathingHeader": "Breathing exercises",
+  "@meditationsBreathingHeader": {
+    "description": "Meditations hub: section heading over the breathing exercises."
+  },
+  "meditationsMeditationsHeader": "Meditations",
+  "@meditationsMeditationsHeader": {
+    "description": "Meditations hub: section heading over the guided meditations."
+  },
+  "soundsUpgradeTitle": "This sound is part of Premium",
+  "@soundsUpgradeTitle": {
+    "description": "Upgrade sheet subtitle when a free user taps a Premium sound."
+  },
+  "soundsUpgradeMessage": "Free includes one sound to try. Premium unlocks the whole library — and {offer}.",
+  "@soundsUpgradeMessage": {
+    "description": "Upgrade sheet message for sounds. offer is a lowercase clause about the free trial, e.g. 'you can try it free first' (it ends the sentence).",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "soundsPlayError": "Couldn't play that sound.",
+  "@soundsPlayError": {
+    "description": "Snackbar when a sound fails to play."
+  },
+  "soundsPlayingCategory": "Playing · {category}",
+  "@soundsPlayingCategory": {
+    "description": "Sounds list: line under the sound that's playing now; category is its group, e.g. 'Nature'.",
+    "placeholders": {
+      "category": {
+        "type": "String",
+        "example": "Nature"
+      }
+    }
+  },
+  "soundsTitle": "Wellbeing sounds",
+  "@soundsTitle": {
+    "description": "Sounds screen title: ambient audio loops."
+  },
+  "soundsIntro": "Loops that stay with you — pick one and let it run while you focus, drift off, or settle down.",
+  "@soundsIntro": {
+    "description": "Sounds screen intro."
+  },
+  "soundsFilterAll": "All",
+  "@soundsFilterAll": {
+    "description": "Sounds screen: filter chip showing every category. Very short."
+  },
+  "soundsStop": "Stop sound",
+  "@soundsStop": {
+    "description": "Sounds screen: button stopping the sound that's playing."
+  },
+  "soundPlayerFallbackTitle": "Wellbeing sound",
+  "@soundPlayerFallbackTitle": {
+    "description": "Title on the lock screen / media notification for a sound with no name."
   }
 }

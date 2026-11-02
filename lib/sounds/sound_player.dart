@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
+import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
 import 'sounds_catalog.dart';
 
@@ -142,8 +143,9 @@ class SoundPlayer {
       await player.stop();
       if (backgroundAudioReady) {
         final matches = soundsCatalog.where((s) => s.asset == asset);
-        final title =
-            matches.isEmpty ? 'Wellbeing sound' : matches.first.title;
+        final title = matches.isEmpty
+            ? currentL10n().soundPlayerFallbackTitle
+            : matches.first.title;
         await player.setAudioSource(
           AudioSource.asset(
             asset,

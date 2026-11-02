@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../practice/feeling_store.dart';
 import '../practice/practice_repository.dart';
 import 'mood_repository.dart';
@@ -15,15 +16,9 @@ class Insight {
   final String detail;
 }
 
-const _weekdays = [
-  'Mondays',
-  'Tuesdays',
-  'Wednesdays',
-  'Thursdays',
-  'Fridays',
-  'Saturdays',
-  'Sundays',
-];
+/// [DateTime.weekday] (1 is Monday) as the key the weekday messages
+/// select on.
+const _weekdayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 /// Mood score 1–5 from a check-in.
 double _score(MoodEntry e) => e.index + 1.0;
@@ -33,12 +28,15 @@ double _mean(Iterable<double> xs) => xs.reduce((a, b) => a + b) / xs.length;
 /// What the last ninety days of check-ins, practice and post-session
 /// answers add up to. Pure, so the maths can be tested on its own; each
 /// insight only appears once there's enough behind it to be honest.
+/// Worded in [l10n]'s language, English if not given.
 List<Insight> moodInsights({
   required List<MoodEntry> moods,
   required List<PracticeSession> sessions,
   required List<FeelingRecord> feelings,
   required DateTime now,
+  AppLocalizations? l10n,
 }) {
+  final l = l10n ?? lookupAppLocalizations(const Locale('en'));
   final insights = <Insight>[];
   final today = DateUtils.dateOnly(now);
 
@@ -61,12 +59,10 @@ List<Insight> moodInsights({
       Insight(
         Icons.calendar_month_rounded,
         Pillars.blue,
-        'You\'ve checked in $thisMonth '
-        '${thisMonth == 1 ? 'day' : 'days'} this month',
+        l.moodInsightCheckedInTitle(thisMonth),
         streak > 1
-            ? 'That\'s $streak days in a row right now. Noticing is where '
-                  'change starts.'
-            : 'Every check-in makes the picture clearer.',
+            ? l.moodInsightCheckedInStreak(streak)
+            : l.moodInsightCheckedInFirst,
       ),
     );
   }
@@ -87,31 +83,29 @@ List<Insight> moodInsights({
     final diff = _mean(onDays) - _mean(offDays);
     if (diff >= 0.3) {
       insights.add(
-        const Insight(
+        Insight(
           Icons.self_improvement_rounded,
           Pillars.blue,
-          'Your mood is higher on days you practise',
-          'Days with a meditation, breathing or a sound score better than '
-              'days without. Worth keeping a small daily habit.',
+          l.moodInsightPracticeHigherTitle,
+          l.moodInsightPracticeHigherDetail,
         ),
       );
     } else if (diff <= -0.3) {
       insights.add(
-        const Insight(
+        Insight(
           Icons.self_improvement_rounded,
           Pillars.yellow,
-          'You tend to practise on harder days',
-          'Your practice days have lower moods — which may mean you reach '
-              'for it when you need it. That\'s what it\'s for.',
+          l.moodInsightPracticeLowerTitle,
+          l.moodInsightPracticeLowerDetail,
         ),
       );
     } else {
       insights.add(
-        const Insight(
+        Insight(
           Icons.self_improvement_rounded,
           Pillars.black,
-          'Practice days and other days look alike so far',
-          'Keep checking in — the pattern gets clearer with a few more weeks.',
+          l.moodInsightPracticeSameTitle,
+          l.moodInsightPracticeSameDetail,
         ),
       );
     }
@@ -128,14 +122,17 @@ List<Insight> moodInsights({
         if (entry.value.length >= 2) (entry.key, _mean(entry.value)),
     ]..sort((a, b) => a.$2.compareTo(b.$2));
     if (ranked.length >= 3 && ranked.last.$2 - ranked.first.$2 >= 0.5) {
+      final hardest = _weekdayKeys[ranked.first.$1 - 1];
+      final best = _weekdayKeys[ranked.last.$1 - 1];
       insights.add(
         Insight(
           Icons.event_rounded,
           Pillars.red,
-          '${_weekdays[ranked.first.$1 - 1]} are usually your hardest days',
-          '${_weekdays[ranked.last.$1 - 1]} tend to go best. A little '
-              'something planned for ${_weekdays[ranked.first.$1 - 1].toLowerCase()} '
-              'could help.',
+          l.moodInsightHardestDayTitle(l.moodWeekdays(hardest)),
+          l.moodInsightHardestDayDetail(
+            l.moodWeekdays(best),
+            l.moodWeekdaysMidSentence(hardest),
+          ),
         ),
       );
     }
@@ -156,36 +153,34 @@ List<Insight> moodInsights({
     final diff = _mean(recent) - _mean(before);
     if (diff >= 0.4) {
       insights.add(
-        const Insight(
+        Insight(
           Icons.trending_up_rounded,
           Pillars.blue,
-          'The last two weeks have been better',
-          'Your check-ins are up on the fortnight before. Whatever you\'re '
-              'doing, it\'s worth noticing.',
+          l.moodInsightBetterTitle,
+          l.moodInsightBetterDetail,
         ),
       );
     } else if (diff <= -0.4) {
       insights.add(
-        const Insight(
+        Insight(
           Icons.trending_down_rounded,
           Pillars.red,
-          'The last two weeks have been harder',
-          'Your check-ins are down on the fortnight before. Be gentle with '
-              'yourself — and talking to someone can help.',
+          l.moodInsightHarderTitle,
+          l.moodInsightHarderDetail,
         ),
       );
     }
   }
 
   // What the post-session answers say.
-  final line = FeelingStore.summarise(feelings).line;
+  final line = FeelingStore.summarise(feelings).lineFor(l);
   if (line != null) {
     insights.add(
       Insight(
         Icons.favorite_rounded,
         Pillars.red,
         line,
-        'From how you said you felt at the end of each session.',
+        l.moodInsightFeelingsDetail,
       ),
     );
   }

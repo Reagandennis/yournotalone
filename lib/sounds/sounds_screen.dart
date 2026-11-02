@@ -4,6 +4,7 @@ import '../billing/pricing_copy.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import 'player_screen.dart';
 import 'sound_player.dart';
 import 'sounds_catalog.dart';
@@ -26,9 +27,8 @@ class _SoundsScreenState extends State<SoundsScreen> {
         context,
         item: sound.title,
         source: 'sheet:sounds',
-        title: 'This sound is part of Premium',
-        message: 'Free includes one sound to try. Premium unlocks the whole '
-            'library — and $introOffer.',
+        title: context.l10n.soundsUpgradeTitle,
+        message: context.l10n.soundsUpgradeMessage(introOffer),
       );
       return false;
     }
@@ -50,7 +50,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
       debugPrint('Sound playback failed for ${sound.asset}: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Couldn\'t play that sound.')),
+          SnackBar(content: Text(context.l10n.soundsPlayError)),
         );
       }
     }
@@ -150,7 +150,9 @@ class _SoundsScreenState extends State<SoundsScreen> {
                       const SizedBox(height: 3),
                       Text(
                         active
-                            ? 'Playing · ${sound.category.label}'
+                            ? context.l10n.soundsPlayingCategory(
+                                sound.category.label,
+                              )
                             : '${sound.category.label} · ${sound.detail}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -222,7 +224,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'Wellbeing sounds',
+                    context.l10n.soundsTitle,
                     style: TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.w600,
@@ -234,8 +236,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                   const PillarStripe(),
                   const SizedBox(height: 16),
                   Text(
-                    'Loops that stay with you — pick one and let it run '
-                    'while you focus, drift off, or settle down.',
+                    context.l10n.soundsIntro,
                     style: TextStyle(
                       fontSize: 14,
                       color: c.textMuted,
@@ -249,7 +250,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _chip('All', null),
+                        _chip(context.l10n.soundsFilterAll, null),
                         for (final category in SoundCategory.values)
                           _chip(category.label, category),
                       ],
@@ -264,7 +265,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
                       child: TextButton.icon(
                         onPressed: player.stop,
                         icon: const Icon(Icons.stop_rounded, size: 18),
-                        label: const Text('Stop sound'),
+                        label: Text(context.l10n.soundsStop),
                       ),
                     ),
                   ],
