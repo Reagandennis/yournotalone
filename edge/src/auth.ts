@@ -27,6 +27,7 @@ export function resetAuthState(): void {
 
 interface SupabaseClaims extends JWTPayload {
   app_metadata?: { premium_comp?: unknown };
+  user_metadata?: { goals?: unknown };
 }
 
 /** Requires `Authorization: Bearer <Supabase access token>`; sets c.var.user. */
@@ -55,9 +56,12 @@ export const requireAuth: MiddlewareHandler<AppEnv> = async (c, next) => {
     return jsonError(c, 401, 'invalid_token');
   }
 
+  const goals = payload.user_metadata?.goals;
   c.set('user', {
     id: payload.sub,
     premiumComp: payload.app_metadata?.premium_comp === true,
+    goals: Array.isArray(goals) ? goals.filter((g): g is string => typeof g === 'string').slice(0, 20) : [],
+    token: match[1],
   });
 
   // Per-user rate limit (design §5). Optional binding; see wrangler.toml.

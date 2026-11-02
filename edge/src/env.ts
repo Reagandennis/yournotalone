@@ -2,6 +2,8 @@
 export interface Env {
   // vars
   SUPABASE_URL: string;
+  /** The project's publishable (anon) key: public, sent as `apikey` with the user's JWT. */
+  SUPABASE_ANON_KEY: string;
   PUBLIC_BASE_URL: string;
   R2_ACCOUNT_ID: string;
   /** The one R2 bucket; premium media is under `${KEY_PREFIX}private/`. */
@@ -19,9 +21,13 @@ export interface Env {
   REVENUECAT_SECRET_KEY: string;
   REVENUECAT_PROJECT_ID: string;
   SENTRY_DSN?: string;
+  /** Only the daily cron uses it, for the content_popularity RPC. */
+  SUPABASE_SERVICE_ROLE_KEY?: string;
 
   // bindings (optional: the code skips rate limiting if absent)
   RATE_LIMITER?: RateLimit;
+  /** The `yournotalone` bucket, read-write; the cron writes stats/ into it. */
+  CONTENT_BUCKET?: R2Bucket;
 }
 
 /** Hono context variables set by the auth middleware. */
@@ -32,6 +38,10 @@ export interface Vars {
 export interface AuthUser {
   id: string;
   premiumComp: boolean;
+  /** `user_metadata.goals`: the needs picked at onboarding or in Settings. */
+  goals: string[];
+  /** The verified access token, for Supabase reads under the user's own RLS. Never log it. */
+  token: string;
 }
 
 export type AppEnv = { Bindings: Env; Variables: Vars };

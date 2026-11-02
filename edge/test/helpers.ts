@@ -31,6 +31,7 @@ export interface TokenOptions {
   iss?: string;
   expiresIn?: number; // seconds from now; negative = already expired
   comp?: boolean;
+  goals?: unknown;
   forged?: boolean; // signed by a key not in the JWKS (same kid)
 }
 
@@ -38,6 +39,7 @@ export async function token(o: TokenOptions = {}): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const claims: Record<string, unknown> = { role: 'authenticated' };
   if (o.comp !== undefined) claims.app_metadata = { provider: 'email', premium_comp: o.comp };
+  if (o.goals !== undefined) claims.user_metadata = { goals: o.goals };
   return new SignJWT(claims)
     .setProtectedHeader({ alg: 'ES256', kid: 'test-kid', typ: 'JWT' })
     .setSubject(o.sub ?? crypto.randomUUID())
@@ -56,16 +58,44 @@ export const REFS = {
   bodyScanBed: { key: `media/${hex('c')}.m4a`, sha256: hex('c'), bytes: 400_000, access: 'public' },
 };
 
+function item(
+  id: string,
+  kind: string,
+  order: number,
+  premium: boolean,
+  needs: string[],
+  dayParts: string[],
+  extra: Record<string, unknown> = {},
+) {
+  const title = id.slice(id.indexOf(':') + 1);
+  return { id, kind, order, premium, text: { en: { title, blurb: '…' } }, tags: { needs, dayParts, ...extra } };
+}
+
 export const SNAPSHOT = {
   format: 1,
   version: 7,
   hash: 'deadbeefcafef00d',
   items: [
-    { id: 'sound:Rainfall', kind: 'sound', premium: false },
-    { id: 'meditation:Body scan', kind: 'meditation', premium: true },
-    { id: 'breathing:Box breathing', kind: 'breathing', premium: false },
+    item('sound:Rainfall', 'sound', 10, false, ['sleep'], ['night'], { intensity: 'gentle', calmingSafe: true }),
+    item('meditation:Body scan', 'meditation', 20, true, ['sleep', 'stressed'], ['evening']),
+    item('breathing:Box breathing', 'breathing', 30, false, ['anxious', 'stressed', 'focus'], [], {
+      intensity: 'gentle',
+      calmingSafe: true,
+    }),
+    item('tool:Grounding: 5-4-3-2-1', 'tool', 40, false, ['anxious', 'panic'], [], { intensity: 'gentle', calmingSafe: true }),
+    item('prompt:Worst case', 'prompt', 50, true, ['anxious', 'low', 'reflect'], [], { intensity: 'deep' }),
+    item('meditation:Loving kindness', 'meditation', 60, true, ['low', 'good'], []),
+    item('recovery:Urge surfing', 'recovery', 70, false, ['urges'], [], { intensity: 'gentle', calmingSafe: true }),
   ],
-  courses: [],
+  courses: [
+    {
+      id: 'calm2',
+      order: 10,
+      need: 'anxious',
+      days: ['breathing:Box breathing', 'meditation:Body scan'],
+      text: { en: { title: '2 days to calm', blurb: '…', notes: ['…', '…'] } },
+    },
+  ],
   media: {
     'sound:Rainfall': { audio: REFS.rain },
     'meditation:Body scan': { narration: REFS.bodyScan, audio: REFS.bodyScanBed },
@@ -78,8 +108,14 @@ export type RcHandler = (url: URL, init?: RequestInit) => Response | Promise<Res
 
 export interface MockState {
   calls: string[];
+  /** Requests as made, for checking headers. */
+  requests: { url: URL; init?: RequestInit }[];
   revenueCat: RcHandler;
   catalogUp: boolean;
+  /** PostgREST: /rest/v1/{table} reads and /rest/v1/rpc/… calls. */
+  supabase: RcHandler;
+  /** {CDN}/stats/popularity.json; null means 404. */
+  popularity: unknown;
 }
 
 export const json = (body: unknown, status = 200) =>
@@ -105,12 +141,24 @@ export const inactiveCustomer = () =>
   });
 
 export function mockFetch(): MockState {
-  const state: MockState = { calls: [], revenueCat: () => inactiveCustomer(), catalogUp: true };
+  const state: MockState = {
+    calls: [],
+    requests: [],
+    revenueCat: () => inactiveCustomer(),
+    catalogUp: true,
+    supabase: () => json([]),
+    popularity: null,
+  };
   vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : String(input));
     state.calls.push(url.toString());
+    state.requests.push({ url, init });
     if (url.toString() === `${SUPABASE}/auth/v1/.well-known/jwks.json`) return json(jwks);
+    if (url.origin === SUPABASE && url.pathname.startsWith('/rest/v1/')) return state.supabase(url, init);
     if (url.origin === CDN) {
+      if (url.pathname === '/stats/popularity.json') {
+        return state.popularity === null ? new Response('not found', { status: 404 }) : json(state.popularity);
+      }
       if (!state.catalogUp) return new Response('down', { status: 503 });
       if (url.pathname === '/catalog/latest.json') return json(LATEST);
       if (url.pathname === `/${LATEST.path}`) return json(SNAPSHOT);
@@ -142,6 +190,19 @@ export async function call(
 export function sign(bearer: string | undefined, body: unknown, envOverride: Partial<Env> = {}) {
   return call(
     '/v1/media/sign',
+    {
+      method: 'POST',
+      bearer,
+      headers: { 'Content-Type': 'application/json' },
+      body: typeof body === 'string' ? body : JSON.stringify(body),
+    },
+    envOverride,
+  );
+}
+
+export function recommendations(bearer: string | undefined, body: unknown, envOverride: Partial<Env> = {}) {
+  return call(
+    '/v1/recommendations',
     {
       method: 'POST',
       bearer,
