@@ -10,6 +10,7 @@ import '../brand.dart';
 import '../brand_layout.dart';
 import '../discover/content_index.dart';
 import '../home/home_ui.dart';
+import '../media/download_buttons.dart';
 import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
@@ -490,8 +491,15 @@ class _MeditationScreenState extends State<MeditationScreen>
                               ),
                             ),
                           ),
-                          // Balances the back chip so the title sits centred.
-                          const SizedBox(width: 42),
+                          // Balances the back chip so the title sits centred;
+                          // holds the download button when there's one.
+                          SizedBox(
+                            width: 42,
+                            child: DownloadButton(
+                              itemId: downloadableItemAt(meditation.narration),
+                              accent: meditation.accent,
+                            ),
+                          ),
                         ],
                       ),
                     ),
