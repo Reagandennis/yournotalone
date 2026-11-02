@@ -512,7 +512,7 @@ class _HomeTabState extends State<HomeTab> {
             ).push(ContentListScreen.route(ContentListScreen.forNeed(need))),
             child: Text(
               context.l10n.homeMoreForNeed(
-                need.label(context.l10n).toLowerCase(),
+                context.l10n.midSentence(need.label(context.l10n)),
               ),
               style: const TextStyle(fontSize: 13),
             ),

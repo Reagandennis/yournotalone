@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -30,6 +31,7 @@ import 'package:yournotalone/home/mood_repository.dart';
 import 'package:yournotalone/home/settings_tab.dart';
 import 'package:yournotalone/journal/journal_hub_screen.dart';
 import 'package:yournotalone/journal/journal_screen.dart';
+import 'package:yournotalone/l10n/l10n.dart';
 import 'package:yournotalone/legal/legal_content.dart';
 import 'package:yournotalone/legal/legal_screen.dart';
 import 'package:yournotalone/meditation/breathing_screen.dart';
@@ -331,6 +333,61 @@ void main() {
       expect(broken, isEmpty,
           reason: 'Layout failures on $label:\n${broken.join('\n')}');
     });
+  }
+
+  // German runs long and Chinese draws taller glyphs: every screen has to
+  // fit the smallest phone in both, and with larger system text too.
+  for (final tag in const ['de', 'zh-Hans']) {
+    final language = appLanguages.firstWhere((l) => l.tag == tag);
+    for (final (label, size, textScale) in [_devices.first, _devices.last]) {
+      testWidgets('every screen lays out in $tag on $label', (tester) async {
+        // Drafts on, and the setting pointed at the language, so strings
+        // read outside a BuildContext (currentL10n) follow it too.
+        debugDraftsOverride = true;
+        LocaleSetting.instance.value = tag;
+        addTearDown(() {
+          debugDraftsOverride = null;
+          LocaleSetting.instance.value = null;
+        });
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = size;
+        addTearDown(tester.view.reset);
+
+        final broken = <String>[];
+        for (final entry in screens.entries) {
+          await tester.pumpWidget(
+            MaterialApp(
+              theme: buildAppTheme(),
+              locale: language.locale,
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              home: MediaQuery(
+                data: MediaQueryData(
+                  size: size,
+                  textScaler: TextScaler.linear(textScale),
+                ),
+                child: entry.value(),
+              ),
+            ),
+          );
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 400));
+
+          final error = tester.takeException();
+          if (error != null) {
+            broken.add('${entry.key}: ${error.toString().split('\n').first}');
+          }
+        }
+
+        expect(broken, isEmpty,
+            reason: 'Layout failures in $tag on $label:\n${broken.join('\n')}');
+      }, skip: !AppLocalizations.delegate.isSupported(language.locale));
+    }
   }
 
   // Dark mode draws every colour through the theme, so a screen or painter

@@ -226,7 +226,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              context.l10n.recoveryPledgedSnack(habit.name.toLowerCase()),
+              context.l10n.recoveryPledgedSnack(
+                context.l10n.midSentence(habit.name),
+              ),
             ),
           ),
         );
@@ -985,8 +987,9 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                           Expanded(
                             child: Text(
                               l10n.recoveryTopTrigger(
-                                recoveryTriggerLabel(l10n, _topTrigger!)
-                                    .toLowerCase(),
+                                l10n.midSentence(
+                                  recoveryTriggerLabel(l10n, _topTrigger!),
+                                ),
                               ),
                               style: TextStyle(
                                 fontSize: 12.5,

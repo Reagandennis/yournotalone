@@ -109,8 +109,12 @@ class _PlayerScreenState extends State<PlayerScreen>
             style: TextButton.styleFrom(foregroundColor: accent),
           );
         }
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        // Wraps rather than overflows where "15 Min." runs longer than
+        // "15m" on a small phone.
+        return Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: 8,
           children: [
             Icon(Icons.bedtime_outlined, size: 16, color: c.textMuted),
             const SizedBox(width: 2),

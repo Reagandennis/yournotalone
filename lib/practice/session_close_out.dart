@@ -169,7 +169,7 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
           onPressed: () => openNewJournalEntry(
             context,
             title: widget.title,
-            content: l10n.closeOutJournalSeed(widget.title.toLowerCase()),
+            content: l10n.closeOutJournalSeed(l10n.midSentence(widget.title)),
           ),
           child: Text(l10n.closeOutWriteAboutIt),
         ),

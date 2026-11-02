@@ -150,6 +150,13 @@ AppLocalizations currentL10n() => lookupAppLocalizations(
       resolveDeviceLocale(PlatformDispatcher.instance.locales),
 );
 
+extension MidSentence on AppLocalizations {
+  /// [text] as it reads inside a sentence: lower-cased ("more for “feeling
+  /// low”"), except in German, whose nouns keep their capital letter.
+  String midSentence(String text) =>
+      localeName == 'de' ? text : text.toLowerCase();
+}
+
 extension AppL10n on BuildContext {
   /// The app's strings in the current language. Falls back to English
   /// where there is no app-level [Localizations] — a widget test that pumps

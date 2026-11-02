@@ -429,7 +429,7 @@ class _SleepDiaryScreenState extends State<SleepDiaryScreen> {
                               n.date,
                               n.latency,
                               n.awake,
-                              _qualities(l10n)[n.quality - 1].toLowerCase(),
+                              l10n.midSentence(_qualities(l10n)[n.quality - 1]),
                             ),
                             style: TextStyle(
                               fontSize: 12,
