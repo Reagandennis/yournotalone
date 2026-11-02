@@ -4103,6 +4103,1216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only the care team sees your rating, flags and private note. Flagging a safety concern emails them straight away.'**
   String get careFinishPrivacy;
+
+  /// Progress label at the top of a guided exercise (CBT, sleep, stress toolkits), e.g. "Step 2 of 6".
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String toolkitStepOf(int step, int total);
+
+  /// Snackbar after an exercise was saved as a journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your journal.'**
+  String get toolkitSavedToJournal;
+
+  /// Snackbar when saving an exercise to the journal failed, probably because the phone is offline.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save — check your connection.'**
+  String get toolkitSaveFailed;
+
+  /// Snackbar when an outside web link could not be opened in the browser.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t open {url}'**
+  String toolkitCouldntOpenLink(String url);
+
+  /// Section heading on a toolkit's front page (CBT, sleep, stress): the interactive exercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools'**
+  String get toolkitToolsTitle;
+
+  /// Section heading on a toolkit's front page: short reading lessons.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn the ideas'**
+  String get toolkitLessonsTitle;
+
+  /// Subtitle under "Free resources" on a toolkit's front page.
+  ///
+  /// In en, this message translates to:
+  /// **'Reputable, clinician-written material from outside the app. Links open in your browser.'**
+  String get toolkitResourcesIntro;
+
+  /// Section heading on a toolkit's front page: links to free material on other websites.
+  ///
+  /// In en, this message translates to:
+  /// **'Free resources'**
+  String get toolkitFreeResources;
+
+  /// Title of the upgrade sheet shown when tapping a locked toolkit tool or lesson.
+  ///
+  /// In en, this message translates to:
+  /// **'This is part of Premium'**
+  String get toolkitPremiumTitle;
+
+  /// Message of the upgrade sheet for a locked toolkit item. {offer} is the free-trial phrase, e.g. "you can try it free first".
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes a taste of each programme. Premium unlocks every tool and read — and {offer}.'**
+  String toolkitPremiumMessage(String offer);
+
+  /// Counts under a section heading: how many items are free and how many need Premium, e.g. "1 free · 6 Premium". "Premium" is the plan name.
+  ///
+  /// In en, this message translates to:
+  /// **'{free} free · {locked} Premium'**
+  String toolkitCountLine(int free, int locked);
+
+  /// How long a tool takes, on a toolkit card, e.g. "4 min".
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min}}'**
+  String toolkitMinutes(int minutes);
+
+  /// How long a short reading lesson takes, e.g. "3 min read".
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, other{{minutes} min read}}'**
+  String toolkitMinutesRead(int minutes);
+
+  /// App bar title of the screen showing one short reading lesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn'**
+  String get toolkitLearnTitle;
+
+  /// Title of the upgrade sheet when a toolkit links to a locked meditation or breathing session.
+  ///
+  /// In en, this message translates to:
+  /// **'This session is part of Premium'**
+  String get toolkitSessionPremiumTitle;
+
+  /// Message of the upgrade sheet for a locked meditation/breathing session. {offer} is the free-trial phrase, e.g. "you can try it free first".
+  ///
+  /// In en, this message translates to:
+  /// **'Free includes a taste of each practice. Premium unlocks every session — and {offer}.'**
+  String toolkitSessionPremiumMessage(String offer);
+
+  /// App bar title of the CBT (cognitive behavioural therapy) toolkit's front page.
+  ///
+  /// In en, this message translates to:
+  /// **'CBT toolkit'**
+  String get cbtTitle;
+
+  /// Headline at the top of the CBT toolkit's front page.
+  ///
+  /// In en, this message translates to:
+  /// **'Skills you can use today'**
+  String get cbtHeadline;
+
+  /// Intro paragraph on the CBT toolkit's front page. Warm, plain, non-clinical.
+  ///
+  /// In en, this message translates to:
+  /// **'Cognitive behavioural therapy is the best-studied talking therapy for anxiety and depression, and much of it is learnable. These are the tools therapists hand out first — for the minutes between sessions, or before you\'ve had one.'**
+  String get cbtIntro;
+
+  /// Banner at the bottom of the CBT toolkit inviting the person to book a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Want to do this with someone?'**
+  String get cbtTherapistBannerTitle;
+
+  /// Detail line of the banner inviting the person to book a therapist session.
+  ///
+  /// In en, this message translates to:
+  /// **'A licensed therapist can take you through these properly. Book a private video session.'**
+  String get cbtTherapistBannerDetail;
+
+  /// Safety footnote at the end of the CBT toolkit. "Get help now" is the name of the crisis button on the Home screen — keep it consistent with that button's translation.
+  ///
+  /// In en, this message translates to:
+  /// **'Self-help is not a substitute for care in a crisis. If you\'re in immediate danger, use Get help now on the Home screen.'**
+  String get cbtFootnote;
+
+  /// App bar title of the stress toolkit's front page.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage stress'**
+  String get stressTitle;
+
+  /// Headline on the stress toolkit's front page: first calm the body down, then deal with what's causing the stress. Idiomatic, can be rephrased.
+  ///
+  /// In en, this message translates to:
+  /// **'Down from the ceiling, then sort the load'**
+  String get stressHeadline;
+
+  /// Intro paragraph on the stress toolkit's front page.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress is a body state before it\'s a thought, so the fastest tools work on the body: breath and muscles first, thinking second. Then a check-in to see the trend, and two tools for the load itself — what you can change, and what refills you.'**
+  String get stressIntro;
+
+  /// Banner on the stress toolkit pointing to the CBT toolkit.
+  ///
+  /// In en, this message translates to:
+  /// **'When the stress is in the thinking'**
+  String get stressCbtBannerTitle;
+
+  /// Detail line of the banner pointing from the stress toolkit to the CBT toolkit. Names of three CBT tools.
+  ///
+  /// In en, this message translates to:
+  /// **'Thought records, thinking traps and worry windows are in the CBT toolkit.'**
+  String get stressCbtBannerDetail;
+
+  /// Banner on the stress toolkit for long-lasting stress, inviting the person to book a therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Been like this for months?'**
+  String get stressTherapistBannerTitle;
+
+  /// Detail line of the banner inviting the person to book a therapist session.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s worth a real conversation. Book a private session with a licensed therapist.'**
+  String get stressTherapistBannerDetail;
+
+  /// Safety footnote at the end of the stress toolkit.
+  ///
+  /// In en, this message translates to:
+  /// **'Chest pain, breathlessness or palpitations that don\'t settle need a doctor, not a breathing exercise. In an emergency, call your local emergency number.'**
+  String get stressFootnote;
+
+  /// App bar title of the 5-4-3-2-1 grounding exercise (name five things you see, four you feel, …).
+  ///
+  /// In en, this message translates to:
+  /// **'Grounding'**
+  String get groundingTitle;
+
+  /// Heading when the grounding exercise is finished: you are present, in this moment.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re here'**
+  String get groundingDoneTitle;
+
+  /// Calming text when the grounding exercise is finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice your breathing. Notice the weight of your body where you\'re sitting. Whatever was pulling at you is still there, but you\'re here, and here is manageable.'**
+  String get groundingDoneBody;
+
+  /// Button after the grounding exercise: opens the breathing exercises.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe for a few minutes'**
+  String get groundingBreatheButton;
+
+  /// Button after an exercise: start it again from the beginning.
+  ///
+  /// In en, this message translates to:
+  /// **'Go again'**
+  String get toolkitGoAgain;
+
+  /// Big button in the grounding exercise: tap each time you notice one thing (e.g. one thing you can see).
+  ///
+  /// In en, this message translates to:
+  /// **'Found one'**
+  String get groundingFoundOne;
+
+  /// Same button as groundingFoundOne, when only one thing is left to find in this step.
+  ///
+  /// In en, this message translates to:
+  /// **'Found one — last'**
+  String get groundingFoundLast;
+
+  /// Step title in the grounding exercise, e.g. "5 things you can see". {sense} is a verb from the exercise content (see, feel, hear, smell, taste), currently in English.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} things you can {sense}}}'**
+  String groundingStepTitle(int count, String sense);
+
+  /// Small text under the big number in the grounding exercise: how many things are still to find in this step (the number is shown above it, e.g. "3" / "to go").
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{to go}}'**
+  String groundingToGo(int count);
+
+  /// Wraps a quoted thought in the CBT tools in this language's quotation marks (e.g. „…“ in German, « … » in French).
+  ///
+  /// In en, this message translates to:
+  /// **'“{text}”'**
+  String cbtQuoted(String text);
+
+  /// App bar title of the screen listing common unhelpful thinking patterns (cognitive distortions).
+  ///
+  /// In en, this message translates to:
+  /// **'Thinking traps'**
+  String get thinkingTrapsTitle;
+
+  /// Section heading at the top of the thinking traps screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Spot the pattern'**
+  String get thinkingTrapsSectionTitle;
+
+  /// Intro under "Spot the pattern" on the thinking traps screen. "Distortions" = unhelpful thinking patterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Anxious and low moods run on a handful of predictable distortions. Naming one takes some of its power away. Write the thought that\'s bothering you, then see which of these it\'s wearing.'**
+  String get thinkingTrapsSectionBody;
+
+  /// Label of the text field where the person may type the thought that's bothering them.
+  ///
+  /// In en, this message translates to:
+  /// **'The thought (optional)'**
+  String get thinkingTrapsThoughtLabel;
+
+  /// Note under the thought the person typed, asking which thinking trap it matches. {thought} is already in quotation marks. Keep the blank line.
+  ///
+  /// In en, this message translates to:
+  /// **'{thought}\n\nWhich of these does it sound like?'**
+  String thinkingTrapsWhichOne(String thought);
+
+  /// Small label (shown in capitals) above an example of a thinking trap.
+  ///
+  /// In en, this message translates to:
+  /// **'For example'**
+  String get thinkingTrapsForExample;
+
+  /// Small label (shown in capitals) above the question that helps loosen a thinking trap.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask yourself'**
+  String get thinkingTrapsAskYourself;
+
+  /// Note at the end of the thinking traps list, pointing to the thought record tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Found one? The thought record walks you through checking the evidence and writing something fairer.'**
+  String get thinkingTrapsFooter;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Anxious'**
+  String get cbtFeelingAnxious;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Sad'**
+  String get cbtFeelingSad;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Angry'**
+  String get cbtFeelingAngry;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Ashamed'**
+  String get cbtFeelingAshamed;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Guilty'**
+  String get cbtFeelingGuilty;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Hopeless'**
+  String get cbtFeelingHopeless;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Lonely'**
+  String get cbtFeelingLonely;
+
+  /// Feeling the person can pick in the thought record (a chip).
+  ///
+  /// In en, this message translates to:
+  /// **'Overwhelmed'**
+  String get cbtFeelingOverwhelmed;
+
+  /// App bar title of the thought record exercise (a CBT worksheet), and the title of the journal entry it saves.
+  ///
+  /// In en, this message translates to:
+  /// **'Thought record'**
+  String get thoughtRecordTitle;
+
+  /// In the thought record summary, after "Thinking traps:" when none were picked. Lower case, continues the line.
+  ///
+  /// In en, this message translates to:
+  /// **'none spotted'**
+  String get thoughtRecordNoneSpotted;
+
+  /// Summary of a finished thought record, shown on the last step and saved to the journal. One labelled line each; keep the line breaks. {before}/{after} are 0–100 intensity ratings; empty answers show as "—".
+  ///
+  /// In en, this message translates to:
+  /// **'Situation: {situation}\nAutomatic thought: {thought}\nFeeling: {feelings} — {before}/100 before\nThinking traps: {traps}\nEvidence for: {evidenceFor}\nEvidence against: {evidenceAgainst}\nBalanced thought: {balanced}\nFeeling now: {after}/100'**
+  String thoughtRecordSummary(
+    String situation,
+    String thought,
+    String feelings,
+    int before,
+    String traps,
+    String evidenceFor,
+    String evidenceAgainst,
+    String balanced,
+    int after,
+  );
+
+  /// Under a slider rating how strong a feeling is, from 0 to 100.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} out of 100'**
+  String thoughtRecordOutOf100(int value);
+
+  /// Step 1 question of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'What was the situation?'**
+  String get thoughtRecordStep1Title;
+
+  /// Hint under step 1 of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'Just the facts, as a camera would have seen them. Where were you, who was there, what happened?'**
+  String get thoughtRecordStep1Hint;
+
+  /// Example in the text field for step 1 of the thought record (the situation).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Sent a message at 2pm, no reply by 9pm'**
+  String get thoughtRecordStep1Field;
+
+  /// Step 2 question of the thought record: the automatic thought.
+  ///
+  /// In en, this message translates to:
+  /// **'What went through your mind?'**
+  String get thoughtRecordStep2Title;
+
+  /// Hint under step 2 of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'The first, quickest thought — the one that stung. Write it the way it sounded in your head.'**
+  String get thoughtRecordStep2Hint;
+
+  /// Example in the text field for step 2 of the thought record (the thought).
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. She\'s had enough of me'**
+  String get thoughtRecordStep2Field;
+
+  /// Step 3 question of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'How did it make you feel?'**
+  String get thoughtRecordStep3Title;
+
+  /// Hint under step 3 of the thought record: pick feelings, then rate them on a slider.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick what fits, then rate how strong it was.'**
+  String get thoughtRecordStep3Hint;
+
+  /// Step 4 question of the thought record: which unhelpful thinking patterns fit.
+  ///
+  /// In en, this message translates to:
+  /// **'Any thinking traps in there?'**
+  String get thoughtRecordStep4Title;
+
+  /// Hint under step 4 of the thought record. "Hot thoughts" = the most upsetting thoughts (CBT term).
+  ///
+  /// In en, this message translates to:
+  /// **'Tap any that fit. Most hot thoughts have at least one.'**
+  String get thoughtRecordStep4Hint;
+
+  /// Step 5 heading of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the evidence'**
+  String get thoughtRecordStep5Title;
+
+  /// Hint under step 5 of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'Facts, not feelings. What would a fair judge accept?'**
+  String get thoughtRecordStep5Hint;
+
+  /// Text field label in step 5 of the thought record: evidence for the thought.
+  ///
+  /// In en, this message translates to:
+  /// **'What supports the thought?'**
+  String get thoughtRecordEvidenceFor;
+
+  /// Text field label in step 5 of the thought record: evidence against the thought.
+  ///
+  /// In en, this message translates to:
+  /// **'What doesn\'t fit with it?'**
+  String get thoughtRecordEvidenceAgainst;
+
+  /// Heading of a note in step 5 listing questions for the thinking traps the person picked.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions worth asking'**
+  String get thoughtRecordQuestionsWorthAsking;
+
+  /// Step 6 heading of the thought record: write a more balanced thought.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a fairer thought'**
+  String get thoughtRecordStep6Title;
+
+  /// Hint under step 6 of the thought record. The quoted openings are examples of how a balanced thought may start.
+  ///
+  /// In en, this message translates to:
+  /// **'Not the cheerful opposite — something you could defend. It often starts \"Even though…\" or \"It\'s possible that…\".'**
+  String get thoughtRecordStep6Hint;
+
+  /// Text field label in step 6 of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'A more balanced way to see it'**
+  String get thoughtRecordBalancedField;
+
+  /// Step 7 question of the thought record: rate the feeling again.
+  ///
+  /// In en, this message translates to:
+  /// **'How strong is the feeling now?'**
+  String get thoughtRecordStep7Title;
+
+  /// Hint under step 7 of the thought record.
+  ///
+  /// In en, this message translates to:
+  /// **'It rarely goes to zero. A few points down is the skill working.'**
+  String get thoughtRecordStep7Hint;
+
+  /// Button at the end of a CBT exercise: save it as a journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to journal'**
+  String get cbtSaveToJournal;
+
+  /// A bulleted line in a list (CBT tools).
+  ///
+  /// In en, this message translates to:
+  /// **'• {text}'**
+  String cbtBullet(String text);
+
+  /// Snackbar after the person "parks" a worry to look at later, during their daily worry time.
+  ///
+  /// In en, this message translates to:
+  /// **'Parked. It\'ll be here at worry time — you don\'t have to hold it now.'**
+  String get worryTimeParked;
+
+  /// Snackbar when the daily worry window (a 15-minute timer) runs out.
+  ///
+  /// In en, this message translates to:
+  /// **'Time\'s up. Whatever\'s left can wait for tomorrow\'s window.'**
+  String get worryTimeTimesUp;
+
+  /// Shown under a worry the person decided to make a plan for.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve got a plan for this one.'**
+  String get worryTimeHavePlan;
+
+  /// Shown under a worry the person decided to let go of.
+  ///
+  /// In en, this message translates to:
+  /// **'Let go — nothing to do here today.'**
+  String get worryTimeLetGo;
+
+  /// Question under each worry during the worry window.
+  ///
+  /// In en, this message translates to:
+  /// **'Can you do something about it in the next week?'**
+  String get worryTimeCanYouAct;
+
+  /// Answer button: yes, I can do something about this worry, so I'll plan it.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes — plan it'**
+  String get worryTimeYesPlan;
+
+  /// Answer button: no, I can't act on this worry, so I'll let it go.
+  ///
+  /// In en, this message translates to:
+  /// **'No — let it go'**
+  String get worryTimeNoLetGo;
+
+  /// App bar title of the worry time tool (CBT technique: postpone worrying to a set daily window).
+  ///
+  /// In en, this message translates to:
+  /// **'Worry window'**
+  String get worryTimeTitle;
+
+  /// Section heading at the top of the worry window screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Worry later, on purpose'**
+  String get worryTimeSectionTitle;
+
+  /// Explanation of the worry window technique.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t stop a worry arriving, but you can decide when to give it attention. Park it here as it comes. Then, once a day, open a fifteen-minute window and go through the list — and only then.'**
+  String get worryTimeSectionBody;
+
+  /// Text field label for typing a worry to park.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind right now?'**
+  String get worryTimeInputLabel;
+
+  /// Tooltip of the button that parks (saves for later) the typed worry.
+  ///
+  /// In en, this message translates to:
+  /// **'Park it'**
+  String get worryTimeParkTooltip;
+
+  /// Shown when no worries are waiting for the worry window.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing parked'**
+  String get worryTimeNothingParked;
+
+  /// How many worries are waiting for the worry window, e.g. "3 parked for worry time".
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, other{{count} parked for worry time}}'**
+  String worryTimeParkedCount(int count);
+
+  /// Tip under the parked-worries count about when to hold the worry window.
+  ///
+  /// In en, this message translates to:
+  /// **'Best kept to the same time each day — not the hour before bed.'**
+  String get worryTimeBestTime;
+
+  /// Button that starts the 15-minute worry window timer. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Open window'**
+  String get worryTimeOpenWindow;
+
+  /// Instruction next to the timer while the worry window is open.
+  ///
+  /// In en, this message translates to:
+  /// **'Go through each worry once. Decide, don\'t dwell.'**
+  String get worryTimeGoThrough;
+
+  /// Section heading above the list of parked worries.
+  ///
+  /// In en, this message translates to:
+  /// **'Your list'**
+  String get worryTimeYourList;
+
+  /// Small button that removes the worries already decided on (planned or let go).
+  ///
+  /// In en, this message translates to:
+  /// **'Clear decided'**
+  String get worryTimeClearDecided;
+
+  /// Empty state of the worry list.
+  ///
+  /// In en, this message translates to:
+  /// **'Your parked worries appear here. Most people find half of them have lost their sting by the time the window opens.'**
+  String get worryTimeEmpty;
+
+  /// Chip in the problem-solving tool: when to take the first step.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get problemSolvingWhenToday;
+
+  /// Chip in the problem-solving tool: when to take the first step.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get problemSolvingWhenTomorrow;
+
+  /// Chip in the problem-solving tool: when to take the first step.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get problemSolvingWhenThisWeek;
+
+  /// Chip in the problem-solving tool: when to take the first step.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get problemSolvingWhenNextWeek;
+
+  /// Summary of a problem-solving plan, saved to the journal. Keep the line breaks. {options} is a list separated by semicolons; {when} is e.g. "Tomorrow".
+  ///
+  /// In en, this message translates to:
+  /// **'Problem: {problem}\nOptions considered: {options}\nChosen: {chosen}\nFirst step: {firstStep} — {when}'**
+  String problemSolvingSummary(
+    String problem,
+    String options,
+    String chosen,
+    String firstStep,
+    String when,
+  );
+
+  /// Title of the journal entry saved from the problem-solving tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Problem-solving plan'**
+  String get problemSolvingPlanTitle;
+
+  /// App bar title of the structured problem-solving tool (CBT).
+  ///
+  /// In en, this message translates to:
+  /// **'Problem solving'**
+  String get problemSolvingTitle;
+
+  /// Step 1 question of the problem-solving tool.
+  ///
+  /// In en, this message translates to:
+  /// **'What exactly is the problem?'**
+  String get problemSolvingStep1Title;
+
+  /// Hint under step 1 of problem solving. Adapt the money example (currency, rent) so it feels natural in the language.
+  ///
+  /// In en, this message translates to:
+  /// **'One problem, in one sentence, specific enough to act on. \"Money\" is a worry; \"I\'m £300 short for rent on the 1st\" is a problem.'**
+  String get problemSolvingStep1Hint;
+
+  /// Text field label in step 1 of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'The problem, precisely'**
+  String get problemSolvingStep1Field;
+
+  /// Step 2 heading of problem solving: brainstorm possible solutions.
+  ///
+  /// In en, this message translates to:
+  /// **'List every option'**
+  String get problemSolvingStep2Title;
+
+  /// Hint under step 2 of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t judge them yet — bad ideas loosen up good ones. Aim for at least three, including one you\'d never do.'**
+  String get problemSolvingStep2Hint;
+
+  /// Text field label for adding one possible solution.
+  ///
+  /// In en, this message translates to:
+  /// **'An option'**
+  String get problemSolvingOptionField;
+
+  /// Step 3 heading of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick one to try'**
+  String get problemSolvingStep3Title;
+
+  /// Hint under step 3 of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'Not the perfect one — the one that\'s good enough and that you\'d actually do. You can come back to the others.'**
+  String get problemSolvingStep3Hint;
+
+  /// Step 4 question of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s the first step?'**
+  String get problemSolvingStep4Title;
+
+  /// Hint under step 4 of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'Something that takes under twenty minutes and needs no one\'s permission. Then decide when.'**
+  String get problemSolvingStep4Hint;
+
+  /// Note in step 4 of problem solving showing the option the person chose.
+  ///
+  /// In en, this message translates to:
+  /// **'Trying: {option}'**
+  String problemSolvingTrying(String option);
+
+  /// Text field label in step 4 of problem solving.
+  ///
+  /// In en, this message translates to:
+  /// **'First step'**
+  String get problemSolvingFirstStepField;
+
+  /// Snackbar when the person tries to pick a fourth activity for today in the activity planner.
+  ///
+  /// In en, this message translates to:
+  /// **'Three is plenty for one day. Swap one out if you\'d rather.'**
+  String get activityPlannerTooMany;
+
+  /// Snackbar when every activity picked for today is ticked off.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s today\'s plan done. Notice how you feel now compared with before.'**
+  String get activityPlannerAllDone;
+
+  /// App bar title of the activity planner (behavioural activation: plan small, doable activities when mood is low).
+  ///
+  /// In en, this message translates to:
+  /// **'One small thing'**
+  String get activityPlannerTitle;
+
+  /// Section heading at the top of the activity planner.
+  ///
+  /// In en, this message translates to:
+  /// **'Do first, feel later'**
+  String get activityPlannerSectionTitle;
+
+  /// Explanation at the top of the activity planner.
+  ///
+  /// In en, this message translates to:
+  /// **'When mood is low, motivation doesn\'t come before action — it comes after. Pick up to three small things for today. Small enough that you\'d do them on a bad day.'**
+  String get activityPlannerSectionBody;
+
+  /// Heading of today's picked activities with progress, e.g. "Today · 1 of 3 done".
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, other{Today · {done} of {total} done}}'**
+  String activityPlannerTodayProgress(int done, int total);
+
+  /// Section heading above the list of suggested activities.
+  ///
+  /// In en, this message translates to:
+  /// **'Ideas'**
+  String get activityPlannerIdeas;
+
+  /// Filter chip showing activity ideas of every category.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get activityPlannerAll;
+
+  /// Text field label for adding a custom activity.
+  ///
+  /// In en, this message translates to:
+  /// **'Or something of your own'**
+  String get activityPlannerOwnField;
+
+  /// Chip in the "What's in your hands" tool: this stressor is something I can change. One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Control'**
+  String get controlCircleZoneControl;
+
+  /// Explains the "Control" circle: things I can change.
+  ///
+  /// In en, this message translates to:
+  /// **'I can change this'**
+  String get controlCircleZoneControlHint;
+
+  /// Chip in the "What's in your hands" tool: this stressor is something I can only influence. One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Influence'**
+  String get controlCircleZoneInfluence;
+
+  /// Explains the "Influence" circle: things I can push on or influence, but not decide.
+  ///
+  /// In en, this message translates to:
+  /// **'I can lean on it'**
+  String get controlCircleZoneInfluenceHint;
+
+  /// Chip in the "What's in your hands" tool: this stressor is something to accept. One word.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get controlCircleZoneAccept;
+
+  /// Explains the "Accept" circle: things outside my control.
+  ///
+  /// In en, this message translates to:
+  /// **'Not mine to move'**
+  String get controlCircleZoneAcceptHint;
+
+  /// Advice under the stressors sorted into the "Control" circle.
+  ///
+  /// In en, this message translates to:
+  /// **'These are yours to move. Pick one — the smallest — and take the first step this week.'**
+  String get controlCircleControlAdvice;
+
+  /// Button under the "Control" circle summary: opens the problem-solving tool for one of these stressors.
+  ///
+  /// In en, this message translates to:
+  /// **'Work one through'**
+  String get controlCircleControlAction;
+
+  /// Advice under the stressors sorted into the "Influence" circle.
+  ///
+  /// In en, this message translates to:
+  /// **'You can\'t decide these, but you can ask, say, or nudge. What is the one conversation each of these needs?'**
+  String get controlCircleInfluenceAdvice;
+
+  /// Advice under the stressors sorted into the "Accept" circle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not yours to carry, and carrying them anyway is where a lot of stress lives. Practise setting them down — it\'s a skill, not a mood.'**
+  String get controlCircleAcceptAdvice;
+
+  /// Button under the "Accept" circle summary: opens a slow-exhale breathing exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe it out'**
+  String get controlCircleAcceptAction;
+
+  /// Heading of a circle's summary: the circle's name and how many stressors are in it, e.g. "Control · 2".
+  ///
+  /// In en, this message translates to:
+  /// **'{zone} · {count}'**
+  String controlCircleZoneCount(String zone, int count);
+
+  /// App bar title of the control-circle tool (sort stressors into what you can control, influence, or must accept).
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s in your hands'**
+  String get controlCircleTitle;
+
+  /// Section heading at the top of the control-circle tool.
+  ///
+  /// In en, this message translates to:
+  /// **'Three circles'**
+  String get controlCircleSectionTitle;
+
+  /// Explanation at the top of the control-circle tool. Inner circle = control; outer = influence and accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Write down everything that\'s weighing on you, then sort each one. Most stress comes from spending effort in the outer circles and neglecting the inner one.'**
+  String get controlCircleSectionBody;
+
+  /// Text field label for adding a stressor.
+  ///
+  /// In en, this message translates to:
+  /// **'Something on your mind'**
+  String get controlCircleInputLabel;
+
+  /// Section heading above the summary of stressors per circle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where your effort goes'**
+  String get controlCircleEffortTitle;
+
+  /// Empty state of the control-circle tool. The quoted words are examples of vague stressors; adapt them to the language.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with whatever came to mind first. Vague is fine — \"work\", \"money\", \"mum\" — you can sharpen it later.'**
+  String get controlCircleEmpty;
+
+  /// Button that starts a timed exercise (e.g. muscle relaxation).
+  ///
+  /// In en, this message translates to:
+  /// **'Begin'**
+  String get toolkitBegin;
+
+  /// App bar title of the progressive muscle relaxation exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Tense and release'**
+  String get muscleRelaxTitle;
+
+  /// Section heading before starting progressive muscle relaxation: eight muscle groups, each tensed once.
+  ///
+  /// In en, this message translates to:
+  /// **'Eight groups, once each'**
+  String get muscleRelaxIntroTitle;
+
+  /// Instructions before starting progressive muscle relaxation.
+  ///
+  /// In en, this message translates to:
+  /// **'Sit or lie somewhere you won\'t be disturbed for eight minutes. For each group: tense hard for five seconds — not to pain — then let go completely for ten, and notice the difference. That noticing is the exercise.'**
+  String get muscleRelaxIntroBody;
+
+  /// Section heading after finishing progressive muscle relaxation.
+  ///
+  /// In en, this message translates to:
+  /// **'Let it all stay loose'**
+  String get muscleRelaxDoneTitle;
+
+  /// Text after finishing progressive muscle relaxation.
+  ///
+  /// In en, this message translates to:
+  /// **'Sit for a moment before you get up. Where was the most tension hiding? That\'s the place to check in on during the day.'**
+  String get muscleRelaxDoneBody;
+
+  /// Instruction during the release phase of a muscle group.
+  ///
+  /// In en, this message translates to:
+  /// **'Let go all at once. Feel the difference.'**
+  String get muscleRelaxReleaseHint;
+
+  /// Big label in the circle while the person tenses a muscle group (imperative). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Tense'**
+  String get muscleRelaxTense;
+
+  /// Big label in the circle while the person relaxes a muscle group (imperative). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Release'**
+  String get muscleRelaxRelease;
+
+  /// Label in the circle during the physiological sigh: first inhale. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in'**
+  String get sighPhaseIn;
+
+  /// Instruction during the first inhale of the physiological sigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Through the nose, most of the way.'**
+  String get sighPhaseInHint;
+
+  /// Label in the circle during the physiological sigh: a second, short inhale on top of the first ("sip" of air). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'One more sip'**
+  String get sighPhaseSip;
+
+  /// Instruction during the second short inhale of the physiological sigh.
+  ///
+  /// In en, this message translates to:
+  /// **'A short top-up, right to the top.'**
+  String get sighPhaseSipHint;
+
+  /// Label in the circle during the physiological sigh: the long exhale. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Long breath out'**
+  String get sighPhaseOut;
+
+  /// Instruction during the long exhale of the physiological sigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Slowly, through the mouth, until you\'re empty.'**
+  String get sighPhaseOutHint;
+
+  /// App bar title of the physiological sigh breathing exercise (two inhales, one long exhale).
+  ///
+  /// In en, this message translates to:
+  /// **'Physiological sigh'**
+  String get sighTitle;
+
+  /// Button after finishing the physiological sigh: do it again.
+  ///
+  /// In en, this message translates to:
+  /// **'Another round'**
+  String get sighAnotherRound;
+
+  /// Button that starts the physiological sigh exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get sighStart;
+
+  /// Section heading when the physiological sigh exercise is finished.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s the round'**
+  String get sighDoneTitle;
+
+  /// Section heading while the physiological sigh runs, e.g. "Round 2 of 5".
+  ///
+  /// In en, this message translates to:
+  /// **'Round {round} of {total}'**
+  String sighRoundOf(int round, int total);
+
+  /// Section heading before the physiological sigh starts: two inhales, one long exhale.
+  ///
+  /// In en, this message translates to:
+  /// **'Two in, one long out'**
+  String get sighIntroTitle;
+
+  /// Text after the physiological sigh is finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice your shoulders and your jaw. Most people feel the drop within a round or two. Use it any time — in a meeting, in a queue, before a call.'**
+  String get sighDoneBody;
+
+  /// Instructions before the physiological sigh starts.
+  ///
+  /// In en, this message translates to:
+  /// **'Breathe in through your nose, then take one more short sip on top. Let it all out slowly through your mouth. That\'s one. Follow the circle.'**
+  String get sighIntroBody;
+
+  /// Label in the circle when the physiological sigh is finished. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get sighDone;
+
+  /// Label in the circle before the physiological sigh starts. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get sighReady;
+
+  /// App bar title of the recharge tool: list what drains and what refills your energy.
+  ///
+  /// In en, this message translates to:
+  /// **'Recharge list'**
+  String get rechargeTitle;
+
+  /// Section heading at the top of the recharge list (your energy is like a fuel tank).
+  ///
+  /// In en, this message translates to:
+  /// **'Know your tank'**
+  String get rechargeSectionTitle;
+
+  /// Explanation at the top of the recharge list.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress is a budget: things that take from it and things that pay in. Most people can name the drains instantly and go quiet on the refills. Write both. Then choose one refill for today — and treat it as an appointment.'**
+  String get rechargeSectionBody;
+
+  /// Highlighted note showing the refill (energising activity) chosen for today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today: {pick}'**
+  String rechargeToday(String pick);
+
+  /// Section heading: things that use up my energy.
+  ///
+  /// In en, this message translates to:
+  /// **'What drains me'**
+  String get rechargeDrainsTitle;
+
+  /// Text field label for adding something that drains energy.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a drain'**
+  String get rechargeAddDrain;
+
+  /// Section heading: things that restore my energy.
+  ///
+  /// In en, this message translates to:
+  /// **'What refills me'**
+  String get rechargeRefillsTitle;
+
+  /// Subtitle under "What refills me": tap a refill to choose it for today.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap one to make it today\'s.'**
+  String get rechargeRefillsHint;
+
+  /// Text field label for adding something that restores energy.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a refill'**
+  String get rechargeAddRefill;
+
+  /// Heading above suggested refills the person can add with one tap.
+  ///
+  /// In en, this message translates to:
+  /// **'Stuck for refills? Borrow one:'**
+  String get rechargeBorrow;
+
+  /// Result band of the weekly stress check-in: low stress.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get stressBandLow;
+
+  /// Advice shown with a low stress check-in score.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re carrying this week fine. Keep whatever recovery you\'ve got in place — it\'s working.'**
+  String get stressBandLowAdvice;
+
+  /// Result band of the weekly stress check-in: moderate stress.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get stressBandModerate;
+
+  /// Advice shown with a moderate stress check-in score. "A sigh round" = one round of the physiological sigh breathing exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Noticeable, and worth ten deliberate minutes a day: a sigh round, a walk, a proper break. Sort one thing that\'s in your hands.'**
+  String get stressBandModerateAdvice;
+
+  /// Result band of the weekly stress check-in: high stress.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get stressBandHigh;
+
+  /// Advice shown with a high stress check-in score. "Sigh" and "tense and release" are names of two exercises in the app.
+  ///
+  /// In en, this message translates to:
+  /// **'A lot right now. Bring the body down first — sigh, tense and release — then look at the load. If it\'s been like this for weeks, talk to someone; that\'s what the therapist sessions are for.'**
+  String get stressBandHighAdvice;
+
+  /// A numbered question in the stress check-in, e.g. "1. How often have you felt…".
+  ///
+  /// In en, this message translates to:
+  /// **'{number}. {question}'**
+  String stressCheckinQuestion(int number, String question);
+
+  /// Heading above a small bar chart of recent stress check-in scores.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last check-ins'**
+  String get stressCheckinHistoryTitle;
+
+  /// Caption under the stress check-in chart: date range, then how to read the 0–20 score.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} → {to} · 0 is calm, 20 is a lot'**
+  String stressCheckinHistoryRange(String from, String to);
+
+  /// App bar title of the weekly stress check-in questionnaire.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress check-in'**
+  String get stressCheckinTitle;
+
+  /// Big result line of the stress check-in, e.g. "10 out of 20 · Moderate".
+  ///
+  /// In en, this message translates to:
+  /// **'{score} out of 20 · {band}'**
+  String stressCheckinScore(int score, String band);
+
+  /// Small print under the stress check-in result.
+  ///
+  /// In en, this message translates to:
+  /// **'A check-in is a snapshot of one week, not a diagnosis. If the high scores keep coming, that\'s the signal to talk to someone.'**
+  String get stressCheckinDisclaimer;
+
+  /// Button that finishes the stress check-in and shows the score.
+  ///
+  /// In en, this message translates to:
+  /// **'See my score'**
+  String get stressCheckinSeeScore;
+
+  /// Disabled button while the stress check-in isn't complete, e.g. "3 of 5 answered".
+  ///
+  /// In en, this message translates to:
+  /// **'{total, plural, other{{answered} of {total} answered}}'**
+  String stressCheckinAnswered(int answered, int total);
+
+  /// Section heading at the top of the stress check-in: the questions are about the past week.
+  ///
+  /// In en, this message translates to:
+  /// **'The past week'**
+  String get stressCheckinSectionTitle;
+
+  /// Instruction at the top of the stress check-in.
+  ///
+  /// In en, this message translates to:
+  /// **'Go with your first answer. Once a week, same day, gives you a line you can actually read.'**
+  String get stressCheckinSectionBody;
 }
 
 class _AppLocalizationsDelegate

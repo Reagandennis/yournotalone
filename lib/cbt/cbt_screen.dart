@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../therapy/therapy_screen.dart';
 import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_hub.dart';
@@ -18,15 +19,12 @@ class CbtScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return ToolkitHub(
-      title: 'CBT toolkit',
+      title: l10n.cbtTitle,
       accent: cbtAccent,
-      headline: 'Skills you can use today',
-      intro:
-          'Cognitive behavioural therapy is the best-studied talking '
-          'therapy for anxiety and depression, and much of it is learnable. '
-          'These are the tools therapists hand out first — for the minutes '
-          'between sessions, or before you\'ve had one.',
+      headline: l10n.cbtHeadline,
+      intro: l10n.cbtIntro,
       tools: cbtTools,
       lessons: cbtLessons,
       resources: cbtResources,
@@ -35,15 +33,11 @@ class CbtScreen extends StatelessWidget {
       footer: ToolkitBanner(
         icon: Icons.favorite_rounded,
         iconColor: context.brand.red,
-        title: 'Want to do this with someone?',
-        detail:
-            'A licensed therapist can take you through these properly. '
-            'Book a private video session.',
+        title: l10n.cbtTherapistBannerTitle,
+        detail: l10n.cbtTherapistBannerDetail,
         onTap: () => Navigator.of(context).push(TherapyScreen.route()),
       ),
-      footnote:
-          'Self-help is not a substitute for care in a crisis. If '
-          'you\'re in immediate danger, use Get help now on the Home screen.',
+      footnote: l10n.cbtFootnote,
     );
   }
 }

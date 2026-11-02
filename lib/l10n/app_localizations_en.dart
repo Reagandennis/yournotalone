@@ -2506,4 +2506,752 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get careFinishPrivacy =>
       'Only the care team sees your rating, flags and private note. Flagging a safety concern emails them straight away.';
+
+  @override
+  String toolkitStepOf(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get toolkitSavedToJournal => 'Saved to your journal.';
+
+  @override
+  String get toolkitSaveFailed => 'Couldn\'t save — check your connection.';
+
+  @override
+  String toolkitCouldntOpenLink(String url) {
+    return 'Couldn\'t open $url';
+  }
+
+  @override
+  String get toolkitToolsTitle => 'Tools';
+
+  @override
+  String get toolkitLessonsTitle => 'Learn the ideas';
+
+  @override
+  String get toolkitResourcesIntro =>
+      'Reputable, clinician-written material from outside the app. Links open in your browser.';
+
+  @override
+  String get toolkitFreeResources => 'Free resources';
+
+  @override
+  String get toolkitPremiumTitle => 'This is part of Premium';
+
+  @override
+  String toolkitPremiumMessage(String offer) {
+    return 'Free includes a taste of each programme. Premium unlocks every tool and read — and $offer.';
+  }
+
+  @override
+  String toolkitCountLine(int free, int locked) {
+    return '$free free · $locked Premium';
+  }
+
+  @override
+  String toolkitMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String toolkitMinutesRead(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min read',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toolkitLearnTitle => 'Learn';
+
+  @override
+  String get toolkitSessionPremiumTitle => 'This session is part of Premium';
+
+  @override
+  String toolkitSessionPremiumMessage(String offer) {
+    return 'Free includes a taste of each practice. Premium unlocks every session — and $offer.';
+  }
+
+  @override
+  String get cbtTitle => 'CBT toolkit';
+
+  @override
+  String get cbtHeadline => 'Skills you can use today';
+
+  @override
+  String get cbtIntro =>
+      'Cognitive behavioural therapy is the best-studied talking therapy for anxiety and depression, and much of it is learnable. These are the tools therapists hand out first — for the minutes between sessions, or before you\'ve had one.';
+
+  @override
+  String get cbtTherapistBannerTitle => 'Want to do this with someone?';
+
+  @override
+  String get cbtTherapistBannerDetail =>
+      'A licensed therapist can take you through these properly. Book a private video session.';
+
+  @override
+  String get cbtFootnote =>
+      'Self-help is not a substitute for care in a crisis. If you\'re in immediate danger, use Get help now on the Home screen.';
+
+  @override
+  String get stressTitle => 'Manage stress';
+
+  @override
+  String get stressHeadline => 'Down from the ceiling, then sort the load';
+
+  @override
+  String get stressIntro =>
+      'Stress is a body state before it\'s a thought, so the fastest tools work on the body: breath and muscles first, thinking second. Then a check-in to see the trend, and two tools for the load itself — what you can change, and what refills you.';
+
+  @override
+  String get stressCbtBannerTitle => 'When the stress is in the thinking';
+
+  @override
+  String get stressCbtBannerDetail =>
+      'Thought records, thinking traps and worry windows are in the CBT toolkit.';
+
+  @override
+  String get stressTherapistBannerTitle => 'Been like this for months?';
+
+  @override
+  String get stressTherapistBannerDetail =>
+      'That\'s worth a real conversation. Book a private session with a licensed therapist.';
+
+  @override
+  String get stressFootnote =>
+      'Chest pain, breathlessness or palpitations that don\'t settle need a doctor, not a breathing exercise. In an emergency, call your local emergency number.';
+
+  @override
+  String get groundingTitle => 'Grounding';
+
+  @override
+  String get groundingDoneTitle => 'You\'re here';
+
+  @override
+  String get groundingDoneBody =>
+      'Notice your breathing. Notice the weight of your body where you\'re sitting. Whatever was pulling at you is still there, but you\'re here, and here is manageable.';
+
+  @override
+  String get groundingBreatheButton => 'Breathe for a few minutes';
+
+  @override
+  String get toolkitGoAgain => 'Go again';
+
+  @override
+  String get groundingFoundOne => 'Found one';
+
+  @override
+  String get groundingFoundLast => 'Found one — last';
+
+  @override
+  String groundingStepTitle(int count, String sense) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count things you can $sense',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String groundingToGo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'to go',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String cbtQuoted(String text) {
+    return '“$text”';
+  }
+
+  @override
+  String get thinkingTrapsTitle => 'Thinking traps';
+
+  @override
+  String get thinkingTrapsSectionTitle => 'Spot the pattern';
+
+  @override
+  String get thinkingTrapsSectionBody =>
+      'Anxious and low moods run on a handful of predictable distortions. Naming one takes some of its power away. Write the thought that\'s bothering you, then see which of these it\'s wearing.';
+
+  @override
+  String get thinkingTrapsThoughtLabel => 'The thought (optional)';
+
+  @override
+  String thinkingTrapsWhichOne(String thought) {
+    return '$thought\n\nWhich of these does it sound like?';
+  }
+
+  @override
+  String get thinkingTrapsForExample => 'For example';
+
+  @override
+  String get thinkingTrapsAskYourself => 'Ask yourself';
+
+  @override
+  String get thinkingTrapsFooter =>
+      'Found one? The thought record walks you through checking the evidence and writing something fairer.';
+
+  @override
+  String get cbtFeelingAnxious => 'Anxious';
+
+  @override
+  String get cbtFeelingSad => 'Sad';
+
+  @override
+  String get cbtFeelingAngry => 'Angry';
+
+  @override
+  String get cbtFeelingAshamed => 'Ashamed';
+
+  @override
+  String get cbtFeelingGuilty => 'Guilty';
+
+  @override
+  String get cbtFeelingHopeless => 'Hopeless';
+
+  @override
+  String get cbtFeelingLonely => 'Lonely';
+
+  @override
+  String get cbtFeelingOverwhelmed => 'Overwhelmed';
+
+  @override
+  String get thoughtRecordTitle => 'Thought record';
+
+  @override
+  String get thoughtRecordNoneSpotted => 'none spotted';
+
+  @override
+  String thoughtRecordSummary(
+    String situation,
+    String thought,
+    String feelings,
+    int before,
+    String traps,
+    String evidenceFor,
+    String evidenceAgainst,
+    String balanced,
+    int after,
+  ) {
+    return 'Situation: $situation\nAutomatic thought: $thought\nFeeling: $feelings — $before/100 before\nThinking traps: $traps\nEvidence for: $evidenceFor\nEvidence against: $evidenceAgainst\nBalanced thought: $balanced\nFeeling now: $after/100';
+  }
+
+  @override
+  String thoughtRecordOutOf100(int value) {
+    return '$value out of 100';
+  }
+
+  @override
+  String get thoughtRecordStep1Title => 'What was the situation?';
+
+  @override
+  String get thoughtRecordStep1Hint =>
+      'Just the facts, as a camera would have seen them. Where were you, who was there, what happened?';
+
+  @override
+  String get thoughtRecordStep1Field =>
+      'e.g. Sent a message at 2pm, no reply by 9pm';
+
+  @override
+  String get thoughtRecordStep2Title => 'What went through your mind?';
+
+  @override
+  String get thoughtRecordStep2Hint =>
+      'The first, quickest thought — the one that stung. Write it the way it sounded in your head.';
+
+  @override
+  String get thoughtRecordStep2Field => 'e.g. She\'s had enough of me';
+
+  @override
+  String get thoughtRecordStep3Title => 'How did it make you feel?';
+
+  @override
+  String get thoughtRecordStep3Hint =>
+      'Pick what fits, then rate how strong it was.';
+
+  @override
+  String get thoughtRecordStep4Title => 'Any thinking traps in there?';
+
+  @override
+  String get thoughtRecordStep4Hint =>
+      'Tap any that fit. Most hot thoughts have at least one.';
+
+  @override
+  String get thoughtRecordStep5Title => 'Check the evidence';
+
+  @override
+  String get thoughtRecordStep5Hint =>
+      'Facts, not feelings. What would a fair judge accept?';
+
+  @override
+  String get thoughtRecordEvidenceFor => 'What supports the thought?';
+
+  @override
+  String get thoughtRecordEvidenceAgainst => 'What doesn\'t fit with it?';
+
+  @override
+  String get thoughtRecordQuestionsWorthAsking => 'Questions worth asking';
+
+  @override
+  String get thoughtRecordStep6Title => 'Write a fairer thought';
+
+  @override
+  String get thoughtRecordStep6Hint =>
+      'Not the cheerful opposite — something you could defend. It often starts \"Even though…\" or \"It\'s possible that…\".';
+
+  @override
+  String get thoughtRecordBalancedField => 'A more balanced way to see it';
+
+  @override
+  String get thoughtRecordStep7Title => 'How strong is the feeling now?';
+
+  @override
+  String get thoughtRecordStep7Hint =>
+      'It rarely goes to zero. A few points down is the skill working.';
+
+  @override
+  String get cbtSaveToJournal => 'Save to journal';
+
+  @override
+  String cbtBullet(String text) {
+    return '• $text';
+  }
+
+  @override
+  String get worryTimeParked =>
+      'Parked. It\'ll be here at worry time — you don\'t have to hold it now.';
+
+  @override
+  String get worryTimeTimesUp =>
+      'Time\'s up. Whatever\'s left can wait for tomorrow\'s window.';
+
+  @override
+  String get worryTimeHavePlan => 'You\'ve got a plan for this one.';
+
+  @override
+  String get worryTimeLetGo => 'Let go — nothing to do here today.';
+
+  @override
+  String get worryTimeCanYouAct =>
+      'Can you do something about it in the next week?';
+
+  @override
+  String get worryTimeYesPlan => 'Yes — plan it';
+
+  @override
+  String get worryTimeNoLetGo => 'No — let it go';
+
+  @override
+  String get worryTimeTitle => 'Worry window';
+
+  @override
+  String get worryTimeSectionTitle => 'Worry later, on purpose';
+
+  @override
+  String get worryTimeSectionBody =>
+      'You can\'t stop a worry arriving, but you can decide when to give it attention. Park it here as it comes. Then, once a day, open a fifteen-minute window and go through the list — and only then.';
+
+  @override
+  String get worryTimeInputLabel => 'What\'s on your mind right now?';
+
+  @override
+  String get worryTimeParkTooltip => 'Park it';
+
+  @override
+  String get worryTimeNothingParked => 'Nothing parked';
+
+  @override
+  String worryTimeParkedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count parked for worry time',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get worryTimeBestTime =>
+      'Best kept to the same time each day — not the hour before bed.';
+
+  @override
+  String get worryTimeOpenWindow => 'Open window';
+
+  @override
+  String get worryTimeGoThrough =>
+      'Go through each worry once. Decide, don\'t dwell.';
+
+  @override
+  String get worryTimeYourList => 'Your list';
+
+  @override
+  String get worryTimeClearDecided => 'Clear decided';
+
+  @override
+  String get worryTimeEmpty =>
+      'Your parked worries appear here. Most people find half of them have lost their sting by the time the window opens.';
+
+  @override
+  String get problemSolvingWhenToday => 'Today';
+
+  @override
+  String get problemSolvingWhenTomorrow => 'Tomorrow';
+
+  @override
+  String get problemSolvingWhenThisWeek => 'This week';
+
+  @override
+  String get problemSolvingWhenNextWeek => 'Next week';
+
+  @override
+  String problemSolvingSummary(
+    String problem,
+    String options,
+    String chosen,
+    String firstStep,
+    String when,
+  ) {
+    return 'Problem: $problem\nOptions considered: $options\nChosen: $chosen\nFirst step: $firstStep — $when';
+  }
+
+  @override
+  String get problemSolvingPlanTitle => 'Problem-solving plan';
+
+  @override
+  String get problemSolvingTitle => 'Problem solving';
+
+  @override
+  String get problemSolvingStep1Title => 'What exactly is the problem?';
+
+  @override
+  String get problemSolvingStep1Hint =>
+      'One problem, in one sentence, specific enough to act on. \"Money\" is a worry; \"I\'m £300 short for rent on the 1st\" is a problem.';
+
+  @override
+  String get problemSolvingStep1Field => 'The problem, precisely';
+
+  @override
+  String get problemSolvingStep2Title => 'List every option';
+
+  @override
+  String get problemSolvingStep2Hint =>
+      'Don\'t judge them yet — bad ideas loosen up good ones. Aim for at least three, including one you\'d never do.';
+
+  @override
+  String get problemSolvingOptionField => 'An option';
+
+  @override
+  String get problemSolvingStep3Title => 'Pick one to try';
+
+  @override
+  String get problemSolvingStep3Hint =>
+      'Not the perfect one — the one that\'s good enough and that you\'d actually do. You can come back to the others.';
+
+  @override
+  String get problemSolvingStep4Title => 'What\'s the first step?';
+
+  @override
+  String get problemSolvingStep4Hint =>
+      'Something that takes under twenty minutes and needs no one\'s permission. Then decide when.';
+
+  @override
+  String problemSolvingTrying(String option) {
+    return 'Trying: $option';
+  }
+
+  @override
+  String get problemSolvingFirstStepField => 'First step';
+
+  @override
+  String get activityPlannerTooMany =>
+      'Three is plenty for one day. Swap one out if you\'d rather.';
+
+  @override
+  String get activityPlannerAllDone =>
+      'That\'s today\'s plan done. Notice how you feel now compared with before.';
+
+  @override
+  String get activityPlannerTitle => 'One small thing';
+
+  @override
+  String get activityPlannerSectionTitle => 'Do first, feel later';
+
+  @override
+  String get activityPlannerSectionBody =>
+      'When mood is low, motivation doesn\'t come before action — it comes after. Pick up to three small things for today. Small enough that you\'d do them on a bad day.';
+
+  @override
+  String activityPlannerTodayProgress(int done, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: 'Today · $done of $total done',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get activityPlannerIdeas => 'Ideas';
+
+  @override
+  String get activityPlannerAll => 'All';
+
+  @override
+  String get activityPlannerOwnField => 'Or something of your own';
+
+  @override
+  String get controlCircleZoneControl => 'Control';
+
+  @override
+  String get controlCircleZoneControlHint => 'I can change this';
+
+  @override
+  String get controlCircleZoneInfluence => 'Influence';
+
+  @override
+  String get controlCircleZoneInfluenceHint => 'I can lean on it';
+
+  @override
+  String get controlCircleZoneAccept => 'Accept';
+
+  @override
+  String get controlCircleZoneAcceptHint => 'Not mine to move';
+
+  @override
+  String get controlCircleControlAdvice =>
+      'These are yours to move. Pick one — the smallest — and take the first step this week.';
+
+  @override
+  String get controlCircleControlAction => 'Work one through';
+
+  @override
+  String get controlCircleInfluenceAdvice =>
+      'You can\'t decide these, but you can ask, say, or nudge. What is the one conversation each of these needs?';
+
+  @override
+  String get controlCircleAcceptAdvice =>
+      'Not yours to carry, and carrying them anyway is where a lot of stress lives. Practise setting them down — it\'s a skill, not a mood.';
+
+  @override
+  String get controlCircleAcceptAction => 'Breathe it out';
+
+  @override
+  String controlCircleZoneCount(String zone, int count) {
+    return '$zone · $count';
+  }
+
+  @override
+  String get controlCircleTitle => 'What\'s in your hands';
+
+  @override
+  String get controlCircleSectionTitle => 'Three circles';
+
+  @override
+  String get controlCircleSectionBody =>
+      'Write down everything that\'s weighing on you, then sort each one. Most stress comes from spending effort in the outer circles and neglecting the inner one.';
+
+  @override
+  String get controlCircleInputLabel => 'Something on your mind';
+
+  @override
+  String get controlCircleEffortTitle => 'Where your effort goes';
+
+  @override
+  String get controlCircleEmpty =>
+      'Start with whatever came to mind first. Vague is fine — \"work\", \"money\", \"mum\" — you can sharpen it later.';
+
+  @override
+  String get toolkitBegin => 'Begin';
+
+  @override
+  String get muscleRelaxTitle => 'Tense and release';
+
+  @override
+  String get muscleRelaxIntroTitle => 'Eight groups, once each';
+
+  @override
+  String get muscleRelaxIntroBody =>
+      'Sit or lie somewhere you won\'t be disturbed for eight minutes. For each group: tense hard for five seconds — not to pain — then let go completely for ten, and notice the difference. That noticing is the exercise.';
+
+  @override
+  String get muscleRelaxDoneTitle => 'Let it all stay loose';
+
+  @override
+  String get muscleRelaxDoneBody =>
+      'Sit for a moment before you get up. Where was the most tension hiding? That\'s the place to check in on during the day.';
+
+  @override
+  String get muscleRelaxReleaseHint =>
+      'Let go all at once. Feel the difference.';
+
+  @override
+  String get muscleRelaxTense => 'Tense';
+
+  @override
+  String get muscleRelaxRelease => 'Release';
+
+  @override
+  String get sighPhaseIn => 'Breathe in';
+
+  @override
+  String get sighPhaseInHint => 'Through the nose, most of the way.';
+
+  @override
+  String get sighPhaseSip => 'One more sip';
+
+  @override
+  String get sighPhaseSipHint => 'A short top-up, right to the top.';
+
+  @override
+  String get sighPhaseOut => 'Long breath out';
+
+  @override
+  String get sighPhaseOutHint =>
+      'Slowly, through the mouth, until you\'re empty.';
+
+  @override
+  String get sighTitle => 'Physiological sigh';
+
+  @override
+  String get sighAnotherRound => 'Another round';
+
+  @override
+  String get sighStart => 'Start';
+
+  @override
+  String get sighDoneTitle => 'That\'s the round';
+
+  @override
+  String sighRoundOf(int round, int total) {
+    return 'Round $round of $total';
+  }
+
+  @override
+  String get sighIntroTitle => 'Two in, one long out';
+
+  @override
+  String get sighDoneBody =>
+      'Notice your shoulders and your jaw. Most people feel the drop within a round or two. Use it any time — in a meeting, in a queue, before a call.';
+
+  @override
+  String get sighIntroBody =>
+      'Breathe in through your nose, then take one more short sip on top. Let it all out slowly through your mouth. That\'s one. Follow the circle.';
+
+  @override
+  String get sighDone => 'Done';
+
+  @override
+  String get sighReady => 'Ready';
+
+  @override
+  String get rechargeTitle => 'Recharge list';
+
+  @override
+  String get rechargeSectionTitle => 'Know your tank';
+
+  @override
+  String get rechargeSectionBody =>
+      'Stress is a budget: things that take from it and things that pay in. Most people can name the drains instantly and go quiet on the refills. Write both. Then choose one refill for today — and treat it as an appointment.';
+
+  @override
+  String rechargeToday(String pick) {
+    return 'Today: $pick';
+  }
+
+  @override
+  String get rechargeDrainsTitle => 'What drains me';
+
+  @override
+  String get rechargeAddDrain => 'Add a drain';
+
+  @override
+  String get rechargeRefillsTitle => 'What refills me';
+
+  @override
+  String get rechargeRefillsHint => 'Tap one to make it today\'s.';
+
+  @override
+  String get rechargeAddRefill => 'Add a refill';
+
+  @override
+  String get rechargeBorrow => 'Stuck for refills? Borrow one:';
+
+  @override
+  String get stressBandLow => 'Low';
+
+  @override
+  String get stressBandLowAdvice =>
+      'You\'re carrying this week fine. Keep whatever recovery you\'ve got in place — it\'s working.';
+
+  @override
+  String get stressBandModerate => 'Moderate';
+
+  @override
+  String get stressBandModerateAdvice =>
+      'Noticeable, and worth ten deliberate minutes a day: a sigh round, a walk, a proper break. Sort one thing that\'s in your hands.';
+
+  @override
+  String get stressBandHigh => 'High';
+
+  @override
+  String get stressBandHighAdvice =>
+      'A lot right now. Bring the body down first — sigh, tense and release — then look at the load. If it\'s been like this for weeks, talk to someone; that\'s what the therapist sessions are for.';
+
+  @override
+  String stressCheckinQuestion(int number, String question) {
+    return '$number. $question';
+  }
+
+  @override
+  String get stressCheckinHistoryTitle => 'Your last check-ins';
+
+  @override
+  String stressCheckinHistoryRange(String from, String to) {
+    return '$from → $to · 0 is calm, 20 is a lot';
+  }
+
+  @override
+  String get stressCheckinTitle => 'Stress check-in';
+
+  @override
+  String stressCheckinScore(int score, String band) {
+    return '$score out of 20 · $band';
+  }
+
+  @override
+  String get stressCheckinDisclaimer =>
+      'A check-in is a snapshot of one week, not a diagnosis. If the high scores keep coming, that\'s the signal to talk to someone.';
+
+  @override
+  String get stressCheckinSeeScore => 'See my score';
+
+  @override
+  String stressCheckinAnswered(int answered, int total) {
+    String _temp0 = intl.Intl.pluralLogic(
+      total,
+      locale: localeName,
+      other: '$answered of $total answered',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stressCheckinSectionTitle => 'The past week';
+
+  @override
+  String get stressCheckinSectionBody =>
+      'Go with your first answer. Once a week, same day, gives you a line you can actually read.';
 }

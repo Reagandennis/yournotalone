@@ -5,6 +5,7 @@ import '../brand.dart';
 import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
+import '../l10n/l10n.dart';
 import 'toolkit_art.dart';
 
 /// The accent colour of whichever toolkit is on screen — the CBT card's
@@ -81,6 +82,7 @@ class ToolkitScaffold extends StatelessWidget {
           foregroundColor: onAccent,
           titleTextStyle: TextStyle(
             fontFamily: 'Poppins',
+            fontFamilyFallback: appFontFallback,
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: onAccent,
@@ -311,7 +313,7 @@ class ToolkitStepHeader extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         Text(
-          'Step $step of $of',
+          context.l10n.toolkitStepOf(step, of),
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -521,6 +523,7 @@ Future<bool> toolkitSaveToJournal(
 }) async {
   final journal = repository ?? JournalRepository();
   final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
   try {
     final count = await journal.countEntries();
     if (!context.mounted) return false;
@@ -528,7 +531,7 @@ Future<bool> toolkitSaveToJournal(
     await journal.create(title: title, content: content);
     messenger
       ..hideCurrentSnackBar()
-      ..showSnackBar(const SnackBar(content: Text('Saved to your journal.')));
+      ..showSnackBar(SnackBar(content: Text(l10n.toolkitSavedToJournal)));
     return true;
   } catch (e) {
     messenger
@@ -536,7 +539,7 @@ Future<bool> toolkitSaveToJournal(
       ..showSnackBar(
         SnackBar(
           content: Text(
-            errorMessage(e, 'Couldn\'t save — check your connection.'),
+            errorMessage(e, l10n.toolkitSaveFailed),
           ),
         ),
       );
@@ -548,10 +551,13 @@ Future<bool> toolkitSaveToJournal(
 Future<void> toolkitOpenLink(BuildContext context, String url) async {
   final uri = Uri.parse(url);
   final messenger = ScaffoldMessenger.of(context);
+  final l10n = context.l10n;
   try {
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched) throw Exception('not launched');
   } catch (_) {
-    messenger.showSnackBar(SnackBar(content: Text('Couldn\'t open $url')));
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.toolkitCouldntOpenLink(url))),
+    );
   }
 }

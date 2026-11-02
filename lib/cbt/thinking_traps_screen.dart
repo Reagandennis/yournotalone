@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'cbt_content.dart';
 import '../toolkit/toolkit_ui.dart';
 
@@ -71,7 +72,7 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '“${trap.soundsLike}”',
+                            context.l10n.cbtQuoted(trap.soundsLike),
                             style: TextStyle(
                               fontSize: 12.5,
                               color: c.textMuted,
@@ -91,9 +92,13 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
                 ),
                 if (open) ...[
                   const SizedBox(height: 14),
-                  _row('For example', trap.example),
+                  _row(context.l10n.thinkingTrapsForExample, trap.example),
                   const SizedBox(height: 10),
-                  _row('Ask yourself', trap.ask, strong: true),
+                  _row(
+                    context.l10n.thinkingTrapsAskYourself,
+                    trap.ask,
+                    strong: true,
+                  ),
                 ],
               ],
             ),
@@ -134,17 +139,14 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     return ToolkitScaffold(
       accent: cbtAccent,
-      title: 'Thinking traps',
+      title: l10n.thinkingTrapsTitle,
       children: [
-        const ToolkitSection(
-          title: 'Spot the pattern',
-          subtitle:
-              'Anxious and low moods run on a handful of predictable '
-              'distortions. Naming one takes some of its power away. Write '
-              'the thought that\'s bothering you, then see which of these '
-              'it\'s wearing.',
+        ToolkitSection(
+          title: l10n.thinkingTrapsSectionTitle,
+          subtitle: l10n.thinkingTrapsSectionBody,
         ),
         TextField(
           controller: _thought,
@@ -152,8 +154,8 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
           maxLength: 200,
           textCapitalization: TextCapitalization.sentences,
           onChanged: (_) => setState(() {}),
-          decoration: const InputDecoration(
-            labelText: 'The thought (optional)',
+          decoration: InputDecoration(
+            labelText: l10n.thinkingTrapsThoughtLabel,
             counterText: '',
           ),
         ),
@@ -162,7 +164,9 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
           ToolkitNote(
             tint: c.tint(cbtAccent, 0.08),
             child: Text(
-              '“${_thought.text.trim()}”\n\nWhich of these does it sound like?',
+              l10n.thinkingTrapsWhichOne(
+                l10n.cbtQuoted(_thought.text.trim()),
+              ),
               style: TextStyle(
                 fontSize: 13,
                 color: c.ink,
@@ -176,8 +180,7 @@ class _ThinkingTrapsScreenState extends State<ThinkingTrapsScreen> {
         const SizedBox(height: 8),
         ToolkitNote(
           child: Text(
-            'Found one? The thought record walks you through checking the '
-            'evidence and writing something fairer.',
+            l10n.thinkingTrapsFooter,
             style: TextStyle(fontSize: 13, color: c.textMuted, height: 1.5),
           ),
         ),

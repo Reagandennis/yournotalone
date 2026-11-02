@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'cbt_content.dart';
 import '../toolkit/toolkit_ui.dart';
 
@@ -89,12 +90,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Three is plenty for one day. Swap one out if '
-                'you\'d rather.',
-              ),
-            ),
+            SnackBar(content: Text(context.l10n.activityPlannerTooMany)),
           );
         return;
       }
@@ -114,12 +110,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text(
-              'That\'s today\'s plan done. Notice how you feel now '
-              'compared with before.',
-            ),
-          ),
+          SnackBar(content: Text(context.l10n.activityPlannerAllDone)),
         );
     }
   }
@@ -134,11 +125,12 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
   @override
   Widget build(BuildContext context) {
     final plan = _plan;
+    final l10n = context.l10n;
     if (plan == null) {
-      return const ToolkitScaffold(
+      return ToolkitScaffold(
         accent: cbtAccent,
-        title: 'One small thing',
-        children: [Center(child: CircularProgressIndicator())],
+        title: l10n.activityPlannerTitle,
+        children: const [Center(child: CircularProgressIndicator())],
       );
     }
     final c = context.brand;
@@ -147,14 +139,11 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
         : activityIdeas.where((a) => a.category == _filter).toList();
     return ToolkitScaffold(
       accent: cbtAccent,
-      title: 'One small thing',
+      title: l10n.activityPlannerTitle,
       children: [
-        const ToolkitSection(
-          title: 'Do first, feel later',
-          subtitle:
-              'When mood is low, motivation doesn\'t come before '
-              'action — it comes after. Pick up to three small things for '
-              'today. Small enough that you\'d do them on a bad day.',
+        ToolkitSection(
+          title: l10n.activityPlannerSectionTitle,
+          subtitle: l10n.activityPlannerSectionBody,
         ),
         if (plan.picked.isNotEmpty) ...[
           ToolkitNote(
@@ -162,7 +151,10 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Today · ${plan.done.length} of ${plan.picked.length} done',
+                  l10n.activityPlannerTodayProgress(
+                    plan.done.length,
+                    plan.picked.length,
+                  ),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -194,7 +186,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
                       icon: const Icon(Icons.close_rounded, size: 18),
                       color: c.textMuted,
                       onPressed: () => _toggle(label),
-                      tooltip: 'Remove',
+                      tooltip: l10n.commonRemove,
                     ),
                   ),
               ],
@@ -202,13 +194,13 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
           ),
           const SizedBox(height: 20),
         ],
-        const ToolkitSection(title: 'Ideas'),
+        ToolkitSection(title: l10n.activityPlannerIdeas),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
             ToolkitPill(
-              label: 'All',
+              label: l10n.activityPlannerAll,
               selected: _filter == null,
               onTap: () => setState(() => _filter = null),
             ),
@@ -280,7 +272,7 @@ class _ActivityPlannerScreenState extends State<ActivityPlannerScreen> {
           textCapitalization: TextCapitalization.sentences,
           onSubmitted: (_) => _addCustom(),
           decoration: InputDecoration(
-            labelText: 'Or something of your own',
+            labelText: l10n.activityPlannerOwnField,
             counterText: '',
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_rounded),

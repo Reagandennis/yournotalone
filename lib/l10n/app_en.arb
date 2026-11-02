@@ -3415,5 +3415,1039 @@
   "careFinishPrivacy": "Only the care team sees your rating, flags and private note. Flagging a safety concern emails them straight away.",
   "@careFinishPrivacy": {
     "description": "Note under the private fields. Therapist-facing sheet for finishing a session (note to client, private rating)."
+  },
+  "toolkitStepOf": "Step {step} of {total}",
+  "@toolkitStepOf": {
+    "description": "Progress label at the top of a guided exercise (CBT, sleep, stress toolkits), e.g. \"Step 2 of 6\".",
+    "placeholders": {
+      "step": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "toolkitSavedToJournal": "Saved to your journal.",
+  "@toolkitSavedToJournal": {
+    "description": "Snackbar after an exercise was saved as a journal entry."
+  },
+  "toolkitSaveFailed": "Couldn't save — check your connection.",
+  "@toolkitSaveFailed": {
+    "description": "Snackbar when saving an exercise to the journal failed, probably because the phone is offline."
+  },
+  "toolkitCouldntOpenLink": "Couldn't open {url}",
+  "@toolkitCouldntOpenLink": {
+    "description": "Snackbar when an outside web link could not be opened in the browser.",
+    "placeholders": {
+      "url": {
+        "type": "String",
+        "example": "https://www.nhs.uk"
+      }
+    }
+  },
+  "toolkitToolsTitle": "Tools",
+  "@toolkitToolsTitle": {
+    "description": "Section heading on a toolkit's front page (CBT, sleep, stress): the interactive exercises."
+  },
+  "toolkitLessonsTitle": "Learn the ideas",
+  "@toolkitLessonsTitle": {
+    "description": "Section heading on a toolkit's front page: short reading lessons."
+  },
+  "toolkitResourcesIntro": "Reputable, clinician-written material from outside the app. Links open in your browser.",
+  "@toolkitResourcesIntro": {
+    "description": "Subtitle under \"Free resources\" on a toolkit's front page."
+  },
+  "toolkitFreeResources": "Free resources",
+  "@toolkitFreeResources": {
+    "description": "Section heading on a toolkit's front page: links to free material on other websites."
+  },
+  "toolkitPremiumTitle": "This is part of Premium",
+  "@toolkitPremiumTitle": {
+    "description": "Title of the upgrade sheet shown when tapping a locked toolkit tool or lesson."
+  },
+  "toolkitPremiumMessage": "Free includes a taste of each programme. Premium unlocks every tool and read — and {offer}.",
+  "@toolkitPremiumMessage": {
+    "description": "Message of the upgrade sheet for a locked toolkit item. {offer} is the free-trial phrase, e.g. \"you can try it free first\".",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "toolkitCountLine": "{free} free · {locked} Premium",
+  "@toolkitCountLine": {
+    "description": "Counts under a section heading: how many items are free and how many need Premium, e.g. \"1 free · 6 Premium\". \"Premium\" is the plan name.",
+    "placeholders": {
+      "free": {
+        "type": "int",
+        "example": "1"
+      },
+      "locked": {
+        "type": "int",
+        "example": "6"
+      }
+    }
+  },
+  "toolkitMinutes": "{minutes, plural, other{{minutes} min}}",
+  "@toolkitMinutes": {
+    "description": "How long a tool takes, on a toolkit card, e.g. \"4 min\".",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "toolkitMinutesRead": "{minutes, plural, other{{minutes} min read}}",
+  "@toolkitMinutesRead": {
+    "description": "How long a short reading lesson takes, e.g. \"3 min read\".",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "toolkitLearnTitle": "Learn",
+  "@toolkitLearnTitle": {
+    "description": "App bar title of the screen showing one short reading lesson."
+  },
+  "toolkitSessionPremiumTitle": "This session is part of Premium",
+  "@toolkitSessionPremiumTitle": {
+    "description": "Title of the upgrade sheet when a toolkit links to a locked meditation or breathing session."
+  },
+  "toolkitSessionPremiumMessage": "Free includes a taste of each practice. Premium unlocks every session — and {offer}.",
+  "@toolkitSessionPremiumMessage": {
+    "description": "Message of the upgrade sheet for a locked meditation/breathing session. {offer} is the free-trial phrase, e.g. \"you can try it free first\".",
+    "placeholders": {
+      "offer": {
+        "type": "String",
+        "example": "you can try it free first"
+      }
+    }
+  },
+  "cbtTitle": "CBT toolkit",
+  "@cbtTitle": {
+    "description": "App bar title of the CBT (cognitive behavioural therapy) toolkit's front page."
+  },
+  "cbtHeadline": "Skills you can use today",
+  "@cbtHeadline": {
+    "description": "Headline at the top of the CBT toolkit's front page."
+  },
+  "cbtIntro": "Cognitive behavioural therapy is the best-studied talking therapy for anxiety and depression, and much of it is learnable. These are the tools therapists hand out first — for the minutes between sessions, or before you've had one.",
+  "@cbtIntro": {
+    "description": "Intro paragraph on the CBT toolkit's front page. Warm, plain, non-clinical."
+  },
+  "cbtTherapistBannerTitle": "Want to do this with someone?",
+  "@cbtTherapistBannerTitle": {
+    "description": "Banner at the bottom of the CBT toolkit inviting the person to book a therapist."
+  },
+  "cbtTherapistBannerDetail": "A licensed therapist can take you through these properly. Book a private video session.",
+  "@cbtTherapistBannerDetail": {
+    "description": "Detail line of the banner inviting the person to book a therapist session."
+  },
+  "cbtFootnote": "Self-help is not a substitute for care in a crisis. If you're in immediate danger, use Get help now on the Home screen.",
+  "@cbtFootnote": {
+    "description": "Safety footnote at the end of the CBT toolkit. \"Get help now\" is the name of the crisis button on the Home screen — keep it consistent with that button's translation."
+  },
+  "stressTitle": "Manage stress",
+  "@stressTitle": {
+    "description": "App bar title of the stress toolkit's front page."
+  },
+  "stressHeadline": "Down from the ceiling, then sort the load",
+  "@stressHeadline": {
+    "description": "Headline on the stress toolkit's front page: first calm the body down, then deal with what's causing the stress. Idiomatic, can be rephrased."
+  },
+  "stressIntro": "Stress is a body state before it's a thought, so the fastest tools work on the body: breath and muscles first, thinking second. Then a check-in to see the trend, and two tools for the load itself — what you can change, and what refills you.",
+  "@stressIntro": {
+    "description": "Intro paragraph on the stress toolkit's front page."
+  },
+  "stressCbtBannerTitle": "When the stress is in the thinking",
+  "@stressCbtBannerTitle": {
+    "description": "Banner on the stress toolkit pointing to the CBT toolkit."
+  },
+  "stressCbtBannerDetail": "Thought records, thinking traps and worry windows are in the CBT toolkit.",
+  "@stressCbtBannerDetail": {
+    "description": "Detail line of the banner pointing from the stress toolkit to the CBT toolkit. Names of three CBT tools."
+  },
+  "stressTherapistBannerTitle": "Been like this for months?",
+  "@stressTherapistBannerTitle": {
+    "description": "Banner on the stress toolkit for long-lasting stress, inviting the person to book a therapist."
+  },
+  "stressTherapistBannerDetail": "That's worth a real conversation. Book a private session with a licensed therapist.",
+  "@stressTherapistBannerDetail": {
+    "description": "Detail line of the banner inviting the person to book a therapist session."
+  },
+  "stressFootnote": "Chest pain, breathlessness or palpitations that don't settle need a doctor, not a breathing exercise. In an emergency, call your local emergency number.",
+  "@stressFootnote": {
+    "description": "Safety footnote at the end of the stress toolkit."
+  },
+  "groundingTitle": "Grounding",
+  "@groundingTitle": {
+    "description": "App bar title of the 5-4-3-2-1 grounding exercise (name five things you see, four you feel, …)."
+  },
+  "groundingDoneTitle": "You're here",
+  "@groundingDoneTitle": {
+    "description": "Heading when the grounding exercise is finished: you are present, in this moment."
+  },
+  "groundingDoneBody": "Notice your breathing. Notice the weight of your body where you're sitting. Whatever was pulling at you is still there, but you're here, and here is manageable.",
+  "@groundingDoneBody": {
+    "description": "Calming text when the grounding exercise is finished."
+  },
+  "groundingBreatheButton": "Breathe for a few minutes",
+  "@groundingBreatheButton": {
+    "description": "Button after the grounding exercise: opens the breathing exercises."
+  },
+  "toolkitGoAgain": "Go again",
+  "@toolkitGoAgain": {
+    "description": "Button after an exercise: start it again from the beginning."
+  },
+  "groundingFoundOne": "Found one",
+  "@groundingFoundOne": {
+    "description": "Big button in the grounding exercise: tap each time you notice one thing (e.g. one thing you can see)."
+  },
+  "groundingFoundLast": "Found one — last",
+  "@groundingFoundLast": {
+    "description": "Same button as groundingFoundOne, when only one thing is left to find in this step."
+  },
+  "groundingStepTitle": "{count, plural, other{{count} things you can {sense}}}",
+  "@groundingStepTitle": {
+    "description": "Step title in the grounding exercise, e.g. \"5 things you can see\". {sense} is a verb from the exercise content (see, feel, hear, smell, taste), currently in English.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      },
+      "sense": {
+        "type": "String",
+        "example": "see"
+      }
+    }
+  },
+  "groundingToGo": "{count, plural, other{to go}}",
+  "@groundingToGo": {
+    "description": "Small text under the big number in the grounding exercise: how many things are still to find in this step (the number is shown above it, e.g. \"3\" / \"to go\").",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "cbtQuoted": "“{text}”",
+  "@cbtQuoted": {
+    "description": "Wraps a quoted thought in the CBT tools in this language's quotation marks (e.g. „…“ in German, « … » in French).",
+    "placeholders": {
+      "text": {
+        "type": "String",
+        "example": "I always mess things up"
+      }
+    }
+  },
+  "thinkingTrapsTitle": "Thinking traps",
+  "@thinkingTrapsTitle": {
+    "description": "App bar title of the screen listing common unhelpful thinking patterns (cognitive distortions)."
+  },
+  "thinkingTrapsSectionTitle": "Spot the pattern",
+  "@thinkingTrapsSectionTitle": {
+    "description": "Section heading at the top of the thinking traps screen."
+  },
+  "thinkingTrapsSectionBody": "Anxious and low moods run on a handful of predictable distortions. Naming one takes some of its power away. Write the thought that's bothering you, then see which of these it's wearing.",
+  "@thinkingTrapsSectionBody": {
+    "description": "Intro under \"Spot the pattern\" on the thinking traps screen. \"Distortions\" = unhelpful thinking patterns."
+  },
+  "thinkingTrapsThoughtLabel": "The thought (optional)",
+  "@thinkingTrapsThoughtLabel": {
+    "description": "Label of the text field where the person may type the thought that's bothering them."
+  },
+  "thinkingTrapsWhichOne": "{thought}\n\nWhich of these does it sound like?",
+  "@thinkingTrapsWhichOne": {
+    "description": "Note under the thought the person typed, asking which thinking trap it matches. {thought} is already in quotation marks. Keep the blank line.",
+    "placeholders": {
+      "thought": {
+        "type": "String",
+        "example": "“I always mess things up”"
+      }
+    }
+  },
+  "thinkingTrapsForExample": "For example",
+  "@thinkingTrapsForExample": {
+    "description": "Small label (shown in capitals) above an example of a thinking trap."
+  },
+  "thinkingTrapsAskYourself": "Ask yourself",
+  "@thinkingTrapsAskYourself": {
+    "description": "Small label (shown in capitals) above the question that helps loosen a thinking trap."
+  },
+  "thinkingTrapsFooter": "Found one? The thought record walks you through checking the evidence and writing something fairer.",
+  "@thinkingTrapsFooter": {
+    "description": "Note at the end of the thinking traps list, pointing to the thought record tool."
+  },
+  "cbtFeelingAnxious": "Anxious",
+  "@cbtFeelingAnxious": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingSad": "Sad",
+  "@cbtFeelingSad": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingAngry": "Angry",
+  "@cbtFeelingAngry": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingAshamed": "Ashamed",
+  "@cbtFeelingAshamed": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingGuilty": "Guilty",
+  "@cbtFeelingGuilty": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingHopeless": "Hopeless",
+  "@cbtFeelingHopeless": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingLonely": "Lonely",
+  "@cbtFeelingLonely": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "cbtFeelingOverwhelmed": "Overwhelmed",
+  "@cbtFeelingOverwhelmed": {
+    "description": "Feeling the person can pick in the thought record (a chip)."
+  },
+  "thoughtRecordTitle": "Thought record",
+  "@thoughtRecordTitle": {
+    "description": "App bar title of the thought record exercise (a CBT worksheet), and the title of the journal entry it saves."
+  },
+  "thoughtRecordNoneSpotted": "none spotted",
+  "@thoughtRecordNoneSpotted": {
+    "description": "In the thought record summary, after \"Thinking traps:\" when none were picked. Lower case, continues the line."
+  },
+  "thoughtRecordSummary": "Situation: {situation}\nAutomatic thought: {thought}\nFeeling: {feelings} — {before}/100 before\nThinking traps: {traps}\nEvidence for: {evidenceFor}\nEvidence against: {evidenceAgainst}\nBalanced thought: {balanced}\nFeeling now: {after}/100",
+  "@thoughtRecordSummary": {
+    "description": "Summary of a finished thought record, shown on the last step and saved to the journal. One labelled line each; keep the line breaks. {before}/{after} are 0–100 intensity ratings; empty answers show as \"—\".",
+    "placeholders": {
+      "situation": {
+        "type": "String",
+        "example": "Sent a message at 2pm, no reply by 9pm"
+      },
+      "thought": {
+        "type": "String",
+        "example": "She's had enough of me"
+      },
+      "feelings": {
+        "type": "String",
+        "example": "Anxious, Sad"
+      },
+      "before": {
+        "type": "int",
+        "example": "70"
+      },
+      "traps": {
+        "type": "String",
+        "example": "Mind reading"
+      },
+      "evidenceFor": {
+        "type": "String",
+        "example": "—"
+      },
+      "evidenceAgainst": {
+        "type": "String",
+        "example": "She's busy at work this week"
+      },
+      "balanced": {
+        "type": "String",
+        "example": "She's probably busy"
+      },
+      "after": {
+        "type": "int",
+        "example": "40"
+      }
+    }
+  },
+  "thoughtRecordOutOf100": "{value} out of 100",
+  "@thoughtRecordOutOf100": {
+    "description": "Under a slider rating how strong a feeling is, from 0 to 100.",
+    "placeholders": {
+      "value": {
+        "type": "int",
+        "example": "70"
+      }
+    }
+  },
+  "thoughtRecordStep1Title": "What was the situation?",
+  "@thoughtRecordStep1Title": {
+    "description": "Step 1 question of the thought record."
+  },
+  "thoughtRecordStep1Hint": "Just the facts, as a camera would have seen them. Where were you, who was there, what happened?",
+  "@thoughtRecordStep1Hint": {
+    "description": "Hint under step 1 of the thought record."
+  },
+  "thoughtRecordStep1Field": "e.g. Sent a message at 2pm, no reply by 9pm",
+  "@thoughtRecordStep1Field": {
+    "description": "Example in the text field for step 1 of the thought record (the situation)."
+  },
+  "thoughtRecordStep2Title": "What went through your mind?",
+  "@thoughtRecordStep2Title": {
+    "description": "Step 2 question of the thought record: the automatic thought."
+  },
+  "thoughtRecordStep2Hint": "The first, quickest thought — the one that stung. Write it the way it sounded in your head.",
+  "@thoughtRecordStep2Hint": {
+    "description": "Hint under step 2 of the thought record."
+  },
+  "thoughtRecordStep2Field": "e.g. She's had enough of me",
+  "@thoughtRecordStep2Field": {
+    "description": "Example in the text field for step 2 of the thought record (the thought)."
+  },
+  "thoughtRecordStep3Title": "How did it make you feel?",
+  "@thoughtRecordStep3Title": {
+    "description": "Step 3 question of the thought record."
+  },
+  "thoughtRecordStep3Hint": "Pick what fits, then rate how strong it was.",
+  "@thoughtRecordStep3Hint": {
+    "description": "Hint under step 3 of the thought record: pick feelings, then rate them on a slider."
+  },
+  "thoughtRecordStep4Title": "Any thinking traps in there?",
+  "@thoughtRecordStep4Title": {
+    "description": "Step 4 question of the thought record: which unhelpful thinking patterns fit."
+  },
+  "thoughtRecordStep4Hint": "Tap any that fit. Most hot thoughts have at least one.",
+  "@thoughtRecordStep4Hint": {
+    "description": "Hint under step 4 of the thought record. \"Hot thoughts\" = the most upsetting thoughts (CBT term)."
+  },
+  "thoughtRecordStep5Title": "Check the evidence",
+  "@thoughtRecordStep5Title": {
+    "description": "Step 5 heading of the thought record."
+  },
+  "thoughtRecordStep5Hint": "Facts, not feelings. What would a fair judge accept?",
+  "@thoughtRecordStep5Hint": {
+    "description": "Hint under step 5 of the thought record."
+  },
+  "thoughtRecordEvidenceFor": "What supports the thought?",
+  "@thoughtRecordEvidenceFor": {
+    "description": "Text field label in step 5 of the thought record: evidence for the thought."
+  },
+  "thoughtRecordEvidenceAgainst": "What doesn't fit with it?",
+  "@thoughtRecordEvidenceAgainst": {
+    "description": "Text field label in step 5 of the thought record: evidence against the thought."
+  },
+  "thoughtRecordQuestionsWorthAsking": "Questions worth asking",
+  "@thoughtRecordQuestionsWorthAsking": {
+    "description": "Heading of a note in step 5 listing questions for the thinking traps the person picked."
+  },
+  "thoughtRecordStep6Title": "Write a fairer thought",
+  "@thoughtRecordStep6Title": {
+    "description": "Step 6 heading of the thought record: write a more balanced thought."
+  },
+  "thoughtRecordStep6Hint": "Not the cheerful opposite — something you could defend. It often starts \"Even though…\" or \"It's possible that…\".",
+  "@thoughtRecordStep6Hint": {
+    "description": "Hint under step 6 of the thought record. The quoted openings are examples of how a balanced thought may start."
+  },
+  "thoughtRecordBalancedField": "A more balanced way to see it",
+  "@thoughtRecordBalancedField": {
+    "description": "Text field label in step 6 of the thought record."
+  },
+  "thoughtRecordStep7Title": "How strong is the feeling now?",
+  "@thoughtRecordStep7Title": {
+    "description": "Step 7 question of the thought record: rate the feeling again."
+  },
+  "thoughtRecordStep7Hint": "It rarely goes to zero. A few points down is the skill working.",
+  "@thoughtRecordStep7Hint": {
+    "description": "Hint under step 7 of the thought record."
+  },
+  "cbtSaveToJournal": "Save to journal",
+  "@cbtSaveToJournal": {
+    "description": "Button at the end of a CBT exercise: save it as a journal entry."
+  },
+  "cbtBullet": "• {text}",
+  "@cbtBullet": {
+    "description": "A bulleted line in a list (CBT tools).",
+    "placeholders": {
+      "text": {
+        "type": "String",
+        "example": "What would I tell a friend?"
+      }
+    }
+  },
+  "worryTimeParked": "Parked. It'll be here at worry time — you don't have to hold it now.",
+  "@worryTimeParked": {
+    "description": "Snackbar after the person \"parks\" a worry to look at later, during their daily worry time."
+  },
+  "worryTimeTimesUp": "Time's up. Whatever's left can wait for tomorrow's window.",
+  "@worryTimeTimesUp": {
+    "description": "Snackbar when the daily worry window (a 15-minute timer) runs out."
+  },
+  "worryTimeHavePlan": "You've got a plan for this one.",
+  "@worryTimeHavePlan": {
+    "description": "Shown under a worry the person decided to make a plan for."
+  },
+  "worryTimeLetGo": "Let go — nothing to do here today.",
+  "@worryTimeLetGo": {
+    "description": "Shown under a worry the person decided to let go of."
+  },
+  "worryTimeCanYouAct": "Can you do something about it in the next week?",
+  "@worryTimeCanYouAct": {
+    "description": "Question under each worry during the worry window."
+  },
+  "worryTimeYesPlan": "Yes — plan it",
+  "@worryTimeYesPlan": {
+    "description": "Answer button: yes, I can do something about this worry, so I'll plan it."
+  },
+  "worryTimeNoLetGo": "No — let it go",
+  "@worryTimeNoLetGo": {
+    "description": "Answer button: no, I can't act on this worry, so I'll let it go."
+  },
+  "worryTimeTitle": "Worry window",
+  "@worryTimeTitle": {
+    "description": "App bar title of the worry time tool (CBT technique: postpone worrying to a set daily window)."
+  },
+  "worryTimeSectionTitle": "Worry later, on purpose",
+  "@worryTimeSectionTitle": {
+    "description": "Section heading at the top of the worry window screen."
+  },
+  "worryTimeSectionBody": "You can't stop a worry arriving, but you can decide when to give it attention. Park it here as it comes. Then, once a day, open a fifteen-minute window and go through the list — and only then.",
+  "@worryTimeSectionBody": {
+    "description": "Explanation of the worry window technique."
+  },
+  "worryTimeInputLabel": "What's on your mind right now?",
+  "@worryTimeInputLabel": {
+    "description": "Text field label for typing a worry to park."
+  },
+  "worryTimeParkTooltip": "Park it",
+  "@worryTimeParkTooltip": {
+    "description": "Tooltip of the button that parks (saves for later) the typed worry."
+  },
+  "worryTimeNothingParked": "Nothing parked",
+  "@worryTimeNothingParked": {
+    "description": "Shown when no worries are waiting for the worry window."
+  },
+  "worryTimeParkedCount": "{count, plural, other{{count} parked for worry time}}",
+  "@worryTimeParkedCount": {
+    "description": "How many worries are waiting for the worry window, e.g. \"3 parked for worry time\".",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "worryTimeBestTime": "Best kept to the same time each day — not the hour before bed.",
+  "@worryTimeBestTime": {
+    "description": "Tip under the parked-worries count about when to hold the worry window."
+  },
+  "worryTimeOpenWindow": "Open window",
+  "@worryTimeOpenWindow": {
+    "description": "Button that starts the 15-minute worry window timer. Short."
+  },
+  "worryTimeGoThrough": "Go through each worry once. Decide, don't dwell.",
+  "@worryTimeGoThrough": {
+    "description": "Instruction next to the timer while the worry window is open."
+  },
+  "worryTimeYourList": "Your list",
+  "@worryTimeYourList": {
+    "description": "Section heading above the list of parked worries."
+  },
+  "worryTimeClearDecided": "Clear decided",
+  "@worryTimeClearDecided": {
+    "description": "Small button that removes the worries already decided on (planned or let go)."
+  },
+  "worryTimeEmpty": "Your parked worries appear here. Most people find half of them have lost their sting by the time the window opens.",
+  "@worryTimeEmpty": {
+    "description": "Empty state of the worry list."
+  },
+  "problemSolvingWhenToday": "Today",
+  "@problemSolvingWhenToday": {
+    "description": "Chip in the problem-solving tool: when to take the first step."
+  },
+  "problemSolvingWhenTomorrow": "Tomorrow",
+  "@problemSolvingWhenTomorrow": {
+    "description": "Chip in the problem-solving tool: when to take the first step."
+  },
+  "problemSolvingWhenThisWeek": "This week",
+  "@problemSolvingWhenThisWeek": {
+    "description": "Chip in the problem-solving tool: when to take the first step."
+  },
+  "problemSolvingWhenNextWeek": "Next week",
+  "@problemSolvingWhenNextWeek": {
+    "description": "Chip in the problem-solving tool: when to take the first step."
+  },
+  "problemSolvingSummary": "Problem: {problem}\nOptions considered: {options}\nChosen: {chosen}\nFirst step: {firstStep} — {when}",
+  "@problemSolvingSummary": {
+    "description": "Summary of a problem-solving plan, saved to the journal. Keep the line breaks. {options} is a list separated by semicolons; {when} is e.g. \"Tomorrow\".",
+    "placeholders": {
+      "problem": {
+        "type": "String",
+        "example": "I'm £300 short for rent on the 1st"
+      },
+      "options": {
+        "type": "String",
+        "example": "Ask for an extension; Sell the old bike"
+      },
+      "chosen": {
+        "type": "String",
+        "example": "Ask for an extension"
+      },
+      "firstStep": {
+        "type": "String",
+        "example": "Email the landlord"
+      },
+      "when": {
+        "type": "String",
+        "example": "Tomorrow"
+      }
+    }
+  },
+  "problemSolvingPlanTitle": "Problem-solving plan",
+  "@problemSolvingPlanTitle": {
+    "description": "Title of the journal entry saved from the problem-solving tool."
+  },
+  "problemSolvingTitle": "Problem solving",
+  "@problemSolvingTitle": {
+    "description": "App bar title of the structured problem-solving tool (CBT)."
+  },
+  "problemSolvingStep1Title": "What exactly is the problem?",
+  "@problemSolvingStep1Title": {
+    "description": "Step 1 question of the problem-solving tool."
+  },
+  "problemSolvingStep1Hint": "One problem, in one sentence, specific enough to act on. \"Money\" is a worry; \"I'm £300 short for rent on the 1st\" is a problem.",
+  "@problemSolvingStep1Hint": {
+    "description": "Hint under step 1 of problem solving. Adapt the money example (currency, rent) so it feels natural in the language."
+  },
+  "problemSolvingStep1Field": "The problem, precisely",
+  "@problemSolvingStep1Field": {
+    "description": "Text field label in step 1 of problem solving."
+  },
+  "problemSolvingStep2Title": "List every option",
+  "@problemSolvingStep2Title": {
+    "description": "Step 2 heading of problem solving: brainstorm possible solutions."
+  },
+  "problemSolvingStep2Hint": "Don't judge them yet — bad ideas loosen up good ones. Aim for at least three, including one you'd never do.",
+  "@problemSolvingStep2Hint": {
+    "description": "Hint under step 2 of problem solving."
+  },
+  "problemSolvingOptionField": "An option",
+  "@problemSolvingOptionField": {
+    "description": "Text field label for adding one possible solution."
+  },
+  "problemSolvingStep3Title": "Pick one to try",
+  "@problemSolvingStep3Title": {
+    "description": "Step 3 heading of problem solving."
+  },
+  "problemSolvingStep3Hint": "Not the perfect one — the one that's good enough and that you'd actually do. You can come back to the others.",
+  "@problemSolvingStep3Hint": {
+    "description": "Hint under step 3 of problem solving."
+  },
+  "problemSolvingStep4Title": "What's the first step?",
+  "@problemSolvingStep4Title": {
+    "description": "Step 4 question of problem solving."
+  },
+  "problemSolvingStep4Hint": "Something that takes under twenty minutes and needs no one's permission. Then decide when.",
+  "@problemSolvingStep4Hint": {
+    "description": "Hint under step 4 of problem solving."
+  },
+  "problemSolvingTrying": "Trying: {option}",
+  "@problemSolvingTrying": {
+    "description": "Note in step 4 of problem solving showing the option the person chose.",
+    "placeholders": {
+      "option": {
+        "type": "String",
+        "example": "Ask for an extension"
+      }
+    }
+  },
+  "problemSolvingFirstStepField": "First step",
+  "@problemSolvingFirstStepField": {
+    "description": "Text field label in step 4 of problem solving."
+  },
+  "activityPlannerTooMany": "Three is plenty for one day. Swap one out if you'd rather.",
+  "@activityPlannerTooMany": {
+    "description": "Snackbar when the person tries to pick a fourth activity for today in the activity planner."
+  },
+  "activityPlannerAllDone": "That's today's plan done. Notice how you feel now compared with before.",
+  "@activityPlannerAllDone": {
+    "description": "Snackbar when every activity picked for today is ticked off."
+  },
+  "activityPlannerTitle": "One small thing",
+  "@activityPlannerTitle": {
+    "description": "App bar title of the activity planner (behavioural activation: plan small, doable activities when mood is low)."
+  },
+  "activityPlannerSectionTitle": "Do first, feel later",
+  "@activityPlannerSectionTitle": {
+    "description": "Section heading at the top of the activity planner."
+  },
+  "activityPlannerSectionBody": "When mood is low, motivation doesn't come before action — it comes after. Pick up to three small things for today. Small enough that you'd do them on a bad day.",
+  "@activityPlannerSectionBody": {
+    "description": "Explanation at the top of the activity planner."
+  },
+  "activityPlannerTodayProgress": "{total, plural, other{Today · {done} of {total} done}}",
+  "@activityPlannerTodayProgress": {
+    "description": "Heading of today's picked activities with progress, e.g. \"Today · 1 of 3 done\".",
+    "placeholders": {
+      "done": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "activityPlannerIdeas": "Ideas",
+  "@activityPlannerIdeas": {
+    "description": "Section heading above the list of suggested activities."
+  },
+  "activityPlannerAll": "All",
+  "@activityPlannerAll": {
+    "description": "Filter chip showing activity ideas of every category."
+  },
+  "activityPlannerOwnField": "Or something of your own",
+  "@activityPlannerOwnField": {
+    "description": "Text field label for adding a custom activity."
+  },
+  "controlCircleZoneControl": "Control",
+  "@controlCircleZoneControl": {
+    "description": "Chip in the \"What's in your hands\" tool: this stressor is something I can change. One word."
+  },
+  "controlCircleZoneControlHint": "I can change this",
+  "@controlCircleZoneControlHint": {
+    "description": "Explains the \"Control\" circle: things I can change."
+  },
+  "controlCircleZoneInfluence": "Influence",
+  "@controlCircleZoneInfluence": {
+    "description": "Chip in the \"What's in your hands\" tool: this stressor is something I can only influence. One word."
+  },
+  "controlCircleZoneInfluenceHint": "I can lean on it",
+  "@controlCircleZoneInfluenceHint": {
+    "description": "Explains the \"Influence\" circle: things I can push on or influence, but not decide."
+  },
+  "controlCircleZoneAccept": "Accept",
+  "@controlCircleZoneAccept": {
+    "description": "Chip in the \"What's in your hands\" tool: this stressor is something to accept. One word."
+  },
+  "controlCircleZoneAcceptHint": "Not mine to move",
+  "@controlCircleZoneAcceptHint": {
+    "description": "Explains the \"Accept\" circle: things outside my control."
+  },
+  "controlCircleControlAdvice": "These are yours to move. Pick one — the smallest — and take the first step this week.",
+  "@controlCircleControlAdvice": {
+    "description": "Advice under the stressors sorted into the \"Control\" circle."
+  },
+  "controlCircleControlAction": "Work one through",
+  "@controlCircleControlAction": {
+    "description": "Button under the \"Control\" circle summary: opens the problem-solving tool for one of these stressors."
+  },
+  "controlCircleInfluenceAdvice": "You can't decide these, but you can ask, say, or nudge. What is the one conversation each of these needs?",
+  "@controlCircleInfluenceAdvice": {
+    "description": "Advice under the stressors sorted into the \"Influence\" circle."
+  },
+  "controlCircleAcceptAdvice": "Not yours to carry, and carrying them anyway is where a lot of stress lives. Practise setting them down — it's a skill, not a mood.",
+  "@controlCircleAcceptAdvice": {
+    "description": "Advice under the stressors sorted into the \"Accept\" circle."
+  },
+  "controlCircleAcceptAction": "Breathe it out",
+  "@controlCircleAcceptAction": {
+    "description": "Button under the \"Accept\" circle summary: opens a slow-exhale breathing exercise."
+  },
+  "controlCircleZoneCount": "{zone} · {count}",
+  "@controlCircleZoneCount": {
+    "description": "Heading of a circle's summary: the circle's name and how many stressors are in it, e.g. \"Control · 2\".",
+    "placeholders": {
+      "zone": {
+        "type": "String",
+        "example": "Control"
+      },
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "controlCircleTitle": "What's in your hands",
+  "@controlCircleTitle": {
+    "description": "App bar title of the control-circle tool (sort stressors into what you can control, influence, or must accept)."
+  },
+  "controlCircleSectionTitle": "Three circles",
+  "@controlCircleSectionTitle": {
+    "description": "Section heading at the top of the control-circle tool."
+  },
+  "controlCircleSectionBody": "Write down everything that's weighing on you, then sort each one. Most stress comes from spending effort in the outer circles and neglecting the inner one.",
+  "@controlCircleSectionBody": {
+    "description": "Explanation at the top of the control-circle tool. Inner circle = control; outer = influence and accept."
+  },
+  "controlCircleInputLabel": "Something on your mind",
+  "@controlCircleInputLabel": {
+    "description": "Text field label for adding a stressor."
+  },
+  "controlCircleEffortTitle": "Where your effort goes",
+  "@controlCircleEffortTitle": {
+    "description": "Section heading above the summary of stressors per circle."
+  },
+  "controlCircleEmpty": "Start with whatever came to mind first. Vague is fine — \"work\", \"money\", \"mum\" — you can sharpen it later.",
+  "@controlCircleEmpty": {
+    "description": "Empty state of the control-circle tool. The quoted words are examples of vague stressors; adapt them to the language."
+  },
+  "toolkitBegin": "Begin",
+  "@toolkitBegin": {
+    "description": "Button that starts a timed exercise (e.g. muscle relaxation)."
+  },
+  "muscleRelaxTitle": "Tense and release",
+  "@muscleRelaxTitle": {
+    "description": "App bar title of the progressive muscle relaxation exercise."
+  },
+  "muscleRelaxIntroTitle": "Eight groups, once each",
+  "@muscleRelaxIntroTitle": {
+    "description": "Section heading before starting progressive muscle relaxation: eight muscle groups, each tensed once."
+  },
+  "muscleRelaxIntroBody": "Sit or lie somewhere you won't be disturbed for eight minutes. For each group: tense hard for five seconds — not to pain — then let go completely for ten, and notice the difference. That noticing is the exercise.",
+  "@muscleRelaxIntroBody": {
+    "description": "Instructions before starting progressive muscle relaxation."
+  },
+  "muscleRelaxDoneTitle": "Let it all stay loose",
+  "@muscleRelaxDoneTitle": {
+    "description": "Section heading after finishing progressive muscle relaxation."
+  },
+  "muscleRelaxDoneBody": "Sit for a moment before you get up. Where was the most tension hiding? That's the place to check in on during the day.",
+  "@muscleRelaxDoneBody": {
+    "description": "Text after finishing progressive muscle relaxation."
+  },
+  "muscleRelaxReleaseHint": "Let go all at once. Feel the difference.",
+  "@muscleRelaxReleaseHint": {
+    "description": "Instruction during the release phase of a muscle group."
+  },
+  "muscleRelaxTense": "Tense",
+  "@muscleRelaxTense": {
+    "description": "Big label in the circle while the person tenses a muscle group (imperative). Short."
+  },
+  "muscleRelaxRelease": "Release",
+  "@muscleRelaxRelease": {
+    "description": "Big label in the circle while the person relaxes a muscle group (imperative). Short."
+  },
+  "sighPhaseIn": "Breathe in",
+  "@sighPhaseIn": {
+    "description": "Label in the circle during the physiological sigh: first inhale. Short."
+  },
+  "sighPhaseInHint": "Through the nose, most of the way.",
+  "@sighPhaseInHint": {
+    "description": "Instruction during the first inhale of the physiological sigh."
+  },
+  "sighPhaseSip": "One more sip",
+  "@sighPhaseSip": {
+    "description": "Label in the circle during the physiological sigh: a second, short inhale on top of the first (\"sip\" of air). Short."
+  },
+  "sighPhaseSipHint": "A short top-up, right to the top.",
+  "@sighPhaseSipHint": {
+    "description": "Instruction during the second short inhale of the physiological sigh."
+  },
+  "sighPhaseOut": "Long breath out",
+  "@sighPhaseOut": {
+    "description": "Label in the circle during the physiological sigh: the long exhale. Short."
+  },
+  "sighPhaseOutHint": "Slowly, through the mouth, until you're empty.",
+  "@sighPhaseOutHint": {
+    "description": "Instruction during the long exhale of the physiological sigh."
+  },
+  "sighTitle": "Physiological sigh",
+  "@sighTitle": {
+    "description": "App bar title of the physiological sigh breathing exercise (two inhales, one long exhale)."
+  },
+  "sighAnotherRound": "Another round",
+  "@sighAnotherRound": {
+    "description": "Button after finishing the physiological sigh: do it again."
+  },
+  "sighStart": "Start",
+  "@sighStart": {
+    "description": "Button that starts the physiological sigh exercise."
+  },
+  "sighDoneTitle": "That's the round",
+  "@sighDoneTitle": {
+    "description": "Section heading when the physiological sigh exercise is finished."
+  },
+  "sighRoundOf": "Round {round} of {total}",
+  "@sighRoundOf": {
+    "description": "Section heading while the physiological sigh runs, e.g. \"Round 2 of 5\".",
+    "placeholders": {
+      "round": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "sighIntroTitle": "Two in, one long out",
+  "@sighIntroTitle": {
+    "description": "Section heading before the physiological sigh starts: two inhales, one long exhale."
+  },
+  "sighDoneBody": "Notice your shoulders and your jaw. Most people feel the drop within a round or two. Use it any time — in a meeting, in a queue, before a call.",
+  "@sighDoneBody": {
+    "description": "Text after the physiological sigh is finished."
+  },
+  "sighIntroBody": "Breathe in through your nose, then take one more short sip on top. Let it all out slowly through your mouth. That's one. Follow the circle.",
+  "@sighIntroBody": {
+    "description": "Instructions before the physiological sigh starts."
+  },
+  "sighDone": "Done",
+  "@sighDone": {
+    "description": "Label in the circle when the physiological sigh is finished. Short."
+  },
+  "sighReady": "Ready",
+  "@sighReady": {
+    "description": "Label in the circle before the physiological sigh starts. Short."
+  },
+  "rechargeTitle": "Recharge list",
+  "@rechargeTitle": {
+    "description": "App bar title of the recharge tool: list what drains and what refills your energy."
+  },
+  "rechargeSectionTitle": "Know your tank",
+  "@rechargeSectionTitle": {
+    "description": "Section heading at the top of the recharge list (your energy is like a fuel tank)."
+  },
+  "rechargeSectionBody": "Stress is a budget: things that take from it and things that pay in. Most people can name the drains instantly and go quiet on the refills. Write both. Then choose one refill for today — and treat it as an appointment.",
+  "@rechargeSectionBody": {
+    "description": "Explanation at the top of the recharge list."
+  },
+  "rechargeToday": "Today: {pick}",
+  "@rechargeToday": {
+    "description": "Highlighted note showing the refill (energising activity) chosen for today.",
+    "placeholders": {
+      "pick": {
+        "type": "String",
+        "example": "A walk at lunch"
+      }
+    }
+  },
+  "rechargeDrainsTitle": "What drains me",
+  "@rechargeDrainsTitle": {
+    "description": "Section heading: things that use up my energy."
+  },
+  "rechargeAddDrain": "Add a drain",
+  "@rechargeAddDrain": {
+    "description": "Text field label for adding something that drains energy."
+  },
+  "rechargeRefillsTitle": "What refills me",
+  "@rechargeRefillsTitle": {
+    "description": "Section heading: things that restore my energy."
+  },
+  "rechargeRefillsHint": "Tap one to make it today's.",
+  "@rechargeRefillsHint": {
+    "description": "Subtitle under \"What refills me\": tap a refill to choose it for today."
+  },
+  "rechargeAddRefill": "Add a refill",
+  "@rechargeAddRefill": {
+    "description": "Text field label for adding something that restores energy."
+  },
+  "rechargeBorrow": "Stuck for refills? Borrow one:",
+  "@rechargeBorrow": {
+    "description": "Heading above suggested refills the person can add with one tap."
+  },
+  "stressBandLow": "Low",
+  "@stressBandLow": {
+    "description": "Result band of the weekly stress check-in: low stress."
+  },
+  "stressBandLowAdvice": "You're carrying this week fine. Keep whatever recovery you've got in place — it's working.",
+  "@stressBandLowAdvice": {
+    "description": "Advice shown with a low stress check-in score."
+  },
+  "stressBandModerate": "Moderate",
+  "@stressBandModerate": {
+    "description": "Result band of the weekly stress check-in: moderate stress."
+  },
+  "stressBandModerateAdvice": "Noticeable, and worth ten deliberate minutes a day: a sigh round, a walk, a proper break. Sort one thing that's in your hands.",
+  "@stressBandModerateAdvice": {
+    "description": "Advice shown with a moderate stress check-in score. \"A sigh round\" = one round of the physiological sigh breathing exercise."
+  },
+  "stressBandHigh": "High",
+  "@stressBandHigh": {
+    "description": "Result band of the weekly stress check-in: high stress."
+  },
+  "stressBandHighAdvice": "A lot right now. Bring the body down first — sigh, tense and release — then look at the load. If it's been like this for weeks, talk to someone; that's what the therapist sessions are for.",
+  "@stressBandHighAdvice": {
+    "description": "Advice shown with a high stress check-in score. \"Sigh\" and \"tense and release\" are names of two exercises in the app."
+  },
+  "stressCheckinQuestion": "{number}. {question}",
+  "@stressCheckinQuestion": {
+    "description": "A numbered question in the stress check-in, e.g. \"1. How often have you felt…\".",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      },
+      "question": {
+        "type": "String",
+        "example": "How often have you felt that things were piling up faster than you could deal with them?"
+      }
+    }
+  },
+  "stressCheckinHistoryTitle": "Your last check-ins",
+  "@stressCheckinHistoryTitle": {
+    "description": "Heading above a small bar chart of recent stress check-in scores."
+  },
+  "stressCheckinHistoryRange": "{from} → {to} · 0 is calm, 20 is a lot",
+  "@stressCheckinHistoryRange": {
+    "description": "Caption under the stress check-in chart: date range, then how to read the 0–20 score.",
+    "placeholders": {
+      "from": {
+        "type": "String",
+        "example": "2026-10-05"
+      },
+      "to": {
+        "type": "String",
+        "example": "2026-11-02"
+      }
+    }
+  },
+  "stressCheckinTitle": "Stress check-in",
+  "@stressCheckinTitle": {
+    "description": "App bar title of the weekly stress check-in questionnaire."
+  },
+  "stressCheckinScore": "{score} out of 20 · {band}",
+  "@stressCheckinScore": {
+    "description": "Big result line of the stress check-in, e.g. \"10 out of 20 · Moderate\".",
+    "placeholders": {
+      "score": {
+        "type": "int",
+        "example": "10"
+      },
+      "band": {
+        "type": "String",
+        "example": "Moderate"
+      }
+    }
+  },
+  "stressCheckinDisclaimer": "A check-in is a snapshot of one week, not a diagnosis. If the high scores keep coming, that's the signal to talk to someone.",
+  "@stressCheckinDisclaimer": {
+    "description": "Small print under the stress check-in result."
+  },
+  "stressCheckinSeeScore": "See my score",
+  "@stressCheckinSeeScore": {
+    "description": "Button that finishes the stress check-in and shows the score."
+  },
+  "stressCheckinAnswered": "{total, plural, other{{answered} of {total} answered}}",
+  "@stressCheckinAnswered": {
+    "description": "Disabled button while the stress check-in isn't complete, e.g. \"3 of 5 answered\".",
+    "placeholders": {
+      "answered": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "stressCheckinSectionTitle": "The past week",
+  "@stressCheckinSectionTitle": {
+    "description": "Section heading at the top of the stress check-in: the questions are about the past week."
+  },
+  "stressCheckinSectionBody": "Go with your first answer. Once a week, same day, gives you a line you can actually read.",
+  "@stressCheckinSectionBody": {
+    "description": "Instruction at the top of the stress check-in."
   }
 }

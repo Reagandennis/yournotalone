@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import '../meditation/meditations_screen.dart';
 import 'cbt_content.dart';
 import '../toolkit/toolkit_ui.dart';
@@ -40,10 +41,11 @@ class _GroundingScreenState extends State<GroundingScreen> {
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
+    final l10n = context.l10n;
     if (_finished) {
       return ToolkitScaffold(
         accent: cbtAccent,
-        title: 'Grounding',
+        title: l10n.groundingTitle,
         children: [
           const SizedBox(height: 24),
           Center(
@@ -63,7 +65,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            'You\'re here',
+            l10n.groundingDoneTitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24,
@@ -73,9 +75,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            'Notice your breathing. Notice the weight of your body where '
-            'you\'re sitting. Whatever was pulling at you is still there, '
-            'but you\'re here, and here is manageable.',
+            l10n.groundingDoneBody,
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
@@ -85,10 +85,13 @@ class _GroundingScreenState extends State<GroundingScreen> {
               MaterialPageRoute(builder: (_) => const MeditationsScreen()),
             ),
             icon: const Icon(Icons.air_rounded),
-            label: const Text('Breathe for a few minutes'),
+            label: Text(l10n.groundingBreatheButton),
           ),
           const SizedBox(height: 8),
-          TextButton(onPressed: _restart, child: const Text('Go again')),
+          TextButton(
+            onPressed: _restart,
+            child: Text(l10n.toolkitGoAgain),
+          ),
         ],
       );
     }
@@ -96,16 +99,18 @@ class _GroundingScreenState extends State<GroundingScreen> {
     final remaining = step.count - _found;
     return ToolkitScaffold(
       accent: cbtAccent,
-      title: 'Grounding',
+      title: l10n.groundingTitle,
       bottom: ElevatedButton(
         onPressed: _tap,
-        child: Text('Found one${remaining == 1 ? ' — last' : ''}'),
+        child: Text(
+          remaining == 1 ? l10n.groundingFoundLast : l10n.groundingFoundOne,
+        ),
       ),
       children: [
         ToolkitStepHeader(
           step: _index + 1,
           of: groundingSteps.length,
-          title: '${step.count} things you can ${step.sense}',
+          title: l10n.groundingStepTitle(step.count, step.sense),
           hint: step.prompt,
         ),
         const SizedBox(height: 12),
@@ -137,7 +142,7 @@ class _GroundingScreenState extends State<GroundingScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    remaining == 1 ? 'to go' : 'to go',
+                    l10n.groundingToGo(remaining),
                     style: TextStyle(
                       fontSize: 13,
                       color: c.textMuted,

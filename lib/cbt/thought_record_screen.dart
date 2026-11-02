@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../journal/journal_repository.dart';
+import '../l10n/l10n.dart';
 import 'cbt_content.dart';
 import '../toolkit/toolkit_ui.dart';
 
@@ -15,6 +16,20 @@ const _feelings = [
   'Lonely',
   'Overwhelmed',
 ];
+
+/// How a feeling in [_feelings] is shown, in the app's language.
+String _feelingLabel(AppLocalizations l10n, String feeling) =>
+    switch (feeling) {
+      'Anxious' => l10n.cbtFeelingAnxious,
+      'Sad' => l10n.cbtFeelingSad,
+      'Angry' => l10n.cbtFeelingAngry,
+      'Ashamed' => l10n.cbtFeelingAshamed,
+      'Guilty' => l10n.cbtFeelingGuilty,
+      'Hopeless' => l10n.cbtFeelingHopeless,
+      'Lonely' => l10n.cbtFeelingLonely,
+      'Overwhelmed' => l10n.cbtFeelingOverwhelmed,
+      _ => feeling,
+    };
 
 /// The classic seven-column thought record, one column at a time: catch
 /// the thought, check it against the evidence, and write a fairer one.
@@ -61,23 +76,33 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
   };
 
   String get _summary {
-    final feelings = _feelingSet.join(', ');
-    final traps = _traps.isEmpty ? 'none spotted' : _traps.join(', ');
-    return 'Situation: ${_situation.text.trim()}\n'
-        'Automatic thought: ${_thought.text.trim()}\n'
-        'Feeling: $feelings — ${_before.round()}/100 before\n'
-        'Thinking traps: $traps\n'
-        'Evidence for: ${_forEvidence.text.trim().isEmpty ? '—' : _forEvidence.text.trim()}\n'
-        'Evidence against: ${_against.text.trim().isEmpty ? '—' : _against.text.trim()}\n'
-        'Balanced thought: ${_balanced.text.trim()}\n'
-        'Feeling now: ${_after.round()}/100';
+    final l10n = context.l10n;
+    final feelings = [
+      for (final f in _feelingSet) _feelingLabel(l10n, f),
+    ].join(', ');
+    final traps = _traps.isEmpty
+        ? l10n.thoughtRecordNoneSpotted
+        : _traps.join(', ');
+    String orDash(TextEditingController c) =>
+        c.text.trim().isEmpty ? '—' : c.text.trim();
+    return l10n.thoughtRecordSummary(
+      _situation.text.trim(),
+      _thought.text.trim(),
+      feelings,
+      _before.round(),
+      traps,
+      orDash(_forEvidence),
+      orDash(_against),
+      _balanced.text.trim(),
+      _after.round(),
+    );
   }
 
   Future<void> _save() async {
     setState(() => _saving = true);
     final saved = await toolkitSaveToJournal(
       context,
-      title: 'Thought record',
+      title: context.l10n.thoughtRecordTitle,
       content: _summary,
       repository: widget.journal,
     );
@@ -118,7 +143,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
           onChanged: onChanged,
         ),
         Text(
-          '${value.round()} out of 100',
+          context.l10n.thoughtRecordOutOf100(value.round()),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -131,38 +156,35 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
 
   List<Widget> _body() {
     final c = context.brand;
+    final l10n = context.l10n;
     switch (_step) {
       case 1:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 1,
             of: _steps,
-            title: 'What was the situation?',
-            hint:
-                'Just the facts, as a camera would have seen them. Where '
-                'were you, who was there, what happened?',
+            title: l10n.thoughtRecordStep1Title,
+            hint: l10n.thoughtRecordStep1Hint,
           ),
-          _field(_situation, 'e.g. Sent a message at 2pm, no reply by 9pm'),
+          _field(_situation, l10n.thoughtRecordStep1Field),
         ];
       case 2:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 2,
             of: _steps,
-            title: 'What went through your mind?',
-            hint:
-                'The first, quickest thought — the one that stung. Write '
-                'it the way it sounded in your head.',
+            title: l10n.thoughtRecordStep2Title,
+            hint: l10n.thoughtRecordStep2Hint,
           ),
-          _field(_thought, 'e.g. She\'s had enough of me'),
+          _field(_thought, l10n.thoughtRecordStep2Field),
         ];
       case 3:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 3,
             of: _steps,
-            title: 'How did it make you feel?',
-            hint: 'Pick what fits, then rate how strong it was.',
+            title: l10n.thoughtRecordStep3Title,
+            hint: l10n.thoughtRecordStep3Hint,
           ),
           Wrap(
             spacing: 8,
@@ -170,7 +192,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
             children: [
               for (final f in _feelings)
                 ToolkitPill(
-                  label: f,
+                  label: _feelingLabel(l10n, f),
                   selected: _feelingSet.contains(f),
                   onTap: () => setState(
                     () => _feelingSet.contains(f)
@@ -185,11 +207,11 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       case 4:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 4,
             of: _steps,
-            title: 'Any thinking traps in there?',
-            hint: 'Tap any that fit. Most hot thoughts have at least one.',
+            title: l10n.thoughtRecordStep4Title,
+            hint: l10n.thoughtRecordStep4Hint,
           ),
           for (final trap in thinkingTraps)
             Padding(
@@ -254,15 +276,15 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       case 5:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 5,
             of: _steps,
-            title: 'Check the evidence',
-            hint: 'Facts, not feelings. What would a fair judge accept?',
+            title: l10n.thoughtRecordStep5Title,
+            hint: l10n.thoughtRecordStep5Hint,
           ),
-          _field(_forEvidence, 'What supports the thought?', lines: 3),
+          _field(_forEvidence, l10n.thoughtRecordEvidenceFor, lines: 3),
           const SizedBox(height: 14),
-          _field(_against, 'What doesn\'t fit with it?', lines: 3),
+          _field(_against, l10n.thoughtRecordEvidenceAgainst, lines: 3),
           const SizedBox(height: 14),
           if (_traps.isNotEmpty)
             ToolkitNote(
@@ -270,7 +292,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Questions worth asking',
+                    l10n.thoughtRecordQuestionsWorthAsking,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -284,7 +306,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(
-                        '• ${trap.ask}',
+                        l10n.cbtBullet(trap.ask),
                         style: TextStyle(
                           fontSize: 12.5,
                           color: c.textMuted,
@@ -298,17 +320,15 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
         ];
       case 6:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 6,
             of: _steps,
-            title: 'Write a fairer thought',
-            hint:
-                'Not the cheerful opposite — something you could defend. '
-                'It often starts "Even though…" or "It\'s possible that…".',
+            title: l10n.thoughtRecordStep6Title,
+            hint: l10n.thoughtRecordStep6Hint,
           ),
           ToolkitNote(
             child: Text(
-              '“${_thought.text.trim()}”',
+              l10n.cbtQuoted(_thought.text.trim()),
               style: TextStyle(
                 fontSize: 13,
                 fontStyle: FontStyle.italic,
@@ -318,17 +338,15 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          _field(_balanced, 'A more balanced way to see it'),
+          _field(_balanced, l10n.thoughtRecordBalancedField),
         ];
       default:
         return [
-          const ToolkitStepHeader(
+          ToolkitStepHeader(
             step: 7,
             of: _steps,
-            title: 'How strong is the feeling now?',
-            hint:
-                'It rarely goes to zero. A few points down is the skill '
-                'working.',
+            title: l10n.thoughtRecordStep7Title,
+            hint: l10n.thoughtRecordStep7Hint,
           ),
           _slider(_after, (v) => setState(() => _after = v)),
           const SizedBox(height: 24),
@@ -349,21 +367,22 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
   @override
   Widget build(BuildContext context) {
     final last = _step == _steps;
+    final l10n = context.l10n;
     return ToolkitScaffold(
       accent: cbtAccent,
-      title: 'Thought record',
+      title: l10n.thoughtRecordTitle,
       bottom: Row(
         children: [
           if (_step > 1)
             TextButton(
               onPressed: () => setState(() => _step--),
-              child: const Text('Back'),
+              child: Text(l10n.commonBack),
             ),
           const Spacer(),
           if (last)
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Done'),
+              child: Text(l10n.commonDone),
             ),
           const SizedBox(width: 8),
           Expanded(
@@ -374,7 +393,7 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
                   : last
                   ? _save
                   : () => setState(() => _step++),
-              child: Text(last ? 'Save to journal' : 'Continue'),
+              child: Text(last ? l10n.cbtSaveToJournal : l10n.commonContinue),
             ),
           ),
         ],

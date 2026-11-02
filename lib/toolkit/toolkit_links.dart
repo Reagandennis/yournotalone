@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../billing/pricing_copy.dart';
 import '../home/home_ui.dart';
+import '../l10n/l10n.dart';
 import '../meditation/breathing_screen.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
@@ -32,14 +33,13 @@ bool allowPractice(
 
 bool _allowed(BuildContext context, bool premium, String item, String source) {
   if (premium && !isPremiumUser()) {
+    final l10n = context.l10n;
     showUpgradeSheet(
       context,
       item: item,
       source: source,
-      title: 'This session is part of Premium',
-      message:
-          'Free includes a taste of each practice. Premium unlocks '
-          'every session — and $introOffer.',
+      title: l10n.toolkitSessionPremiumTitle,
+      message: l10n.toolkitSessionPremiumMessage(introOffer),
     );
     return false;
   }

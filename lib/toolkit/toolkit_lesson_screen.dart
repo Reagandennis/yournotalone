@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../l10n/l10n.dart';
 import 'toolkit_art.dart';
 import 'toolkit_content.dart';
 import 'toolkit_ui.dart';
@@ -21,7 +22,7 @@ class ToolkitLessonScreen extends StatelessWidget {
     final c = context.brand;
     return ToolkitScaffold(
       accent: accent,
-      title: 'Learn',
+      title: context.l10n.toolkitLearnTitle,
       children: [
         Center(child: ToolkitArt(kind: lesson.art, size: 140)),
         const SizedBox(height: 18),
@@ -36,7 +37,7 @@ class ToolkitLessonScreen extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Text(
-          '${lesson.minutes} min read',
+          context.l10n.toolkitMinutesRead(lesson.minutes),
           style: TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
