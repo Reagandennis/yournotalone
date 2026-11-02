@@ -104,7 +104,7 @@ async function fetchJson(url: string): Promise<any> {
   return response.json();
 }
 
-const KEY_RE = /^media\/[A-Za-z0-9._-]+$/;
+const KEY_RE = /^(private\/)?media\/[A-Za-z0-9._-]+$/;
 
 function parseRef(raw: any): MediaRef | null {
   if (!raw || typeof raw !== 'object') return null;

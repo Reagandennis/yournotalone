@@ -12,26 +12,24 @@ export const minApp = '1.1.0';
 export const envNames = ['staging', 'production'] as const;
 export type EnvName = (typeof envNames)[number];
 
+/// Everything lives in the one bucket, `yournotalone`, served on
+/// database.techgetafrica.com. Staging is the same layout under `staging/`.
+/// Premium media sits under `private/`, which a WAF rule blocks on the
+/// custom domain, so it's only reachable through URLs the Worker signs.
 export type EnvConfig = {
   name: EnvName;
-  /// Catalogue, latest.json and free media. Served through the CDN.
-  publicBucket: string;
-  /// Premium media. Only reachable through URLs the Worker signs.
-  privateBucket: string;
+  bucket: string;
+  /// Put in front of every key: '' for production, 'staging/' for staging.
+  prefix: string;
 };
 
 export const envs: Record<EnvName, EnvConfig> = {
-  production: {
-    name: 'production',
-    publicBucket: 'yournotalone',
-    privateBucket: 'yournotalone-private',
-  },
-  staging: {
-    name: 'staging',
-    publicBucket: 'yournotalone-staging',
-    privateBucket: 'yournotalone-staging-private',
-  },
+  production: { name: 'production', bucket: 'yournotalone', prefix: '' },
+  staging: { name: 'staging', bucket: 'yournotalone', prefix: 'staging/' },
 };
+
+/// Where premium media goes, relative to the environment's prefix.
+export const privatePrefix = 'private/';
 
 export type Credentials = { accessKeyId: string; secretAccessKey: string };
 
@@ -47,8 +45,8 @@ export function credentialsFromEnv(env: Record<string, string | undefined> = pro
   if (missing.length) {
     throw new Error(
       `${missing.join(' and ')} ${missing.length > 1 ? 'are' : 'is'} not set. ` +
-        'Publishing needs an R2 API token with Object Read & Write on the four ' +
-        'buckets (see tools/content/README.md), or use --dry-run.',
+        'Publishing needs an R2 API token with Object Read & Write on the ' +
+        'yournotalone bucket (see tools/content/README.md), or use --dry-run.',
     );
   }
   return { accessKeyId: accessKeyId!, secretAccessKey: secretAccessKey! };

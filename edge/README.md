@@ -41,10 +41,11 @@ inherit vars into environments.
 | Name | Kind | Value |
 |---|---|---|
 | `SUPABASE_URL` | var | `https://zpcfavemnvfhqaxqhmri.supabase.co` |
-| `PUBLIC_BASE_URL` | var | prod `https://database.techgetafrica.com`; staging is a **placeholder** you need to replace |
+| `PUBLIC_BASE_URL` | var | prod `https://database.techgetafrica.com`, staging `https://database.techgetafrica.com/staging` |
 | `R2_ACCOUNT_ID` | var | `f7e65097ea4facdba994ee51d751705a` |
-| `PRIVATE_BUCKET` | var | prod `yournotalone-private`, staging `yournotalone-staging-private` |
-| `PRO_ENTITLEMENT_ID` | var | RevenueCat's **internal** entitlement id (`entl…`). Fill this in, see below |
+| `BUCKET` | var | `yournotalone` (the one bucket) |
+| `KEY_PREFIX` | var | prod `''`, staging `staging/`. Premium media is at `{KEY_PREFIX}private/media/…` |
+| `PRO_ENTITLEMENT_ID` | var | RevenueCat's **internal** entitlement id: `entl9d4c5b93da` |
 | `PRO_ENTITLEMENT_LOOKUP_KEY` | var | `Techgetafrica Pro`, the fallback used only when `PRO_ENTITLEMENT_ID` is empty |
 | `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | secret | R2 API token (S3 credentials) |
 | `REVENUECAT_SECRET_KEY` | secret | RevenueCat **v2** secret key |
@@ -75,17 +76,22 @@ If you reuse the key the Supabase functions already use, check that it has these
 
 ## Setup (run later, by hand)
 
-1. **Buckets** (Cloudflare dashboard → R2, or `wrangler r2 bucket create`):
-   - `yournotalone-private` and `yournotalone-staging-private`. Keep them private, with no
-     r2.dev URL and no custom domain.
-   - `yournotalone-staging` (public) if it doesn't exist yet. Give it a public URL and put that
-     URL in `[env.staging.vars] PUBLIC_BASE_URL`.
+1. **Block `private/` on the custom domain.** Everything is in the one bucket,
+   `yournotalone`, and the custom domain serves all of it. Premium audio lives under
+   `private/` (and `staging/private/`), so add a WAF custom rule (zone `techgetafrica.com` →
+   Security → WAF → Custom rules → Create), action **Block**:
+   ```
+   (http.host eq "database.techgetafrica.com" and lower(url_decode(http.request.uri.path)) contains "/private/")
+   ```
+   Also make sure the bucket's **r2.dev public URL is off** (R2 → yournotalone → Settings), or
+   premium files are reachable there. Signed links go to the S3 endpoint, which the rule
+   doesn't touch.
 2. **R2 API token for the Worker** (R2 → Manage API tokens → Create):
    - permission **Object Read only**;
-   - scoped to **`yournotalone-private` and `yournotalone-staging-private` only**.
+   - scoped to the **`yournotalone`** bucket only.
 
    Presigning a GET only needs read access. Give the publish CLI its own read-and-write token.
-   Copy the Access Key ID and Secret Access Key.
+   Copy the Access Key ID and Secret Access Key. (These are not the bucket's S3 URL.)
 3. **Log in:** `npx wrangler login`.
 4. **Secrets**, per environment:
    ```sh
@@ -97,7 +103,7 @@ If you reuse the key the Supabase functions already use, check that it has these
      npx wrangler secret put SENTRY_DSN            --env $env   # optional
    done
    ```
-5. **Set `PRO_ENTITLEMENT_ID`** in `wrangler.toml` (see above).
+5. **`PRO_ENTITLEMENT_ID`** is already set to `entl9d4c5b93da`.
 6. **Deploy staging:** `npx wrangler deploy --env staging`. That gives you
    `https://yournotalone-api-staging.<subdomain>.workers.dev`. Production is
    `npx wrangler deploy --env production` (`yournotalone-api.<subdomain>.workers.dev`).

@@ -48,7 +48,7 @@ test('media keys come from the content', async () => {
   );
   assert.equal(a.hash, b.hash);
   const rain = a.media.find((m) => m.label.startsWith('sound:Rainfall'))!;
-  assert.equal(rain.key, `media/${hex(enc('audio:assets/sounds/rainfall.m4a'))}.m4a`);
+  assert.equal(rain.key, `staging/media/${hex(enc('audio:assets/sounds/rainfall.m4a'))}.m4a`);
   assert.equal(rain.contentType, 'audio/mp4');
   assert.equal(rain.cacheControl, 'public, max-age=31536000, immutable');
 
@@ -58,24 +58,25 @@ test('media keys come from the content', async () => {
   assert.notEqual(c.hash, a.hash);
 });
 
-test('premium media goes to the private bucket, free to the public one', async () => {
+test('premium media goes under private/, free media and the catalogue are public', async () => {
   const p = await plan(opts(null));
   const snap = dec(p.snapshot.body);
   const rain = p.media.find((m) => m.label.startsWith('sound:Rainfall'))!;
   const storm = p.media.find((m) => m.label.startsWith('sound:Distant storm'))!;
-  assert.equal(rain.bucket, 'yournotalone-staging');
+  assert.ok(p.media.every((m) => m.bucket === 'yournotalone'));
+  assert.match(rain.key, /^staging\/media\/[0-9a-f]{64}\.m4a$/);
   assert.equal(snap.media['sound:Rainfall'].audio.access, 'public');
-  assert.equal(storm.bucket, 'yournotalone-staging-private');
+  assert.match(storm.key, /^staging\/private\/media\/[0-9a-f]{64}\.m4a$/);
   assert.equal(snap.media['sound:Distant storm'].audio.access, 'premium');
-  // The catalogue itself is always public.
-  assert.equal(p.snapshot.bucket, 'yournotalone-staging');
-  assert.equal(p.latest.bucket, 'yournotalone-staging');
+  // Catalogue keys are relative to the environment.
+  assert.equal(snap.media['sound:Distant storm'].audio.key, storm.key.slice('staging/'.length));
+  assert.match(p.snapshot.key, /^staging\/catalog\//);
+  assert.equal(p.latest.key, 'staging/catalog/latest.json');
+  assert.match(dec(p.latest.body).path, /^catalog\/v1-/);
 
   const prod = await plan({ ...opts(null), env: envs.production });
-  assert.deepEqual(
-    [...new Set(prod.media.map((m) => m.bucket))].sort(),
-    ['yournotalone', 'yournotalone-private'],
-  );
+  assert.ok(prod.media.every((m) => /^(private\/)?media\//.test(m.key)));
+  assert.equal(prod.latest.key, 'catalog/latest.json');
 });
 
 test('the media map has one entry per item with media, in the agreed shape', async () => {
@@ -87,7 +88,7 @@ test('the media map has one entry per item with media, in the agreed shape', asy
     for (const [field, ref] of Object.entries(entry)) {
       assert.ok(field === 'audio' || field === 'narration');
       assert.deepEqual(Object.keys(ref).sort(), ['access', 'bytes', 'key', 'sha256']);
-      assert.equal(ref.key, `media/${ref.sha256}.m4a`);
+      assert.equal(ref.key, `${ref.access === 'premium' ? 'private/' : ''}media/${ref.sha256}.m4a`);
       assert.equal(typeof ref.bytes, 'number');
     }
   }
@@ -107,12 +108,12 @@ test('version starts at 1 and counts up from the current latest', async () => {
   assert.equal((await plan(opts(empty))).previous, null);
 
   const store = new MemoryStore();
-  await store.put(staging.publicBucket, latestKey, enc(JSON.stringify({ version: 7, path: 'catalog/v7-0123456789abcdef.json', minApp: '1.1.0' })), { contentType: '', cacheControl: '' });
+  await store.put(staging.bucket, staging.prefix + latestKey, enc(JSON.stringify({ version: 7, path: 'catalog/v7-0123456789abcdef.json', minApp: '1.1.0' })), { contentType: '', cacheControl: '' });
   const p = await plan(opts(store));
   assert.equal(p.version, 8);
   assert.equal(p.previous, 7);
-  assert.match(p.snapshot.key, new RegExp(`^catalog/v8-${p.hash}\\.json$`));
-  assert.deepEqual(dec(p.latest.body), { version: 8, path: p.snapshot.key, minApp: '1.1.0' });
+  assert.match(p.snapshot.key, new RegExp(`^staging/catalog/v8-${p.hash}\\.json$`));
+  assert.deepEqual(dec(p.latest.body), { version: 8, path: `catalog/v8-${p.hash}.json`, minApp: '1.1.0' });
   assert.equal(dec(p.snapshot.body).version, 8);
 });
 
@@ -122,13 +123,13 @@ test('uploads media first, then the snapshot, and latest.json last', async () =>
   await execute(p, store);
   const puts = store.puts();
   assert.equal(puts.length, p.media.length + 2);
-  assert.ok(puts.slice(0, -2).every((c) => c.key.startsWith('media/')));
+  assert.ok(puts.slice(0, -2).every((c) => /^staging\/(private\/)?media\//.test(c.key)));
   assert.equal(puts.at(-2)!.key, p.snapshot.key);
-  assert.equal(puts.at(-1)!.key, 'catalog/latest.json');
-  const latest = store.objects.get(`yournotalone-staging/${latestKey}`)!;
+  assert.equal(puts.at(-1)!.key, 'staging/catalog/latest.json');
+  const latest = store.objects.get(`yournotalone/staging/${latestKey}`)!;
   assert.equal(latest.cacheControl, 'public, max-age=60');
   assert.equal(latest.contentType, 'application/json');
-  const snap = store.objects.get(`yournotalone-staging/${p.snapshot.key}`)!;
+  const snap = store.objects.get(`yournotalone/${p.snapshot.key}`)!;
   assert.equal(snap.cacheControl, 'public, max-age=31536000, immutable');
 });
 
@@ -167,7 +168,7 @@ test('uploads nothing when the catalogue hash is unchanged', async () => {
   assert.equal(next.unchanged, false);
   assert.equal(next.version, 2);
   // Media didn't change, so only the two catalogue files go up.
-  assert.deepEqual(uploads(next).map((o) => o.key), [next.snapshot.key, latestKey]);
+  assert.deepEqual(uploads(next).map((o) => o.key), [next.snapshot.key, staging.prefix + latestKey]);
 });
 
 test('drafts are not published, and neither is their media', async () => {

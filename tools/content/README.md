@@ -86,13 +86,17 @@ These are read only for a real publish. If one is missing, the command stops aft
 before it prepares media or makes a request.
 
 Create the token in the Cloudflare dashboard under **R2 → Manage API
-tokens**. It needs **Object Read & Write**, applied to these four buckets
-only:
+tokens**. It needs **Object Read & Write**, applied to the `yournotalone`
+bucket only.
 
-- `yournotalone`
-- `yournotalone-private`
-- `yournotalone-staging`
-- `yournotalone-staging-private`
+Everything goes in that one bucket:
+
+| Key | What |
+|---|---|
+| `catalog/latest.json`, `catalog/v{N}-{hash}.json` | the catalogue |
+| `media/{sha256}.m4a` | free audio, public on the CDN |
+| `private/media/{sha256}.m4a` | premium audio, blocked on the custom domain; the Worker signs links |
+| `staging/…` | the same layout for staging |
 
 It doesn't need admin or bucket-management permissions. Requests go to the S3
 endpoint `https://f7e65097ea4facdba994ee51d751705a.r2.cloudflarestorage.com`,

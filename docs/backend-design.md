@@ -208,11 +208,18 @@ be added later with the same media rendition model.
 
 ### Object keys
 
-- Public bucket `yournotalone`: `catalog/…`, `media/{sha256}.m4a` (free
-  audio), `art/{sha256}.{webp,avif}`, `bg/{sha256}.json` (Lottie, later).
-  Everything except `latest.json` is content-addressed and immutable.
-- Private bucket `yournotalone-private`: `media/{sha256}.m4a` (premium
-  audio) and `masters/…` (source WAV/AIFF, kept as a backup).
+One bucket, `yournotalone` (changed 2026-11-02: the user wants the bucket
+they already made, not four):
+
+- `catalog/…`, `media/{sha256}.m4a` (free audio), `art/{sha256}.{webp,avif}`,
+  `bg/{sha256}.json` (Lottie, later). Everything except `latest.json` is
+  content-addressed and immutable.
+- `private/media/{sha256}.m4a` (premium audio) and `private/masters/…`
+  (source WAV/AIFF, kept as a backup). A WAF custom rule blocks any path
+  containing `/private/` on `database.techgetafrica.com`, and the r2.dev URL
+  is off, so these are only reachable through presigned S3 URLs.
+- `staging/…`: the same layout for staging, served at
+  `database.techgetafrica.com/staging`.
 
 ## 5. Worker API
 
@@ -474,8 +481,7 @@ npm run content:publish -- --env staging|production [--dry-run]
 
 Rolling back means `git revert` and publishing again.
 
-Staging uses separate buckets, `yournotalone-staging` and
-`yournotalone-staging-private`, plus a staging Worker, so a test build can
+Staging uses the `staging/` prefix in the same bucket, plus a staging Worker, so a test build can
 point at staging.
 
 `suggest-tags` uses the Claude API (`claude-haiku-5-5`, well under $1 for

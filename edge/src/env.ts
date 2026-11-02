@@ -4,7 +4,10 @@ export interface Env {
   SUPABASE_URL: string;
   PUBLIC_BASE_URL: string;
   R2_ACCOUNT_ID: string;
-  PRIVATE_BUCKET: string;
+  /** The one R2 bucket; premium media is under `${KEY_PREFIX}private/`. */
+  BUCKET: string;
+  /** '' for production, 'staging/' for staging. Catalogue keys are relative to it. */
+  KEY_PREFIX: string;
   /** RevenueCat's internal entitlement id (entl…). Preferred over the lookup key. */
   PRO_ENTITLEMENT_ID?: string;
   /** Entitlement identifier as the app knows it ("Techgetafrica Pro"). */

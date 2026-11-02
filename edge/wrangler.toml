@@ -24,12 +24,13 @@ crons = ["0 3 * * *"]
 
 [vars]
 SUPABASE_URL = "https://zpcfavemnvfhqaxqhmri.supabase.co"
-PUBLIC_BASE_URL = "https://staging.example.invalid"
+PUBLIC_BASE_URL = "https://database.techgetafrica.com/staging"
 R2_ACCOUNT_ID = "f7e65097ea4facdba994ee51d751705a"
-PRIVATE_BUCKET = "yournotalone-staging-private"
+BUCKET = "yournotalone"
+KEY_PREFIX = "staging/"
 PRO_ENTITLEMENT_LOOKUP_KEY = "Techgetafrica Pro"
-# Set to RevenueCat's internal entitlement id (entl...) once known; see README.
-PRO_ENTITLEMENT_ID = ""
+# RevenueCat's REST API identifier for "Techgetafrica Pro".
+PRO_ENTITLEMENT_ID = "entl9d4c5b93da"
 
 # Per-user rate limit (design §5). Cloudflare's docs don't list this binding as
 # paid-only; if a free-plan deploy rejects it, delete this block — the code
@@ -49,11 +50,12 @@ crons = ["0 3 * * *"]
 
 [env.staging.vars]
 SUPABASE_URL = "https://zpcfavemnvfhqaxqhmri.supabase.co"
-PUBLIC_BASE_URL = "https://staging.example.invalid"
+PUBLIC_BASE_URL = "https://database.techgetafrica.com/staging"
 R2_ACCOUNT_ID = "f7e65097ea4facdba994ee51d751705a"
-PRIVATE_BUCKET = "yournotalone-staging-private"
+BUCKET = "yournotalone"
+KEY_PREFIX = "staging/"
 PRO_ENTITLEMENT_LOOKUP_KEY = "Techgetafrica Pro"
-PRO_ENTITLEMENT_ID = ""
+PRO_ENTITLEMENT_ID = "entl9d4c5b93da"
 
 [[env.staging.ratelimits]]
 name = "RATE_LIMITER"
@@ -72,9 +74,10 @@ crons = ["0 3 * * *"]
 SUPABASE_URL = "https://zpcfavemnvfhqaxqhmri.supabase.co"
 PUBLIC_BASE_URL = "https://database.techgetafrica.com"
 R2_ACCOUNT_ID = "f7e65097ea4facdba994ee51d751705a"
-PRIVATE_BUCKET = "yournotalone-private"
+BUCKET = "yournotalone"
+KEY_PREFIX = ""
 PRO_ENTITLEMENT_LOOKUP_KEY = "Techgetafrica Pro"
-PRO_ENTITLEMENT_ID = ""
+PRO_ENTITLEMENT_ID = "entl9d4c5b93da"
 
 [[env.production.ratelimits]]
 name = "RATE_LIMITER"

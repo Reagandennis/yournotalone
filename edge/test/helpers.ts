@@ -52,7 +52,7 @@ export async function token(o: TokenOptions = {}): Promise<string> {
 const hex = (c: string) => c.repeat(64);
 export const REFS = {
   rain: { key: `media/${hex('a')}.m4a`, sha256: hex('a'), bytes: 812345, access: 'public' },
-  bodyScan: { key: `media/${hex('b')}.m4a`, sha256: hex('b'), bytes: 9_000_000, access: 'premium' },
+  bodyScan: { key: `private/media/${hex('b')}.m4a`, sha256: hex('b'), bytes: 9_000_000, access: 'premium' },
   bodyScanBed: { key: `media/${hex('c')}.m4a`, sha256: hex('c'), bytes: 400_000, access: 'public' },
 };
 

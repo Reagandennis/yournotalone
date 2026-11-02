@@ -3,7 +3,7 @@
 // docs/backend-design.md §4 "Object keys" and "Published catalogue
 // snapshot", and §8.
 import type { Course, Item } from './content.ts';
-import type { EnvConfig } from './config.ts';
+import { type EnvConfig, privatePrefix } from './config.ts';
 import { type MediaMap, type MediaRef, snapshot } from './snapshot.ts';
 import type { Store } from './store.ts';
 import { type Prepared, type Role, sha256 } from './transcode.ts';
@@ -70,13 +70,15 @@ const json = (x: unknown) => new TextEncoder().encode(JSON.stringify(x));
 
 /// Reads the target's latest.json: `{version, path}`, plus the snapshot hash
 /// taken from the path.
-export async function readLatest(store: Store, bucket: string) {
-  const bytes = await store.get(bucket, latestKey);
+export async function readLatest(store: Store, env: EnvConfig) {
+  const bucket = env.bucket;
+  const key = env.prefix + latestKey;
+  const bytes = await store.get(bucket, key);
   if (!bytes) return null;
   const j = JSON.parse(new TextDecoder().decode(bytes));
   const m = typeof j.path === 'string' ? /^catalog\/v(\d+)-([0-9a-f]+)\.json$/.exec(j.path) : null;
   if (!Number.isInteger(j.version) || j.version < 1 || !m) {
-    throw new Error(`${bucket}/${latestKey} doesn't look right: ${JSON.stringify(j)}`);
+    throw new Error(`${bucket}/${key} doesn't look right: ${JSON.stringify(j)}`);
   }
   return { version: j.version as number, path: j.path as string, hash: m[2] };
 }
@@ -104,18 +106,20 @@ export async function plan(o: PlanOptions): Promise<Plan> {
     const { bytes, note } = await o.prepare(src);
     const hex = sha256(bytes);
     const access = src.premium ? 'premium' : 'public';
-    const ref: MediaRef = { key: `media/${hex}.m4a`, sha256: hex, bytes: bytes.length, access };
+    // Keys in the catalogue are relative to the environment's base URL.
+    const key = `${src.premium ? privatePrefix : ''}media/${hex}.m4a`;
+    const ref: MediaRef = { key, sha256: hex, bytes: bytes.length, access };
     (media[src.itemId] ??= {})[src.field] = ref;
 
-    const bucket = src.premium ? env.privateBucket : env.publicBucket;
-    const id = `${bucket}/${ref.key}`;
+    const bucket = env.bucket;
+    const id = `${bucket}/${env.prefix}${ref.key}`;
     const label = `${src.itemId} ${src.field} (${note})`;
     const seen = objects.get(id);
     if (seen) seen.label += `; ${label}`;
     else {
       objects.set(id, {
         bucket,
-        key: ref.key,
+        key: env.prefix + ref.key,
         body: bytes,
         contentType: 'audio/mp4',
         cacheControl: immutable,
@@ -125,7 +129,7 @@ export async function plan(o: PlanOptions): Promise<Plan> {
   }
 
   // 2. Version: one past the target's current latest.
-  const latest = o.store ? await readLatest(o.store, env.publicBucket) : undefined;
+  const latest = o.store ? await readLatest(o.store, env) : undefined;
   const previous = latest === undefined ? undefined : (latest?.version ?? null);
   const version = (latest?.version ?? 0) + 1;
 
@@ -147,16 +151,16 @@ export async function plan(o: PlanOptions): Promise<Plan> {
     unchanged,
     media: [...objects.values()],
     snapshot: {
-      bucket: env.publicBucket,
-      key: snapKey,
+      bucket: env.bucket,
+      key: env.prefix + snapKey,
       body: json(snap),
       contentType: 'application/json',
       cacheControl: immutable,
       label: `catalogue v${version}`,
     },
     latest: {
-      bucket: env.publicBucket,
-      key: latestKey,
+      bucket: env.bucket,
+      key: env.prefix + latestKey,
       body: json({ version, path: snapKey, minApp: o.minApp }),
       contentType: 'application/json',
       cacheControl: latestCacheControl,

@@ -95,7 +95,7 @@ describe('POST /v1/media/sign', () => {
     const out: any = await res.json();
     const narration = out.urls[BODY_SCAN].narration;
     expect(narration.url).toMatch(
-      /^https:\/\/f7e65097ea4facdba994ee51d751705a\.r2\.cloudflarestorage\.com\/yournotalone-test-private\/media\/b{64}\.m4a\?/,
+      /^https:\/\/f7e65097ea4facdba994ee51d751705a\.r2\.cloudflarestorage\.com\/yournotalone\/staging\/private\/media\/b{64}\.m4a\?/,
     );
     expect(narration.url).toContain('X-Amz-Signature=');
     expect(amzExpires(narration.url)).toBe(6 * 3600);

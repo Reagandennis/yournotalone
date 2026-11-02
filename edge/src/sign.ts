@@ -49,7 +49,7 @@ async function presign(env: Env, ref: MediaRef, seconds: number, now: number): P
     region: 'auto',
   });
   const url = new URL(
-    `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${env.PRIVATE_BUCKET}/${ref.key}`,
+    `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com/${env.BUCKET}/${env.KEY_PREFIX ?? ''}${ref.key}`,
   );
   url.searchParams.set('X-Amz-Expires', String(seconds));
   const signed = await client.sign(url.toString(), {
