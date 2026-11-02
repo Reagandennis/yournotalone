@@ -12,6 +12,7 @@ import '../courses/course_screen.dart';
 import '../discover/content_index.dart';
 import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
+import '../discover/recommendations.dart';
 import '../discover/saved_store.dart';
 import '../discover/usage_store.dart';
 import '../journal/journal_screen.dart';
@@ -133,6 +134,11 @@ class _HomeTabState extends State<HomeTab> {
   /// How much each kind of practice has helped, from the post-session
   /// answers; suggestions lean towards what works.
   Map<ContentKind, double> _kindBoost = const {};
+
+  /// The Worker's suggestions for the time-of-day strip. Null until they
+  /// arrive, or when the app is built without one: then Home orders them
+  /// itself.
+  List<Recommendation>? _suggested;
   List<_QuickItem> _quick = _quickItems;
 
   @override
@@ -176,6 +182,7 @@ class _HomeTabState extends State<HomeTab> {
           // No session to show; the plain banner stays.
         });
     unawaited(_orderQuickAccess());
+    unawaited(_loadSuggestions());
     FeelingStore.instance.recent().then((records) {
       if (mounted) {
         setState(
@@ -183,6 +190,17 @@ class _HomeTabState extends State<HomeTab> {
         );
       }
     });
+  }
+
+  Future<void> _loadSuggestions() async {
+    final client = RecommendationsClient.instance;
+    if (!client.enabled) return;
+    try {
+      final picks = await client.fetch(await RecommendationRequest.current());
+      if (mounted && picks != null) setState(() => _suggested = picks);
+    } catch (e) {
+      debugPrint('Suggestions stay on-device: $e');
+    }
   }
 
   void _loadRhythm() {
@@ -269,6 +287,11 @@ class _HomeTabState extends State<HomeTab> {
     // struggling. Offer the door straight away — before the save, which
     // may be slow or fail offline — without forcing them through it.
     if (index == 0) unawaited(showHeavyDaySheet(context));
+    // A hard check-in changes what's suggested; ask again with it.
+    final suggestions = RecommendationsClient.instance;
+    if (suggestions.enabled) {
+      unawaited(suggestions.noteMood(index).then((_) => _loadSuggestions()));
+    }
     try {
       await _moodRepo.saveMood(index);
       if (!mounted) return;
@@ -1201,15 +1224,17 @@ class _HomeTabState extends State<HomeTab> {
     final today = dailyPick(now: now, premium: premium);
     final dayPart = DayPart.of(now);
     final goals = userGoals();
-    final forNow = recommend(
-      dayPart: dayPart,
-      count: 5,
-      now: now,
-      premium: premium,
-      exclude: {today.id},
-      goals: goals,
-      kindBoost: _kindBoost,
-    );
+    final forNow =
+        itemsForRecommendations(_suggested, exclude: {today.id}) ??
+        recommend(
+          dayPart: dayPart,
+          count: 5,
+          now: now,
+          premium: premium,
+          exclude: {today.id},
+          goals: goals,
+          kindBoost: _kindBoost,
+        );
     // The course they're in, else the one that fits their goals if they
     // haven't started it.
     final active = CourseStore.instance.active;
