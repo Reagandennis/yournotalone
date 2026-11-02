@@ -8,6 +8,7 @@ accent: black
 tags:
   needs: [anxious, low, reflect]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "Worst case"

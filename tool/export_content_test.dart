@@ -124,7 +124,7 @@ Map<String, Object?> _item(
     'minutes': item.minutes,
     'icon': _icon(item.icon),
     'accent': _accent(item.accent),
-    'tags': {
+    'tags': <String, Object?>{
       'needs': [
         for (final n in Need.values)
           if (item.needs.contains(n)) n.name,
@@ -174,6 +174,25 @@ List<Map<String, Object?>> _toolkit(
       body: {'type': 'lesson', 'art': l.art.name},
     ),
 ];
+
+/// `intensity`, `calmingSafe` and `support` from the item files already in
+/// content/, by path. They have no Dart equivalent.
+Map<String, Map<String, Object>> _safetyTags() {
+  final dir = Directory('content/items');
+  if (!dir.existsSync()) return {};
+  final line = RegExp(
+    r'^  (intensity|calmingSafe|support): (\S+)$',
+    multiLine: true,
+  );
+  return {
+    for (final f in dir.listSync(recursive: true).whereType<File>())
+      if (f.path.endsWith('.yaml'))
+        f.path: {
+          for (final m in line.allMatches(f.readAsStringSync()))
+            m[1]!: m[2] == 'true' ? true : m[2]!,
+        },
+  };
+}
 
 void main() {
   test('export catalogues to content/', () {
@@ -242,7 +261,26 @@ void main() {
     final missing = _byId.keys.where((id) => !exported.contains(id)).toList();
     expect(missing, isEmpty, reason: 'index items with no export');
 
-    // Only what this writes: README and anything else in content/ stays.
+    // An item's preferred background is set in content/ only (the Dart
+    // catalogues have no such field), so carry it over from the old file.
+    final backgrounds = <String, String>{};
+    final itemsDir = Directory('content/items');
+    if (itemsDir.existsSync()) {
+      for (final f in itemsDir.listSync(recursive: true).whereType<File>()) {
+        final m = RegExp(
+          r'^background: (\S+)$',
+          multiLine: true,
+        ).firstMatch(f.readAsStringSync());
+        if (m != null) backgrounds[f.path] = m[1]!;
+      }
+    }
+
+    // The safety tags are edited in content/ only (design §5), so carry
+    // them over from the files about to be rewritten.
+    final safety = _safetyTags();
+
+    // Only what this writes: README, backgrounds/ and anything else in
+    // content/ stays.
     for (final dir in ['content/items', 'content/courses']) {
       final d = Directory(dir);
       if (d.existsSync()) d.deleteSync(recursive: true);
@@ -254,6 +292,8 @@ void main() {
       final title = ((item['text']! as Map)['en'] as Map)['title'] as String;
       final path = 'content/items/$kind/${_slug(title)}.yaml';
       expect(names.add(path), isTrue, reason: 'two items would share $path');
+      item['background'] = backgrounds[path];
+      (item['tags']! as Map<String, Object?>).addAll(safety[path] ?? const {});
       final out = StringBuffer();
       _write(out, item, 0);
       File(path)
@@ -290,6 +330,7 @@ void main() {
       'kinds': [for (final k in ContentKind.values) k.name],
       'needs': [for (final n in Need.values) n.name],
       'dayParts': [for (final d in DayPart.values) d.name],
+      'intensities': ['gentle', 'moderate', 'deep'],
       'accents': [...contentAccents.keys],
       'soundCategories': [for (final c in SoundCategory.values) c.name],
       'promptGroups': promptGroups,

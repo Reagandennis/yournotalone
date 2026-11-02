@@ -28,6 +28,15 @@ flutter test tool/export_content_test.dart   # Dart catalogues → content/
   item is a screen built into the app and only gets its tags from here.
 - Every item needs at least one need. Tags must come from `vocab.yaml`.
   Icons must come from `lib/content/content_icons.dart`.
+- Three optional tags feed the recommendation safety rules (design §5) and
+  exist only here, not in Dart (the export carries them over):
+  - `intensity`: `gentle`, `moderate` or `deep`. Deep items dig into
+    what's hard (worst-case writing, thought records).
+  - `calmingSafe: true`: allowed straight after an awful or low check-in.
+    Never on a `deep` item or one for `good`. Tag conservatively: breathing
+    without long holds, grounding, soft sounds.
+  - `support: true`: crisis and support content. Must be free; never
+    ranked down.
 - `order` sets the position in lists. Use gaps of 10 so there's room to
   slot items in later.
 - `status` is `published`, `draft` or `retired`. Drafts and retired items
@@ -38,5 +47,37 @@ flutter test tool/export_content_test.dart   # Dart catalogues → content/
   `reviewed: true`. Until then the app shows English.
 - A meditation needs one prompt line for each `promptAt` time, in every
   language.
+
+## Backgrounds
+
+`backgrounds/` holds the animated scenes behind the sound player and the
+meditation and breathing screens (design: `docs/backend-design.md` §7).
+Each one picks a code-drawn engine in the app (`waves`, `aurora`,
+`particles` or `gradient`) and tunes it, so a new background is just a
+file here: nothing is downloaded and it works offline.
+
+```yaml
+id: dusk-waves
+status: published
+order: 20
+engine: waves
+defaultFor: [sound]          # optional: kinds that open with it
+params:
+  palette: ["#5E8BDD", "#3764CD", "#1A2238"]   # 2–6 colours, back to front
+  speed: 0.8                 # 1 is the engine's usual pace
+  density: 1                 # 1 is its usual amount
+  seed: 7                    # moves things around
+  intensity: 0.8             # optional, 0–1
+text:
+  en:
+    title: Dusk waves
+```
+
+- Keep palettes calm and low in contrast: the app draws them faintly over
+  the page, and text sits on top.
+- An item can prefer one with `background: <id>`; otherwise it gets its
+  kind's `defaultFor`. A kind can have only one default.
+- The export (`tool/export_content_test.dart`) keeps an item's
+  `background:` line when it rewrites the file.
 
 Publishing to R2 is covered in `tools/content/README.md`.

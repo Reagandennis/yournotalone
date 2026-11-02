@@ -1,0 +1,39 @@
+{
+  "description": "Awful check-in 30 minutes ago, free: a free grounding item leads, then support; only calmingSafe items.",
+  "signals": {
+    "now": "2026-11-02T18:30:00Z",
+    "localTime": "2026-11-02T21:30",
+    "premium": false,
+    "lastMood": 0,
+    "lastMoodAt": "2026-11-02T18:00:00Z"
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "tool:Grounding: 5-4-3-2-1",
+        "reason": "For right now"
+      },
+      {
+        "id": "support-crisis-lines",
+        "reason": "Here whenever you need it"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "For right now"
+      },
+      {
+        "id": "tool:Physiological sigh",
+        "reason": "For right now"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "For right now"
+      },
+      {
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight"
+      }
+    ],
+    "rules": "v1"
+  }
+}

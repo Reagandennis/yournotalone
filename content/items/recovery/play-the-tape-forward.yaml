@@ -8,6 +8,7 @@ accent: red
 tags:
   needs: [urges]
   dayParts: []
+  intensity: deep
 text:
   en:
     title: "Play the tape forward"

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
+import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../discover/content_index.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
@@ -14,7 +16,6 @@ import '../practice/session_close_out.dart';
 import '../sounds/sound_player.dart';
 import '../sounds/sounds_catalog.dart';
 import 'meditation_catalog.dart';
-import 'pillar_backdrop.dart';
 
 /// A timed meditation: progress ring, gentle prompts that change as the
 /// session unfolds, optional ambient sound underneath, chime at both ends.
@@ -81,12 +82,14 @@ class _MeditationScreenState extends State<MeditationScreen>
     // on the network here froze the timer at 0:00 on a poor connection.
     if (mounted) setState(() => _done = true);
     // Keep the session, so it can add up to something.
-    unawaited((widget.practice ?? PracticeRepository()).logSession(
-      kind: PracticeKind.meditation,
-      slug: meditation.title,
-      title: meditation.title,
-      minutes: meditation.minutes.toDouble(),
-    ));
+    unawaited(
+      (widget.practice ?? PracticeRepository()).logSession(
+        kind: PracticeKind.meditation,
+        slug: meditation.title,
+        title: meditation.title,
+        minutes: meditation.minutes.toDouble(),
+      ),
+    );
     unawaited(_closeOutAudio());
   }
 
@@ -109,8 +112,9 @@ class _MeditationScreenState extends State<MeditationScreen>
   }
 
   /// The instruction on screen right now; see the listener in initState.
-  late final ValueNotifier<String> _promptShown =
-      ValueNotifier(meditation.prompts.first.$2);
+  late final ValueNotifier<String> _promptShown = ValueNotifier(
+    meditation.prompts.first.$2,
+  );
 
   String get _prompt {
     final progress = _session.value;
@@ -213,10 +217,7 @@ class _MeditationScreenState extends State<MeditationScreen>
         color: selected ? c.ink : c.card,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: selected ? c.ink : c.border,
-            width: 1.2,
-          ),
+          side: BorderSide(color: selected ? c.ink : c.border, width: 1.2),
         ),
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
@@ -227,11 +228,7 @@ class _MeditationScreenState extends State<MeditationScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (locked) ...[
-                  Icon(
-                    Icons.lock_rounded,
-                    size: 11,
-                    color: c.textMuted,
-                  ),
+                  Icon(Icons.lock_rounded, size: 11, color: c.textMuted),
                   const SizedBox(width: 4),
                 ],
                 Text(
@@ -281,19 +278,12 @@ class _MeditationScreenState extends State<MeditationScreen>
         Text(
           context.l10n.meditationCompleteBody(meditation.minutes),
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            color: c.textMuted,
-            height: 1.6,
-          ),
+          style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 8),
         Text(
           context.l10n.meditationAddedToHistory,
-          style: TextStyle(
-            fontSize: 12.5,
-            color: c.accent(meditation.accent),
-          ),
+          style: TextStyle(fontSize: 12.5, color: c.accent(meditation.accent)),
         ),
         const Spacer(),
         Padding(
@@ -465,10 +455,11 @@ class _MeditationScreenState extends State<MeditationScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // The four logo pillars, drifting behind the session.
+          // The session's background, drifting behind it.
           Positioned.fill(
-            child: PillarBackdrop(
-              accent: meditation.accent,
+            child: SceneBackdrop(
+              itemId: 'meditation:${meditation.title}',
+              kind: ContentKind.meditation,
               intensity: _done ? 0.7 : 1,
             ),
           ),

@@ -1,0 +1,15 @@
+# The four logo pillars as soft washes of light: the look sessions have
+# always had, now one background among several.
+id: pillar-glow
+status: published
+order: 10
+engine: gradient
+defaultFor: [breathing]
+params:
+  palette: ["#E12D23", "#3764CD", "#191919", "#FAB414"]
+  speed: 1
+  density: 1
+  seed: 1
+text:
+  en:
+    title: Pillar glow

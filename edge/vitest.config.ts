@@ -10,6 +10,7 @@ export default defineConfig({
       miniflare: {
         bindings: {
           SUPABASE_URL: 'https://test-project.supabase.co',
+          SUPABASE_ANON_KEY: 'sb_publishable_test',
           PUBLIC_BASE_URL: 'https://cdn.test',
           R2_ACCOUNT_ID: 'f7e65097ea4facdba994ee51d751705a',
           BUCKET: 'yournotalone',
@@ -20,6 +21,7 @@ export default defineConfig({
           R2_SECRET_ACCESS_KEY: 'test-secret-key',
           REVENUECAT_SECRET_KEY: 'sk_test',
           REVENUECAT_PROJECT_ID: 'proj_test',
+          SUPABASE_SERVICE_ROLE_KEY: 'sb_secret_test',
           SENTRY_DSN: '',
         },
       },

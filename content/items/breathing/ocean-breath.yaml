@@ -9,6 +9,8 @@ accent: blue
 tags:
   needs: [sleep, anxious]
   dayParts: [night]
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Ocean breath"
@@ -20,3 +22,4 @@ body:
   holdIn: 0
   exhale: 7
   holdOut: 0
+background: dusk-waves

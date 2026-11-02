@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../auth/auth_ui.dart';
+import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../discover/content_index.dart';
 import '../l10n/l10n.dart';
 import '../sounds/sound_player.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
 import 'meditation_catalog.dart';
-import 'pillar_backdrop.dart';
 
 enum _Phase { inhale, holdIn, exhale, holdOut }
 
@@ -167,10 +168,7 @@ class _BreathingScreenState extends State<BreathingScreen>
       color: selected ? c.ink : c.card,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(
-          color: selected ? c.ink : c.border,
-          width: 1.2,
-        ),
+        side: BorderSide(color: selected ? c.ink : c.border, width: 1.2),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
@@ -262,11 +260,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           child: Text(
             pattern.detail,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13.5,
-              color: c.textMuted,
-              height: 1.5,
-            ),
+            style: TextStyle(fontSize: 13.5, color: c.textMuted, height: 1.5),
           ),
         ),
         const SizedBox(height: 26),
@@ -279,11 +273,7 @@ class _BreathingScreenState extends State<BreathingScreen>
             alignment: WrapAlignment.center,
             spacing: 10,
             runSpacing: 10,
-            children: [
-              _durationChip(1),
-              _durationChip(3),
-              _durationChip(5),
-            ],
+            children: [_durationChip(1), _durationChip(3), _durationChip(5)],
           ),
         ),
         const Spacer(),
@@ -330,11 +320,7 @@ class _BreathingScreenState extends State<BreathingScreen>
         Text(
           context.l10n.breathingDoneSummary(_minutes, cycles),
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            color: c.textMuted,
-            height: 1.6,
-          ),
+          style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
         ),
         const SizedBox(height: 8),
         Text(
@@ -401,10 +387,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                   const SizedBox(height: 4),
                   Text(
                     _clock(total - elapsed),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: c.textMuted,
-                    ),
+                    style: TextStyle(fontSize: 13, color: c.textMuted),
                   ),
                 ],
               ),
@@ -482,15 +465,15 @@ class _BreathingScreenState extends State<BreathingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // The logo pillars behind the session — and while one is running
-          // they swell with the same animation as the circle, so the whole
+          // The background behind the session — and while one is running
+          // it swells with the same curve as the circle, so the whole
           // screen breathes rather than just the middle of it.
           Positioned.fill(
-            child: PillarBackdrop(
-              accent: pattern.accent,
+            child: SceneBackdrop(
+              itemId: 'breathing:${pattern.title}',
+              kind: ContentKind.breathing,
               intensity: _running ? 1 : 0.7,
-              breathing: _running ? _session : null,
-              swellFrom: _swellAt,
+              swell: _running ? () => _swellAt(_session.value) : null,
             ),
           ),
           SafeArea(

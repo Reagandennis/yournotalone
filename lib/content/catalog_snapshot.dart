@@ -12,6 +12,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../backgrounds/background_spec.dart';
 import '../brand.dart';
 import '../cbt/cbt_content.dart';
 import '../discover/content_index.dart';
@@ -91,6 +92,7 @@ class CatalogItem {
     required this.body,
     this.minutes,
     this.addedOn,
+    this.background,
   });
 
   factory CatalogItem.fromJson(Map<String, dynamic> json) {
@@ -117,6 +119,7 @@ class CatalogItem {
           key: ItemText.fromJson(value as Map<String, dynamic>),
       },
       body: json['body'] as Map<String, dynamic>,
+      background: json['background'] as String?,
     );
   }
 
@@ -137,6 +140,9 @@ class CatalogItem {
   final Map<String, dynamic> body;
 
   String get bodyType => body['type'] as String;
+
+  /// The id of the background it opens with, if not its kind's default.
+  final String? background;
 
   ItemText textFor(String locale) => _localised(text, locale);
 }
@@ -229,6 +235,7 @@ class CatalogSnapshot {
     required this.hash,
     required this.items,
     required this.courses,
+    this.backgrounds = const [],
     this.media = const {},
   });
 
@@ -245,6 +252,12 @@ class CatalogSnapshot {
       courses: [
         for (final c in json['courses'] as List)
           CatalogCourse.fromJson(c as Map<String, dynamic>),
+      ],
+      // Added without a format bump: older builds skip the field, and this
+      // one skips any background it can't draw.
+      backgrounds: [
+        for (final b in (json['backgrounds'] as List?) ?? const [])
+          ?BackgroundSpec.fromJson(b as Map<String, dynamic>),
       ],
       media: {
         for (final MapEntry(key: id, value: refs)
@@ -271,6 +284,9 @@ class CatalogSnapshot {
   /// Published items, in list order.
   final List<CatalogItem> items;
   final List<CatalogCourse> courses;
+
+  /// Animated backgrounds this build can draw, in list order.
+  final List<BackgroundSpec> backgrounds;
 
   /// Published audio by item id, then role (`audio`, `narration`). Empty
   /// in the bundled copy, whose audio ships inside the app.

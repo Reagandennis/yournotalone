@@ -1,0 +1,27 @@
+{
+  "items": [
+    { "id": "breathing:Box breathing", "kind": "breathing", "title": "Box breathing", "order": 10, "premium": false, "needs": ["anxious", "stressed", "focus"], "dayParts": [], "intensity": "gentle", "calmingSafe": true },
+    { "id": "breathing:4-7-8 calm", "kind": "breathing", "title": "4-7-8 calm", "order": 20, "premium": true, "needs": ["sleep", "anxious"], "dayParts": ["evening", "night"] },
+    { "id": "breathing:Panic reset", "kind": "breathing", "title": "Panic reset", "order": 70, "premium": true, "needs": ["anxious", "panic"], "dayParts": [], "intensity": "gentle", "calmingSafe": true },
+    { "id": "meditation:Body scan", "kind": "meditation", "title": "Body scan", "order": 100, "premium": true, "needs": ["sleep", "stressed"], "dayParts": ["evening"] },
+    { "id": "meditation:Sleep wind-down", "kind": "meditation", "title": "Sleep wind-down", "order": 110, "premium": true, "needs": ["sleep"], "dayParts": ["night"], "intensity": "gentle", "calmingSafe": true },
+    { "id": "meditation:Loving kindness", "kind": "meditation", "title": "Loving kindness", "order": 120, "premium": true, "needs": ["low", "good"], "dayParts": [] },
+    { "id": "meditation:Self-compassion", "kind": "meditation", "title": "Self-compassion", "order": 130, "premium": true, "needs": ["low"], "dayParts": [], "intensity": "gentle", "calmingSafe": true },
+    { "id": "med-morning-reset", "kind": "meditation", "title": "Morning reset", "order": 140, "premium": true, "addedOn": "2026-10-25", "needs": ["focus", "stressed"], "dayParts": ["morning"] },
+    { "id": "sound:Deep focus", "kind": "sound", "title": "Deep focus", "order": 200, "premium": false, "needs": ["focus"], "dayParts": [] },
+    { "id": "sound:Rainfall", "kind": "sound", "title": "Rainfall", "order": 210, "premium": true, "needs": ["sleep"], "dayParts": ["night"], "intensity": "gentle", "calmingSafe": true },
+    { "id": "sound:Heartbeat", "kind": "sound", "title": "Heartbeat", "order": 220, "premium": true, "needs": ["anxious", "panic", "stressed"], "dayParts": [] },
+    { "id": "prompt:Gratitude", "kind": "prompt", "title": "Gratitude", "order": 300, "premium": false, "needs": ["reflect", "good"], "dayParts": ["evening"] },
+    { "id": "prompt:Worst case", "kind": "prompt", "title": "Worst case", "order": 310, "premium": true, "needs": ["anxious", "low", "reflect"], "dayParts": [], "intensity": "deep" },
+    { "id": "tool:Grounding: 5-4-3-2-1", "kind": "tool", "title": "Grounding: 5-4-3-2-1", "order": 400, "premium": false, "needs": ["anxious", "panic"], "dayParts": [], "intensity": "gentle", "calmingSafe": true },
+    { "id": "tool:Thought record", "kind": "tool", "title": "Thought record", "order": 410, "premium": true, "needs": ["anxious", "low"], "dayParts": [], "intensity": "deep" },
+    { "id": "tool:Physiological sigh", "kind": "tool", "title": "Physiological sigh", "order": 420, "premium": false, "needs": ["panic", "stressed", "angry"], "dayParts": [], "intensity": "gentle", "calmingSafe": true },
+    { "id": "lesson:What CBT actually is", "kind": "lesson", "title": "What CBT actually is", "order": 500, "premium": false, "needs": ["anxious", "low"], "dayParts": [] },
+    { "id": "lesson:Why avoiding things keeps anxiety alive", "kind": "lesson", "title": "Why avoiding things keeps anxiety alive", "order": 510, "premium": true, "needs": ["anxious"], "dayParts": [] },
+    { "id": "support-crisis-lines", "kind": "tool", "title": "Crisis lines", "order": 900, "premium": false, "needs": ["panic", "low"], "dayParts": [], "support": true }
+  ],
+  "courses": [
+    { "id": "anxiety7", "title": "7 days to calmer", "days": ["tool:Grounding: 5-4-3-2-1", "lesson:What CBT actually is", "tool:Thought record", "lesson:Why avoiding things keeps anxiety alive"] },
+    { "id": "sleep7", "title": "7 days to better sleep", "days": ["breathing:4-7-8 calm", "meditation:Body scan", "meditation:Sleep wind-down"] }
+  ]
+}

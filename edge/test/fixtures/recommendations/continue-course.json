@@ -1,0 +1,44 @@
+{
+  "description": "Day 3 of anxiety7 comes first; no other anxiety7 day in the top 6.",
+  "signals": {
+    "now": "2026-11-02T05:00:00Z",
+    "localTime": "2026-11-02T08:00",
+    "premium": true,
+    "course": {
+      "id": "anxiety7",
+      "day": 2
+    },
+    "goals": [
+      "anxious"
+    ]
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "tool:Thought record",
+        "reason": "Day 3 of 7 days to calmer"
+      },
+      {
+        "id": "med-morning-reset",
+        "reason": "For this morning"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "Because you're working on anxiety"
+      },
+      {
+        "id": "prompt:Worst case",
+        "reason": "Because you're working on anxiety"
+      },
+      {
+        "id": "breathing:Box breathing",
+        "reason": "Because you're working on anxiety"
+      },
+      {
+        "id": "sound:Heartbeat",
+        "reason": "Because you're working on anxiety"
+      }
+    ],
+    "rules": "v1"
+  }
+}

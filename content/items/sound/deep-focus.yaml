@@ -22,3 +22,4 @@ body:
   waveSpeed: 1
   waveHeight: 0.55
   pulse: false
+background: drifting-dust

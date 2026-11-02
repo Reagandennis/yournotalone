@@ -14,6 +14,8 @@ import 'package:workmanager/workmanager.dart';
 import 'app_navigation.dart';
 import 'appearance.dart';
 import 'auth/auth_gate.dart';
+import 'backgrounds/calm_visuals.dart';
+import 'backgrounds/scene_library.dart';
 import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
@@ -126,7 +128,10 @@ Future<void> _start() async {
   // Date names for every language, so a DateFormat never depends on which
   // locale's data the Material delegate happened to load first.
   await initializeDateFormatting();
+  await CalmVisualsSetting.instance.load();
   await ContentCatalog.instance.load();
+  // After the catalogue, which hands over its snapshot when it uses one.
+  unawaited(SceneLibrary.instance.load());
   await _initSessionNotifications();
   runApp(SentryWidget(child: const MyApp()));
 }
@@ -160,41 +165,43 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _authSub =
-        Supabase.instance.client.auth.onAuthStateChange.listen((state) {
-      switch (state.event) {
-        // Practice finished offline, or as the app was killed, is written
-        // once there's a signed-in user to write it for.
-        case AuthChangeEvent.initialSession || AuthChangeEvent.signedIn:
-          unawaited(PracticeRepository().flushPending());
-          unawaited(SavedStore.instance.sync());
-        // A password-recovery email deep-links back into the app and signs
-        // the user in; from there they still need to choose the new password.
-        case AuthChangeEvent.passwordRecovery:
-          if (!NewPasswordScreen.isShowing) {
-            appNavigatorKey.currentState?.push(
-              MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
-            );
-          }
-        // Without this, an expired or revoked session leaves the app sitting
-        // in HomeShell with no user: every repository throws "Not signed in",
-        // every screen reports it as a connection problem, and "Try again"
-        // can never succeed. Send them somewhere they can actually recover.
-        case AuthChangeEvent.signedOut:
-          unawaited(SessionNotifications.instance.stop());
-          _toLogin();
-        default:
-          break;
-      }
-    }, onError: (Object error) {
-      // A refresh that failed for network reasons arrives here with the
-      // session intact, and the client retries it on its next tick. Only a
-      // refresh token the server rejects ends the session, and that comes
-      // through as a signedOut event above. Treating every stream error as
-      // a sign-out used to log people out on an hourly refresh over bad
-      // Wi-Fi. Nothing to do here but note it.
-      debugPrint('Auth stream error (session kept): $error');
-    });
+    _authSub = Supabase.instance.client.auth.onAuthStateChange.listen(
+      (state) {
+        switch (state.event) {
+          // Practice finished offline, or as the app was killed, is written
+          // once there's a signed-in user to write it for.
+          case AuthChangeEvent.initialSession || AuthChangeEvent.signedIn:
+            unawaited(PracticeRepository().flushPending());
+            unawaited(SavedStore.instance.sync());
+          // A password-recovery email deep-links back into the app and signs
+          // the user in; from there they still need to choose the new password.
+          case AuthChangeEvent.passwordRecovery:
+            if (!NewPasswordScreen.isShowing) {
+              appNavigatorKey.currentState?.push(
+                MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
+              );
+            }
+          // Without this, an expired or revoked session leaves the app sitting
+          // in HomeShell with no user: every repository throws "Not signed in",
+          // every screen reports it as a connection problem, and "Try again"
+          // can never succeed. Send them somewhere they can actually recover.
+          case AuthChangeEvent.signedOut:
+            unawaited(SessionNotifications.instance.stop());
+            _toLogin();
+          default:
+            break;
+        }
+      },
+      onError: (Object error) {
+        // A refresh that failed for network reasons arrives here with the
+        // session intact, and the client retries it on its next tick. Only a
+        // refresh token the server rejects ends the session, and that comes
+        // through as a signedOut event above. Treating every stream error as
+        // a sign-out used to log people out on an hourly refresh over bad
+        // Wi-Fi. Nothing to do here but note it.
+        debugPrint('Auth stream error (session kept): $error');
+      },
+    );
   }
 
   void _toLogin() {
@@ -277,8 +284,11 @@ class _SomethingWentWrong extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.sentiment_dissatisfied_rounded,
-                  size: 40, color: c.textMuted),
+              Icon(
+                Icons.sentiment_dissatisfied_rounded,
+                size: 40,
+                color: c.textMuted,
+              ),
               const SizedBox(height: 14),
               Text(
                 l10n.somethingWentWrongTitle,
@@ -293,11 +303,7 @@ class _SomethingWentWrong extends StatelessWidget {
               Text(
                 l10n.somethingWentWrongBody,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: c.textMuted,
-                  height: 1.5,
-                ),
+                style: TextStyle(fontSize: 13, color: c.textMuted, height: 1.5),
               ),
             ],
           ),

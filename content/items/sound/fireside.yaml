@@ -8,6 +8,8 @@ accent: black
 tags:
   needs: [sleep, low]
   dayParts: [evening, night]
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Fireside"
@@ -22,3 +24,4 @@ body:
   waveSpeed: 2
   waveHeight: 0.5
   pulse: true
+background: fireflies

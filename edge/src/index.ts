@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/cloudflare';
 import type { Env } from './env';
 import { createApp } from './app';
-import { logInfo } from './log';
+import { logError } from './log';
+import { writePopularity } from './recommend/popularity';
 
 const app = createApp();
 
@@ -10,9 +11,15 @@ const handler = {
     return app.fetch(request, env, ctx);
   },
 
-  // Daily 03:00 UTC (wrangler.toml). Popularity snapshot is build step 8.
-  async scheduled(controller, _env, _ctx) {
-    logInfo('cron', { cron: controller.cron, popularity: 'not yet' });
+  // Daily 03:00 UTC (wrangler.toml): the popularity snapshot.
+  async scheduled(controller, env, _ctx) {
+    try {
+      await writePopularity(env, controller.scheduledTime);
+    } catch (error) {
+      // Rethrown so the run shows as failed (and reaches Sentry when set).
+      logError('popularity_failed', error, { cron: controller.cron });
+      throw error;
+    }
   },
 } satisfies ExportedHandler<Env>;
 

@@ -8,6 +8,8 @@ accent: black
 tags:
   needs: [sleep]
   dayParts: [night]
+  intensity: gentle
+  calmingSafe: true
 text:
   en:
     title: "Rainfall"
@@ -22,3 +24,4 @@ body:
   waveSpeed: 3
   waveHeight: 0.4
   pulse: false
+background: night-aurora

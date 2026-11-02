@@ -13,6 +13,7 @@ export type Vocab = {
   kinds: string[];
   needs: string[];
   dayParts: string[];
+  intensities: string[];
   accents: string[];
   soundCategories: string[];
   promptGroups: string[];
@@ -24,6 +25,7 @@ export type Loaded = {
   // [path relative to the repo, parsed YAML]
   items: [string, unknown][];
   courses: [string, unknown][];
+  backgrounds: [string, unknown][];
 };
 
 const vocabSchema = z.strictObject({
@@ -31,6 +33,7 @@ const vocabSchema = z.strictObject({
   kinds: z.array(z.string()).min(1),
   needs: z.array(z.string()).min(1),
   dayParts: z.array(z.string()).min(1),
+  intensities: z.array(z.string()).min(1),
   accents: z.array(z.string()).min(1),
   soundCategories: z.array(z.string()).min(1),
   promptGroups: z.array(z.string()).min(1),
@@ -62,11 +65,20 @@ export function load(root = repoRoot): Loaded {
     icons: readIcons(root),
     items: yamlFiles(join(dir, 'items')).map(read),
     courses: yamlFiles(join(dir, 'courses')).map(read),
+    backgrounds: yamlFiles(join(dir, 'backgrounds')).map(read),
   };
 }
 
 const statuses = ['draft', 'published', 'retired'] as const;
 const nonEmpty = z.string().trim().min(1);
+const slug = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+
+/// The code-drawn scenes the app can paint (lib/backgrounds/). A
+/// background names one and tunes it; nothing is downloaded. A Lottie
+/// background would be another engine with its own params (the file
+/// published like audio, under bg/{sha256}.json): older apps skip an
+/// engine they don't know.
+export const sceneEngines = ['waves', 'aurora', 'particles', 'gradient'] as const;
 
 /// Which bodies each kind may carry. Recovery holds both the urge-surfing
 /// meditation and app-built screens.
@@ -134,12 +146,20 @@ function schemas(v: Vocab) {
     tags: z.strictObject({
       needs: z.array(z.enum(v.needs)).min(1, 'every item needs at least one need'),
       dayParts: z.array(z.enum(v.dayParts)),
+      // What the recommendations' safety rules read (design §5).
+      intensity: z.enum(v.intensities).optional(),
+      // Allowed straight after a distressed check-in.
+      calmingSafe: z.boolean().optional(),
+      // Crisis and support content: always free, never ranked down.
+      support: z.boolean().optional(),
     }),
     text: z.partialRecord(z.enum(v.locales), text),
     body,
+    // The background it opens with, if not its kind's default.
+    background: slug.optional(),
   });
   const course = z.strictObject({
-    id: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/),
+    id: slug,
     status: z.enum(statuses),
     order: z.int().nonnegative(),
     icon: nonEmpty,
@@ -156,25 +176,57 @@ function schemas(v: Vocab) {
       }),
     ),
   });
-  return { item, course };
+  const background = z.strictObject({
+    id: slug,
+    status: z.enum(statuses),
+    order: z.int().nonnegative(),
+    engine: z.enum(sceneEngines),
+    // Kinds that open with this one unless an item names its own.
+    defaultFor: z.array(z.enum(v.kinds)).optional(),
+    params: z.strictObject({
+      // Back to front. Drawn faintly over the page, so text stays readable
+      // in light and dark mode.
+      palette: z.array(z.string().regex(hexColour, 'colours are #RRGGBB')).min(2).max(6),
+      // 1 is the engine's usual pace and amount.
+      speed: z.number().positive().max(3),
+      density: z.number().positive().max(3),
+      // Places things differently, so two backgrounds on one engine differ.
+      seed: z.int().nonnegative(),
+      // 0–1, how present the whole scene is. Default 1.
+      intensity: z.number().positive().max(1).optional(),
+    }),
+    text: z.partialRecord(
+      z.enum(v.locales),
+      z.strictObject({ title: nonEmpty, reviewed: z.boolean().optional() }),
+    ),
+  });
+  return { item, course, background };
 }
 
 export type Item = z.infer<ReturnType<typeof schemas>['item']>;
 export type Course = z.infer<ReturnType<typeof schemas>['course']>;
+export type Background = z.infer<ReturnType<typeof schemas>['background']>;
 
-export type Checked = { items: Item[]; courses: Course[]; errors: string[] };
+export type Checked = {
+  items: Item[];
+  courses: Course[];
+  backgrounds: Background[];
+  errors: string[];
+};
 
 const hexAccent = /^#[0-9A-F]{8}$/;
+const hexColour = /^#[0-9A-F]{6}$/;
 
 export function check(
   loaded: Loaded,
   fileExists: (path: string) => boolean = (p) => existsSync(join(repoRoot, p)),
 ): Checked {
   const { vocab, icons } = loaded;
-  const { item: itemSchema, course: courseSchema } = schemas(vocab);
+  const { item: itemSchema, course: courseSchema, background: bgSchema } = schemas(vocab);
   const errors: string[] = [];
   const items: Item[] = [];
   const courses: Course[] = [];
+  const backgrounds: Background[] = [];
   const fail = (path: string, msg: string) => errors.push(`${path}: ${msg}`);
 
   const parseAll = <T>(
@@ -199,6 +251,24 @@ export function check(
   const coursePaths = new Map<Course, string>();
   parseAll(loaded.items, itemSchema, items, itemPaths);
   parseAll(loaded.courses, courseSchema, courses, coursePaths);
+  const bgPaths = new Map<Background, string>();
+  parseAll(loaded.backgrounds, bgSchema, backgrounds, bgPaths);
+
+  const bgById = new Map<string, Background>();
+  const defaults = new Map<string, Background>();
+  for (const bg of backgrounds) {
+    const path = bgPaths.get(bg)!;
+    const other = bgById.get(bg.id);
+    if (other) fail(path, `background id "${bg.id}" is also used by ${bgPaths.get(other)}`);
+    bgById.set(bg.id, bg);
+    if (!('en' in bg.text)) fail(path, 'text.en is required');
+    if (bg.status !== 'published') continue;
+    for (const kind of bg.defaultFor ?? []) {
+      const taken = defaults.get(kind);
+      if (taken) fail(path, `${kind} already defaults to ${taken.id}`);
+      defaults.set(kind, bg);
+    }
+  }
 
   const common = (path: string, x: { icon: string; accent: string; text: object }) => {
     if (!icons.has(x.icon)) {
@@ -217,6 +287,17 @@ export function check(
     if (other) fail(path, `id "${item.id}" is also used by ${itemPaths.get(other)}`);
     byId.set(item.id, item);
     common(path, item);
+
+    const { tags } = item;
+    if (tags.calmingSafe && tags.intensity === 'deep') {
+      fail(path, 'a calmingSafe item can\'t be deep');
+    }
+    if (tags.calmingSafe && tags.needs.includes('good')) {
+      fail(path, 'a calmingSafe item can\'t be for feeling good');
+    }
+    if (tags.support && item.premium) {
+      fail(path, 'support items are always free');
+    }
 
     const { body } = item;
     if (!bodiesFor[item.kind]?.includes(body.type)) {
@@ -253,6 +334,13 @@ export function check(
     if (body.type === 'sound' && !fileExists(body.audio)) {
       fail(path, `audio file ${body.audio} doesn't exist`);
     }
+    if (item.background !== undefined) {
+      const bg = bgById.get(item.background);
+      if (!bg) fail(path, `background "${item.background}" isn't in content/backgrounds`);
+      else if (item.status === 'published' && bg.status !== 'published') {
+        fail(path, `background "${item.background}" is ${bg.status}`);
+      }
+    }
   }
 
   const courseIds = new Set<string>();
@@ -275,5 +363,5 @@ export function check(
     }
   }
 
-  return { items, courses, errors };
+  return { items, courses, backgrounds, errors };
 }

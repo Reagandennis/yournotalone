@@ -3,8 +3,11 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
+import '../backgrounds/background_picker.dart';
+import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../discover/content_index.dart';
 import '../l10n/l10n.dart';
 import 'sound_player.dart';
 import 'sounds_catalog.dart';
@@ -114,11 +117,14 @@ class _PlayerScreenState extends State<PlayerScreen>
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(16),
-                    onTap: () => SoundPlayer.instance
-                        .setSleepTimer(Duration(minutes: minutes)),
+                    onTap: () => SoundPlayer.instance.setSleepTimer(
+                      Duration(minutes: minutes),
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       child: Text(
                         context.l10n.playerSleepTimerOption(minutes),
                         style: TextStyle(
@@ -137,12 +143,22 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
+  String get _itemId => 'sound:${sound.title}';
+
+  /// The player over its background, which the person can change.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => SceneBackdrop(
+    itemId: _itemId,
+    kind: ContentKind.sound,
+    child: _player(context),
+  );
+
+  Widget _player(BuildContext context) {
     final c = context.brand;
     final accent = sound.category.accent;
     final player = SoundPlayer.instance;
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -195,9 +211,8 @@ class _PlayerScreenState extends State<PlayerScreen>
                         builder: (context, child) {
                           final breathe = active
                               ? 1 +
-                                  0.04 *
-                                      math.sin(
-                                          _wave.value * 2 * math.pi * 2)
+                                    0.04 *
+                                        math.sin(_wave.value * 2 * math.pi * 2)
                               : 1.0;
                           return Transform.scale(
                             scale: scale * breathe,
@@ -316,7 +331,11 @@ class _PlayerScreenState extends State<PlayerScreen>
                           ),
                         ),
                         const SizedBox(width: 26),
-                        const SizedBox(width: 46), // balances the stop button
+                        // Opposite the stop button, and the same size.
+                        BackgroundPickerButton(
+                          itemId: _itemId,
+                          kind: ContentKind.sound,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 18),
@@ -413,7 +432,8 @@ class _WavePainter extends CustomPainter {
       for (double x = 0; x <= size.width; x += 3) {
         final u = x / size.width;
         final taper = math.sin(u * math.pi); // fade out at the edges
-        final y = mid +
+        final y =
+            mid +
             layerAmp *
                 taper *
                 math.sin(u * freq * 2 * math.pi + phase * speed + layer);

@@ -1,0 +1,13 @@
+id: dusk-waves
+status: published
+order: 20
+engine: waves
+defaultFor: [sound]
+params:
+  palette: ["#5E8BDD", "#3764CD", "#1A2238"]
+  speed: 0.8
+  density: 1
+  seed: 7
+text:
+  en:
+    title: Dusk waves
