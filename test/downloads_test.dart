@@ -156,7 +156,11 @@ void main() {
     transfer.hold = Completer();
 
     await store.download(rain.itemId);
-    await pumpEventQueue();
+    // Real file I/O sits between queueing and the first progress report,
+    // so wait for it rather than for a fixed number of turns.
+    for (var i = 0; i < 100 && store.stateOf(rain.itemId).progress < 0.5; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
     expect(store.stateOf(rain.itemId).status, DownloadStatus.downloading);
     expect(store.stateOf(rain.itemId).progress, 0.5);
 
