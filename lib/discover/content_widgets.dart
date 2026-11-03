@@ -158,11 +158,15 @@ class ContentCard extends StatelessWidget {
     required this.item,
     required this.source,
     this.width = 168,
+    this.reason,
   });
 
   final ContentItem item;
   final String source;
   final double width;
+
+  /// Why it's suggested, in a quiet line under the meta; none if null.
+  final String? reason;
 
   @override
   Widget build(BuildContext context) {
@@ -237,6 +241,20 @@ class ContentCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontSize: 11.5, color: c.textMuted),
                 ),
+                if (reason case final reason?) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    reason,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                      color: c.textMuted,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -249,23 +267,36 @@ class ContentCard extends StatelessWidget {
 /// A horizontal strip of [ContentCard]s whose height follows the text
 /// scale, so larger system text doesn't clip the cards.
 class ContentStrip extends StatelessWidget {
-  const ContentStrip({super.key, required this.items, required this.source});
+  const ContentStrip({
+    super.key,
+    required this.items,
+    required this.source,
+    this.reasons = const {},
+  });
 
   final List<ContentItem> items;
   final String source;
 
+  /// Item id → why it's suggested. The strip grows by two short lines
+  /// when there are any.
+  final Map<String, String> reasons;
+
   @override
   Widget build(BuildContext context) {
     final scale = MediaQuery.textScalerOf(context).scale(1);
+    final withReasons = items.any((i) => reasons.containsKey(i.id));
     return SizedBox(
-      height: 76 + 62 * scale,
+      height: 76 + 62 * scale + (withReasons ? 4 + 29 * scale : 0),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
         itemCount: items.length,
         separatorBuilder: (_, _) => const SizedBox(width: 10),
-        itemBuilder: (context, i) =>
-            ContentCard(item: items[i], source: source),
+        itemBuilder: (context, i) => ContentCard(
+          item: items[i],
+          source: source,
+          reason: reasons[items[i].id],
+        ),
       ),
     );
   }

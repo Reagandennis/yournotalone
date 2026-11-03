@@ -102,13 +102,21 @@ final _quickItems = [
 /// suggestions for the time of day, practice so far, quick access ordered by use, and the
 /// therapy banner (or the next booked session).
 class HomeTab extends StatefulWidget {
-  const HomeTab({super.key, this.practice, this.therapyRequests});
+  const HomeTab({
+    super.key,
+    this.practice,
+    this.therapyRequests,
+    this.recommendations,
+  });
 
   /// Injectable so the practice strip can be driven with known sessions.
   final PracticeRepository? practice;
 
   /// Injectable so the session banner can be tested without a backend.
   final Future<List<TherapyRequest>> Function()? therapyRequests;
+
+  /// Injectable so the suggestions can come from a fake Worker.
+  final RecommendationsClient? recommendations;
 
   @override
   State<HomeTab> createState() => _HomeTabState();
@@ -193,8 +201,20 @@ class _HomeTabState extends State<HomeTab> {
     });
   }
 
+  /// The Worker's reasons in the app's language, by item id. A reason
+  /// that only repeats the strip's heading ("For tonight") or says nothing
+  /// ("Something to try") is left out.
+  Map<String, String> _reasons(AppLocalizations l10n) => {
+    for (final r in _suggested ?? const <Recommendation>[])
+      if (r.reasonKey != 'dayPart' && r.reasonKey != 'fallback')
+        r.id: ?r.reasonText(l10n),
+  };
+
+  RecommendationsClient get _recommendations =>
+      widget.recommendations ?? RecommendationsClient.instance;
+
   Future<void> _loadSuggestions() async {
-    final client = RecommendationsClient.instance;
+    final client = _recommendations;
     if (!client.enabled) return;
     try {
       final picks = await client.fetch(await RecommendationRequest.current());
@@ -289,7 +309,7 @@ class _HomeTabState extends State<HomeTab> {
     // may be slow or fail offline — without forcing them through it.
     if (index == 0) unawaited(showHeavyDaySheet(context));
     // A hard check-in changes what's suggested; ask again with it.
-    final suggestions = RecommendationsClient.instance;
+    final suggestions = _recommendations;
     if (suggestions.enabled) {
       unawaited(suggestions.noteMood(index).then((_) => _loadSuggestions()));
     }
@@ -1223,8 +1243,12 @@ class _HomeTabState extends State<HomeTab> {
     final today = dailyPick(now: now, premium: premium);
     final dayPart = DayPart.of(now);
     final goals = userGoals();
+    final fromWorker = itemsForRecommendations(
+      _suggested,
+      exclude: {today.id},
+    );
     final forNow =
-        itemsForRecommendations(_suggested, exclude: {today.id}) ??
+        fromWorker ??
         recommend(
           dayPart: dayPart,
           count: 5,
@@ -1293,7 +1317,12 @@ class _HomeTabState extends State<HomeTab> {
         if (forNow.isNotEmpty) ...[
           SectionHeader(title: dayPart.heading(context.l10n)),
           const SizedBox(height: 12),
-          ContentStrip(items: forNow, source: 'home:${dayPart.name}'),
+          ContentStrip(
+            items: forNow,
+            source: 'home:${dayPart.name}',
+            // Only the Worker says why; the on-device order doesn't.
+            reasons: fromWorker == null ? const {} : _reasons(context.l10n),
+          ),
           const SizedBox(height: 28),
         ],
         _savedStrip(),

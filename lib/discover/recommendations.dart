@@ -18,7 +18,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../content/content_catalog.dart';
+import '../courses/course_catalog.dart';
 import '../courses/course_progress.dart';
+import '../l10n/l10n.dart';
 import 'content_index.dart';
 import 'usage_store.dart';
 
@@ -27,10 +29,86 @@ const recommendationsBaseUrl = String.fromEnvironment('MEDIA_API_URL');
 
 /// One suggestion: an item id and a short line saying why.
 class Recommendation {
-  const Recommendation(this.id, this.reason);
+  const Recommendation(
+    this.id,
+    this.reason, {
+    this.reasonKey,
+    this.reasonArgs = const {},
+  });
+
+  factory Recommendation.fromJson(Map<dynamic, dynamic> json) => Recommendation(
+    json['id'] as String,
+    json['reason'] is String ? json['reason'] as String : '',
+    reasonKey: json['reasonKey'] is String ? json['reasonKey'] as String : null,
+    reasonArgs: json['reasonArgs'] is Map
+        ? (json['reasonArgs'] as Map).cast<String, Object?>()
+        : const {},
+  );
 
   final String id;
+
+  /// The Worker's English line. Not shown: [reasonText] words it in the
+  /// app's language from [reasonKey].
   final String reason;
+
+  /// What the reason is ("feltBetter", "goal", …; see edge/README.md), or
+  /// null from a Worker older than the codes.
+  final String? reasonKey;
+
+  /// Ids the reason names: an item, a course, a need, a part of the day.
+  final Map<String, Object?> reasonArgs;
+
+  /// The reason in the app's language, or null when there's nothing to
+  /// show: no code, a code this build doesn't know, or an item or course
+  /// it doesn't have.
+  String? reasonText(
+    AppLocalizations l10n, {
+    List<ContentItem>? items,
+    List<Course>? courseList,
+  }) {
+    String? arg(String name) =>
+        reasonArgs[name] is String ? reasonArgs[name] as String : null;
+    switch (reasonKey) {
+      case 'lead':
+        return l10n.homeReasonLead;
+      case 'support':
+        return l10n.homeReasonSupport;
+      case 'course':
+        final day = reasonArgs['day'];
+        final id = arg('course');
+        final course = (courseList ?? courses)
+            .where((c) => c.id == id)
+            .firstOrNull;
+        if (course == null || day is! int) return null;
+        return l10n.homeReasonCourseDay(day, course.title);
+      case 'feltBetter':
+        final id = arg('title');
+        final item = (items ?? contentIndex).where((i) => i.id == id);
+        if (item.isEmpty) return null;
+        return l10n.homeReasonFeltBetter(item.first.title);
+      case 'goal':
+        final need = Need.values.asNameMap()[arg('need')];
+        return need == null ? null : l10n.homeReasonGoal(need.name);
+      case 'dayPart':
+        return DayPart.values.asNameMap()[arg('part')]?.heading(l10n);
+      case 'fresh':
+        return l10n.homeReasonFresh;
+      case 'popular':
+        return l10n.homeReasonPopular;
+      case 'saved':
+        return l10n.homeReasonSaved;
+      case 'fallback':
+        return l10n.homeReasonFallback;
+    }
+    return null;
+  }
+
+  Map<String, Object?> toJson() => {
+    'id': id,
+    'reason': reason,
+    'reasonKey': ?reasonKey,
+    if (reasonArgs.isNotEmpty) 'reasonArgs': reasonArgs,
+  };
 }
 
 /// What the device knows that the server doesn't. Nothing in it is stored
@@ -229,11 +307,7 @@ class RecommendationsClient {
     if (json is! Map || json['items'] is! List) return null;
     return [
       for (final x in json['items'] as List)
-        if (x is Map && x['id'] is String)
-          Recommendation(
-            x['id'] as String,
-            x['reason'] is String ? x['reason'] as String : '',
-          ),
+        if (x is Map && x['id'] is String) Recommendation.fromJson(x),
     ];
   }
 
@@ -265,9 +339,7 @@ class RecommendationsClient {
         jsonEncode({
           'key': request.cacheKey,
           'at': request.now.toIso8601String(),
-          'items': [
-            for (final x in items) {'id': x.id, 'reason': x.reason},
-          ],
+          'items': [for (final x in items) x.toJson()],
         }),
       );
     } catch (e) {

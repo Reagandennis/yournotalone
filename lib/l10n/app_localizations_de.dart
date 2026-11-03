@@ -5862,4 +5862,64 @@ class AppLocalizationsDe extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get homeReasonLead => 'Für genau jetzt';
+
+  @override
+  String get homeReasonSupport => 'Für dich da, wann immer du es brauchst';
+
+  @override
+  String homeReasonCourseDay(int day, String course) {
+    return 'Tag $day von $course';
+  }
+
+  @override
+  String homeReasonFeltBetter(String title) {
+    return 'Weil es dir nach $title besser ging';
+  }
+
+  @override
+  String homeReasonGoal(String need) {
+    String _temp0 = intl.Intl.selectLogic(need, {
+      'sleep': 'Weil du an deinem Schlaf arbeitest',
+      'anxious': 'Weil du an deiner Angst arbeitest',
+      'panic': 'Weil du an deiner Panik arbeitest',
+      'low': 'Weil du an Stimmungstiefs arbeitest',
+      'stressed': 'Weil du an deinem Stress arbeitest',
+      'angry': 'Weil du an deiner Wut arbeitest',
+      'urges': 'Weil du an deinem Verlangen arbeitest',
+      'focus': 'Weil du an deiner Konzentration arbeitest',
+      'reflect': 'Weil du an Selbstreflexion arbeitest',
+      'good': 'Weil du an guten Tagen arbeitest',
+      'other': 'Passend zu deinen Zielen',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get homeReasonFresh => 'Neu dabei';
+
+  @override
+  String get homeReasonPopular => 'Beliebt diesen Monat';
+
+  @override
+  String get homeReasonSaved => 'Von dir gespeichert';
+
+  @override
+  String get homeReasonFallback => 'Zum Ausprobieren';
+
+  @override
+  String get downloadsLapsedTitle => 'Premium-Downloads entfernen?';
+
+  @override
+  String downloadsLapsedBody(String size) {
+    return 'Dein Premium ist seit über einem Monat beendet, und seine Downloads belegen noch $size auf diesem Handy. Möchtest du sie entfernen, um Platz zu schaffen? Wenn du wieder Premium nutzt, kannst du sie erneut herunterladen.';
+  }
+
+  @override
+  String get downloadsLapsedKeep => 'Behalten';
+
+  @override
+  String get downloadsLapsedRemove => 'Entfernen';
 }

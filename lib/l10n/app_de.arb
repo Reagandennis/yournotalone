@@ -1499,5 +1499,18 @@
   "settingsPasswordResetSent": "Link zum Zurücksetzen des Passworts an {email} gesendet",
   "settingsEmailCopied": "E-Mail-Adresse kopiert: {email}",
   "settingsTypeToConfirm": "Gib zur Bestätigung {word} ein",
-  "settingsGoalsMore": "{first} +{more}"
+  "settingsGoalsMore": "{first} +{more}",
+  "homeReasonLead": "Für genau jetzt",
+  "homeReasonSupport": "Für dich da, wann immer du es brauchst",
+  "homeReasonCourseDay": "Tag {day} von {course}",
+  "homeReasonFeltBetter": "Weil es dir nach {title} besser ging",
+  "homeReasonGoal": "{need, select, sleep{Weil du an deinem Schlaf arbeitest} anxious{Weil du an deiner Angst arbeitest} panic{Weil du an deiner Panik arbeitest} low{Weil du an Stimmungstiefs arbeitest} stressed{Weil du an deinem Stress arbeitest} angry{Weil du an deiner Wut arbeitest} urges{Weil du an deinem Verlangen arbeitest} focus{Weil du an deiner Konzentration arbeitest} reflect{Weil du an Selbstreflexion arbeitest} good{Weil du an guten Tagen arbeitest} other{Passend zu deinen Zielen}}",
+  "homeReasonFresh": "Neu dabei",
+  "homeReasonPopular": "Beliebt diesen Monat",
+  "homeReasonSaved": "Von dir gespeichert",
+  "homeReasonFallback": "Zum Ausprobieren",
+  "downloadsLapsedTitle": "Premium-Downloads entfernen?",
+  "downloadsLapsedBody": "Dein Premium ist seit über einem Monat beendet, und seine Downloads belegen noch {size} auf diesem Handy. Möchtest du sie entfernen, um Platz zu schaffen? Wenn du wieder Premium nutzt, kannst du sie erneut herunterladen.",
+  "downloadsLapsedKeep": "Behalten",
+  "downloadsLapsedRemove": "Entfernen"
 }

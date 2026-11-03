@@ -7,8 +7,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:yournotalone/courses/course_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
 import 'package:yournotalone/discover/recommendations.dart';
+import 'package:yournotalone/l10n/app_localizations_de.dart';
+import 'package:yournotalone/l10n/app_localizations_en.dart';
+import 'package:yournotalone/l10n/l10n.dart';
 
 const _base = 'https://api.test';
 
@@ -31,7 +35,8 @@ class _Worker {
     return http.Response(
       jsonEncode({
         'items': [
-          for (final id in ids) {'id': id, 'reason': 'For right now'},
+          for (final id in ids)
+            {'id': id, 'reason': 'For right now', 'reasonKey': 'lead'},
         ],
         'rules': 'v1',
         'catalogVersion': 7,
@@ -99,6 +104,7 @@ void main() {
         ['tool:Grounding: 5-4-3-2-1', 'sound:Rainfall'],
       );
       expect(picks.first.reason, 'For right now');
+      expect(picks.first.reasonKey, 'lead');
 
       final req = worker.requests.single;
       expect(req.method, 'POST');
@@ -150,6 +156,20 @@ void main() {
       await client.fetch(_request());
       await client.fetch(_request(lastMood: 3, lastMoodAt: _evening));
       expect(worker.requests, hasLength(1));
+    });
+
+    test('keeps the reason codes in the cached answer', () async {
+      final worker = _Worker();
+      final client = worker.connect();
+      final early = DateTime(2026, 11, 2, 17, 10);
+      await client.fetch(_request(now: early));
+      worker.down = true;
+      // Past 3 hours, so it asks; still the evening, so the cache fits.
+      final cached = await client.fetch(
+        _request(now: early.add(const Duration(hours: 3, minutes: 30))),
+      );
+      expect(worker.requests, hasLength(2));
+      expect(cached!.first.reasonKey, 'lead');
     });
 
     test('falls back to the last answer when the Worker fails', () async {
@@ -232,6 +252,92 @@ void main() {
         'opensByKind',
         'limit',
       ]);
+    });
+  });
+
+  group('Recommendation.reasonText', () {
+    final en = AppLocalizationsEn();
+    final items = [
+      ContentItem(
+        kind: ContentKind.meditation,
+        title: 'Body scan',
+        blurb: '',
+        icon: ContentKind.meditation.icon,
+        accent: const Color(0xFF000000),
+        premium: false,
+        open: (_) {},
+      ),
+    ];
+    final course = courses.first;
+    String? text(
+      String? key, [
+      Map<String, Object?> args = const {},
+      AppLocalizations? l10n,
+    ]) => Recommendation.fromJson({
+      'id': 'x',
+      'reason': 'English',
+      'reasonKey': ?key,
+      'reasonArgs': args,
+    }).reasonText(l10n ?? en, items: items, courseList: courses);
+
+    test('words each code from the ARB strings', () {
+      expect(text('lead'), 'For right now');
+      expect(text('support'), 'Here whenever you need it');
+      expect(text('fresh'), 'Just added');
+      expect(text('popular'), 'Popular this month');
+      expect(text('saved'), 'One you saved');
+      expect(text('fallback'), 'Something to try');
+      expect(
+        text('goal', {'need': 'anxious'}),
+        "Because you're working on anxiety",
+      );
+      expect(text('dayPart', {'part': 'night'}), 'For tonight');
+      expect(
+        text('course', {'course': course.id, 'day': 3}),
+        'Day 3 of ${course.title}',
+      );
+    });
+
+    test('takes the title from the catalogue, not the English line', () {
+      expect(
+        text('feltBetter', {'title': 'meditation:Body scan'}),
+        'Because you felt better after Body scan',
+      );
+      expect(
+        text('feltBetter', {
+          'title': 'meditation:Body scan',
+        }, AppLocalizationsDe()),
+        'Weil es dir nach Body scan besser ging',
+      );
+    });
+
+    test('nothing for an unknown code, item, course, need or part', () {
+      expect(text(null), isNull);
+      expect(text('somethingNew'), isNull);
+      expect(text('feltBetter', {'title': 'sound:Gone'}), isNull);
+      expect(text('feltBetter'), isNull);
+      expect(text('course', {'course': 'nope', 'day': 1}), isNull);
+      expect(text('course', {'course': course.id}), isNull);
+      expect(text('goal', {'need': 'nope'}), isNull);
+      expect(text('dayPart', {'part': 'teatime'}), isNull);
+    });
+
+    test('round-trips through JSON', () {
+      const r = Recommendation(
+        'tool:A',
+        'Because you felt better after A',
+        reasonKey: 'feltBetter',
+        reasonArgs: {'title': 'tool:A'},
+      );
+      final back = Recommendation.fromJson(
+        jsonDecode(jsonEncode(r.toJson())) as Map,
+      );
+      expect(back.id, r.id);
+      expect(back.reason, r.reason);
+      expect(back.reasonKey, r.reasonKey);
+      expect(back.reasonArgs, r.reasonArgs);
+      final old = Recommendation.fromJson({'id': 'old', 'reason': 'x'});
+      expect(old.reasonKey, isNull);
     });
   });
 
