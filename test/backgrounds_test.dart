@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -7,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:yournotalone/backgrounds/background_spec.dart';
+import 'package:yournotalone/backgrounds/battery_saver.dart';
 import 'package:yournotalone/backgrounds/calm_visuals.dart';
 import 'package:yournotalone/backgrounds/scene_background.dart';
 import 'package:yournotalone/backgrounds/scene_library.dart';
@@ -263,6 +265,83 @@ void main() {
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pump();
       expect(tester.binding.transientCallbackCount, 1);
+    });
+
+    group('battery saver', () {
+      late bool saver;
+      late int asked;
+      late StreamController<Object?> charging;
+      final real = BatterySaver.instance;
+
+      setUp(() {
+        saver = false;
+        asked = 0;
+        charging = StreamController<Object?>.broadcast();
+        BatterySaver.instance = BatterySaver.forTest(
+          probe: () async {
+            asked++;
+            return saver;
+          },
+          changes: () => charging.stream,
+        );
+      });
+
+      tearDown(() {
+        BatterySaver.instance = real;
+        charging.close();
+      });
+
+      testWidgets('on: the scene holds still', (tester) async {
+        saver = true;
+        await tester.pumpWidget(scene());
+        await tester.pump();
+        expect(tester.binding.transientCallbackCount, 0);
+        final clock = painterOf(tester).clock;
+        await tester.pump(const Duration(seconds: 2));
+        expect(clock.time, sceneStillTime);
+      });
+
+      testWidgets('switched off, it moves again on return to the app', (
+        tester,
+      ) async {
+        saver = true;
+        await tester.pumpWidget(scene());
+        await tester.pump();
+        expect(tester.binding.transientCallbackCount, 0);
+        saver = false;
+        tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        );
+        await tester.pump();
+        expect(tester.binding.transientCallbackCount, 1);
+      });
+
+      testWidgets('re-checked on charge changes and once a minute', (
+        tester,
+      ) async {
+        await tester.pumpWidget(scene());
+        await tester.pump();
+        expect(tester.binding.transientCallbackCount, 1);
+        final before = asked;
+        saver = true;
+        charging.add(null);
+        await tester.pump();
+        expect(asked, before + 1);
+        expect(tester.binding.transientCallbackCount, 0);
+        saver = false;
+        await tester.pump(BatterySaver.recheckEvery);
+        expect(asked, before + 2);
+        expect(tester.binding.transientCallbackCount, 1);
+      });
+
+      testWidgets('stops checking when no scene is showing', (tester) async {
+        await tester.pumpWidget(scene());
+        await tester.pump();
+        await tester.pumpWidget(const SizedBox());
+        final before = asked;
+        await tester.pump(BatterySaver.recheckEvery * 3);
+        expect(asked, before);
+      });
     });
   });
 }
