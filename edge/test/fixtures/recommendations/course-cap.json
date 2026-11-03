@@ -1,0 +1,63 @@
+{
+  "description": "Popular sleep7 days, not in the course: up to 2 of them make the top 6, not all 3.",
+  "signals": {
+    "now": "2026-11-02T16:30:00Z",
+    "localTime": "2026-11-02T19:30",
+    "premium": true,
+    "goals": [
+      "sleep"
+    ],
+    "popularity": {
+      "breathing:4-7-8 calm": 120,
+      "meditation:Body scan": 110,
+      "meditation:Sleep wind-down": 100
+    }
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "breathing:4-7-8 calm",
+        "reason": "For this evening",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "evening"
+        }
+      },
+      {
+        "id": "meditation:Body scan",
+        "reason": "For this evening",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "evening"
+        }
+      },
+      {
+        "id": "prompt:Gratitude",
+        "reason": "For this evening",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "evening"
+        }
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "Because you're working on sleep",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "sleep"
+        }
+      },
+      {
+        "id": "med-morning-reset",
+        "reason": "Just added",
+        "reasonKey": "fresh"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "Something to try",
+        "reasonKey": "fallback"
+      }
+    ],
+    "rules": "v1"
+  }
+}

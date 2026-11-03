@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
+import '../backgrounds/background_picker.dart';
 import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../discover/content_index.dart';
 import '../home/home_ui.dart';
 import '../media/download_buttons.dart';
+import '../media/download_store.dart';
 import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
 import '../practice/session_close_out.dart';
@@ -41,6 +43,12 @@ class _MeditationScreenState extends State<MeditationScreen>
   /// Whether the recorded voice guide plays, when the session has one.
   bool _voice = true;
   bool get _hasVoice => meditation.narration != null;
+
+  /// Whether the header shows a download button (see [DownloadButton]).
+  bool get _hasDownload {
+    final id = downloadableItemAt(meditation.narration);
+    return id != null && DownloadStore.instance.canDownload(id);
+  }
 
   Meditation get meditation => widget.meditation;
 
@@ -473,6 +481,9 @@ class _MeditationScreenState extends State<MeditationScreen>
                       child: Row(
                         children: [
                           const BackChip(),
+                          // Balances the download button, when there's one,
+                          // so the title stays centred.
+                          if (_hasDownload) const SizedBox(width: 42),
                           // Expanded rather than Spacer-Flexible-Spacer: with
                           // three flexible children the title only got a third
                           // of the row and ellipsised with space to spare.
@@ -489,14 +500,16 @@ class _MeditationScreenState extends State<MeditationScreen>
                               ),
                             ),
                           ),
-                          // Balances the back chip so the title sits centred;
-                          // holds the download button when there's one.
-                          SizedBox(
-                            width: 42,
-                            child: DownloadButton(
+                          if (_hasDownload)
+                            DownloadButton(
                               itemId: downloadableItemAt(meditation.narration),
                               accent: meditation.accent,
                             ),
+                          // The size of the back chip, opposite it.
+                          BackgroundPickerButton(
+                            itemId: 'meditation:${meditation.title}',
+                            kind: ContentKind.meditation,
+                            compact: true,
                           ),
                         ],
                       ),

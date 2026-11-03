@@ -16,27 +16,36 @@
     "items": [
       {
         "id": "med-morning-reset",
-        "reason": "For this morning"
+        "reason": "For this morning",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "morning"
+        }
       },
       {
         "id": "sound:Deep focus",
-        "reason": "Popular this month"
+        "reason": "Popular this month",
+        "reasonKey": "popular"
       },
       {
         "id": "meditation:Self-compassion",
-        "reason": "One you saved"
+        "reason": "One you saved",
+        "reasonKey": "saved"
       },
       {
         "id": "breathing:Box breathing",
-        "reason": "Popular this month"
+        "reason": "Popular this month",
+        "reasonKey": "popular"
       },
       {
         "id": "breathing:Panic reset",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       },
       {
         "id": "lesson:Why avoiding things keeps anxiety alive",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       }
     ],
     "rules": "v1"

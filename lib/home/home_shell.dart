@@ -11,6 +11,7 @@ import '../discover/content_index.dart';
 import '../discover/saved_store.dart';
 import '../journal/journal_hub_screen.dart';
 import '../l10n/l10n.dart';
+import '../media/lapsed_downloads.dart';
 import '../notifications/local_notifications.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
@@ -115,11 +116,17 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     SavedStore.instance.load();
     CourseStore.instance.load();
     homeTabRequest.addListener(_onTabRequest);
+    // Premium ended a month ago with its downloads still here: ask once.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _askAboutDownloads());
     final payload = LocalNotifications.takeLaunchPayload();
     if (payload != null) {
       WidgetsBinding.instance
           .addPostFrameCallback((_) => openSessionScreen(payload));
     }
+  }
+
+  void _askAboutDownloads() {
+    if (mounted) LapsedDownloads.instance.maybeAsk(context);
   }
 
   void _onTabRequest() {
@@ -140,6 +147,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       SessionNotifications.instance.start();
+      _askAboutDownloads();
     }
   }
 

@@ -5789,4 +5789,64 @@ class AppLocalizationsEn extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get homeReasonLead => 'For right now';
+
+  @override
+  String get homeReasonSupport => 'Here whenever you need it';
+
+  @override
+  String homeReasonCourseDay(int day, String course) {
+    return 'Day $day of $course';
+  }
+
+  @override
+  String homeReasonFeltBetter(String title) {
+    return 'Because you felt better after $title';
+  }
+
+  @override
+  String homeReasonGoal(String need) {
+    String _temp0 = intl.Intl.selectLogic(need, {
+      'sleep': 'Because you\'re working on sleep',
+      'anxious': 'Because you\'re working on anxiety',
+      'panic': 'Because you\'re working on panic',
+      'low': 'Because you\'re working on low moods',
+      'stressed': 'Because you\'re working on stress',
+      'angry': 'Because you\'re working on anger',
+      'urges': 'Because you\'re working on urges',
+      'focus': 'Because you\'re working on focus',
+      'reflect': 'Because you\'re working on reflection',
+      'good': 'Because you\'re working on good days',
+      'other': 'Because of what you\'re working on',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get homeReasonFresh => 'Just added';
+
+  @override
+  String get homeReasonPopular => 'Popular this month';
+
+  @override
+  String get homeReasonSaved => 'One you saved';
+
+  @override
+  String get homeReasonFallback => 'Something to try';
+
+  @override
+  String get downloadsLapsedTitle => 'Remove Premium downloads?';
+
+  @override
+  String downloadsLapsedBody(String size) {
+    return 'Your Premium ended over a month ago, and its downloads still take up $size on this phone. Remove them to free up space? If you come back to Premium, you can download them again.';
+  }
+
+  @override
+  String get downloadsLapsedKeep => 'Keep';
+
+  @override
+  String get downloadsLapsedRemove => 'Remove';
 }

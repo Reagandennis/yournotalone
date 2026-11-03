@@ -31,27 +31,45 @@
     "items": [
       {
         "id": "meditation:Sleep wind-down",
-        "reason": "For tonight"
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
+        "id": "breathing:4-7-8 calm",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       },
       {
         "id": "med-morning-reset",
-        "reason": "Because you're working on focus"
+        "reason": "Because you're working on focus",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "focus"
+        }
       },
       {
         "id": "breathing:Panic reset",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       },
       {
         "id": "sound:Deep focus",
-        "reason": "Because you're working on focus"
+        "reason": "Because you're working on focus",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "focus"
+        }
       },
       {
         "id": "lesson:Why avoiding things keeps anxiety alive",
-        "reason": "Something to try"
-      },
-      {
-        "id": "prompt:Worst case",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       }
     ],
     "rules": "v1"

@@ -11,27 +11,36 @@
     "items": [
       {
         "id": "tool:Grounding: 5-4-3-2-1",
-        "reason": "For right now"
+        "reason": "For right now",
+        "reasonKey": "lead"
       },
       {
         "id": "support-crisis-lines",
-        "reason": "Here whenever you need it"
+        "reason": "Here whenever you need it",
+        "reasonKey": "support"
       },
       {
         "id": "breathing:Panic reset",
-        "reason": "For right now"
+        "reason": "For right now",
+        "reasonKey": "lead"
       },
       {
         "id": "tool:Physiological sigh",
-        "reason": "For right now"
+        "reason": "For right now",
+        "reasonKey": "lead"
       },
       {
         "id": "breathing:Box breathing",
-        "reason": "For right now"
+        "reason": "For right now",
+        "reasonKey": "lead"
       },
       {
         "id": "meditation:Sleep wind-down",
-        "reason": "For tonight"
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       }
     ],
     "rules": "v1"

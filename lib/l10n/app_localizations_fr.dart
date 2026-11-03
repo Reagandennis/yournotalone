@@ -5880,4 +5880,64 @@ class AppLocalizationsFr extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get homeReasonLead => 'Pour maintenant';
+
+  @override
+  String get homeReasonSupport => 'Là dès que tu en as besoin';
+
+  @override
+  String homeReasonCourseDay(int day, String course) {
+    return 'Jour $day de $course';
+  }
+
+  @override
+  String homeReasonFeltBetter(String title) {
+    return 'Parce que $title t\'a fait du bien';
+  }
+
+  @override
+  String homeReasonGoal(String need) {
+    String _temp0 = intl.Intl.selectLogic(need, {
+      'sleep': 'Parce que tu travailles sur le sommeil',
+      'anxious': 'Parce que tu travailles sur l\'anxiété',
+      'panic': 'Parce que tu travailles sur la panique',
+      'low': 'Parce que tu travailles sur les baisses de moral',
+      'stressed': 'Parce que tu travailles sur le stress',
+      'angry': 'Parce que tu travailles sur la colère',
+      'urges': 'Parce que tu travailles sur les envies',
+      'focus': 'Parce que tu travailles sur la concentration',
+      'reflect': 'Parce que tu travailles sur la réflexion',
+      'good': 'Parce que tu travailles sur les bons jours',
+      'other': 'Pour ce sur quoi tu travailles',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get homeReasonFresh => 'Tout juste ajouté';
+
+  @override
+  String get homeReasonPopular => 'Populaire ce mois-ci';
+
+  @override
+  String get homeReasonSaved => 'Un favori à toi';
+
+  @override
+  String get homeReasonFallback => 'À essayer';
+
+  @override
+  String get downloadsLapsedTitle => 'Supprimer les téléchargements Premium ?';
+
+  @override
+  String downloadsLapsedBody(String size) {
+    return 'Ton Premium a pris fin il y a plus d\'un mois, et ses téléchargements occupent encore $size sur ce téléphone. Les supprimer pour libérer de l\'espace ? Si tu reviens à Premium, tu pourras les retélécharger.';
+  }
+
+  @override
+  String get downloadsLapsedKeep => 'Garder';
+
+  @override
+  String get downloadsLapsedRemove => 'Supprimer';
 }

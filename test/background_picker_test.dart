@@ -12,6 +12,9 @@ import 'package:yournotalone/backgrounds/scene_background.dart';
 import 'package:yournotalone/backgrounds/scene_library.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/content/catalog_snapshot.dart';
+import 'package:yournotalone/meditation/breathing_screen.dart';
+import 'package:yournotalone/meditation/meditation_catalog.dart';
+import 'package:yournotalone/meditation/meditation_screen.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
 import 'package:yournotalone/sounds/player_screen.dart';
 import 'package:yournotalone/sounds/sound_player.dart';
@@ -84,4 +87,56 @@ void main() {
     await tester.pump();
     expect(CalmVisualsSetting.instance.choiceFor('sound:White noise'), isNull);
   });
+
+  for (final (name, itemId, screen) in [
+    (
+      'meditation',
+      'meditation:${meditations.first.title}',
+      () => MeditationScreen(
+        meditation: meditations.first,
+        practice: PracticeRepository(),
+      ),
+    ),
+    (
+      'breathing',
+      'breathing:${breathPatterns.first.title}',
+      () => BreathingScreen(
+        pattern: breathPatterns.first,
+        practice: PracticeRepository(),
+      ),
+    ),
+  ]) {
+    testWidgets('the $name screen\'s background can be changed', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 900);
+      addTearDown(tester.view.reset);
+      SceneLibrary.instance.use(
+        CatalogSnapshot.fromJson(
+          jsonDecode(File(bundledCatalogAsset).readAsStringSync())
+              as Map<String, dynamic>,
+        )!,
+      );
+      await tester.pumpWidget(
+        MaterialApp(theme: buildAppTheme(), home: screen()),
+      );
+      await tester.pump();
+
+      await tester.tap(find.byTooltip('Change background'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(find.text('Fireflies'));
+      await tester.pump();
+      expect(CalmVisualsSetting.instance.choiceFor(itemId), 'fireflies');
+      expect(
+        tester
+            .widgetList<SceneBackground>(find.byType(SceneBackground))
+            .first
+            .spec
+            .id,
+        'fireflies',
+      );
+    });
+  }
 }

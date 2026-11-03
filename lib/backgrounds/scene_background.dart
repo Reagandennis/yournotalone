@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import '../brand.dart';
 import '../discover/content_index.dart';
 import 'background_spec.dart';
+import 'battery_saver.dart';
 import 'calm_visuals.dart';
 import 'scene_library.dart';
 import 'scene_painters.dart';
@@ -17,8 +18,9 @@ const sceneStillTime = 12.0;
 /// moving.
 ///
 /// It holds still (one frame, no ticker) when the phone asks to reduce
-/// motion, when Calm visuals is off, when [animate] is false, and while
-/// the app is in the background. Off-screen routes stop it too: the
+/// motion, when Calm visuals is off, when [animate] is false, while the
+/// battery saver (Low Power Mode) is on, and while the app is in the
+/// background. Off-screen routes stop it too: the
 /// ticker is muted by [TickerMode]. Moving, it repaints at most 30 times
 /// a second, through a [RepaintBoundary] and a painter that repaints off
 /// a clock rather than rebuilding widgets.
@@ -61,6 +63,10 @@ class _SceneBackgroundState extends State<SceneBackground>
   double _before = sceneStillTime;
   bool _foreground = true;
 
+  /// Kept so the listener comes off the one it went on, even if a test
+  /// swaps [BatterySaver.instance] in between.
+  late final BatterySaver _battery = BatterySaver.instance;
+
   ScenePainter? _painter;
 
   @override
@@ -69,6 +75,7 @@ class _SceneBackgroundState extends State<SceneBackground>
     WidgetsBinding.instance.addObserver(this);
     _foreground = _isForeground(WidgetsBinding.instance.lifecycleState);
     CalmVisualsSetting.instance.addListener(_sync);
+    _battery.addListener(_sync);
   }
 
   static bool _isForeground(AppLifecycleState? state) => switch (state) {
@@ -104,6 +111,7 @@ class _SceneBackgroundState extends State<SceneBackground>
         widget.animate &&
         _foreground &&
         CalmVisualsSetting.instance.enabled &&
+        !_battery.on &&
         !MediaQuery.disableAnimationsOf(context);
     if (moving && !_ticker.isActive) {
       _before = _clock.time;
@@ -124,6 +132,7 @@ class _SceneBackgroundState extends State<SceneBackground>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     CalmVisualsSetting.instance.removeListener(_sync);
+    _battery.removeListener(_sync);
     _ticker.dispose();
     _clock.dispose();
     super.dispose();

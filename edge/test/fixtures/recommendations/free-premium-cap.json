@@ -13,27 +13,48 @@
     "items": [
       {
         "id": "breathing:4-7-8 calm",
-        "reason": "Because you're working on sleep"
+        "reason": "Because you're working on sleep",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "sleep"
+        }
       },
       {
-        "id": "sound:Rainfall",
-        "reason": "For tonight"
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       },
       {
         "id": "breathing:Box breathing",
-        "reason": "Because you're working on anxiety"
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
       },
       {
         "id": "lesson:What CBT actually is",
-        "reason": "Because you're working on anxiety"
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
+      },
+      {
+        "id": "tool:Grounding: 5-4-3-2-1",
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
       },
       {
         "id": "sound:Deep focus",
-        "reason": "Something to try"
-      },
-      {
-        "id": "tool:Physiological sigh",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       }
     ],
     "rules": "v1"

@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseSnapshot } from '../src/catalog';
 import {
-  isCalmingSafe, recommend, REASONS, TOP, type ScoreCatalog, type ScoreItem, type Signals,
+  COURSE_CAP, isCalmingSafe, recommend, REASONS, TOP, type ScoreCatalog, type ScoreItem, type Signals,
 } from '../src/recommend/score';
 import bundled from '../../assets/catalog/bundled.json';
 import catalogJson from './fixtures/recommendations/catalog.json';
@@ -51,7 +51,7 @@ describe('safety (design §5, §9)', () => {
           const first = itemsOf(catalog, s)[0];
           expect(first.calmingSafe).toBe(true);
           expect(first.needs).toContain('panic');
-          expect(recommend(catalog, s).items[0].reason).toBe(REASONS.lead);
+          expect(recommend(catalog, s).items[0]).toMatchObject({ reason: REASONS.lead, reasonKey: 'lead' });
         });
 
         it(`${label}: only calmingSafe items, nothing deep or for feeling good`, () => {
@@ -76,7 +76,7 @@ describe('safety (design §5, §9)', () => {
 
   it('support items come straight after the lead', () => {
     const r = recommend(fixture, { ...NIGHT, ...AWFUL, premium: true });
-    expect(r.items[1]).toEqual({ id: 'support-crisis-lines', reason: REASONS.support });
+    expect(r.items[1]).toEqual({ id: 'support-crisis-lines', reason: REASONS.support, reasonKey: 'support' });
   });
 
   it('the rules lapse 2 hours after the check-in', () => {
@@ -152,11 +152,18 @@ describe('caps on the top 6', () => {
         for (const [kind, count] of counts) expect(count, kind).toBeLessThanOrEqual(2);
       });
 
-      it(`${name} #${n}: at most 1 from one course`, () => {
+      it(`${name} #${n}: at most ${COURSE_CAP} from one course`, () => {
         for (const course of catalog.courses) {
-          expect(top.filter((i) => course.days.includes(i.id)).length, course.id).toBeLessThanOrEqual(1);
+          expect(top.filter((i) => course.days.includes(i.id)).length, course.id).toBeLessThanOrEqual(COURSE_CAP);
         }
       });
+
+      for (const course of catalog.courses.slice(0, 3)) {
+        it(`${name} #${n}: in ${course.id}, only its next day from it`, () => {
+          const inCourse = itemsOf(catalog, { ...s, course: { id: course.id, day: 0 }, limit: 12 }).slice(0, TOP);
+          expect(inCourse.filter((i) => course.days.includes(i.id)).length).toBeLessThanOrEqual(1);
+        });
+      }
 
       if (!s.premium) {
         it(`${name} #${n}: a free user sees at most 2 premium items`, () => {
@@ -181,7 +188,12 @@ describe('caps on the top 6', () => {
 describe('scoring', () => {
   it('puts the course in progress first, with its day', () => {
     const r = recommend(fixture, { ...NIGHT, premium: true, course: { id: 'sleep7', day: 1 } });
-    expect(r.items[0]).toEqual({ id: 'meditation:Body scan', reason: 'Day 2 of 7 days to better sleep' });
+    expect(r.items[0]).toEqual({
+      id: 'meditation:Body scan',
+      reason: 'Day 2 of 7 days to better sleep',
+      reasonKey: 'course',
+      reasonArgs: { course: 'sleep7', day: 2 },
+    });
   });
 
   it('ignores an unknown course or a day out of range', () => {
@@ -197,9 +209,11 @@ describe('scoring', () => {
       feelings: [{ id: 'tool:Physiological sigh', feeling: 1, at: '2026-11-01T10:00:00Z' }],
       limit: 20,
     });
-    expect(r.items.find((x) => x.id === 'breathing:Box breathing')?.reason).toBe(
-      'Because you felt better after Physiological sigh',
-    );
+    expect(r.items.find((x) => x.id === 'breathing:Box breathing')).toMatchObject({
+      reason: 'Because you felt better after Physiological sigh',
+      reasonKey: 'feltBetter',
+      reasonArgs: { title: 'tool:Physiological sigh' },
+    });
   });
 
   it('ignores feelings older than 90 days', () => {
@@ -234,12 +248,48 @@ describe('scoring', () => {
     expect(recommend(real, { ...NIGHT, premium: true }).items).toHaveLength(6);
   });
 
-  it('every reason is a non-empty line', () => {
+  it('every reason is a non-empty line with a code', () => {
     for (const r of [
       recommend(real, { ...NIGHT, premium: false, limit: 20 }),
       recommend(real, { ...NIGHT, ...AWFUL, premium: false, limit: 20 }),
+      recommend(real, { ...NIGHT, premium: true, goals: ['sleep'], course: { id: real.courses[0].id, day: 0 } }),
     ]) {
-      for (const x of r.items) expect(x.reason.length).toBeGreaterThan(0);
+      for (const x of r.items) {
+        expect(x.reason.length).toBeGreaterThan(0);
+        expect(x.reasonKey).toMatch(/^[a-zA-Z]+$/);
+      }
     }
+  });
+
+  it('reason arguments are ids, never English', () => {
+    const items = new Set(real.items.map((i) => i.id));
+    const courses = new Set(real.courses.map((c) => c.id));
+    const r = recommend(real, {
+      ...NIGHT,
+      premium: true,
+      goals: ['sleep'],
+      course: { id: real.courses[0].id, day: 1 },
+      feelings: real.items.slice(0, 5).map((i) => ({ id: i.id, feeling: 1, at: '2026-11-01T10:00:00Z' })),
+      limit: 20,
+    });
+    for (const x of r.items) {
+      const a = x.reasonArgs ?? {};
+      if (x.reasonKey === 'feltBetter') expect(items.has(a.title as string), String(a.title)).toBe(true);
+      if (x.reasonKey === 'course') expect(courses.has(a.course as string)).toBe(true);
+      if (x.reasonKey === 'goal') expect(['sleep']).toContain(a.need);
+      if (x.reasonKey === 'dayPart') expect(a.part).toBe('night');
+    }
+  });
+
+  it('a course the person is not in is capped at 2, not 1', () => {
+    const top = itemsOf(fixture, {
+      now: '2026-11-02T16:30:00Z',
+      localTime: '2026-11-02T19:30',
+      premium: true,
+      goals: ['sleep'],
+      popularity: { 'breathing:4-7-8 calm': 120, 'meditation:Body scan': 110, 'meditation:Sleep wind-down': 100 },
+    });
+    const sleep7 = fixture.courses.find((c) => c.id === 'sleep7')!;
+    expect(top.filter((i) => sleep7.days.includes(i.id))).toHaveLength(2);
   });
 });
