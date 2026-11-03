@@ -38,7 +38,14 @@ import '../toolkit/toolkit_content.dart';
 import '../toolkit/toolkit_lesson_screen.dart';
 import 'catalog_snapshot.dart';
 
-const catalogSnapshotEnabled = bool.fromEnvironment('CATALOG_SNAPSHOT');
+/// On by default: the app reads its catalogue from the bundled snapshot and
+/// downloads newer published ones. `--dart-define=CATALOG_SNAPSHOT=false`
+/// goes back to the Dart catalogues, for comparing the two in tests; most
+/// sounds aren't bundled any more, so don't ship a build like that.
+const catalogSnapshotEnabled = bool.fromEnvironment(
+  'CATALOG_SNAPSHOT',
+  defaultValue: true,
+);
 
 /// The language content is shown in. English until the UI itself is
 /// translated, so a screen never mixes two languages.
@@ -282,8 +289,11 @@ bool appVersionAtLeast(String version, String minimum) {
 /// A download takes effect at the next launch, so nothing changes under
 /// someone mid-session.
 class ContentCatalog {
-  ContentCatalog._([this._client, Future<String> Function()? appVersion])
-    : _appVersion = appVersion ?? _platformVersion;
+  ContentCatalog._([
+    this._client,
+    Future<String> Function()? appVersion,
+    this._baseUrl = catalogBaseUrl,
+  ]) : _appVersion = appVersion ?? _platformVersion;
 
   static final instance = ContentCatalog._();
 
@@ -291,7 +301,8 @@ class ContentCatalog {
   factory ContentCatalog.forTest({
     required http.Client client,
     required String appVersion,
-  }) => ContentCatalog._(client, () async => appVersion);
+    String baseUrl = catalogBaseUrl,
+  }) => ContentCatalog._(client, () async => appVersion, baseUrl);
 
   static Future<String> _platformVersion() async =>
       (await PackageInfo.fromPlatform()).version;
@@ -300,6 +311,7 @@ class ContentCatalog {
 
   final http.Client? _client;
   final Future<String> Function() _appVersion;
+  final String _baseUrl;
 
   CatalogSnapshot? _snapshot;
   List<ContentItem>? _items;
@@ -365,7 +377,8 @@ class ContentCatalog {
   Future<bool> refresh() async {
     final client = _client ?? http.Client();
     try {
-      final base = Uri.parse(catalogBaseUrl);
+      // With a trailing slash, so a base with a path (…/staging) keeps it.
+      final base = Uri.parse(_baseUrl.endsWith('/') ? _baseUrl : '$_baseUrl/');
       final latest = await client
           .get(base.resolve('catalog/latest.json'))
           .timeout(const Duration(seconds: 10));
@@ -375,6 +388,11 @@ class ContentCatalog {
       final path = pointer['path'] as String;
       final minApp = pointer['minApp'] as String? ?? '0.0.0';
       if (version <= (_snapshot?.version ?? -1)) return false;
+      // The same catalogue we already have (the bundled copy is built from
+      // what was published): nothing to fetch.
+      if (_snapshot case final s? when path.endsWith('-${s.hash}.json')) {
+        return false;
+      }
       if (!appVersionAtLeast(await _appVersion(), minApp)) return false;
 
       final res = await client

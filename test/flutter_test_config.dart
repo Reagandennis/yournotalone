@@ -7,9 +7,9 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:yournotalone/content/catalog_snapshot.dart';
 import 'package:yournotalone/content/content_catalog.dart';
 
-/// `flutter test --dart-define=CATALOG_SNAPSHOT=true` runs every test with
-/// the catalogue read from the bundled snapshot instead of the Dart
-/// catalogues, the way the app runs with the same flag.
+/// Every test runs with the catalogue read from the bundled snapshot, the
+/// way the app runs. `--dart-define=CATALOG_SNAPSHOT=false` runs them on the
+/// Dart catalogues instead.
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // As in main(): date names for every language, delegate or not.
   await initializeDateFormatting();

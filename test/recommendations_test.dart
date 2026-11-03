@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:yournotalone/discover/content_index.dart';
 import 'package:yournotalone/discover/recommendations.dart';
+import 'package:yournotalone/media/media_links.dart';
 
 const _base = 'https://api.test';
 
@@ -79,9 +80,9 @@ void main() {
       expect(worker.requests, isEmpty);
     });
 
-    test('is off in a build without MEDIA_API_URL', () {
-      expect(recommendationsBaseUrl, isEmpty);
-      expect(RecommendationsClient.instance.enabled, isFalse);
+    test('uses the production Worker unless the build names another', () {
+      expect(recommendationsBaseUrl, mediaApiUrl);
+      expect(RecommendationsClient.instance.enabled, isTrue);
     });
 
     test('posts the device signals with the access token', () async {

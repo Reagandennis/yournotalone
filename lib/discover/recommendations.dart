@@ -19,11 +19,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../content/content_catalog.dart';
 import '../courses/course_progress.dart';
+import '../media/media_links.dart';
 import 'content_index.dart';
 import 'usage_store.dart';
 
 /// The Worker's base URL, shared with media signing. Empty means off.
-const recommendationsBaseUrl = String.fromEnvironment('MEDIA_API_URL');
+const recommendationsBaseUrl = mediaApiUrl;
 
 /// One suggestion: an item id and a short line saying why.
 class Recommendation {
