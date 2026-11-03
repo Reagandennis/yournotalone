@@ -5909,7 +5909,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'urges': 'Parce que tu travailles sur les envies',
       'focus': 'Parce que tu travailles sur la concentration',
       'reflect': 'Parce que tu travailles sur la réflexion',
-      'good': 'Parce que tu travailles sur les bons jours',
+      'good': 'Parce que tu veux faire durer les bons jours',
       'other': 'Pour ce sur quoi tu travailles',
     });
     return '$_temp0';

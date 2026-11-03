@@ -5818,7 +5818,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'urges': 'Because you\'re working on urges',
       'focus': 'Because you\'re working on focus',
       'reflect': 'Because you\'re working on reflection',
-      'good': 'Because you\'re working on good days',
+      'good': 'Because you want to keep the good days going',
       'other': 'Because of what you\'re working on',
     });
     return '$_temp0';

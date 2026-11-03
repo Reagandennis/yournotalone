@@ -1504,7 +1504,7 @@
   "homeReasonSupport": "Là dès que tu en as besoin",
   "homeReasonCourseDay": "Jour {day} de {course}",
   "homeReasonFeltBetter": "Parce que {title} t'a fait du bien",
-  "homeReasonGoal": "{need, select, sleep{Parce que tu travailles sur le sommeil} anxious{Parce que tu travailles sur l'anxiété} panic{Parce que tu travailles sur la panique} low{Parce que tu travailles sur les baisses de moral} stressed{Parce que tu travailles sur le stress} angry{Parce que tu travailles sur la colère} urges{Parce que tu travailles sur les envies} focus{Parce que tu travailles sur la concentration} reflect{Parce que tu travailles sur la réflexion} good{Parce que tu travailles sur les bons jours} other{Pour ce sur quoi tu travailles}}",
+  "homeReasonGoal": "{need, select, sleep{Parce que tu travailles sur le sommeil} anxious{Parce que tu travailles sur l'anxiété} panic{Parce que tu travailles sur la panique} low{Parce que tu travailles sur les baisses de moral} stressed{Parce que tu travailles sur le stress} angry{Parce que tu travailles sur la colère} urges{Parce que tu travailles sur les envies} focus{Parce que tu travailles sur la concentration} reflect{Parce que tu travailles sur la réflexion} good{Parce que tu veux faire durer les bons jours} other{Pour ce sur quoi tu travailles}}",
   "homeReasonFresh": "Tout juste ajouté",
   "homeReasonPopular": "Populaire ce mois-ci",
   "homeReasonSaved": "Un favori à toi",

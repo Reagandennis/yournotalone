@@ -9165,7 +9165,7 @@ abstract class AppLocalizations {
   /// Small line under a suggestion on Home: it fits one of the goals the person chose in onboarding. {need} picks the goal; translate each sentence whole. Shown on two lines at most.
   ///
   /// In en, this message translates to:
-  /// **'{need, select, sleep{Because you\'re working on sleep} anxious{Because you\'re working on anxiety} panic{Because you\'re working on panic} low{Because you\'re working on low moods} stressed{Because you\'re working on stress} angry{Because you\'re working on anger} urges{Because you\'re working on urges} focus{Because you\'re working on focus} reflect{Because you\'re working on reflection} good{Because you\'re working on good days} other{Because of what you\'re working on}}'**
+  /// **'{need, select, sleep{Because you\'re working on sleep} anxious{Because you\'re working on anxiety} panic{Because you\'re working on panic} low{Because you\'re working on low moods} stressed{Because you\'re working on stress} angry{Because you\'re working on anger} urges{Because you\'re working on urges} focus{Because you\'re working on focus} reflect{Because you\'re working on reflection} good{Because you want to keep the good days going} other{Because of what you\'re working on}}'**
   String homeReasonGoal(String need);
 
   /// Small line under a suggestion on Home: the item is new in the app.

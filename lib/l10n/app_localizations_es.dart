@@ -5888,7 +5888,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'urges': 'Porque estás trabajando en los impulsos',
       'focus': 'Porque estás trabajando en la concentración',
       'reflect': 'Porque estás trabajando en la reflexión',
-      'good': 'Porque estás trabajando en los días buenos',
+      'good': 'Porque quieres que los buenos días duren',
       'other': 'Por lo que estás trabajando',
     });
     return '$_temp0';

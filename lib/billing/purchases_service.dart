@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/l10n.dart';
@@ -23,6 +24,29 @@ const _appStoreApiKey = 'appl_VAPXkxYInHoDdHATCqzNlXhzIzM';
 String get _revenueCatApiKey =>
     Platform.isAndroid ? _googlePlayApiKey : _appStoreApiKey;
 
+/// Whether an entitlement RevenueCat reported still holds at [now].
+///
+/// Offline, RevenueCat answers from its cache, which can say "active" long
+/// after the paid period ended. So the period's own end date decides:
+/// past [expires], premium stops even with no connection, until RevenueCat
+/// is reached and confirms a renewal. [expires] null means no end date
+/// (a lifetime grant). [latestSeen] is the latest time the app has seen;
+/// a clock set back before it doesn't buy more time.
+@visibleForTesting
+bool entitlementHolds({
+  required bool entitled,
+  required DateTime? expires,
+  required DateTime now,
+  DateTime? latestSeen,
+}) {
+  if (!entitled) return false;
+  if (expires == null) return true;
+  final effective = latestSeen != null && latestSeen.isAfter(now)
+      ? latestSeen
+      : now;
+  return effective.isBefore(expires);
+}
+
 /// App-wide RevenueCat wrapper: configures the SDK, keeps the RevenueCat
 /// identity in step with the Supabase account, and exposes entitlement
 /// state plus purchase/restore/paywall/customer-center actions.
@@ -36,6 +60,15 @@ class PurchasesService {
 
   bool _configured = false;
 
+  /// What RevenueCat last said: entitled, and until when (null for no end).
+  bool _entitled = false;
+  DateTime? _expires;
+
+  /// The latest time seen, so setting the clock back doesn't extend
+  /// premium. Kept across launches.
+  static const _latestSeenKey = 'billing.latestSeen';
+  DateTime? _latestSeen;
+
   bool get isConfigured => _configured;
 
   static bool get _supported =>
@@ -46,6 +79,8 @@ class PurchasesService {
   /// Call once at startup, after Supabase is initialized.
   Future<void> init() async {
     if (!_supported || _configured) return;
+    // The latest time seen on earlier launches, before any answer is used.
+    await recheck();
     try {
       await Purchases.setLogLevel(kDebugMode ? LogLevel.debug : LogLevel.info);
       final configuration = PurchasesConfiguration(_revenueCatApiKey)
@@ -101,11 +136,54 @@ class PurchasesService {
 
   void _onCustomerInfo(CustomerInfo info) {
     final pro = info.entitlements.active[proEntitlementId];
-    isPro.value = pro != null;
+    _entitled = pro != null;
+    _expires = pro?.expirationDate == null
+        ? null
+        : DateTime.tryParse(pro!.expirationDate!);
+    _apply();
     // When premium was last active, for its downloads after it ends.
-    if (pro != null) unawaited(LapsedDownloads.instance.notePremium());
+    if (isPro.value) unawaited(LapsedDownloads.instance.notePremium());
     // The paywall promises a reminder before a trial turns into a charge.
     unawaited(TrialReminder.sync(pro));
+  }
+
+  /// Applies the paid period's end date to what RevenueCat last said, at
+  /// the current time. Called on each RevenueCat answer and when the app
+  /// comes back to the foreground, so a period that ends while the phone
+  /// is offline ends premium too. Online, it also asks RevenueCat again,
+  /// which picks up a renewal.
+  Future<void> recheck({bool refresh = false}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final stored = DateTime.tryParse(prefs.getString(_latestSeenKey) ?? '');
+      if (stored != null &&
+          (_latestSeen == null || stored.isAfter(_latestSeen!))) {
+        _latestSeen = stored;
+      }
+      _apply();
+      await prefs.setString(_latestSeenKey, _latestSeen!.toIso8601String());
+    } catch (e) {
+      debugPrint('Clock check unavailable: $e');
+      _apply();
+    }
+    if (refresh && _configured) {
+      try {
+        _onCustomerInfo(await Purchases.getCustomerInfo());
+      } catch (e) {
+        debugPrint('RevenueCat customer info unavailable: $e');
+      }
+    }
+  }
+
+  void _apply() {
+    final now = DateTime.now();
+    if (_latestSeen == null || now.isAfter(_latestSeen!)) _latestSeen = now;
+    isPro.value = entitlementHolds(
+      entitled: _entitled,
+      expires: _expires,
+      now: now,
+      latestSeen: _latestSeen,
+    );
   }
 
   /// Asks RevenueCat afresh whether the signed-in account has Pro, after

@@ -222,6 +222,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       unawaited(PracticeRepository().flushPending());
       unawaited(SavedStore.instance.syncIfStale());
+      // A paid period that ended while the app was away ends premium,
+      // even offline.
+      unawaited(PurchasesService.instance.recheck(refresh: true));
     }
   }
 

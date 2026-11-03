@@ -5520,7 +5520,7 @@ class AppLocalizationsZh extends AppLocalizations {
       'urges': '因为你在关注冲动',
       'focus': '因为你在关注专注',
       'reflect': '因为你在关注自我反思',
-      'good': '因为你在关注美好的日子',
+      'good': '因为你想让好日子延续下去',
       'other': '贴合你的目标',
     });
     return '$_temp0';

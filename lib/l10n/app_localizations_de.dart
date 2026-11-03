@@ -5891,7 +5891,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'urges': 'Weil du an deinem Verlangen arbeitest',
       'focus': 'Weil du an deiner Konzentration arbeitest',
       'reflect': 'Weil du an Selbstreflexion arbeitest',
-      'good': 'Weil du an guten Tagen arbeitest',
+      'good': 'Weil du gute Tage festhalten möchtest',
       'other': 'Passend zu deinen Zielen',
     });
     return '$_temp0';

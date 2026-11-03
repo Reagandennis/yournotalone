@@ -1504,7 +1504,7 @@
   "homeReasonSupport": "你需要时随时都在",
   "homeReasonCourseDay": "{course} · 第 {day} 天",
   "homeReasonFeltBetter": "因为你在{title}之后感觉好些了",
-  "homeReasonGoal": "{need, select, sleep{因为你在关注睡眠} anxious{因为你在关注焦虑} panic{因为你在关注惊恐} low{因为你在关注情绪低落} stressed{因为你在关注压力} angry{因为你在关注愤怒} urges{因为你在关注冲动} focus{因为你在关注专注} reflect{因为你在关注自我反思} good{因为你在关注美好的日子} other{贴合你的目标}}",
+  "homeReasonGoal": "{need, select, sleep{因为你在关注睡眠} anxious{因为你在关注焦虑} panic{因为你在关注惊恐} low{因为你在关注情绪低落} stressed{因为你在关注压力} angry{因为你在关注愤怒} urges{因为你在关注冲动} focus{因为你在关注专注} reflect{因为你在关注自我反思} good{因为你想让好日子延续下去} other{贴合你的目标}}",
   "homeReasonFresh": "新上线",
   "homeReasonPopular": "本月热门",
   "homeReasonSaved": "你收藏过的",
