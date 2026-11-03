@@ -263,7 +263,9 @@ Workers rate-limiting binding.
   "opensByKind": {"sound": 12, "meditation": 3},
   "downloaded": ["meditation:Body scan"], "offline": false }
 // response
-{ "items": [ { "id": "breathing:Panic reset", "reason": "For right now" }, … ],
+{ "items": [ { "id": "breathing:Panic reset", "reason": "For right now", "reasonKey": "lead" },
+             { "id": "…", "reason": "Because you felt better after Body scan",
+               "reasonKey": "feltBetter", "reasonArgs": { "title": "meditation:Body scan" } }, … ],
   "rules": "v1" }
 ```
 
@@ -286,10 +288,16 @@ JWT and the daily popularity snapshot.
    + freshness (`addedOn` < 21 days)
    + small popularity prior
    − recently done (finished in the last 24h).
-4. **Diversity:** at most 2 items of one kind in the top 6, and at most 1
-   from one course.
+4. **Diversity:** at most 2 items of one kind in the top 6, and at most 2
+   from one course. The course in progress is the exception: only its next
+   day (step 2) is in the top 6. (It was 1 per course, but most popular
+   items are days of the 7-day courses, so that held back too many good
+   matches.)
 5. **Reason:** the strongest scoring term becomes a short line, for example
-   "Because you felt better after Body scan".
+   "Because you felt better after Body scan". It's sent as a code with
+   arguments (`reasonKey: "feltBetter"`, `reasonArgs: {title: <item id>}`)
+   that the app renders in its own language, plus the English line for
+   older apps.
 6. For a free user, premium items are capped at 2 of the top 6, so Home
    never looks like a wall of locks. Locked items still show, because they
    lead to the upgrade sheet.

@@ -16,27 +16,52 @@
     "items": [
       {
         "id": "tool:Thought record",
-        "reason": "Day 3 of 7 days to calmer"
+        "reason": "Day 3 of 7 days to calmer",
+        "reasonKey": "course",
+        "reasonArgs": {
+          "course": "anxiety7",
+          "day": 3
+        }
       },
       {
         "id": "med-morning-reset",
-        "reason": "For this morning"
+        "reason": "For this morning",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "morning"
+        }
       },
       {
         "id": "breathing:Panic reset",
-        "reason": "Because you're working on anxiety"
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
       },
       {
         "id": "prompt:Worst case",
-        "reason": "Because you're working on anxiety"
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
       },
       {
         "id": "breathing:Box breathing",
-        "reason": "Because you're working on anxiety"
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
       },
       {
         "id": "sound:Heartbeat",
-        "reason": "Because you're working on anxiety"
+        "reason": "Because you're working on anxiety",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "anxious"
+        }
       }
     ],
     "rules": "v1"

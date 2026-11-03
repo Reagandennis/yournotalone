@@ -10,8 +10,14 @@
 //      the support items.
 //   2. The next day of the course in progress.
 //   3. Everything else by score (TERMS below).
-//   4. Caps on the top 6: at most 2 of one kind, 1 per course, and for a
-//      free user at most 2 premium items.
+//   4. Caps on the top 6: at most 2 of one kind, at most 2 from one
+//      course (only the day to continue from the course in progress), and
+//      for a free user at most 2 premium items.
+//
+// Every suggestion carries a reason twice: an English line (`reason`, for
+// older apps) and a code with arguments (`reasonKey`, `reasonArgs`) that
+// the app turns into its own language. Arguments are ids, never English:
+// the app looks titles up in its catalogue.
 //
 // Support items (crisis content) are always free, skip the caps and never
 // get a negative term.
@@ -92,6 +98,9 @@ function dayPartOf(hour: number): DayPart {
   return 'night';
 }
 
+/** Per course in the top 6, for a course the person isn't in. */
+export const COURSE_CAP = 2;
+
 export const REASONS = {
   lead: 'For right now',
   support: 'Here whenever you need it',
@@ -153,9 +162,35 @@ export interface Signals {
   limit?: number;
 }
 
-export interface Suggestion {
-  id: string;
+/**
+ * What the app renders for each code, and its arguments:
+ *   lead, support, fresh, popular, saved, fallback: none
+ *   course:     { course: course id, day: 1-based day }
+ *   feltBetter: { title: item id }
+ *   goal:       { need: a need name }
+ *   dayPart:    { part: morning | afternoon | evening | night }
+ */
+export type ReasonKey =
+  | 'lead'
+  | 'support'
+  | 'course'
+  | 'feltBetter'
+  | 'goal'
+  | 'dayPart'
+  | 'fresh'
+  | 'popular'
+  | 'saved'
+  | 'fallback';
+
+export interface Reason {
+  /** English, for apps that predate reasonKey. */
   reason: string;
+  reasonKey: ReasonKey;
+  reasonArgs?: Record<string, string | number>;
+}
+
+export interface Suggestion extends Reason {
+  id: string;
 }
 
 export interface Recommendations {
@@ -209,6 +244,11 @@ export function isCalmingSafe(item: ScoreItem): boolean {
   return item.calmingSafe === true && item.intensity !== 'deep' && !item.needs.includes('good');
 }
 
+const reasonOf = (key: Exclude<ReasonKey, 'course' | 'feltBetter' | 'goal' | 'dayPart'>): Reason => ({
+  reason: REASONS[key],
+  reasonKey: key,
+});
+
 /** Premium as far as the caps (and the app) should see it. */
 const lockedFor = (item: ScoreItem, premium: boolean) => !premium && item.premium && !item.support;
 
@@ -217,13 +257,14 @@ const lockedFor = (item: ScoreItem, premium: boolean) => !premium && item.premiu
 interface Term {
   name: 'felt' | 'goal' | 'mood' | 'dayPart' | 'fresh' | 'saved' | 'popular' | 'habit';
   value: number;
-  reason: string;
+  /** Null when the term can't be put into words. */
+  reason: Reason | null;
 }
 
 interface Scored {
   item: ScoreItem;
   score: number;
-  reason: string;
+  reason: Reason;
   tie: number;
 }
 
@@ -237,8 +278,8 @@ interface Context {
   moodNeeds: Set<string>;
   /** Need -> summed feeling (+1 better, -1 worse), clamped to ±1 after /2. */
   needWeight: Map<string, number>;
-  /** Need -> title of the latest item that felt better and has it. */
-  betterAfter: Map<string, string>;
+  /** Need -> the latest item that felt better and has it. */
+  betterAfter: Map<string, ScoreItem>;
   recent: Set<string>;
   saved: Set<string>;
   popularity: Record<string, number>;
@@ -254,7 +295,7 @@ function context(catalog: ScoreCatalog, s: Signals): Context {
   const byId = new Map(catalog.items.map((i) => [i.id, i]));
 
   const sums = new Map<string, number>();
-  const betterAfter = new Map<string, string>();
+  const betterAfter = new Map<string, ScoreItem>();
   // Newest first, so the first better-after title per need is the latest.
   const feelings = [...(s.feelings ?? [])].sort((a, b) => Date.parse(b.at) - Date.parse(a.at));
   for (const f of feelings) {
@@ -263,7 +304,7 @@ function context(catalog: ScoreCatalog, s: Signals): Context {
     const sign = f.feeling > 0 ? 1 : -1;
     for (const need of item.needs) {
       sums.set(need, (sums.get(need) ?? 0) + sign);
-      if (sign > 0 && !betterAfter.has(need)) betterAfter.set(need, item.title);
+      if (sign > 0 && !betterAfter.has(need)) betterAfter.set(need, item);
     }
   }
   const needWeight = new Map([...sums].map(([need, sum]) => [need, clamp(sum / 2, -1, 1)]));
@@ -303,8 +344,18 @@ function terms(item: ScoreItem, c: Context): Term[] {
   }
   felt = clamp(felt, -2, 2) * WEIGHTS.felt;
   if (felt !== 0) {
-    const title = bestNeed ? c.betterAfter.get(bestNeed) : undefined;
-    out.push({ name: 'felt', value: felt, reason: title ? `Because you felt better after ${title}` : '' });
+    const after = bestNeed ? c.betterAfter.get(bestNeed) : undefined;
+    out.push({
+      name: 'felt',
+      value: felt,
+      reason: after
+        ? {
+            reason: `Because you felt better after ${after.title}`,
+            reasonKey: 'feltBetter',
+            reasonArgs: { title: after.id },
+          }
+        : null,
+    });
   }
 
   // Need affinity: goals.
@@ -313,13 +364,17 @@ function terms(item: ScoreItem, c: Context): Term[] {
     out.push({
       name: 'goal',
       value: Math.min(2, goalNeeds.length) * WEIGHTS.goal,
-      reason: `Because you're working on ${NEED_LABEL[goalNeeds[0]]}`,
+      reason: {
+        reason: `Because you're working on ${NEED_LABEL[goalNeeds[0]]}`,
+        reasonKey: 'goal',
+        reasonArgs: { need: goalNeeds[0] },
+      },
     });
   }
 
   if (c.distressed) {
     const fit = needs.filter((n) => c.moodNeeds.has(n)).length;
-    if (fit) out.push({ name: 'mood', value: fit * WEIGHTS.mood, reason: REASONS.lead });
+    if (fit) out.push({ name: 'mood', value: fit * WEIGHTS.mood, reason: reasonOf('lead') });
   }
 
   if (item.dayParts.length) {
@@ -327,25 +382,25 @@ function terms(item: ScoreItem, c: Context): Term[] {
     out.push({
       name: 'dayPart',
       value: fits ? WEIGHTS.dayPart : WEIGHTS.wrongDayPart,
-      reason: DAY_PART_REASON[c.dayPart],
+      reason: { reason: DAY_PART_REASON[c.dayPart], reasonKey: 'dayPart', reasonArgs: { part: c.dayPart } },
     });
   }
 
   const age = daysSince(item.addedOn, c.today);
   if (age !== null && age >= 0 && age < FRESH_DAYS) {
-    out.push({ name: 'fresh', value: WEIGHTS.fresh, reason: REASONS.fresh });
+    out.push({ name: 'fresh', value: WEIGHTS.fresh, reason: reasonOf('fresh') });
   }
 
-  if (c.saved.has(item.id)) out.push({ name: 'saved', value: WEIGHTS.saved, reason: REASONS.saved });
+  if (c.saved.has(item.id)) out.push({ name: 'saved', value: WEIGHTS.saved, reason: reasonOf('saved') });
 
   const count = c.popularity[item.id];
   if (c.topPopularity > 0 && Number.isFinite(count) && count > 0) {
-    out.push({ name: 'popular', value: (count / c.topPopularity) * WEIGHTS.popular, reason: REASONS.popular });
+    out.push({ name: 'popular', value: (count / c.topPopularity) * WEIGHTS.popular, reason: reasonOf('popular') });
   }
 
   const opened = c.opens[item.kind];
   if (c.topOpens > 0 && Number.isFinite(opened) && opened > 0) {
-    out.push({ name: 'habit', value: (opened / c.topOpens) * WEIGHTS.habit, reason: '' });
+    out.push({ name: 'habit', value: (opened / c.topOpens) * WEIGHTS.habit, reason: null });
   }
   return out;
 }
@@ -365,7 +420,7 @@ function score(item: ScoreItem, c: Context, day: number): Scored {
   return {
     item,
     score: total,
-    reason: best?.reason ?? REASONS.fallback,
+    reason: best?.reason ?? reasonOf('fallback'),
     tie: (stableHash(item.id) + day * 7919) % 1009,
   };
 }
@@ -393,15 +448,25 @@ export function recommend(catalog: ScoreCatalog, s: Signals): Recommendations {
   const courses = new Map<string, number>();
   let premiumCount = 0;
 
+  // Most popular items are also a day of one of the 7-day courses, so a
+  // cap of 1 per course held back too many good matches. A course the
+  // person isn't in is just a tag here: up to COURSE_CAP of its days may
+  // show. The course they're in is different: its next day already leads
+  // the list, and other days would skip ahead or repeat, so it gets only
+  // that one (a day past the end means it's finished, not in progress).
+  const current = s.course ? catalog.courses.find((x) => x.id === s.course!.id) : undefined;
+  const nextDay =
+    current && Number.isInteger(s.course!.day) && s.course!.day >= 0 ? current.days[s.course!.day] : undefined;
+  const courseCap = (id: string) => (nextDay && id === current!.id ? 1 : COURSE_CAP);
   const window = Math.min(TOP, limit);
   const fits = (item: ScoreItem) =>
     item.support ||
     ((kinds.get(item.kind) ?? 0) < 2 &&
-      (coursesOf.get(item.id) ?? []).every((id) => (courses.get(id) ?? 0) < 1) &&
+      (coursesOf.get(item.id) ?? []).every((id) => (courses.get(id) ?? 0) < courseCap(id)) &&
       (!lockedFor(item, s.premium) || premiumCount < 2));
-  const add = (item: ScoreItem, reason: string) => {
+  const add = (item: ScoreItem, reason: Reason) => {
     if (picked.has(item.id) || picks.length >= limit) return;
-    picks.push({ id: item.id, reason });
+    picks.push({ id: item.id, ...reason });
     picked.add(item.id);
     if (item.support) return;
     kinds.set(item.kind, (kinds.get(item.kind) ?? 0) + 1);
@@ -415,19 +480,23 @@ export function recommend(catalog: ScoreCatalog, s: Signals): Recommendations {
     const lead = ranked
       .filter((x) => !x.item.support && x.item.needs.includes('panic'))
       .sort((a, b) => Number(lockedFor(a.item, s.premium)) - Number(lockedFor(b.item, s.premium)) || byRank(a, b))[0];
-    if (lead) add(lead.item, REASONS.lead);
+    if (lead) add(lead.item, reasonOf('lead'));
     for (const x of [...ranked].filter((x) => x.item.support).sort((a, b) => a.item.order - b.item.order)) {
-      add(x.item, REASONS.support);
+      add(x.item, reasonOf('support'));
     }
   }
 
   // 2. The course in progress.
-  if (s.course) {
-    const course = catalog.courses.find((x) => x.id === s.course!.id);
-    const day = s.course.day;
-    const id = course && Number.isInteger(day) && day >= 0 ? course.days[day] : undefined;
-    const item = id ? pool.find((i) => i.id === id) : undefined;
-    if (course && item) add(item, `Day ${day + 1} of ${course.title}`);
+  if (current && nextDay) {
+    const day = s.course!.day;
+    const item = pool.find((i) => i.id === nextDay);
+    if (item) {
+      add(item, {
+        reason: `Day ${day + 1} of ${current.title}`,
+        reasonKey: 'course',
+        reasonArgs: { course: current.id, day: day + 1 },
+      });
+    }
   }
 
   // 3–4. By score, with the caps on the top window. Nothing is let past a

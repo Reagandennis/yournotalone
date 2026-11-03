@@ -21,27 +21,51 @@
     "items": [
       {
         "id": "meditation:Sleep wind-down",
-        "reason": "For tonight"
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       },
       {
         "id": "sound:Rainfall",
-        "reason": "For tonight"
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
+        "id": "breathing:4-7-8 calm",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       },
       {
         "id": "med-morning-reset",
-        "reason": "Because you felt better after Body scan"
+        "reason": "Because you felt better after Body scan",
+        "reasonKey": "feltBetter",
+        "reasonArgs": {
+          "title": "meditation:Body scan"
+        }
       },
       {
         "id": "tool:Physiological sigh",
-        "reason": "Because you felt better after Body scan"
+        "reason": "Because you felt better after Body scan",
+        "reasonKey": "feltBetter",
+        "reasonArgs": {
+          "title": "meditation:Body scan"
+        }
       },
       {
         "id": "breathing:Box breathing",
-        "reason": "Because you felt better after Body scan"
-      },
-      {
-        "id": "sound:Heartbeat",
-        "reason": "Because you felt better after Body scan"
+        "reason": "Because you felt better after Body scan",
+        "reasonKey": "feltBetter",
+        "reasonArgs": {
+          "title": "meditation:Body scan"
+        }
       }
     ],
     "rules": "v1"

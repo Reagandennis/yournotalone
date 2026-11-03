@@ -139,8 +139,8 @@ curl -s -X POST $API/v1/media/sign \
 curl -s -X POST $API/v1/recommendations \
   -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
   -d '{"surface":"home","localTime":"2026-11-02T21:14","lastMood":0,"lastMoodAt":"2026-11-02T18:05:00Z","opensByKind":{"sound":12}}'
-# {"items":[{"id":"tool:Grounding: 5-4-3-2-1","reason":"For right now"},
-#           {"id":"breathing:Panic reset","reason":"For right now"}, …],
+# {"items":[{"id":"tool:Grounding: 5-4-3-2-1","reason":"For right now","reasonKey":"lead"},
+#           {"id":"support-crisis-lines","reason":"Here whenever you need it","reasonKey":"support"}, …],
 #  "rules":"v1","catalogVersion":7}
 ```
 
@@ -162,7 +162,26 @@ The Worker adds the last 90 days of `practice_sessions` and `session_feelings`, 
 `saved_items`, goals from the JWT (`user_metadata.goals`), premium (as for signing) and the
 popularity snapshot. The Supabase reads use the caller's JWT, so RLS applies; each has a 1.5 s
 timeout, and one that fails (or a table that isn't migrated yet) is treated as empty. Supabase
-being down never fails the request. Reasons are English for now.
+being down never fails the request.
+
+Each item's reason comes twice. `reason` is an English line, kept for apps that predate the
+codes. `reasonKey` and `reasonArgs` are what the app renders in its own language:
+
+| `reasonKey` | `reasonArgs` | English |
+|---|---|---|
+| `lead` | — | For right now |
+| `support` | — | Here whenever you need it |
+| `course` | `{"course": "sleep7", "day": 2}` (1-based) | Day 2 of 7 days to better sleep |
+| `feltBetter` | `{"title": "meditation:Body scan"}` (an item id) | Because you felt better after Body scan |
+| `goal` | `{"need": "anxious"}` | Because you're working on anxiety |
+| `dayPart` | `{"part": "night"}` (`morning`, `afternoon`, `evening`, `night`) | For tonight |
+| `fresh`, `popular`, `saved`, `fallback` | — | Just added, Popular this month, One you saved, Something to try |
+
+Arguments are ids, never English: the app looks titles up in its own catalogue. An app that
+doesn't know a `reasonKey` shows no reason.
+
+Diversity in the top 6: at most 2 of one kind and at most 2 days of one course, except the
+course in progress, which shows only its next day.
 
 Scoring rules, weights and reason strings are in `src/recommend/score.ts`. The fixtures in
 `test/fixtures/recommendations/` pin exact outputs for a future Dart port.
