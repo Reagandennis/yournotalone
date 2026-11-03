@@ -134,3 +134,17 @@ v3 can hold the same catalogue. Compare them by the hash.
 Rolling back means `git revert`, then publishing again. That makes a new,
 higher version with the old content. Media files are never deleted, so the
 old keys are still there.
+
+## Original recordings (`Sounds/`)
+
+The masters aren't in git. They're in R2 under `private/masters/` (blocked on
+the custom domain like all of `private/`), listed with their sizes and
+sha256 in `content/masters.json`.
+
+```sh
+npm run masters -- check      # does Sounds/ match the list? (no network)
+npm run masters -- download   # put Sounds/ back on a new machine (read token is enough)
+npm run masters -- upload     # after adding a recording (read & write token)
+```
+
+Git history still has the old copies; it wasn't rewritten.

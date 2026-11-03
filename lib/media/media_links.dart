@@ -8,8 +8,12 @@ import '../content/content_catalog.dart';
 
 /// The Worker that signs links to premium audio (docs/backend-design.md §5).
 /// Empty means it isn't set up: free audio still comes straight from the
-/// CDN, premium audio that isn't in the app can't be fetched.
-const mediaApiUrl = String.fromEnvironment('MEDIA_API_URL');
+/// CDN, premium audio that isn't in the app can't be fetched. Staging
+/// builds pass the staging Worker with `--dart-define=MEDIA_API_URL=…`.
+const mediaApiUrl = String.fromEnvironment(
+  'MEDIA_API_URL',
+  defaultValue: 'https://yournotalone-api.reaganprezzo.workers.dev',
+);
 
 /// Why a link is wanted: the Worker signs streams for longer.
 enum MediaPurpose { stream, download }

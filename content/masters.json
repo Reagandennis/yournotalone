@@ -1,0 +1,74 @@
+[
+  {
+    "name": "129342__le_abbaye_noirlac__cricket-fly.aiff",
+    "key": "private/masters/129342__le_abbaye_noirlac__cricket-fly.aiff",
+    "bytes": 3206050,
+    "sha256": "8757a14fe9b2480a47efa92f1f29e3d9099a48b970373ab247665d783c6d6fed"
+  },
+  {
+    "name": "156598__rmutt__oceanwaves-10.wav",
+    "key": "private/masters/156598__rmutt__oceanwaves-10.wav",
+    "bytes": 24532028,
+    "sha256": "c52f9f0322df2012de6a8567c0bb5823deaed4037acc29aca0348788e4ae5445"
+  },
+  {
+    "name": "433950__peacemeditation__learn-to-be-gratitude.mp3",
+    "key": "private/masters/433950__peacemeditation__learn-to-be-gratitude.mp3",
+    "bytes": 15080039,
+    "sha256": "aa2d289439e359c0e7a52cca88884ff393d03b65c6418a81693458f7c9961a6c"
+  },
+  {
+    "name": "657061__harrisonlace__harmony_gratitude_c_phrygian_115.wav",
+    "key": "private/masters/657061__harrisonlace__harmony_gratitude_c_phrygian_115.wav",
+    "bytes": 15226484,
+    "sha256": "e52f92560a04054a2a66a693767e7f6a04cbe8a67fd9169da6bd1da1d0f2d618"
+  },
+  {
+    "name": "798806__kontraamusic__midnight-destined-hiphop-instrumental.mp3",
+    "key": "private/masters/798806__kontraamusic__midnight-destined-hiphop-instrumental.mp3",
+    "bytes": 1441390,
+    "sha256": "08ab575d6356638ae4c25a6f623e48fd973db67d452539744954fa7a629329c3"
+  },
+  {
+    "name": "brown noise.wav",
+    "key": "private/masters/brown noise.wav",
+    "bytes": 5547076,
+    "sha256": "d8ad972f2eada7747b6ed0977364d163ff14fa852eaf0b0b87eaebe1e2a95e1d"
+  },
+  {
+    "name": "deep_focus.mp3",
+    "key": "private/masters/deep_focus.mp3",
+    "bytes": 6109334,
+    "sha256": "1f2a23936c8d9fce3ed146820048a8d6dd5f029d41c0ac631cf1b232fda54e84"
+  },
+  {
+    "name": "distant storm.wav",
+    "key": "private/masters/distant storm.wav",
+    "bytes": 34243884,
+    "sha256": "78264dbdaf09ce87d1ee233e75eb7d1f8b4c2f5c548c43033ee8f025afb32a80"
+  },
+  {
+    "name": "fireside.wav",
+    "key": "private/masters/fireside.wav",
+    "bytes": 12308564,
+    "sha256": "528f30b63867b14b4c3008de8bc1bdad56b253f2b0276381145ab01a9650bd75"
+  },
+  {
+    "name": "rainfaill.wav",
+    "key": "private/masters/rainfaill.wav",
+    "bytes": 52110572,
+    "sha256": "726d3dcd486a7e7c0983977622c16ca8937d210cd6080e02610742613c8640c2"
+  },
+  {
+    "name": "stream.wav",
+    "key": "private/masters/stream.wav",
+    "bytes": 34560044,
+    "sha256": "33a422ad04081d94a8e2babda04a06b6de4cadad7eb29a5808c95f3df0d892da"
+  },
+  {
+    "name": "white noise.wav",
+    "key": "private/masters/white noise.wav",
+    "bytes": 1454220,
+    "sha256": "188374a7d9fe7dfe7291e1591d73bf050da10effebf60ec8627760751df28335"
+  }
+]

@@ -113,7 +113,16 @@ flutter:
   assets:
     - assets/splash/
     - assets/brand/
-    - assets/sounds/
+    # The starter pack (about 3 MB): the free sound, the chime, and a few
+    # small ones that work offline from the first launch. Every other
+    # sound is in the published catalogue and plays from the CDN or a
+    # download. The files stay in assets/sounds/ as the publish source.
+    - assets/sounds/chime.m4a
+    - assets/sounds/deep_focus.m4a
+    - assets/sounds/brown_noise.m4a
+    - assets/sounds/white_noise.m4a
+    - assets/sounds/crickets_night.m4a
+    - assets/sounds/fireside.m4a
     - assets/explore/
     - assets/narration/
     - assets/rhythm/

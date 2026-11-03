@@ -138,17 +138,64 @@ void main() {
     final ref = snapshot.media['sound:Rainfall']!['audio']!;
     expect(ref.key, 'media/abc.m4a');
     expect(ref.premium, isTrue);
-    expect(bundled.media, isEmpty);
   });
 
-  test('leaves out a sound whose audio this build does not have', () {
+  test('the bundled catalogue names published audio for every sound', () {
+    for (final s in soundsCatalog) {
+      final ref = bundled.media['sound:${s.title}']?['audio'];
+      expect(ref, isNotNull, reason: s.title);
+      expect(
+        ref!.key,
+        matches(RegExp(r'^(private/)?media/[0-9a-f]{64}\.m4a$')),
+      );
+    }
+  });
+
+  test('keeps a sound that is not bundled but is published', () {
     bundledAssetsForTest = {
       for (final s in soundsCatalog)
         if (s.title != 'Rainfall') s.asset,
     };
-    final items = contentItemsFrom(bundled);
+    expect(
+      contentItemsFrom(bundled).any((i) => i.id == 'sound:Rainfall'),
+      isTrue,
+    );
+  });
+
+  test('leaves out a sound with neither bundled nor published audio', () {
+    bundledAssetsForTest = {
+      for (final s in soundsCatalog)
+        if (s.title != 'Rainfall') s.asset,
+    };
+    final json = _bundledJson()..remove('media');
+    final items = contentItemsFrom(CatalogSnapshot.fromJson(json)!);
     expect(items.any((i) => i.id == 'sound:Rainfall'), isFalse);
     expect(items.any((i) => i.id == 'sound:Fireside'), isTrue);
+  });
+
+  test('skips a published catalogue that is the one already in use', () async {
+    final server = _Server(version: 5, pathHash: bundled.hash);
+    final catalog = await started(server);
+    expect(await catalog.refresh(), isFalse);
+    expect(server.requests, ['/catalog/latest.json']);
+  });
+
+  test('keeps the path of a base URL like …/staging', () async {
+    final requests = <Uri>[];
+    final catalog = ContentCatalog.forTest(
+      client: MockClient((req) async {
+        requests.add(req.url);
+        return http.Response('not found', 404);
+      }),
+      appVersion: '1.1.0',
+      baseUrl: 'https://cdn.test/staging',
+    );
+    await catalog.loadFrom(bundled);
+    await catalog.refresh();
+    expect(
+      requests.single.toString(),
+      'https://cdn.test/staging/catalog/latest.json',
+    );
   });
 
   test('compares app versions', () {
