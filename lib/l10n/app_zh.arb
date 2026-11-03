@@ -1512,5 +1512,8 @@
   "downloadsLapsedTitle": "删除高级版下载内容？",
   "downloadsLapsedBody": "你的高级版已结束一个多月，它的下载内容仍占用这部手机 {size} 的空间。要删除它们来释放空间吗？如果你再次开通高级版，可以重新下载。",
   "downloadsLapsedKeep": "保留",
-  "downloadsLapsedRemove": "删除"
+  "downloadsLapsedRemove": "删除",
+  "crisisChangeCountry": "更改国家或地区",
+  "crisisUsePhoneCountry": "使用手机所在的国家或地区",
+  "crisisUncheckedNumbers": "草稿：这些号码还没有核实。紧急情况下，请拨打上面的号码。"
 }

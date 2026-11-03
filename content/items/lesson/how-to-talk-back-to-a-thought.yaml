@@ -18,6 +18,42 @@ text:
       - "A balanced thought isn't the cheerful opposite of the anxious one. \"I'll definitely fail\" doesn't become \"I'll definitely succeed\". It becomes something you could actually defend in front of a fair judge: \"I'm underprepared for part of this, I've passed harder things, and if it goes badly I can retake it.\""
       - "Three questions do most of the work. What is the evidence for this thought, and against it? What would I say to a friend who told me this? And: is there a thinking trap in here — am I mind reading, catastrophising, filtering out the good?"
       - "Write it down. Thoughts that stay in your head keep their weight; on paper they're just sentences, and sentences can be checked. That's what the thought record is for."
+  fr:
+    title: "Comment répondre à une pensée"
+    blurb: "Pas « penser positif ». Penser juste."
+    area: "TCC · lecture"
+    paragraphs:
+      - "Une pensée équilibrée n’est pas le contraire joyeux de la pensée anxieuse. « Je vais forcément échouer » ne devient pas « Je vais forcément réussir ». Ça devient quelque chose que tu pourrais vraiment défendre devant un juge impartial : « Je ne suis pas assez préparé pour une partie, j’ai déjà réussi des choses plus difficiles, et si ça se passe mal, je pourrai le repasser. »"
+      - "Trois questions font l’essentiel du travail. Qu’est-ce qui confirme cette pensée, et qu’est-ce qui la contredit ? Que dirais-je à un ami qui me dirait ça ? Et : y a-t-il un piège de la pensée là-dedans — est-ce que je lis dans les pensées, est-ce que je dramatise, est-ce que je filtre le positif ?"
+      - "Écris-la. Les pensées qui restent dans ta tête gardent tout leur poids ; sur le papier, ce ne sont que des phrases, et une phrase, ça se vérifie. C’est à ça que sert le registre des pensées."
+    reviewed: false
+  de:
+    title: "Einem Gedanken antworten"
+    blurb: "Nicht „positiv denken“. Zutreffend denken."
+    area: "KVT · Text"
+    paragraphs:
+      - "Ein ausgewogener Gedanke ist nicht das fröhliche Gegenteil des ängstlichen. Aus „Ich falle ganz sicher durch“ wird nicht „Ich schaffe es ganz sicher“. Sondern etwas, das du vor einer fairen Richterin vertreten könntest: „Auf einen Teil davon bin ich nicht gut vorbereitet, ich habe schon Schwereres bestanden, und wenn es schiefgeht, kann ich es wiederholen.“"
+      - "Drei Fragen erledigen den Großteil der Arbeit. Was spricht für diesen Gedanken, und was dagegen? Was würde ich einer Freundin oder einem Freund sagen, die mir das erzählen? Und: Steckt hier eine Denkfalle drin – lese ich Gedanken, male ich mir die Katastrophe aus, blende ich das Gute aus?"
+      - "Schreib es auf. Gedanken, die im Kopf bleiben, behalten ihr Gewicht; auf Papier sind sie nur Sätze, und Sätze kann man prüfen. Genau dafür ist das Gedankenprotokoll da."
+    reviewed: false
+  es:
+    title: "Cómo responderle a un pensamiento"
+    blurb: "No se trata de «pensar en positivo», sino de pensar con precisión."
+    area: "Lectura · TCC"
+    paragraphs:
+      - "Un pensamiento equilibrado no es lo contrario alegre del pensamiento ansioso. «Seguro que voy a fracasar» no se convierte en «seguro que me va a ir genial». Se convierte en algo que podrías defender de verdad ante un juez justo: «Hay una parte para la que no estoy bien preparado, he superado cosas más difíciles y, si sale mal, puedo volver a intentarlo»."
+      - "Tres preguntas hacen la mayor parte del trabajo. ¿Qué pruebas hay a favor de este pensamiento, y cuáles en contra? ¿Qué le diría a un amigo que me contara esto? Y: ¿hay aquí alguna trampa del pensamiento? ¿Estoy leyendo la mente, pensando en lo peor, filtrando lo bueno?"
+      - "Escríbelo. Los pensamientos que se quedan en tu cabeza conservan su peso; en papel solo son frases, y las frases se pueden revisar. Para eso sirve el registro de pensamientos."
+    reviewed: false
+  zh-Hans:
+    title: "如何回应一个想法"
+    blurb: "不是“往好处想”，而是想得更准确。"
+    area: "CBT · 短文"
+    paragraphs:
+      - "平衡的想法，并不是焦虑想法的乐观反面。“我肯定会失败”不会变成“我肯定会成功”，而是变成一句你在公正的裁判面前也站得住脚的话：“这件事有一部分我准备得不够，但我以前通过过更难的；就算结果不好，我还可以再考一次。”"
+      - "三个问题能做大部分的工作。支持这个想法的证据是什么，反对它的证据又是什么？如果朋友这样跟我说，我会怎么回答？还有：这里面有没有思维陷阱——我是不是在读心、在灾难化、在把好的部分过滤掉？"
+      - "把它写下来。留在脑子里的想法会一直很沉重；写在纸上，它们就只是句子，而句子是可以检验的。想法记录就是为此而设的。"
+    reviewed: false
 body:
   type: lesson
   art: thoughts

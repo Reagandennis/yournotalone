@@ -5922,4 +5922,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get downloadsLapsedRemove => 'Entfernen';
+
+  @override
+  String get crisisChangeCountry => 'Land ändern';
+
+  @override
+  String get crisisUsePhoneCountry => 'Land meines Handys verwenden';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Entwurf: Diese Nummern sind noch nicht geprüft. Im Notfall ruf die Nummer oben an.';
 }

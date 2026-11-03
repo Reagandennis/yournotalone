@@ -14,6 +14,26 @@ text:
     title: "Awake at 3am?"
     blurb: "What to do when sleep won't come, so the bed stays a place for sleep."
     area: "Sleep"
+  fr:
+    title: "Les yeux ouverts à 3 h ?"
+    blurb: "Que faire quand le sommeil ne vient pas, pour que le lit reste un endroit où l’on dort."
+    area: "Sommeil"
+    reviewed: false
+  de:
+    title: "Um 3 Uhr wach?"
+    blurb: "Was du tun kannst, wenn der Schlaf nicht kommt – damit dein Bett ein Ort zum Schlafen bleibt."
+    area: "Schlaf"
+    reviewed: false
+  es:
+    title: "¿Despierto a las 3 de la madrugada?"
+    blurb: "Qué hacer cuando el sueño no llega, para que la cama siga siendo un lugar para dormir."
+    area: "Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "凌晨三点还醒着？"
+    blurb: "睡不着时该做什么，好让床一直是睡觉的地方。"
+    area: "睡眠"
+    reviewed: false
 body:
   type: native
   screen: awake-at-3am

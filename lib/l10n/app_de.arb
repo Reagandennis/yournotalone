@@ -1512,5 +1512,8 @@
   "downloadsLapsedTitle": "Premium-Downloads entfernen?",
   "downloadsLapsedBody": "Dein Premium ist seit über einem Monat beendet, und seine Downloads belegen noch {size} auf diesem Handy. Möchtest du sie entfernen, um Platz zu schaffen? Wenn du wieder Premium nutzt, kannst du sie erneut herunterladen.",
   "downloadsLapsedKeep": "Behalten",
-  "downloadsLapsedRemove": "Entfernen"
+  "downloadsLapsedRemove": "Entfernen",
+  "crisisChangeCountry": "Land ändern",
+  "crisisUsePhoneCountry": "Land meines Handys verwenden",
+  "crisisUncheckedNumbers": "Entwurf: Diese Nummern sind noch nicht geprüft. Im Notfall ruf die Nummer oben an."
 }

@@ -37,41 +37,62 @@ class _CrisisScreenState extends State<CrisisScreen> {
     }
   }
 
+  /// Lets someone pick their country, or go back to the phone's region.
+  /// The choice is kept for next time.
   Future<void> _pickRegion() async {
     final c = context.brand;
-    final picked = await showModalBottomSheet<CrisisRegion>(
+    final following = CrisisCountrySetting.instance.value == null;
+    // A region's code, or '' for the phone's region.
+    final picked = await showModalBottomSheet<String>(
+      isScrollControlled: true,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (sheetContext) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 18),
-            Text(
-              context.l10n.crisisWhereAreYou,
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w600,
-                color: c.ink,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(sheetContext).size.height * 0.8,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              const SizedBox(height: 18),
+              Text(
+                context.l10n.crisisWhereAreYou,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  color: c.ink,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            for (final region in crisisRegions)
+              const SizedBox(height: 8),
               ListTile(
-                title: Text(region.label),
-                trailing: region.code == _region.code
+                leading: const Icon(Icons.my_location_rounded),
+                title: Text(context.l10n.crisisUsePhoneCountry),
+                trailing: following
                     ? Icon(Icons.check_rounded, color: c.blue)
                     : null,
-                onTap: () => Navigator.of(sheetContext).pop(region),
+                onTap: () => Navigator.of(sheetContext).pop(''),
               ),
-            const SizedBox(height: 12),
-          ],
+              for (final region in availableCrisisRegions())
+                ListTile(
+                  title: Text(region.label),
+                  trailing: !following && region.code == _region.code
+                      ? Icon(Icons.check_rounded, color: c.blue)
+                      : null,
+                  onTap: () => Navigator.of(sheetContext).pop(region.code),
+                ),
+              const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
     );
-    if (picked != null) setState(() => _region = picked);
+    if (picked == null) return;
+    await CrisisCountrySetting.instance.choose(picked.isEmpty ? null : picked);
+    if (mounted) setState(() => _region = defaultCrisisRegion());
   }
 
   Widget _emergencyCard() {
@@ -269,10 +290,23 @@ class _CrisisScreenState extends State<CrisisScreen> {
                     ),
                     TextButton(
                       onPressed: _pickRegion,
-                      child: Text(l10n.commonChange),
+                      child: Text(l10n.crisisChangeCountry),
                     ),
                   ],
                 ),
+                // Only builds with drafts on show unchecked numbers; say so,
+                // so a tester doesn't take them as checked.
+                if (!_region.verified) ...[
+                  Text(
+                    l10n.crisisUncheckedNumbers,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: c.red,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                ],
                 const SizedBox(height: 10),
                 for (final line in _region.lines) _lineCard(line),
                 if (showInternational) ...[

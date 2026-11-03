@@ -7866,5 +7866,17 @@
   "downloadsLapsedRemove": "Remove",
   "@downloadsLapsedRemove": {
     "description": "Button in the 'Remove Premium downloads?' dialog: delete the Premium downloads."
+  },
+  "crisisChangeCountry": "Change country",
+  "@crisisChangeCountry": {
+    "description": "Button on the crisis screen, next to the country name, that opens the list of countries whose helplines can be shown. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "crisisUsePhoneCountry": "Use my phone's country",
+  "@crisisUsePhoneCountry": {
+    "description": "First option in the country list on the crisis screen: show helplines for the country the phone is set to, instead of one picked by hand."
+  },
+  "crisisUncheckedNumbers": "Draft: these numbers haven't been checked yet. In an emergency, call the number above.",
+  "@crisisUncheckedNumbers": {
+    "description": "Warning on the crisis screen, only in test builds, above helplines nobody has checked yet. Crisis wording: needs careful review by a fluent speaker."
   }
 }

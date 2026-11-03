@@ -11,6 +11,7 @@
     "build": "node src/build.ts",
     "publish": "node src/publish.ts",
     "masters": "node src/masters.ts",
+    "translate": "node src/translate.ts",
     "test": "node --test src/*.test.ts"
   },
   "dependencies": {

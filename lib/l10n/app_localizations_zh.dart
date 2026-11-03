@@ -5551,6 +5551,15 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get downloadsLapsedRemove => '删除';
+
+  @override
+  String get crisisChangeCountry => '更改国家或地区';
+
+  @override
+  String get crisisUsePhoneCountry => '使用手机所在的国家或地区';
+
+  @override
+  String get crisisUncheckedNumbers => '草稿：这些号码还没有核实。紧急情况下，请拨打上面的号码。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

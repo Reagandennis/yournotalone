@@ -19,6 +19,46 @@ text:
       - "The damage comes when the surge never ends. Deadlines that roll into deadlines, worry that fills the evenings, sleep that doesn't restore. The body stays in gear, and gear that's never released wears: poor sleep, a short fuse, a stomach that complains, getting every cold going."
       - "So the question isn't \"how do I have less stress\" — often you can't. It's \"where is my recovery\". Recovery is anything that tells the body the emergency is over: a long exhale, movement, laughter, food eaten slowly, a person you trust, sleep. Not scrolling; that's more input."
       - "The tools here work on both sides: some cut the load, most add recovery. Ten deliberate minutes of recovery a day changes the arithmetic more than people expect."
+  fr:
+    title: "Le stress n’est pas l’ennemi"
+    blurb: "Le problème, ce n’est jamais la montée. C’est la récupération qui manque."
+    area: "Stress · lecture"
+    paragraphs:
+      - "La réaction de stress est une belle pièce d’ingénierie. Le cœur accélère, l’attention se resserre, l’énergie est libérée : c’est ce qui te permet d’éviter une voiture, de tenir un délai, de prononcer ce discours. De courtes poussées suivies de repos ne te laissent pas en moins bon état — parfois même en meilleur. Les athlètes appellent ça l’entraînement."
+      - "Les dégâts arrivent quand la montée ne s’arrête jamais. Des échéances qui s’enchaînent, des inquiétudes qui remplissent les soirées, un sommeil qui ne répare pas. Le corps reste en alerte, et une alerte qui ne se relâche jamais finit par user : mauvais sommeil, nerfs à fleur de peau, estomac qui proteste, chaque rhume qui passe."
+      - "Alors la question n’est pas « comment avoir moins de stress » — souvent, tu ne peux pas. C’est « où est ma récupération ». La récupération, c’est tout ce qui dit au corps que l’urgence est passée : une longue expiration, bouger, rire, un repas mangé lentement, une personne de confiance, le sommeil. Pas le défilement sur l’écran ; ça, c’est encore plus d’informations."
+      - "Les outils ici agissent des deux côtés : certains allègent la charge, la plupart ajoutent de la récupération. Dix minutes de récupération voulue par jour changent le calcul bien plus qu’on ne le croit."
+    reviewed: false
+  de:
+    title: "Stress ist nicht der Feind"
+    blurb: "Das Problem ist nie der Anstieg. Es ist die fehlende Erholung."
+    area: "Stress · Text"
+    paragraphs:
+      - "Die Stressreaktion ist ein Stück gute Technik. Der Puls steigt, die Aufmerksamkeit wird eng, Energie wird frei: So weichst du einem Auto aus, schaffst eine Frist, hältst die Rede. Kurze Schübe mit Erholung danach schaden dir nicht – manchmal stärken sie dich sogar. Im Sport nennt man das Training."
+      - "Der Schaden entsteht, wenn der Anstieg nie endet. Fristen, die in neue Fristen übergehen, Sorgen, die die Abende füllen, Schlaf, der nicht erholt. Der Körper bleibt im Gang, und ein Gang, der nie gelöst wird, nutzt sich ab: schlechter Schlaf, eine kurze Zündschnur, ein Magen, der sich meldet, jede Erkältung, die herumgeht."
+      - "Die Frage ist also nicht „Wie bekomme ich weniger Stress?“ – oft geht das nicht. Sondern: „Wo ist meine Erholung?“ Erholung ist alles, was dem Körper sagt, dass der Notfall vorbei ist: ein langes Ausatmen, Bewegung, Lachen, langsam gegessenes Essen, ein Mensch, dem du vertraust, Schlaf. Nicht Scrollen; das ist noch mehr Input."
+      - "Die Werkzeuge hier wirken auf beiden Seiten: Manche verringern die Last, die meisten bringen Erholung. Zehn bewusste Minuten Erholung am Tag verändern die Rechnung mehr, als man denkt."
+    reviewed: false
+  es:
+    title: "El estrés no es el enemigo"
+    blurb: "El problema nunca es el pico. Es la recuperación que falta."
+    area: "Lectura · Estrés"
+    paragraphs:
+      - "La respuesta al estrés es una muy buena pieza de ingeniería. El corazón se acelera, la atención se enfoca, se libera energía: es lo que te permite esquivar un coche, cumplir un plazo o dar ese discurso. Picos breves seguidos de descanso no te dejan peor; a veces, incluso mejor. Los deportistas lo llaman entrenar."
+      - "El daño llega cuando el pico nunca termina. Plazos que se encadenan con más plazos, preocupaciones que llenan las noches, un sueño que no repara. El cuerpo se queda en marcha, y un motor que nunca se apaga se desgasta: dormir mal, tener poca paciencia, un estómago que se queja, pescar todos los resfriados."
+      - "Así que la pregunta no es «cómo tengo menos estrés»; muchas veces no se puede. Es «dónde está mi recuperación». Recuperación es todo lo que le dice al cuerpo que la emergencia terminó: una exhalación larga, moverte, reírte, comer despacio, una persona de confianza, dormir. Mirar el teléfono sin parar no lo es: eso es más estímulo."
+      - "Las herramientas de aquí trabajan por los dos lados: algunas reducen la carga, la mayoría suma recuperación. Diez minutos de recuperación consciente al día cambian las cuentas más de lo que la gente espera."
+    reviewed: false
+  zh-Hans:
+    title: "压力不是敌人"
+    blurb: "问题从来不在于压力涌上来，而在于缺少恢复。"
+    area: "压力 · 短文"
+    paragraphs:
+      - "压力反应是一套精妙的设计。心跳加快，注意力集中，能量释放：正是它让你能及时打方向盘避开车子、赶上截止日期、完成那场演讲。短暂的爆发之后接着休息，并不会让你变差——有时反而更好。运动员把这叫作训练。"
+      - "伤害来自压力始终不退。一个截止日期接着另一个，担忧填满了每个晚上，睡了也恢复不过来。身体一直挂着挡，而一直不松开的挡位会磨损：睡不好，脾气一点就着，肠胃时常闹别扭，什么感冒都躲不过。"
+      - "所以问题不是“怎样让压力少一点”——很多时候你做不到。而是“我的恢复在哪里”。恢复是任何能告诉身体“紧急情况结束了”的东西：一次长长的呼气、活动身体、开怀大笑、慢慢吃一顿饭、一个你信任的人、睡眠。刷手机不算；那只是更多的输入。"
+      - "这里的工具从两边下手：有些减轻负担，大多数增加恢复。每天刻意留出十分钟来恢复，带来的改变比大多数人想象的都要大。"
+    reviewed: false
 body:
   type: lesson
   art: gauge

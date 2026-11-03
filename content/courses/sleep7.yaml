@@ -24,3 +24,51 @@ text:
       - "A breath to slow the body down once you're in bed."
       - "The three things quietly shaping your nights."
       - "Put it all together: wind down, lie down, let go."
+  fr:
+    title: "7 jours pour mieux dormir"
+    blurb: "D’abord la soirée, ensuite la nuit. Une étape par jour."
+    notes:
+      - "Le sommeil commence une heure avant le coucher. Construis cette heure."
+      - "Pourquoi l’effort te tient éveillé, et quoi faire à la place."
+      - "Sors demain de ta tête et pose-le sur papier."
+      - "Que faire quand ça fait trop longtemps que tu es éveillé au lit."
+      - "Une respiration pour ralentir le corps une fois au lit."
+      - "Les trois choses qui façonnent tes nuits sans bruit."
+      - "Tout rassembler : ralentir, s’allonger, lâcher prise."
+    reviewed: false
+  de:
+    title: "7 Tage zu besserem Schlaf"
+    blurb: "Erst den Abend, dann die Nacht. Ein Schritt pro Tag."
+    notes:
+      - "Schlaf beginnt eine Stunde vor dem Zubettgehen. Gestalte diese Stunde."
+      - "Warum Anstrengung wach hält – und was du stattdessen tun kannst."
+      - "Hol den morgigen Tag aus dem Kopf und aufs Papier."
+      - "Was du tun kannst, wenn du schon zu lange wach liegst."
+      - "Ein Atemrhythmus, der den Körper im Bett zur Ruhe bringt."
+      - "Die drei Dinge, die deine Nächte leise prägen."
+      - "Alles zusammen: runterkommen, hinlegen, loslassen."
+    reviewed: false
+  es:
+    title: "7 días para dormir mejor"
+    blurb: "Primero arregla la noche antes de acostarte, luego la madrugada. Un paso al día."
+    notes:
+      - "El sueño empieza una hora antes de acostarte. Construye esa hora."
+      - "Por qué el esfuerzo te mantiene despierto, y qué hacer en su lugar."
+      - "Saca el día de mañana de tu cabeza y ponlo en papel."
+      - "Qué hacer cuando llevas demasiado tiempo despierto en la cama."
+      - "Una respiración para calmar el cuerpo una vez que estás en la cama."
+      - "Las tres cosas que, sin hacer ruido, moldean tus noches."
+      - "Júntalo todo: desconecta, acuéstate, suelta."
+    reviewed: false
+  zh-Hans:
+    title: "睡得更好的 7 天"
+    blurb: "先调整夜晚，再调整睡眠。每天一步。"
+    notes:
+      - "睡眠从睡前一小时就开始了。把这一小时安排好。"
+      - "为什么用力会让你清醒，以及该怎么做。"
+      - "把明天的事从脑子里搬到纸上。"
+      - "躺着醒太久时该怎么办。"
+      - "上床后，用一种呼吸让身体慢下来。"
+      - "悄悄影响你夜晚的三件事。"
+      - "把一切串起来：放松下来，躺下，放手。"
+    reviewed: false

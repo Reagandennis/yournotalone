@@ -13,6 +13,26 @@ text:
     title: "Heartbeat"
     blurb: "Sixty beats a minute — the pace a settled body finds."
     area: "Sound · Calm"
+  fr:
+    title: "Battements de cœur"
+    blurb: "Soixante battements par minute — le rythme que trouve un corps apaisé."
+    area: "Son · Calme"
+    reviewed: false
+  de:
+    title: "Herzschlag"
+    blurb: "Sechzig Schläge pro Minute – das Tempo, das ein ruhiger Körper findet."
+    area: "Klang · Ruhe"
+    reviewed: false
+  es:
+    title: "Latido"
+    blurb: "Sesenta latidos por minuto: el ritmo que encuentra un cuerpo en calma."
+    area: "Sonido · Calma"
+    reviewed: false
+  zh-Hans:
+    title: "心跳"
+    blurb: "每分钟六十下——身体安定下来时的节奏。"
+    area: "声音 · 平静"
+    reviewed: false
 body:
   type: sound
   category: calm

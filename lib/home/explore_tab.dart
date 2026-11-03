@@ -645,12 +645,14 @@ class ExploreTab extends StatelessWidget {
   }
 }
 
-/// Whether [item] matches [query]: title, meta, blurb, or a need it's
-/// tagged for ("sleep", "anxious").
+/// Whether [item] matches [query]: title, meta, blurb, its English text
+/// when it's shown in another language, or a need it's tagged for
+/// ("sleep", "anxious").
 bool _matches(ContentItem item, String query) =>
     item.title.toLowerCase().contains(query) ||
     item.meta().toLowerCase().contains(query) ||
     item.blurb.toLowerCase().contains(query) ||
+    item.alsoMatches.any((t) => t.toLowerCase().contains(query)) ||
     item.needs.any((n) => n.label(currentL10n()).toLowerCase().contains(query));
 
 /// Searches the whole index. A result opens the item itself (through the

@@ -13,6 +13,26 @@ text:
     title: "One day at a time"
     blurb: "Just today. Nothing about tomorrow."
     seed: "Today, the thing I'm choosing is "
+  fr:
+    title: "Un jour à la fois"
+    blurb: "Juste aujourd’hui. Rien sur demain."
+    seed: "Aujourd’hui, ce que je choisis, c’est "
+    reviewed: false
+  de:
+    title: "Ein Tag nach dem anderen"
+    blurb: "Nur heute. Nichts über morgen."
+    seed: "Heute entscheide ich mich für "
+    reviewed: false
+  es:
+    title: "Un día a la vez"
+    blurb: "Solo hoy. Nada sobre mañana."
+    seed: "Hoy, lo que elijo es "
+    reviewed: false
+  zh-Hans:
+    title: "一次过好一天"
+    blurb: "只看今天。不管明天。"
+    seed: "今天，我选择的是"
+    reviewed: false
 body:
   type: prompt
   group: "Recovery"

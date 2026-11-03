@@ -16,6 +16,26 @@ text:
     title: "Box breathing"
     blurb: "Even sides, steady mind — used by athletes and navy divers alike."
     area: "Breathing · 4 · 4 · 4 · 4"
+  fr:
+    title: "Respiration carrée"
+    blurb: "Des côtés égaux, un esprit stable — utilisée par les athlètes comme par les plongeurs de la marine."
+    area: "Respiration · 4 · 4 · 4 · 4"
+    reviewed: false
+  de:
+    title: "Box-Atmung"
+    blurb: "Gleiche Seiten, ruhiger Kopf – das nutzen Sportlerinnen und Marinetaucher gleichermaßen."
+    area: "Atmung · 4 · 4 · 4 · 4"
+    reviewed: false
+  es:
+    title: "Respiración cuadrada"
+    blurb: "Lados iguales, mente estable: la usan deportistas y buzos de la marina por igual."
+    area: "Respiración · 4 · 4 · 4 · 4"
+    reviewed: false
+  zh-Hans:
+    title: "方块呼吸"
+    blurb: "四边一样长，心也跟着稳下来——运动员和海军潜水员都在用。"
+    area: "呼吸 · 4 · 4 · 4 · 4"
+    reviewed: false
 body:
   type: breathing
   inhale: 4

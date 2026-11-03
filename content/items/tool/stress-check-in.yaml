@@ -14,6 +14,26 @@ text:
     title: "Stress check-in"
     blurb: "Five questions about the past week, and a trend you can watch."
     area: "Stress"
+  fr:
+    title: "Check-in stress"
+    blurb: "Cinq questions sur la semaine passée, et une tendance à suivre."
+    area: "Stress"
+    reviewed: false
+  de:
+    title: "Stress-Check-in"
+    blurb: "Fünf Fragen zur letzten Woche und ein Verlauf, den du beobachten kannst."
+    area: "Stress"
+    reviewed: false
+  es:
+    title: "Registro de estrés"
+    blurb: "Cinco preguntas sobre la última semana, y una tendencia que puedes seguir."
+    area: "Estrés"
+    reviewed: false
+  zh-Hans:
+    title: "压力自测"
+    blurb: "关于过去一周的五个问题，还有一条可以追踪的趋势线。"
+    area: "压力"
+    reviewed: false
 body:
   type: native
   screen: stress-check-in

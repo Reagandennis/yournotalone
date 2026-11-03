@@ -9215,6 +9215,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove'**
   String get downloadsLapsedRemove;
+
+  /// Button on the crisis screen, next to the country name, that opens the list of countries whose helplines can be shown. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Change country'**
+  String get crisisChangeCountry;
+
+  /// First option in the country list on the crisis screen: show helplines for the country the phone is set to, instead of one picked by hand.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my phone\'s country'**
+  String get crisisUsePhoneCountry;
+
+  /// Warning on the crisis screen, only in test builds, above helplines nobody has checked yet. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft: these numbers haven\'t been checked yet. In an emergency, call the number above.'**
+  String get crisisUncheckedNumbers;
 }
 
 class _AppLocalizationsDelegate

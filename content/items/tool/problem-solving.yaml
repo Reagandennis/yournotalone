@@ -14,6 +14,26 @@ text:
     title: "Problem solving"
     blurb: "Name it, list the options, pick one, take a first step."
     area: "CBT"
+  fr:
+    title: "Résoudre un problème"
+    blurb: "Nomme-le, liste les options, choisis-en une, fais un premier pas."
+    area: "TCC"
+    reviewed: false
+  de:
+    title: "Probleme lösen"
+    blurb: "Benenne es, sammle Möglichkeiten, wähl eine aus, mach einen ersten Schritt."
+    area: "KVT"
+    reviewed: false
+  es:
+    title: "Resolver problemas"
+    blurb: "Ponle nombre, enumera las opciones, elige una y da el primer paso."
+    area: "TCC"
+    reviewed: false
+  zh-Hans:
+    title: "解决问题"
+    blurb: "说出问题，列出选项，选一个，迈出第一步。"
+    area: "CBT"
+    reviewed: false
 body:
   type: native
   screen: problem-solving

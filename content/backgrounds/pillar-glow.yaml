@@ -13,3 +13,15 @@ params:
 text:
   en:
     title: Pillar glow
+  fr:
+    title: "Lueur des piliers"
+    reviewed: false
+  de:
+    title: "Säulenschimmer"
+    reviewed: false
+  es:
+    title: "Resplandor de pilares"
+    reviewed: false
+  zh-Hans:
+    title: "光柱微光"
+    reviewed: false

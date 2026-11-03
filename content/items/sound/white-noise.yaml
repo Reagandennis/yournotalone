@@ -13,6 +13,26 @@ text:
     title: "White noise"
     blurb: "The classic — masks the world evenly."
     area: "Sound · Focus"
+  fr:
+    title: "Bruit blanc"
+    blurb: "Le classique — couvre le monde de façon uniforme."
+    area: "Son · Concentration"
+    reviewed: false
+  de:
+    title: "Weißes Rauschen"
+    blurb: "Der Klassiker – überdeckt die Welt gleichmäßig."
+    area: "Klang · Fokus"
+    reviewed: false
+  es:
+    title: "Ruido blanco"
+    blurb: "El clásico: tapa el mundo de forma pareja."
+    area: "Sonido · Concentración"
+    reviewed: false
+  zh-Hans:
+    title: "白噪音"
+    blurb: "经典之选——均匀地盖住周围的声音。"
+    area: "声音 · 专注"
+    reviewed: false
 body:
   type: sound
   category: focus

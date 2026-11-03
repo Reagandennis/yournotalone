@@ -13,6 +13,26 @@ text:
     title: "Who showed up"
     blurb: "The people who made this week lighter, named."
     seed: "Someone who made this week easier was "
+  fr:
+    title: "Qui était là"
+    blurb: "Les personnes qui ont rendu cette semaine plus légère, nommées."
+    seed: "Quelqu’un qui a rendu cette semaine plus facile, c’est "
+    reviewed: false
+  de:
+    title: "Wer für mich da war"
+    blurb: "Die Menschen, die diese Woche leichter gemacht haben, beim Namen genannt."
+    seed: "Jemand, der mir diese Woche leichter gemacht hat, war "
+    reviewed: false
+  es:
+    title: "Quién estuvo ahí"
+    blurb: "Las personas que hicieron más ligera esta semana, con nombre."
+    seed: "Alguien que me hizo la semana más fácil fue "
+    reviewed: false
+  zh-Hans:
+    title: "谁出现了"
+    blurb: "让这一周轻松一些的那些人，写下他们的名字。"
+    seed: "让这一周轻松一些的人是"
+    reviewed: false
 body:
   type: prompt
   group: "Looking back"

@@ -19,6 +19,46 @@ text:
       - "The thoughts that shape our mood are usually quick, automatic and unexamined. CBT teaches you to notice them, check them against the evidence, and answer them — not with forced positivity, but with something fairer and more accurate."
       - "The other half is behaviour. When we feel low we do less; doing less gives us less to feel good about; so we feel lower. Anxiety works the same way through avoidance. Changing what you do, even a little, changes how you feel — often before your thinking catches up."
       - "None of this is a trick. It's a set of skills, and like any skill it works with practice. The tools in this section are the ones therapists teach most often. Use them alongside a session, or on their own."
+  fr:
+    title: "Ce qu’est vraiment la TCC"
+    blurb: "Les pensées, les émotions et les actions s’influencent les unes les autres. C’est toute l’idée."
+    area: "TCC · lecture"
+    paragraphs:
+      - "Les thérapies cognitives et comportementales partent d’une observation : ce qu’on ressent dépend moins de ce qui nous arrive que de ce qu’on en fait. Deux personnes ratent le même bus. L’une pense « évidemment, rien ne me réussit » et se sent abattue pendant une heure. L’autre pense « c’est agaçant — je vais prévenir » et passe à autre chose. Même bus."
+      - "Les pensées qui façonnent notre humeur sont en général rapides, automatiques et jamais examinées. La TCC t’apprend à les remarquer, à les confronter aux faits et à leur répondre — pas avec une positivité forcée, mais avec quelque chose de plus juste et de plus exact."
+      - "L’autre moitié, c’est le comportement. Quand le moral est bas, on en fait moins ; en faire moins nous donne moins de raisons de nous sentir bien ; alors le moral baisse encore. L’anxiété fonctionne de la même façon, par l’évitement. Changer ce que tu fais, même un peu, change ce que tu ressens — souvent avant que ta façon de penser ne suive."
+      - "Rien de tout ça n’est une astuce. Ce sont des compétences, et comme toute compétence, elles marchent avec la pratique. Les outils de cette section sont ceux que les thérapeutes enseignent le plus souvent. Utilise-les en complément d’une séance, ou seuls."
+    reviewed: false
+  de:
+    title: "Was KVT wirklich ist"
+    blurb: "Gedanken, Gefühle und Handlungen beeinflussen sich gegenseitig. Das ist die ganze Idee."
+    area: "KVT · Text"
+    paragraphs:
+      - "Die kognitive Verhaltenstherapie geht von einer Beobachtung aus: Wie wir uns fühlen, hängt weniger davon ab, was uns passiert, als davon, was wir daraus machen. Zwei Menschen verpassen denselben Bus. Die eine denkt „typisch, bei mir klappt nie was“ und fühlt sich eine Stunde lang leer. Der andere denkt „ärgerlich – ich sag kurz Bescheid“ und macht weiter. Derselbe Bus."
+      - "Die Gedanken, die unsere Stimmung prägen, sind meist schnell, automatisch und ungeprüft. In der KVT lernst du, sie zu bemerken, sie an den Belegen zu prüfen und ihnen zu antworten – nicht mit erzwungener Positivität, sondern mit etwas Faireren, Zutreffenderen."
+      - "Die andere Hälfte ist das Verhalten. Wenn es uns schlecht geht, tun wir weniger; wer weniger tut, hat weniger, worüber er sich freuen kann; also geht es uns noch schlechter. Angst funktioniert genauso, über Vermeidung. Wenn du änderst, was du tust, auch nur ein bisschen, ändert sich, wie du dich fühlst – oft, bevor dein Denken hinterherkommt."
+      - "Nichts davon ist ein Trick. Es sind Fähigkeiten, und wie jede Fähigkeit wachsen sie mit Übung. Die Werkzeuge in diesem Bereich sind die, die Therapeutinnen und Therapeuten am häufigsten vermitteln. Nutze sie begleitend zu einer Therapie oder für sich allein."
+    reviewed: false
+  es:
+    title: "Qué es realmente la TCC"
+    blurb: "Los pensamientos, las emociones y las acciones se influyen entre sí. Esa es toda la idea."
+    area: "Lectura · TCC"
+    paragraphs:
+      - "La terapia cognitivo-conductual parte de una observación: cómo nos sentimos depende menos de lo que nos pasa que de lo que hacemos con ello. Dos personas pierden el mismo autobús. Una piensa «lo de siempre, nada me sale bien» y se siente apagada durante una hora. La otra piensa «qué fastidio, voy a avisar» y sigue con su día. El mismo autobús."
+      - "Los pensamientos que moldean nuestro ánimo suelen ser rápidos, automáticos y sin revisar. La TCC te enseña a notarlos, a contrastarlos con las pruebas y a responderles: no con positividad forzada, sino con algo más justo y más preciso."
+      - "La otra mitad es la conducta. Cuando estamos de bajón hacemos menos; hacer menos nos da menos motivos para sentirnos bien; y así nos sentimos peor. La ansiedad funciona igual a través de la evitación. Cambiar lo que haces, aunque sea un poco, cambia cómo te sientes, a menudo antes de que tu forma de pensar se ponga al día."
+      - "Nada de esto es un truco. Es un conjunto de habilidades y, como cualquier habilidad, funciona con práctica. Las herramientas de esta sección son las que los terapeutas enseñan con más frecuencia. Úsalas junto con tus sesiones, o por tu cuenta."
+    reviewed: false
+  zh-Hans:
+    title: "CBT 到底是什么"
+    blurb: "想法、感受和行为彼此牵动。核心就是这一点。"
+    area: "CBT · 短文"
+    paragraphs:
+      - "认知行为疗法始于一个观察：我们的感受，与其说取决于发生了什么，不如说取决于我们怎么看待它。两个人错过了同一班公交车。一个人想“果然，我做什么都不顺”，接下来一个小时都提不起劲。另一个人想“真烦——我先发个消息说一声”，然后就过去了。同一班车。"
+      - "影响情绪的那些想法，通常来得很快，是自动冒出来的，也没经过检验。CBT 教你留意它们，用证据去检验它们，再回应它们——不是勉强地正面思考，而是用一种更公允、更准确的说法。"
+      - "另一半是行为。情绪低落时，我们做得更少；做得少了，让人感觉好的事情也就少了；于是情绪更低落。焦虑也是同样的道理，只是通过回避。改变你做的事，哪怕只改变一点点，也会改变你的感受——而且往往比想法先一步。"
+      - "这些都不是什么诀窍。它是一套技能，和任何技能一样，越练越有用。这个板块里的工具，正是咨询师最常教的那些。你可以配合咨询一起用，也可以单独使用。"
+    reviewed: false
 body:
   type: lesson
   art: learn

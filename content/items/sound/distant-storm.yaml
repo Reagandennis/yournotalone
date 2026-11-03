@@ -13,6 +13,26 @@ text:
     title: "Distant storm"
     blurb: "Rain that keeps going, with thunder rolling far off."
     area: "Sound · Sleep"
+  fr:
+    title: "Orage lointain"
+    blurb: "Une pluie qui ne s’arrête pas, avec le tonnerre qui roule au loin."
+    area: "Son · Sommeil"
+    reviewed: false
+  de:
+    title: "Fernes Gewitter"
+    blurb: "Regen, der nicht aufhört, und Donner, der weit weg grollt."
+    area: "Klang · Schlaf"
+    reviewed: false
+  es:
+    title: "Tormenta lejana"
+    blurb: "Lluvia que no para, con truenos que retumban a lo lejos."
+    area: "Sonido · Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "远方的雷雨"
+    blurb: "雨一直下，雷声在远处滚动。"
+    area: "声音 · 睡眠"
+    reviewed: false
 body:
   type: sound
   category: sleep

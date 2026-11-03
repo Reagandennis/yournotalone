@@ -471,7 +471,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           // screen breathes rather than just the middle of it.
           Positioned.fill(
             child: SceneBackdrop(
-              itemId: 'breathing:${pattern.title}',
+              itemId: pattern.id,
               kind: ContentKind.breathing,
               intensity: _running ? 1 : 0.7,
               swell: _running ? () => _swellAt(_session.value) : null,
@@ -505,7 +505,7 @@ class _BreathingScreenState extends State<BreathingScreen>
                           ),
                           // Balances the back chip, so the title sits centred.
                           BackgroundPickerButton(
-                            itemId: 'breathing:${pattern.title}',
+                            itemId: pattern.id,
                             kind: ContentKind.breathing,
                             compact: true,
                           ),

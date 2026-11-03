@@ -24,6 +24,66 @@ text:
       - "Move through your hips, your legs, your knees."
       - "Reach your feet. Feel them, heavy and warm."
       - "Hold your whole body in awareness. Rest."
+  fr:
+    title: "Scan corporel"
+    blurb: "Parcours lentement ton corps de la tête aux pieds, en relâchant au passage."
+    prompts:
+      - "Allonge-toi ou installe-toi bien. Ferme les yeux quand tu es prêt."
+      - "Porte ton attention sur le sommet de ta tête."
+      - "Détends ton front, tes yeux, ta mâchoire."
+      - "Remarque ta nuque et tes épaules. Respire dans les tensions."
+      - "Suis tes bras jusqu’au bout de tes doigts."
+      - "Sens ta poitrine et ton ventre se soulever et redescendre."
+      - "Laisse ton dos se relâcher sur ce qui te porte."
+      - "Passe par tes hanches, tes jambes, tes genoux."
+      - "Arrive à tes pieds. Sens-les, lourds et chauds."
+      - "Garde tout ton corps dans ton attention. Repose-toi."
+    reviewed: false
+  de:
+    title: "Body-Scan"
+    blurb: "Wandere langsam vom Kopf bis zu den Zehen und lass dabei los."
+    prompts:
+      - "Leg dich hin oder lehn dich zurück. Schließ die Augen, wenn du so weit bist."
+      - "Richte deine Aufmerksamkeit auf deinen Scheitel."
+      - "Lass Stirn, Augen und Kiefer weich werden."
+      - "Spür deinen Nacken und deine Schultern. Atme in jede Enge hinein."
+      - "Folge deinen Armen bis in die Fingerspitzen."
+      - "Spür, wie sich Brust und Bauch heben und senken."
+      - "Lass deinen Rücken in das sinken, was dich trägt."
+      - "Wandere durch Hüften, Beine und Knie."
+      - "Komm bei deinen Füßen an. Spür sie, schwer und warm."
+      - "Halte deinen ganzen Körper in deiner Aufmerksamkeit. Ruh dich aus."
+    reviewed: false
+  es:
+    title: "Escaneo corporal"
+    blurb: "Recorre tu cuerpo despacio de la cabeza a los pies, soltando a medida que avanzas."
+    prompts:
+      - "Acuéstate o recuéstate. Cierra los ojos cuando estés listo."
+      - "Lleva tu atención a la parte más alta de la cabeza."
+      - "Suaviza la frente, los ojos, la mandíbula."
+      - "Nota el cuello y los hombros. Respira hacia cualquier tensión."
+      - "Recorre los brazos hasta la punta de los dedos."
+      - "Siente cómo el pecho y el vientre suben y bajan."
+      - "Deja que la espalda se suelte sobre lo que te sostiene."
+      - "Pasa por las caderas, las piernas, las rodillas."
+      - "Llega a los pies. Siéntelos, pesados y tibios."
+      - "Sostén todo tu cuerpo en tu atención. Descansa."
+    reviewed: false
+  zh-Hans:
+    title: "身体扫描"
+    blurb: "从头到脚慢慢走一遍，一边走一边放松。"
+    prompts:
+      - "躺下或靠坐好。准备好了就闭上眼睛。"
+      - "把注意力带到头顶。"
+      - "放松你的额头、你的眼睛、你的下巴。"
+      - "留意你的脖子和肩膀。把呼吸送到任何紧绷的地方。"
+      - "顺着手臂往下，一直到指尖。"
+      - "感受胸口和腹部的起伏。"
+      - "让你的背部放松下来，交给托着你的东西。"
+      - "经过你的髋部、你的双腿、你的膝盖。"
+      - "来到你的双脚。感受它们，沉沉的，暖暖的。"
+      - "把整个身体放在觉察之中。休息。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

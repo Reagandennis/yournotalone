@@ -22,6 +22,58 @@ text:
       - "Now something about your own body that carried you today."
       - "Nothing here is owed to you. Let that land softly."
       - "Carry one of these with you into the rest of the day."
+  fr:
+    title: "Gratitude"
+    blurb: "Compte ce qui est déjà là avant de chercher plus."
+    prompts:
+      - "Installe-toi confortablement. Laisse la respiration trouver son rythme."
+      - "Pense à une petite chose qui s’est bien passée aujourd’hui."
+      - "Reste avec elle. Laisse-toi vraiment la ressentir, pas seulement la noter."
+      - "Maintenant, quelqu’un qui a rendu cette semaine plus facile, d’une façon ou d’une autre."
+      - "Imagine son visage. Dis-lui merci, en silence."
+      - "Maintenant, quelque chose dans ton propre corps qui t’a porté aujourd’hui."
+      - "Rien de tout ça ne t’est dû. Laisse cette idée se poser doucement."
+      - "Emporte l’une de ces choses avec toi pour le reste de la journée."
+    reviewed: false
+  de:
+    title: "Dankbarkeit"
+    blurb: "Zähl, was schon da ist, bevor du nach mehr greifst."
+    prompts:
+      - "Setz dich bequem hin. Lass den Atem sein eigenes Tempo finden."
+      - "Denk an eine kleine Sache, die heute gut gelaufen ist."
+      - "Bleib dabei. Lass dich sie wirklich spüren, nicht nur bemerken."
+      - "Jetzt an jemanden, der dir diese Woche etwas leichter gemacht hat, auf welche Weise auch immer."
+      - "Stell dir das Gesicht vor. Sag still Danke."
+      - "Jetzt an etwas an deinem eigenen Körper, das dich heute getragen hat."
+      - "Nichts davon steht dir zu. Lass das sanft ankommen."
+      - "Nimm eins davon mit in den Rest deines Tages."
+    reviewed: false
+  es:
+    title: "Gratitud"
+    blurb: "Cuenta lo que ya está aquí antes de buscar más."
+    prompts:
+      - "Siéntate cómodo. Deja que la respiración encuentre su propio ritmo."
+      - "Trae a la mente algo pequeño que hoy salió bien."
+      - "Quédate con eso. Permítete sentirlo de verdad, no solo notarlo."
+      - "Ahora piensa en alguien que te hizo la semana más fácil, de cualquier manera."
+      - "Imagina su cara. Dale un gracias en silencio."
+      - "Ahora algo de tu propio cuerpo que hoy te sostuvo."
+      - "Nada de esto se te debe. Deja que esa idea se asiente con suavidad."
+      - "Llévate una de estas cosas contigo para el resto del día."
+    reviewed: false
+  zh-Hans:
+    title: "感恩"
+    blurb: "在追求更多之前，先数一数已经拥有的。"
+    prompts:
+      - "舒服地坐好。让呼吸找到自己的节奏。"
+      - "想起今天一件顺利的小事。"
+      - "和它待在一起。让自己真正去感受它，而不只是记下它。"
+      - "现在想一个人，他以某种方式让这一周轻松了一些。"
+      - "想象他的脸。在心里轻轻对他说声谢谢。"
+      - "现在想想你自己的身体，它今天是怎样支撑着你的。"
+      - "这里的一切都不是理所当然的。让这份感受轻轻落下。"
+      - "带上其中一样，走进今天余下的时光。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

@@ -16,6 +16,26 @@ text:
     title: "Ocean breath"
     blurb: "Long and soft, like a wave drawing back from the shore."
     area: "Breathing · 5 · 7"
+  fr:
+    title: "Souffle de l’océan"
+    blurb: "Long et doux, comme une vague qui se retire du rivage."
+    area: "Respiration · 5 · 7"
+    reviewed: false
+  de:
+    title: "Meeresatem"
+    blurb: "Lang und weich, wie eine Welle, die sich vom Ufer zurückzieht."
+    area: "Atmung · 5 · 7"
+    reviewed: false
+  es:
+    title: "Respiración del océano"
+    blurb: "Larga y suave, como una ola que se retira de la orilla."
+    area: "Respiración · 5 · 7"
+    reviewed: false
+  zh-Hans:
+    title: "海浪呼吸"
+    blurb: "绵长又轻柔，像海浪从岸边缓缓退去。"
+    area: "呼吸 · 5 · 7"
+    reviewed: false
 body:
   type: breathing
   inhale: 5

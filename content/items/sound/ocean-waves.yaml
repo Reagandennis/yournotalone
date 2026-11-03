@@ -15,6 +15,26 @@ text:
     title: "Ocean waves"
     blurb: "Slow swells rolling in and out."
     area: "Sound · Calm"
+  fr:
+    title: "Vagues de l’océan"
+    blurb: "Une houle lente qui va et vient."
+    area: "Son · Calme"
+    reviewed: false
+  de:
+    title: "Meereswellen"
+    blurb: "Langsame Wellen, die heranrollen und zurückweichen."
+    area: "Klang · Ruhe"
+    reviewed: false
+  es:
+    title: "Olas del mar"
+    blurb: "Olas lentas que van y vienen."
+    area: "Sonido · Calma"
+    reviewed: false
+  zh-Hans:
+    title: "海浪"
+    blurb: "缓慢的浪涌，来了又去。"
+    area: "声音 · 平静"
+    reviewed: false
 body:
   type: sound
   category: calm

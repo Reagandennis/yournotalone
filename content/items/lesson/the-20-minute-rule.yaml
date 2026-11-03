@@ -18,6 +18,42 @@ text:
       - "Brains learn by association. If you spend hours in bed frustrated, awake and worrying, the bed itself starts to trigger frustration and wakefulness — you feel sleepy on the sofa and alert the moment your head hits the pillow. Insomnia specialists call the cure stimulus control, and it's the most reliable technique they have."
       - "The rule: if you've been awake for what feels like twenty minutes, get up. Go to another room, keep the lights low, and do something quiet and dull until you feel sleepy — actually sleepy, not just tired of being up. Then go back. Repeat as often as it takes."
       - "It feels counterproductive for the first week; you'll be up more and sleep less. By the second or third week the bed means sleep again, and you fall asleep faster than you have in years. Keep your wake time fixed throughout, or it doesn't work."
+  fr:
+    title: "La règle des 20 minutes"
+    blurb: "Ton lit devrait vouloir dire sommeil. Rester éveillé dedans lui apprend le contraire."
+    area: "Sommeil · lecture"
+    paragraphs:
+      - "Le cerveau apprend par association. Si tu passes des heures au lit, frustré, éveillé et inquiet, le lit lui-même finit par déclencher la frustration et l’éveil — tu as sommeil sur le canapé et tu te sens alerte dès que ta tête touche l’oreiller. Les spécialistes de l’insomnie appellent le remède le contrôle du stimulus, et c’est leur technique la plus fiable."
+      - "La règle : si tu es éveillé depuis ce qui te semble vingt minutes, lève-toi. Va dans une autre pièce, garde la lumière basse et fais quelque chose de calme et d’ennuyeux jusqu’à avoir sommeil — vraiment sommeil, pas juste lassé d’être debout. Puis retourne te coucher. Recommence aussi souvent qu’il le faut."
+      - "La première semaine, ça paraît contre-productif ; tu seras plus souvent debout et tu dormiras moins. Dès la deuxième ou la troisième semaine, le lit veut de nouveau dire sommeil, et tu t’endors plus vite que depuis des années. Garde la même heure de réveil tout du long, sinon ça ne marche pas."
+    reviewed: false
+  de:
+    title: "Die 20-Minuten-Regel"
+    blurb: "Dein Bett sollte für Schlaf stehen. Wachliegen bringt ihm etwas anderes bei."
+    area: "Schlaf · Text"
+    paragraphs:
+      - "Das Gehirn lernt über Verknüpfungen. Wenn du stundenlang frustriert, wach und grübelnd im Bett liegst, löst das Bett selbst Frust und Wachheit aus – auf dem Sofa wirst du müde, und sobald dein Kopf das Kissen berührt, bist du hellwach. Fachleute für Schlaflosigkeit nennen das Gegenmittel Stimuluskontrolle, und es ist die verlässlichste Methode, die sie haben."
+      - "Die Regel: Wenn du gefühlt zwanzig Minuten wach liegst, steh auf. Geh in einen anderen Raum, lass das Licht gedämpft und mach etwas Ruhiges, Langweiliges, bis du schläfrig wirst – wirklich schläfrig, nicht nur müde vom Wachsein. Dann geh zurück. Wiederhole das so oft wie nötig."
+      - "In der ersten Woche fühlt es sich falsch an; du bist öfter auf und schläfst weniger. In der zweiten oder dritten Woche steht das Bett wieder für Schlaf, und du schläfst schneller ein als seit Jahren. Behalte dabei die ganze Zeit dieselbe Aufstehzeit, sonst wirkt es nicht."
+    reviewed: false
+  es:
+    title: "La regla de los 20 minutos"
+    blurb: "Tu cama debería significar dormir. Quedarte despierto en ella le enseña otra cosa."
+    area: "Lectura · Sueño"
+    paragraphs:
+      - "El cerebro aprende por asociación. Si pasas horas en la cama frustrado, despierto y preocupado, la cama misma empieza a provocar frustración y vigilia: te da sueño en el sofá y te despejas en cuanto apoyas la cabeza en la almohada. Los especialistas en insomnio llaman a la solución control de estímulos, y es la técnica más fiable que tienen."
+      - "La regla: si sientes que llevas unos veinte minutos despierto, levántate. Ve a otra habitación, deja las luces bajas y haz algo tranquilo y aburrido hasta que te dé sueño —sueño de verdad, no solo cansancio de estar levantado—. Luego vuelve. Repítelo las veces que haga falta."
+      - "La primera semana parece contraproducente: estarás más tiempo levantado y dormirás menos. Hacia la segunda o tercera semana, la cama vuelve a significar dormir, y te duermes más rápido que en años. Mantén fija tu hora de despertar todo el tiempo, o no funciona."
+    reviewed: false
+  zh-Hans:
+    title: "20 分钟法则"
+    blurb: "床应该意味着睡觉。躺着睁眼，会教会它别的东西。"
+    area: "睡眠 · 短文"
+    paragraphs:
+      - "大脑通过联想来学习。如果你在床上一连几个小时又烦躁、又清醒、又担忧，床本身就会开始引发烦躁和清醒——在沙发上困得不行，头一碰到枕头却精神了。失眠专家把解决办法叫作“刺激控制”，这是他们手上最可靠的方法。"
+      - "规则是：如果你感觉已经醒了二十分钟左右，就起床。去另一个房间，灯光调暗，做些安静又无聊的事，直到你感到困——是真的困，而不只是厌倦了醒着。然后再回到床上。需要几次就重复几次。"
+      - "第一周会觉得适得其反：你起来的次数更多，睡得更少。到了第二、三周，床又重新意味着睡觉，你入睡的速度会比这几年都快。整个过程中起床时间要固定，否则就不管用。"
+    reviewed: false
 body:
   type: lesson
   art: awake

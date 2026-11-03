@@ -14,6 +14,26 @@ text:
     title: "Tense and release"
     blurb: "Progressive muscle relaxation, group by group, with the timer kept."
     area: "Stress"
+  fr:
+    title: "Contracter et relâcher"
+    blurb: "Relaxation musculaire progressive, groupe par groupe, avec le minuteur qui garde le temps."
+    area: "Stress"
+    reviewed: false
+  de:
+    title: "Anspannen und lösen"
+    blurb: "Progressive Muskelentspannung, Gruppe für Gruppe, mit mitlaufendem Timer."
+    area: "Stress"
+    reviewed: false
+  es:
+    title: "Tensar y soltar"
+    blurb: "Relajación muscular progresiva, grupo por grupo, con el temporizador en marcha."
+    area: "Estrés"
+    reviewed: false
+  zh-Hans:
+    title: "绷紧与放松"
+    blurb: "渐进式肌肉放松，一组一组来，帮你计好时间。"
+    area: "压力"
+    reviewed: false
 body:
   type: native
   screen: tense-and-release

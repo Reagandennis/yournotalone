@@ -15,6 +15,26 @@ text:
     title: "Crickets at night"
     blurb: "A calm field long after sunset."
     area: "Sound · Sleep"
+  fr:
+    title: "Grillons la nuit"
+    blurb: "Un champ paisible, bien après le coucher du soleil."
+    area: "Son · Sommeil"
+    reviewed: false
+  de:
+    title: "Grillen in der Nacht"
+    blurb: "Ein stilles Feld, lange nach Sonnenuntergang."
+    area: "Klang · Schlaf"
+    reviewed: false
+  es:
+    title: "Grillos de noche"
+    blurb: "Un campo tranquilo mucho después del atardecer."
+    area: "Sonido · Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "夜晚的蟋蟀"
+    blurb: "日落许久之后，一片宁静的田野。"
+    area: "声音 · 睡眠"
+    reviewed: false
 body:
   type: sound
   category: sleep

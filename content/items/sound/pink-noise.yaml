@@ -15,6 +15,26 @@ text:
     title: "Pink noise"
     blurb: "Softer and warmer than white noise — easy to sleep through."
     area: "Sound · Sleep"
+  fr:
+    title: "Bruit rose"
+    blurb: "Plus doux et plus chaud que le bruit blanc — facile pour dormir."
+    area: "Son · Sommeil"
+    reviewed: false
+  de:
+    title: "Rosa Rauschen"
+    blurb: "Weicher und wärmer als weißes Rauschen – leicht zum Durchschlafen."
+    area: "Klang · Schlaf"
+    reviewed: false
+  es:
+    title: "Ruido rosa"
+    blurb: "Más suave y cálido que el ruido blanco: fácil para dormir con él."
+    area: "Sonido · Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "粉噪音"
+    blurb: "比白噪音更柔和、更温暖——伴着它很容易睡着。"
+    area: "声音 · 睡眠"
+    reviewed: false
 body:
   type: sound
   category: sleep

@@ -19,6 +19,46 @@ text:
       - "The exhale is the lever. Breathing out slows the heart a little; breathing in speeds it up. Make the out-breath longer than the in-breath and, within a minute or two, the alarm quietens on its own. The physiological sigh — two sips in, one long breath out — is the fastest version anyone has measured."
       - "Muscles work the same way in reverse. A tense body tells the brain there's a threat. Tensing hard and then letting go, group by group, sends the opposite message, and most people feel it within a single round."
       - "Do these before you think. Once the alarm is quieter, thinking works again — and the problem-solving tools have something to work with."
+  fr:
+    title: "Éteindre l’alarme"
+    blurb: "On ne retrouve pas le calme en réfléchissant. On peut le retrouver en respirant."
+    area: "Stress · lecture"
+    paragraphs:
+      - "La partie de toi qui panique ne lit pas. Te dire de te calmer marche à peu près aussi bien que de dire à un détecteur de fumée de se calmer. Ce à quoi cette partie réagit, c’est le corps : la respiration, les muscles, le mouvement."
+      - "L’expiration est le levier. Expirer ralentit un peu le cœur ; inspirer l’accélère. Rends l’expiration plus longue que l’inspiration et, en une minute ou deux, l’alarme se calme d’elle-même. Le soupir physiologique — deux petites inspirations, une longue expiration — est la version la plus rapide jamais mesurée."
+      - "Les muscles fonctionnent de la même façon, à l’envers. Un corps tendu dit au cerveau qu’il y a une menace. Contracter fort puis relâcher, groupe par groupe, envoie le message inverse, et la plupart des gens le sentent dès le premier tour."
+      - "Fais-les avant de réfléchir. Une fois l’alarme plus calme, la réflexion fonctionne de nouveau — et les outils de résolution de problèmes ont de quoi travailler."
+    reviewed: false
+  de:
+    title: "Den Alarm abschalten"
+    blurb: "Ruhig denken kannst du dich nicht. Ruhig atmen schon."
+    area: "Stress · Text"
+    paragraphs:
+      - "Der Teil von dir, der in Panik gerät, liest nicht. Dir selbst zu sagen, du sollst dich beruhigen, wirkt ungefähr so gut, wie einem Rauchmelder zu sagen, er soll sich beruhigen. Worauf dieser Teil reagiert, ist der Körper: der Atem, die Muskeln, Bewegung."
+      - "Das Ausatmen ist der Hebel. Ausatmen verlangsamt das Herz ein wenig, Einatmen beschleunigt es. Mach das Ausatmen länger als das Einatmen, und innerhalb von ein, zwei Minuten wird der Alarm von selbst leiser. Der physiologische Seufzer – zweimal kurz ein, einmal lang aus – ist die schnellste Variante, die je gemessen wurde."
+      - "Muskeln funktionieren genauso, nur umgekehrt. Ein angespannter Körper meldet dem Gehirn eine Bedrohung. Fest anspannen und dann loslassen, Gruppe für Gruppe, sendet die gegenteilige Botschaft – die meisten spüren es schon nach einer Runde."
+      - "Mach das, bevor du nachdenkst. Wenn der Alarm leiser ist, funktioniert das Denken wieder – und die Werkzeuge zum Problemlösen haben etwas, womit sie arbeiten können."
+    reviewed: false
+  es:
+    title: "Apagar la alarma"
+    blurb: "No puedes pensar hasta calmarte. Pero sí puedes respirar hasta llegar ahí."
+    area: "Lectura · Estrés"
+    paragraphs:
+      - "La parte de ti que entra en pánico no lee. Decirte que te calmes funciona más o menos igual que pedirle a una alarma de humo que se calme. Lo que sí escucha esa parte es el cuerpo: la respiración, los músculos, el movimiento."
+      - "La exhalación es la palanca. Al exhalar, el corazón se desacelera un poco; al inhalar, se acelera. Haz que la exhalación dure más que la inhalación y, en uno o dos minutos, la alarma se calma sola. El suspiro fisiológico —dos inhalaciones cortas y una exhalación larga— es la versión más rápida que se ha medido."
+      - "Los músculos funcionan igual, pero al revés. Un cuerpo tenso le dice al cerebro que hay una amenaza. Tensar con fuerza y luego soltar, grupo por grupo, manda el mensaje contrario, y la mayoría de la gente lo nota en una sola ronda."
+      - "Haz esto antes de ponerte a pensar. Cuando la alarma baja, pensar vuelve a funcionar, y las herramientas para resolver problemas tienen con qué trabajar."
+    reviewed: false
+  zh-Hans:
+    title: "关掉警报"
+    blurb: "你没法靠想让自己平静下来，但可以靠呼吸做到。"
+    area: "压力 · 短文"
+    paragraphs:
+      - "你身上会惊慌的那一部分，是不读道理的。叫自己冷静下来，效果就跟叫烟雾报警器冷静下来差不多。那一部分真正会回应的是身体：呼吸、肌肉、活动。"
+      - "呼气就是那根杠杆。呼气会让心跳稍稍变慢，吸气会让它加快。让呼气比吸气长，一两分钟之内，警报就会自己安静下来。生理性叹息——吸两小口，再长长地呼出一口——是目前测得最快的方法。"
+      - "肌肉的作用方向正好相反，道理却一样。紧绷的身体会告诉大脑：有危险。一组一组地用力绷紧再放松，传递的就是相反的信息，大多数人做一轮就能感觉到。"
+      - "先做这些，再去思考。警报安静一些之后，思考就又能运转了——解决问题的工具也才有用武之地。"
+    reviewed: false
 body:
   type: lesson
   art: sigh

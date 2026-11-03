@@ -16,6 +16,26 @@ text:
     title: "Grounding: 5-4-3-2-1"
     blurb: "Back into the room when panic or a spiral takes over."
     area: "CBT"
+  fr:
+    title: "Ancrage : 5-4-3-2-1"
+    blurb: "Pour revenir dans la pièce quand la panique ou une spirale prend le dessus."
+    area: "TCC"
+    reviewed: false
+  de:
+    title: "Erdung: 5-4-3-2-1"
+    blurb: "Zurück in den Raum, wenn Panik oder ein Gedankenstrudel übernimmt."
+    area: "KVT"
+    reviewed: false
+  es:
+    title: "Anclaje: 5-4-3-2-1"
+    blurb: "Vuelve a la habitación cuando el pánico o una espiral se apoderan de ti."
+    area: "TCC"
+    reviewed: false
+  zh-Hans:
+    title: "着陆练习：5-4-3-2-1"
+    blurb: "当惊慌或思绪失控时，把自己带回到房间里。"
+    area: "CBT"
+    reviewed: false
 body:
   type: native
   screen: grounding-5-4-3-2-1

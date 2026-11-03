@@ -10,3 +10,15 @@ params:
 text:
   en:
     title: Fireflies
+  fr:
+    title: "Lucioles"
+    reviewed: false
+  de:
+    title: "Glühwürmchen"
+    reviewed: false
+  es:
+    title: "Luciérnagas"
+    reviewed: false
+  zh-Hans:
+    title: "萤火虫"
+    reviewed: false

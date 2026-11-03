@@ -14,6 +14,26 @@ text:
     title: "Put the day down"
     blurb: "Tomorrow's three things and one you're letting go, on paper."
     area: "Sleep"
+  fr:
+    title: "Poser la journée"
+    blurb: "Les trois choses de demain et une que tu laisses aller, sur papier."
+    area: "Sommeil"
+    reviewed: false
+  de:
+    title: "Den Tag ablegen"
+    blurb: "Drei Dinge für morgen und eins, das du loslässt – auf Papier."
+    area: "Schlaf"
+    reviewed: false
+  es:
+    title: "Cierra el día"
+    blurb: "Las tres cosas de mañana y una que vas a soltar, en papel."
+    area: "Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "把今天放下"
+    blurb: "明天的三件事，加上一件你要放下的事，都写在纸上。"
+    area: "睡眠"
+    reviewed: false
 body:
   type: native
   screen: put-the-day-down

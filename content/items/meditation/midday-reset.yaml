@@ -22,6 +22,58 @@ text:
       - "Nothing needs deciding in the next sixty seconds."
       - "Ask: what is the one thing the afternoon actually needs?"
       - "Take that answer with you. Leave the rest here."
+  fr:
+    title: "Pause de midi"
+    blurb: "Pose la matinée avant de reprendre l’après-midi."
+    prompts:
+      - "Arrête-toi là où tu es. Les deux pieds à plat, les mains immobiles."
+      - "Une longue expiration — plus longue que ce qui semble nécessaire."
+      - "Quelle qu’ait été la matinée, elle est déjà derrière toi."
+      - "Desserre la mâchoire. Baisse les épaules. Détends le regard."
+      - "Remarque un son que tu entends en ce moment, proche ou lointain."
+      - "Rien n’a besoin d’être décidé dans les soixante prochaines secondes."
+      - "Demande-toi : de quoi l’après-midi a-t-il vraiment besoin ?"
+      - "Emporte cette réponse. Laisse le reste ici."
+    reviewed: false
+  de:
+    title: "Mittagspause für den Kopf"
+    blurb: "Leg den Vormittag ab, bevor du den Nachmittag aufnimmst."
+    prompts:
+      - "Halt an, wo du bist. Beide Füße flach auf dem Boden, die Hände ruhig."
+      - "Einmal lang ausatmen – länger, als es nötig scheint."
+      - "Wie der Vormittag auch war, er liegt schon hinter dir."
+      - "Lös deinen Kiefer. Lass die Schultern sinken. Lass die Augen weich werden."
+      - "Bemerke eine Sache, die du gerade hörst, nah oder fern."
+      - "In den nächsten sechzig Sekunden muss nichts entschieden werden."
+      - "Frag dich: Was ist das eine, das der Nachmittag wirklich braucht?"
+      - "Nimm diese Antwort mit. Lass den Rest hier."
+    reviewed: false
+  es:
+    title: "Pausa de mediodía"
+    blurb: "Deja la mañana antes de tomar la tarde."
+    prompts:
+      - "Detente donde estés. Los dos pies apoyados, las manos quietas."
+      - "Una exhalación larga, más larga de lo que parece necesario."
+      - "Sea lo que sea que haya traído la mañana, ya quedó atrás."
+      - "Afloja la mandíbula. Baja los hombros. Suaviza la mirada."
+      - "Nota algo que puedas oír ahora mismo, cerca o lejos."
+      - "No hay nada que decidir en los próximos sesenta segundos."
+      - "Pregúntate: ¿qué es lo único que de verdad necesita la tarde?"
+      - "Llévate esa respuesta. Deja el resto aquí."
+    reviewed: false
+  zh-Hans:
+    title: "午间重置"
+    blurb: "先放下上午，再拿起下午。"
+    prompts:
+      - "在原地停下来。双脚平放，双手静止。"
+      - "长长地呼出一口气——比你觉得需要的再长一点。"
+      - "不管上午过得怎样，它都已经过去了。"
+      - "松开下巴。放下肩膀。让眼睛柔和下来。"
+      - "留意此刻你能听到的一个声音，近的或远的。"
+      - "接下来的六十秒里，没有什么需要你做决定。"
+      - "问问自己：下午真正需要的，是哪一件事？"
+      - "带上这个答案。其余的，就留在这里。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

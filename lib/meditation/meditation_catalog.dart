@@ -16,11 +16,17 @@ class BreathPattern {
     required this.exhale,
     this.holdOut = 0,
     this.premium = true,
+    this._id,
   });
 
   final String title;
   final String detail;
   final Color accent;
+  final String? _id;
+
+  /// Its content id. A catalogue item passes its own, since its title may
+  /// be a translation.
+  String get id => _id ?? 'breathing:$title';
   final int inhale;
   final int holdIn;
   final int exhale;
@@ -112,10 +118,16 @@ class Meditation {
     this.premium = true,
     required this.prompts,
     this.narration,
+    this._id,
   });
 
   final String title;
   final String detail;
+  final String? _id;
+
+  /// Its content id. A catalogue item passes its own, since its title may
+  /// be a translation.
+  String get id => _id ?? 'meditation:$title';
   final int minutes;
   final IconData icon;
   final Color accent;

@@ -12,8 +12,21 @@ npm install
 npm run check                                  # validate content/
 npm run build                                  # write assets/catalog/bundled.json
 npm run publish -- --env staging --dry-run     # see what a publish would do
+npm run translate -- <id|--all> --to fr,de,es,zh-Hans [--dry-run]
 npm test
 ```
+
+## Translating
+
+`npm run translate` drafts the translations an item, course or background
+is missing (or everything's, with `--all`) with the Claude API
+(`claude-opus-5-5`) and writes them into its YAML under `text.<locale>`
+with `reviewed: false`. It never overwrites a locale that's already there,
+and checks each reply has English's fields and line counts before writing.
+`--dry-run` lists what it would draft without calling anything.
+
+It needs `ANTHROPIC_API_KEY`. A fluent reader then reviews the drafts and
+sets `reviewed: true` (see `content/README.md`).
 
 ## Publishing
 

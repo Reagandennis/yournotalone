@@ -11,3 +11,15 @@ params:
 text:
   en:
     title: Dusk waves
+  fr:
+    title: "Vagues au crépuscule"
+    reviewed: false
+  de:
+    title: "Wellen in der Dämmerung"
+    reviewed: false
+  es:
+    title: "Olas al anochecer"
+    reviewed: false
+  zh-Hans:
+    title: "黄昏海浪"
+    reviewed: false

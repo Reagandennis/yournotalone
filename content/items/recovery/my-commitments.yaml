@@ -12,6 +12,22 @@ text:
   en:
     title: "My commitments"
     blurb: "What you're leaving behind, and the days you've kept."
+  fr:
+    title: "Mes engagements"
+    blurb: "Ce que tu laisses derrière toi, et les jours que tu as tenus."
+    reviewed: false
+  de:
+    title: "Meine Vorhaben"
+    blurb: "Was du hinter dir lässt, und die Tage, die du durchgehalten hast."
+    reviewed: false
+  es:
+    title: "Mis compromisos"
+    blurb: "Lo que estás dejando atrás y los días que has cumplido."
+    reviewed: false
+  zh-Hans:
+    title: "我的承诺"
+    blurb: "你正在告别的东西，以及你坚持下来的每一天。"
+    reviewed: false
 body:
   type: native
   screen: recovery-hub

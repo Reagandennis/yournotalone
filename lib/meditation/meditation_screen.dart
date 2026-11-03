@@ -465,7 +465,7 @@ class _MeditationScreenState extends State<MeditationScreen>
           // The session's background, drifting behind it.
           Positioned.fill(
             child: SceneBackdrop(
-              itemId: 'meditation:${meditation.title}',
+              itemId: meditation.id,
               kind: ContentKind.meditation,
               intensity: _done ? 0.7 : 1,
             ),
@@ -507,7 +507,7 @@ class _MeditationScreenState extends State<MeditationScreen>
                             ),
                           // The size of the back chip, opposite it.
                           BackgroundPickerButton(
-                            itemId: 'meditation:${meditation.title}',
+                            itemId: meditation.id,
                             kind: ContentKind.meditation,
                             compact: true,
                           ),

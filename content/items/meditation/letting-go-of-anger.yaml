@@ -24,6 +24,62 @@ text:
       - "Each exhale, let the grip loosen by a fraction."
       - "You can put this down without saying it was okay."
       - "Come back slowly. Notice what's lighter, even slightly."
+  fr:
+    title: "Lâcher la colère"
+    blurb: "Ressens-la pleinement, puis pose ce qu’elle te coûte à porter."
+    prompts:
+      - "Installe-toi là où personne ne te dérangera. Laisse tes yeux se fermer."
+      - "Ici, la colère a le droit d’exister. Rien n’a besoin d’être pardonné pour l’instant."
+      - "Où la sens-tu — mâchoire, poitrine, mains, ventre ?"
+      - "Respire dans cet endroit. Ne la repousse pas."
+      - "Sous la colère, qu’y a-t-il d’autre ? De la peine ? De la peur ? De la honte ?"
+      - "Laisse cette émotion plus discrète être vue un instant."
+      - "À chaque expiration, laisse la prise se desserrer un tout petit peu."
+      - "Tu peux poser ça sans dire que c’était acceptable."
+      - "Reviens doucement. Remarque ce qui est plus léger, même un peu."
+    reviewed: false
+  de:
+    title: "Wut loslassen"
+    blurb: "Spür sie ganz – und leg dann ab, was es dich kostet, sie zu tragen."
+    prompts:
+      - "Setz dich an einen Ort, an dem dich niemand stört. Lass die Augen zufallen."
+      - "Wut darf hier sein. Noch muss nichts verziehen werden."
+      - "Wo spürst du sie – im Kiefer, in der Brust, in den Händen, im Bauch?"
+      - "Atme an diese Stelle. Schieb sie nicht weg."
+      - "Was liegt unter der Wut? Verletzung? Angst? Scham?"
+      - "Lass dieses leisere Gefühl einen Moment gesehen werden."
+      - "Lass den Griff mit jedem Ausatmen ein kleines Stück lockerer werden."
+      - "Du kannst das ablegen, ohne zu sagen, dass es in Ordnung war."
+      - "Komm langsam zurück. Bemerke, was leichter ist, und sei es nur ein bisschen."
+    reviewed: false
+  es:
+    title: "Soltar el enojo"
+    blurb: "Siéntelo por completo y luego deja lo que te cuesta cargarlo."
+    prompts:
+      - "Siéntate en un lugar donde nadie te interrumpa. Deja que se cierren los ojos."
+      - "Aquí el enojo está permitido. Todavía no hace falta perdonar nada."
+      - "¿Dónde lo sientes? ¿En la mandíbula, el pecho, las manos, el estómago?"
+      - "Respira hacia ese lugar. No lo apartes."
+      - "Debajo del enojo, ¿qué más hay? ¿Dolor? ¿Miedo? ¿Vergüenza?"
+      - "Deja que esa emoción más callada se vea por un momento."
+      - "Con cada exhalación, deja que el puño se afloje un poquito."
+      - "Puedes soltar esto sin decir que estuvo bien."
+      - "Vuelve despacio. Nota qué se siente más ligero, aunque sea un poco."
+    reviewed: false
+  zh-Hans:
+    title: "放下愤怒"
+    blurb: "充分感受它，再放下背着它要付出的代价。"
+    prompts:
+      - "找一个不会被打扰的地方坐下。让眼睛闭上。"
+      - "在这里，愤怒是被允许的。现在还什么都不必原谅。"
+      - "你在哪里感觉到它——下巴、胸口、双手、腹部？"
+      - "把呼吸送到那个地方。不要把它推开。"
+      - "在愤怒底下，还有什么？受伤？害怕？羞愧？"
+      - "让那份更安静的感受被看见一会儿。"
+      - "每一次呼气，都让紧握的力道松开一点点。"
+      - "你可以放下它，而不必说那件事没关系。"
+      - "慢慢回来。留意有什么变轻了，哪怕只轻了一点。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

@@ -18,6 +18,42 @@ text:
       - "Caffeine blocks the chemical that carries sleep pressure. Its half-life is five to six hours, so a coffee at four is a quarter coffee at midnight. If you sleep badly, make the last one before two."
       - "Alcohol is a sedative and then a stimulant. It helps you drop off and then fragments the second half of the night, cutting the dreaming sleep that does the emotional housekeeping. If you use it to sleep, you're borrowing from three a.m."
       - "Light is the clock. Bright light in the morning — outdoors, even on a grey day — pulls your body clock earlier and makes the evening come sooner. Bright light late does the opposite. Ten minutes outside before nine a.m. and dim lamps after nine p.m. is the whole prescription."
+  fr:
+    title: "Caféine, alcool et lumière"
+    blurb: "Trois leviers que tu peux actionner dès aujourd’hui, et quand les actionner."
+    area: "Sommeil · lecture"
+    paragraphs:
+      - "La caféine bloque la substance qui porte la pression de sommeil. Sa demi-vie est de cinq à six heures : un café à seize heures, c’est encore un quart de café à minuit. Si tu dors mal, prends le dernier avant quatorze heures."
+      - "L’alcool est un sédatif, puis un stimulant. Il t’aide à t’endormir, puis morcelle la seconde moitié de la nuit et réduit le sommeil des rêves, celui qui fait le ménage émotionnel. Si tu t’en sers pour dormir, tu empruntes à trois heures du matin."
+      - "La lumière, c’est l’horloge. Une lumière vive le matin — dehors, même par temps gris — avance ton horloge interne et fait venir le soir plus tôt. Une lumière vive tard fait l’inverse. Dix minutes dehors avant neuf heures et des lampes tamisées après vingt et une heures : c’est toute l’ordonnance."
+    reviewed: false
+  de:
+    title: "Koffein, Alkohol und Licht"
+    blurb: "Drei Stellschrauben, die du heute drehen kannst – und wann."
+    area: "Schlaf · Text"
+    paragraphs:
+      - "Koffein blockiert den Botenstoff, der den Schlafdruck trägt. Seine Halbwertszeit liegt bei fünf bis sechs Stunden: Ein Kaffee um vier ist um Mitternacht noch ein Viertelkaffee. Wenn du schlecht schläfst, trink den letzten vor zwei."
+      - "Alkohol macht erst müde und dann wach. Er hilft dir beim Einschlafen und zerstückelt dann die zweite Hälfte der Nacht – und damit den Traumschlaf, der deine Gefühle sortiert. Wenn du ihn zum Einschlafen nimmst, leihst du dir Schlaf von drei Uhr morgens."
+      - "Licht ist die Uhr. Helles Licht am Morgen – draußen, auch an einem grauen Tag – stellt deine innere Uhr früher und lässt den Abend eher kommen. Helles Licht am späten Abend bewirkt das Gegenteil. Zehn Minuten draußen vor neun Uhr morgens und gedämpfte Lampen nach neun Uhr abends: Das ist schon das ganze Rezept."
+    reviewed: false
+  es:
+    title: "Cafeína, alcohol y luz"
+    blurb: "Tres palancas que puedes mover hoy, y cuándo moverlas."
+    area: "Lectura · Sueño"
+    paragraphs:
+      - "La cafeína bloquea la sustancia que transmite la presión de sueño. Su vida media es de cinco a seis horas, así que un café a las cuatro de la tarde sigue siendo un cuarto de café a medianoche. Si duermes mal, que el último sea antes de las dos."
+      - "El alcohol primero es sedante y después estimulante. Te ayuda a quedarte dormido y luego fragmenta la segunda mitad de la noche, recortando el sueño en el que se sueña, que es el que pone en orden las emociones. Si lo usas para dormir, le estás pidiendo prestado a las tres de la madrugada."
+      - "La luz es el reloj. La luz intensa por la mañana —al aire libre, aunque el día esté gris— adelanta tu reloj interno y hace que la noche llegue antes. La luz intensa a última hora hace lo contrario. Diez minutos afuera antes de las nueve de la mañana y luces tenues después de las nueve de la noche: esa es toda la receta."
+    reviewed: false
+  zh-Hans:
+    title: "咖啡因、酒精和光线"
+    blurb: "今天就能调整的三个开关，以及什么时候调整。"
+    area: "睡眠 · 短文"
+    paragraphs:
+      - "咖啡因会阻断传递“睡意压力”的那种化学物质。它的半衰期是五到六个小时，所以下午四点喝的一杯咖啡，到了半夜还剩四分之一杯的效果。如果你睡得不好，最后一杯请在下午两点前喝完。"
+      - "酒精先让人镇静，后让人兴奋。它能帮你入睡，却会把后半夜的睡眠打得支离破碎，削减做梦的那部分睡眠，而那正是大脑整理情绪的时候。如果你靠喝酒入睡，其实是在向凌晨三点借债。"
+      - "光就是时钟。早晨的明亮光线——到户外去，阴天也可以——会把你的生物钟往前拨，让夜晚的困意来得更早。深夜的强光则正好相反。早上九点前到户外待十分钟，晚上九点后把灯调暗，这就是全部的“处方”。"
+    reviewed: false
 body:
   type: lesson
   art: "windDown"

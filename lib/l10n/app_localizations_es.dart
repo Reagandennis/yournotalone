@@ -5919,4 +5919,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get downloadsLapsedRemove => 'Quitar';
+
+  @override
+  String get crisisChangeCountry => 'Cambiar de país';
+
+  @override
+  String get crisisUsePhoneCountry => 'Usar el país de mi teléfono';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Borrador: estos números aún no se han comprobado. En una emergencia, llama al número de arriba.';
 }

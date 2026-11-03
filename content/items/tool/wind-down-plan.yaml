@@ -14,6 +14,26 @@ text:
     title: "Wind-down plan"
     blurb: "An hour of small steps that tell your body it's night."
     area: "Sleep"
+  fr:
+    title: "Plan de routine du soir"
+    blurb: "Une heure de petites étapes qui disent à ton corps que c’est la nuit."
+    area: "Sommeil"
+    reviewed: false
+  de:
+    title: "Abendroutine"
+    blurb: "Eine Stunde kleiner Schritte, die deinem Körper sagen: Es ist Nacht."
+    area: "Schlaf"
+    reviewed: false
+  es:
+    title: "Plan para desconectar"
+    blurb: "Una hora de pasos pequeños que le dicen a tu cuerpo que es de noche."
+    area: "Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "睡前放松计划"
+    blurb: "一个小时的小步骤，告诉身体：夜晚到了。"
+    area: "睡眠"
+    reviewed: false
 body:
   type: native
   screen: wind-down-plan

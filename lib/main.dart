@@ -32,6 +32,7 @@ import 'practice/practice_repository.dart';
 import 'sounds/sound_player.dart';
 import 'splash_screen.dart';
 import 'supabase_config.dart';
+import 'support/crisis_resources.dart';
 
 /// Sentry project `techgetafrica-e6/flutter`. A DSN only lets a client *send*
 /// events — it reads nothing — so like the Supabase publishable key it is a
@@ -126,6 +127,7 @@ Future<void> _start() async {
   await initOnboardingFlags();
   await AppearanceSetting.instance.load();
   await LocaleSetting.instance.load();
+  await CrisisCountrySetting.instance.load();
   // Date names for every language, so a DateFormat never depends on which
   // locale's data the Material delegate happened to load first.
   await initializeDateFormatting();

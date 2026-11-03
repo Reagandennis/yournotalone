@@ -15,6 +15,26 @@ text:
     title: "Breathe"
     blurb: "Six breaths a minute — follow the swell and yours slows to meet it."
     area: "Sound · Calm"
+  fr:
+    title: "Respire"
+    blurb: "Six respirations par minute — suis la houle et ton souffle ralentit pour la rejoindre."
+    area: "Son · Calme"
+    reviewed: false
+  de:
+    title: "Atmen"
+    blurb: "Sechs Atemzüge pro Minute – folge dem An- und Abschwellen, und dein Atem wird langsamer."
+    area: "Klang · Ruhe"
+    reviewed: false
+  es:
+    title: "Respira"
+    blurb: "Seis respiraciones por minuto: sigue el vaivén y la tuya se irá ralentizando hasta acompañarlo."
+    area: "Sonido · Calma"
+    reviewed: false
+  zh-Hans:
+    title: "呼吸"
+    blurb: "每分钟六次呼吸——跟着起伏，你的呼吸会慢下来与它同步。"
+    area: "声音 · 平静"
+    reviewed: false
 body:
   type: sound
   category: calm

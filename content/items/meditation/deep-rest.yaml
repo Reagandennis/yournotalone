@@ -25,6 +25,70 @@ text:
       - "Breath moving on its own, slow and unhurried."
       - "Nothing to do, nowhere to be, no one needing you."
       - "Stay as long as you like. Sleep if it comes."
+  fr:
+    title: "Repos profond"
+    blurb: "Un long moment allongé, guidé, pour quand le sommeil ne vient pas."
+    prompts:
+      - "Allonge-toi sur le dos, les bras un peu écartés du corps."
+      - "Tu n’as pas besoin de t’endormir. Te reposer suffit."
+      - "Laisse le sol ou le lit porter tout ton poids."
+      - "Porte ton attention sur ta main droite. Laisse-la devenir lourde."
+      - "Puis la gauche. Puis les deux bras, de l’épaule au bout des doigts."
+      - "Tes jambes, l’une après l’autre, qui s’enfoncent."
+      - "Ton dos, tes côtes, ton ventre — tout est relâché."
+      - "Ton visage : front, yeux, mâchoire, langue, tout est détendu."
+      - "La respiration va toute seule, lente et sans hâte."
+      - "Rien à faire, nulle part où aller, personne qui a besoin de toi."
+      - "Reste aussi longtemps que tu veux. Endors-toi si le sommeil vient."
+    reviewed: false
+  de:
+    title: "Tiefe Ruhe"
+    blurb: "Eine lange, angeleitete Übung im Liegen, wenn der Schlaf nicht kommt."
+    prompts:
+      - "Leg dich auf den Rücken, die Arme ein wenig vom Körper weg."
+      - "Du musst nicht einschlafen. Ausruhen ist genug."
+      - "Lass den Boden oder das Bett dein ganzes Gewicht tragen."
+      - "Richte deine Aufmerksamkeit auf deine rechte Hand. Lass sie schwer werden."
+      - "Jetzt die linke. Dann beide Arme, von der Schulter bis in die Fingerspitzen."
+      - "Deine Beine, eins nach dem anderen, sinken nach unten."
+      - "Dein Rücken, deine Rippen, dein Bauch – alles gelöst."
+      - "Dein Gesicht: Stirn, Augen, Kiefer, Zunge, alles weich."
+      - "Der Atem geht von allein, langsam und ohne Eile."
+      - "Nichts zu tun, nirgends hinzumüssen, niemand, der dich braucht."
+      - "Bleib, so lange du magst. Schlaf ein, wenn der Schlaf kommt."
+    reviewed: false
+  es:
+    title: "Descanso profundo"
+    blurb: "Un descanso guiado y largo, acostado, para cuando el sueño no llega."
+    prompts:
+      - "Acuéstate boca arriba, con los brazos un poco separados del cuerpo."
+      - "No necesitas quedarte dormido. Descansar es suficiente."
+      - "Deja que el suelo o la cama sostengan todo tu peso."
+      - "Lleva tu atención a la mano derecha. Deja que se vuelva pesada."
+      - "Ahora la izquierda. Luego los dos brazos, del hombro a la punta de los dedos."
+      - "Tus piernas, una a la vez, hundiéndose."
+      - "Tu espalda, tus costillas, tu vientre: todo suelto."
+      - "Tu cara: frente, ojos, mandíbula, lengua, todo suave."
+      - "La respiración se mueve sola, lenta y sin prisa."
+      - "Nada que hacer, ningún lugar al que ir, nadie que te necesite."
+      - "Quédate todo el tiempo que quieras. Si llega el sueño, duerme."
+    reviewed: false
+  zh-Hans:
+    title: "深度休息"
+    blurb: "一段较长的躺卧引导，适合睡不着的时候。"
+    prompts:
+      - "仰面躺下，双臂稍稍离开身体两侧。"
+      - "你不需要睡着。休息就已经足够。"
+      - "让地板或床承接你全部的重量。"
+      - "把注意力带到右手。让它变得沉重。"
+      - "现在是左手。然后是两条手臂，从肩膀到指尖。"
+      - "你的双腿，一条一条，往下沉。"
+      - "你的背、你的肋骨、你的腹部——全都放松了。"
+      - "你的脸：额头、眼睛、下巴、舌头，全都柔软下来。"
+      - "呼吸自己在流动，缓慢，不急不忙。"
+      - "没有要做的事，没有要去的地方，也没有人需要你。"
+      - "想待多久就待多久。如果睡意来了，就睡吧。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

@@ -22,6 +22,58 @@ text:
       - "Offer them the same: may you be safe. May you be well."
       - "Let that warmth widen — to strangers, to everyone."
       - "Come back to yourself. Carry this with you."
+  fr:
+    title: "Bienveillance"
+    blurb: "Tourne un peu de chaleur vers toi et vers les personnes que tu portes."
+    prompts:
+      - "Installe-toi confortablement et prends une inspiration douce."
+      - "Imagine-toi tel que tu es en ce moment."
+      - "Offre-toi en silence : que je sois en sécurité. Que j’aille bien."
+      - "Que je sois bienveillant envers moi-même, surtout les jours difficiles."
+      - "Maintenant, imagine quelqu’un qui compte pour toi."
+      - "Offre-lui la même chose : que tu sois en sécurité. Que tu ailles bien."
+      - "Laisse cette chaleur s’élargir — aux inconnus, à tout le monde."
+      - "Reviens à toi. Emporte ça avec toi."
+    reviewed: false
+  de:
+    title: "Liebende Güte"
+    blurb: "Richte etwas Wärme auf dich und die Menschen, die du im Herzen trägst."
+    prompts:
+      - "Setz dich bequem hin und atme sanft ein."
+      - "Stell dir dich selbst vor, so wie du gerade bist."
+      - "Wünsch dir still: Möge ich sicher sein. Möge es mir gut gehen."
+      - "Möge ich freundlich zu mir sein, besonders an schweren Tagen."
+      - "Stell dir jetzt jemanden vor, der dir am Herzen liegt."
+      - "Wünsch diesem Menschen dasselbe: Mögest du sicher sein. Möge es dir gut gehen."
+      - "Lass diese Wärme weiter werden – zu Fremden, zu allen."
+      - "Komm zu dir zurück. Nimm das mit."
+    reviewed: false
+  es:
+    title: "Bondad amorosa"
+    blurb: "Dirige algo de calidez hacia ti y hacia las personas que llevas contigo."
+    prompts:
+      - "Siéntate cómodo e inhala con suavidad."
+      - "Imagínate tal como estás ahora mismo."
+      - "Ofrécete en silencio: que esté a salvo. Que esté bien."
+      - "Que sea amable conmigo, sobre todo en los días difíciles."
+      - "Ahora imagina a alguien que te importa."
+      - "Ofrécele lo mismo: que estés a salvo. Que estés bien."
+      - "Deja que esa calidez se amplíe: a desconocidos, a todo el mundo."
+      - "Vuelve a ti. Lleva esto contigo."
+    reviewed: false
+  zh-Hans:
+    title: "慈心冥想"
+    blurb: "把一些温暖送给自己，也送给你牵挂的人。"
+    prompts:
+      - "舒服地坐好，轻柔地吸一口气。"
+      - "想象此刻的自己。"
+      - "在心里默默地说：愿我平安。愿我安好。"
+      - "愿我善待自己，尤其是在难熬的日子里。"
+      - "现在，想象一个你在乎的人。"
+      - "也送给他同样的祝福：愿你平安。愿你安好。"
+      - "让这份温暖向外扩展——到陌生人，到每一个人。"
+      - "回到自己身上。把这份温暖带在身边。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

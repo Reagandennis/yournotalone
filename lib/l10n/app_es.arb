@@ -1512,5 +1512,8 @@
   "downloadsLapsedTitle": "¿Quitar las descargas Premium?",
   "downloadsLapsedBody": "Tu Premium terminó hace más de un mes y sus descargas todavía ocupan {size} en este teléfono. ¿Quieres quitarlas para liberar espacio? Si vuelves a Premium, podrás descargarlas de nuevo.",
   "downloadsLapsedKeep": "Conservar",
-  "downloadsLapsedRemove": "Quitar"
+  "downloadsLapsedRemove": "Quitar",
+  "crisisChangeCountry": "Cambiar de país",
+  "crisisUsePhoneCountry": "Usar el país de mi teléfono",
+  "crisisUncheckedNumbers": "Borrador: estos números aún no se han comprobado. En una emergencia, llama al número de arriba."
 }

@@ -24,3 +24,51 @@ text:
       - "Why stepping back makes the next time harder."
       - "Give worries a time, so they don't take the whole day."
       - "Answering the thought, in your own voice."
+  fr:
+    title: "7 jours avec les pensées anxieuses"
+    blurb: "Retrouve d’abord ton équilibre, puis apprends à attraper et à examiner tes pensées."
+    notes:
+      - "D’abord, un moyen de revenir dans la pièce quand tout devient trop bruyant."
+      - "Comment les pensées, les émotions et les actions s’alimentent les unes les autres."
+      - "Les schémas dans lesquels tombent les esprits anxieux, et leurs noms."
+      - "Attrape une pensée et confronte-la aux faits."
+      - "Pourquoi reculer rend la fois suivante plus difficile."
+      - "Donne un horaire à tes inquiétudes, pour qu’elles ne prennent pas toute la journée."
+      - "Répondre à la pensée, avec ta propre voix."
+    reviewed: false
+  de:
+    title: "7 Tage mit ängstlichen Gedanken"
+    blurb: "Erst Halt finden, dann lernen, Gedanken einzufangen und zu prüfen."
+    notes:
+      - "Zuerst ein Weg zurück in den Raum, wenn alles zu laut wird."
+      - "Wie Gedanken, Gefühle und Handlungen sich gegenseitig nähren."
+      - "Die Muster, in die ängstliche Köpfe fallen, und ihre Namen."
+      - "Fang einen Gedanken ein und prüf ihn an den Belegen."
+      - "Warum Ausweichen das nächste Mal schwerer macht."
+      - "Gib Sorgen eine feste Zeit, damit sie nicht den ganzen Tag nehmen."
+      - "Dem Gedanken antworten, mit deiner eigenen Stimme."
+    reviewed: false
+  es:
+    title: "7 días con pensamientos ansiosos"
+    blurb: "Primero encuentra estabilidad, luego aprende a atrapar y revisar los pensamientos."
+    notes:
+      - "Primero, una forma de volver a la habitación cuando todo se vuelve ruidoso."
+      - "Cómo se alimentan entre sí los pensamientos, las emociones y las acciones."
+      - "Los patrones en los que caen las mentes ansiosas, y sus nombres."
+      - "Atrapa un pensamiento y contrástalo con las pruebas."
+      - "Por qué alejarte hace que la próxima vez sea más difícil."
+      - "Dale a las preocupaciones su momento, para que no ocupen todo el día."
+      - "Responder al pensamiento, con tu propia voz."
+    reviewed: false
+  zh-Hans:
+    title: "与焦虑想法相处的 7 天"
+    blurb: "先让自己稳下来，再学会抓住并检验那些想法。"
+    notes:
+      - "首先，一个在一切变得嘈杂时回到当下的方法。"
+      - "想法、感受和行为是如何相互影响的。"
+      - "焦虑的头脑容易陷入的模式，以及它们的名字。"
+      - "抓住一个想法，用证据检验它。"
+      - "为什么退缩会让下一次更难。"
+      - "给担忧定一个时间，别让它占据一整天。"
+      - "用你自己的声音回应那个想法。"
+    reviewed: false

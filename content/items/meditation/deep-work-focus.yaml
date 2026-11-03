@@ -23,6 +23,62 @@ text:
       - "Now name the single task you're about to do."
       - "Hold it lightly. See yourself starting it, calm and unhurried."
       - "Open your eyes. Begin with that one thing."
+  fr:
+    title: "Concentration au travail"
+    blurb: "Range le bureau dans ta tête avant de commencer."
+    prompts:
+      - "Assieds-toi droit mais à l’aise. Téléphone retourné."
+      - "Trois respirations lentes — inspire par le nez, expire par la bouche."
+      - "Imagine tout ce que tu portes, posé en tas à côté de toi."
+      - "Ça reste là. Tu pourras le reprendre une fois que ce sera fini."
+      - "Pose ton attention sur le souffle au bout de ton nez."
+      - "Quand elle s’égare — et ça arrivera — ramène-la sans commentaire."
+      - "Maintenant, nomme la seule tâche que tu vas faire."
+      - "Tiens-la légèrement. Vois-toi la commencer, calme et sans hâte."
+      - "Ouvre les yeux. Commence par cette seule chose."
+    reviewed: false
+  de:
+    title: "Fokus für konzentriertes Arbeiten"
+    blurb: "Räum den Schreibtisch in deinem Kopf auf, bevor du anfängst."
+    prompts:
+      - "Sitz aufrecht, aber locker. Das Handy mit dem Display nach unten."
+      - "Drei langsame Atemzüge – durch die Nase ein, durch den Mund aus."
+      - "Stell dir alles vor, was du mit dir trägst, abgelegt auf einem Stapel neben dir."
+      - "Dort bleibt es. Du kannst es wieder aufnehmen, wenn das hier vorbei ist."
+      - "Lass deine Aufmerksamkeit beim Atem an deiner Nasenspitze ruhen."
+      - "Wenn sie abschweift – und das wird sie –, hol sie ohne Kommentar zurück."
+      - "Nenne jetzt die eine Aufgabe, die du gleich angehst."
+      - "Halte sie leicht. Sieh dich, wie du damit beginnst, ruhig und ohne Eile."
+      - "Öffne die Augen. Fang mit dieser einen Sache an."
+    reviewed: false
+  es:
+    title: "Concentración en el trabajo"
+    blurb: "Despeja el escritorio de tu cabeza antes de empezar."
+    prompts:
+      - "Siéntate erguido pero cómodo. El teléfono boca abajo."
+      - "Tres respiraciones lentas: inhala por la nariz, exhala por la boca."
+      - "Imagina todo lo que cargas, dejado en una pila a tu lado."
+      - "Ahí se queda. Puedes retomarlo cuando termines esto."
+      - "Apoya tu atención en el aire que entra por la punta de la nariz."
+      - "Cuando se distraiga —y lo hará—, tráela de vuelta sin juzgar."
+      - "Ahora nombra la única tarea que vas a hacer."
+      - "Sostenla con ligereza. Imagínate empezándola, con calma y sin prisa."
+      - "Abre los ojos. Empieza por esa única cosa."
+    reviewed: false
+  zh-Hans:
+    title: "专注工作"
+    blurb: "开始之前，先把脑子里的桌面清干净。"
+    prompts:
+      - "坐直，但保持放松。手机屏幕朝下放好。"
+      - "三次缓慢的呼吸——用鼻子吸气，用嘴巴呼气。"
+      - "想象你背负着的一切，都放下来，堆在身旁。"
+      - "它们会留在那里。结束之后你可以再拿起来。"
+      - "把注意力轻轻放在鼻尖的呼吸上。"
+      - "当它跑开时——它一定会跑开——不加评论地把它带回来。"
+      - "现在，说出你接下来要做的那一件事。"
+      - "轻轻地抓住它。看见自己开始做它，平静，不慌不忙。"
+      - "睁开眼睛。就从那一件事开始。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

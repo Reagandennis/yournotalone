@@ -11,3 +11,15 @@ params:
 text:
   en:
     title: Morning mist
+  fr:
+    title: "Brume du matin"
+    reviewed: false
+  de:
+    title: "Morgennebel"
+    reviewed: false
+  es:
+    title: "Niebla matinal"
+    reviewed: false
+  zh-Hans:
+    title: "晨雾"
+    reviewed: false

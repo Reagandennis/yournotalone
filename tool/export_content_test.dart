@@ -194,6 +194,48 @@ Map<String, Map<String, Object>> _safetyTags() {
   };
 }
 
+/// The translations (`text.fr`, …) in the files about to be rewritten, by
+/// path: the lines as they are, so a translation and its `reviewed` flag
+/// come back exactly as written. The Dart catalogues are English only.
+Map<String, List<String>> _translations(List<String> dirs) => {
+  for (final dir in dirs)
+    if (Directory(dir).existsSync())
+      for (final f in Directory(
+        dir,
+      ).listSync(recursive: true).whereType<File>())
+        if (f.path.endsWith('.yaml')) f.path: _translationLines(f),
+};
+
+List<String> _translationLines(File f) {
+  final out = <String>[];
+  var inText = false, keep = false;
+  for (final line in f.readAsLinesSync()) {
+    if (!line.startsWith(' ')) {
+      inText = line == 'text:';
+      keep = false;
+    } else if (inText && !line.startsWith('   ')) {
+      // A locale key, two spaces in: keep all but English.
+      keep = line != '  en:';
+    }
+    if (keep) out.add(line);
+  }
+  return out;
+}
+
+/// [yaml] with [lines] added at the end of its top-level `text:` map —
+/// where `npm run translate` puts them, so a re-export changes nothing.
+String _withTranslations(String yaml, List<String> lines) {
+  if (lines.isEmpty) return yaml;
+  final all = yaml.split('\n');
+  final start = all.indexOf('text:');
+  var end = start + 1;
+  while (end < all.length && all[end].startsWith(' ')) {
+    end++;
+  }
+  all.insertAll(end, lines);
+  return all.join('\n');
+}
+
 void main() {
   test('export catalogues to content/', () {
     final items = <Map<String, Object?>>[
@@ -279,6 +321,9 @@ void main() {
     // them over from the files about to be rewritten.
     final safety = _safetyTags();
 
+    // So are the translations.
+    final translations = _translations(['content/items', 'content/courses']);
+
     // Only what this writes: README, backgrounds/ and anything else in
     // content/ stays.
     for (final dir in ['content/items', 'content/courses']) {
@@ -298,7 +343,9 @@ void main() {
       _write(out, item, 0);
       File(path)
         ..createSync(recursive: true)
-        ..writeAsStringSync(out.toString());
+        ..writeAsStringSync(
+          _withTranslations(out.toString(), translations[path] ?? const []),
+        );
     }
 
     for (final c in builtInCourses) {
@@ -319,9 +366,12 @@ void main() {
           },
         },
       }, 0);
-      File('content/courses/${c.id}.yaml')
+      final path = 'content/courses/${c.id}.yaml';
+      File(path)
         ..createSync(recursive: true)
-        ..writeAsStringSync(out.toString());
+        ..writeAsStringSync(
+          _withTranslations(out.toString(), translations[path] ?? const []),
+        );
     }
 
     final vocab = StringBuffer();

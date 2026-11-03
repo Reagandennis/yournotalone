@@ -23,6 +23,62 @@ text:
       - "Notice the air on your face and hands."
       - "Let the pace stay slow, even now."
       - "Before you stop, take three full breaths standing still."
+  fr:
+    title: "Méditation en marchant"
+    blurb: "Dix minutes dehors, l’attention dans tes pieds."
+    prompts:
+      - "Commence à marcher, plus lentement que d’habitude. Sans destination."
+      - "Sens le sol rencontrer chaque pied — le talon, puis les orteils."
+      - "Laisse tes bras se balancer. Déverrouille tes genoux."
+      - "Accorde ta respiration à tes pas, au rythme qui te convient."
+      - "Accueille ce qui t’entoure sans lui donner de nom."
+      - "Si tes pensées prennent de l’avance, reviens à tes pieds."
+      - "Remarque l’air sur ton visage et sur tes mains."
+      - "Garde un pas lent, même maintenant."
+      - "Avant de t’arrêter, prends trois grandes respirations, immobile."
+    reviewed: false
+  de:
+    title: "Gehmeditation"
+    blurb: "Zehn Minuten draußen, mit der Aufmerksamkeit in den Füßen."
+    prompts:
+      - "Fang an zu gehen, langsamer als sonst. Ohne Ziel."
+      - "Spür, wie der Boden jeden Fuß berührt – erst die Ferse, dann die Zehen."
+      - "Lass die Arme schwingen. Lockere die Knie."
+      - "Pass deinen Atem deinen Schritten an, in welchem Rhythmus auch immer."
+      - "Nimm wahr, was um dich ist, ohne es zu benennen."
+      - "Wenn deine Gedanken vorauseilen, komm zurück zu deinen Füßen."
+      - "Spür die Luft auf deinem Gesicht und deinen Händen."
+      - "Lass das Tempo langsam, auch jetzt."
+      - "Bevor du stehen bleibst, atme dreimal tief, ganz still."
+    reviewed: false
+  es:
+    title: "Meditación caminando"
+    blurb: "Diez minutos al aire libre, con la atención en los pies."
+    prompts:
+      - "Empieza a caminar, más despacio de lo habitual. Sin destino."
+      - "Siente cómo el suelo se encuentra con cada pie: talón, luego punta."
+      - "Deja que tus brazos se balanceen. Afloja las rodillas."
+      - "Acompasa la respiración con tus pasos, al ritmo que te salga."
+      - "Observa lo que te rodea sin ponerle nombre."
+      - "Si tus pensamientos se adelantan, vuelve a tus pies."
+      - "Nota el aire en tu cara y en tus manos."
+      - "Mantén el paso lento, incluso ahora."
+      - "Antes de detenerte, haz tres respiraciones completas, de pie y quieto."
+    reviewed: false
+  zh-Hans:
+    title: "行走冥想"
+    blurb: "到户外走十分钟，把注意力放在双脚上。"
+    prompts:
+      - "开始走，比平时慢一些。没有目的地。"
+      - "感受地面与每只脚的接触——先是脚跟，然后是脚尖。"
+      - "让手臂自然摆动。膝盖不要绷直。"
+      - "让呼吸配合脚步，什么节奏合适就用什么节奏。"
+      - "看看周围的一切，不必给它们命名。"
+      - "如果思绪跑到前面去了，就回到你的双脚。"
+      - "留意脸上和手上的空气。"
+      - "让步伐继续慢下来，即使是现在。"
+      - "停下之前，站定，做三次完整的呼吸。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

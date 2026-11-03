@@ -14,6 +14,26 @@ text:
     title: "After a panic"
     blurb: "Write it down while it's fresh, so it teaches you something."
     seed: "What set it off:\n\nWhat it felt like:\n\nWhat helped:\n\nWhat I want to remember for next time:\n"
+  fr:
+    title: "Après une crise de panique"
+    blurb: "Écris-le pendant que c’est frais, pour que ça t’apprenne quelque chose."
+    seed: "Ce qui l’a déclenchée :\n\nCe que j’ai ressenti :\n\nCe qui m’a aidé :\n\nCe dont je veux me souvenir pour la prochaine fois :\n"
+    reviewed: false
+  de:
+    title: "Nach einer Panikattacke"
+    blurb: "Schreib es auf, solange es frisch ist, damit du daraus lernst."
+    seed: "Was sie ausgelöst hat:\n\nWie es sich angefühlt hat:\n\nWas geholfen hat:\n\nWas ich mir fürs nächste Mal merken will:\n"
+    reviewed: false
+  es:
+    title: "Después de un ataque de pánico"
+    blurb: "Escríbelo mientras está fresco, para que te enseñe algo."
+    seed: "Qué lo desencadenó:\n\nCómo se sintió:\n\nQué me ayudó:\n\nQué quiero recordar para la próxima vez:\n"
+    reviewed: false
+  zh-Hans:
+    title: "惊慌过后"
+    blurb: "趁记忆还新鲜时写下来，让它教会你一些东西。"
+    seed: "是什么引发的：\n\n当时的感觉：\n\n什么有帮助：\n\n下次我想记住的：\n"
+    reviewed: false
 body:
   type: prompt
   group: "Hard days"

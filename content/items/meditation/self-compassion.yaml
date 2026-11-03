@@ -24,6 +24,58 @@ text:
       - "Now say it to yourself, in your own words."
       - "May I be kind to myself. May I give myself what I need."
       - "Let your hand rest a moment longer before you go."
+  fr:
+    title: "Autocompassion"
+    blurb: "Parle-toi comme tu parlerais à un ami."
+    prompts:
+      - "Installe-toi. Pose une main là où c’est réconfortant — poitrine, bras."
+      - "Pense à ce qui te fait mal. Nomme-le simplement, doucement."
+      - "Dis-toi intérieurement : c’est un moment difficile."
+      - "Les moments difficiles font partie de toute vie. Tu n’es pas seul là-dedans."
+      - "Demande-toi : que dirais-je à un ami assis à ma place ?"
+      - "Maintenant, dis-le-toi, avec tes propres mots."
+      - "Que je sois bienveillant envers moi-même. Que je me donne ce dont j’ai besoin."
+      - "Laisse ta main reposer encore un instant avant de partir."
+    reviewed: false
+  de:
+    title: "Selbstmitgefühl"
+    blurb: "Sprich mit dir so, wie du mit einer Freundin oder einem Freund sprechen würdest."
+    prompts:
+      - "Komm an. Leg eine Hand dorthin, wo es sich freundlich anfühlt – auf die Brust, den Arm."
+      - "Denk an das, was wehtut. Benenne es nur, sanft."
+      - "Sag innerlich: Das ist ein schwerer Moment."
+      - "Schwere Momente gehören zu jedem Leben. Du bist damit nicht allein."
+      - "Frag dich: Was würde ich jemandem sagen, der an meiner Stelle sitzt?"
+      - "Sag es jetzt zu dir selbst, in deinen eigenen Worten."
+      - "Möge ich freundlich zu mir sein. Möge ich mir geben, was ich brauche."
+      - "Lass deine Hand noch einen Moment liegen, bevor du gehst."
+    reviewed: false
+  es:
+    title: "Autocompasión"
+    blurb: "Háblate como le hablarías a un amigo."
+    prompts:
+      - "Acomódate. Pon una mano en algún lugar que se sienta amable: el pecho, el brazo."
+      - "Trae a la mente lo que te duele. Solo nómbralo, con suavidad."
+      - "Dite por dentro: este es un momento difícil."
+      - "Los momentos difíciles forman parte de toda vida. No estás solo en esto."
+      - "Pregúntate: ¿qué le diría a un amigo que estuviera donde estoy yo?"
+      - "Ahora dítelo a ti, con tus propias palabras."
+      - "Que sea amable conmigo. Que me dé lo que necesito."
+      - "Deja la mano un momento más antes de irte."
+    reviewed: false
+  zh-Hans:
+    title: "自我关怀"
+    blurb: "用对待朋友的方式，和自己说话。"
+    prompts:
+      - "安顿下来。把手放在一个让你觉得温暖的地方——胸口、手臂。"
+      - "想一想让你难受的事。只是轻轻地说出它的名字。"
+      - "在心里说：这是一个艰难的时刻。"
+      - "艰难的时刻是每个人生命的一部分。在这件事上，你并不孤单。"
+      - "问问自己：如果一个朋友坐在我现在的位置上，我会对他说什么？"
+      - "现在，用你自己的话，把它说给自己听。"
+      - "愿我善待自己。愿我给自己所需要的。"
+      - "离开之前，让手再停留一会儿。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

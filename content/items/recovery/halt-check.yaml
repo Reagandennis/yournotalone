@@ -12,6 +12,22 @@ text:
   en:
     title: "HALT check"
     blurb: "Hungry, angry, lonely, tired — find out what the craving is standing in for."
+  fr:
+    title: "Bilan HALT"
+    blurb: "Faim, colère, solitude, fatigue — découvre ce que l’envie remplace."
+    reviewed: false
+  de:
+    title: "HALT-Check"
+    blurb: "Hungry, Angry, Lonely, Tired – hungrig, wütend, einsam, müde: Finde heraus, wofür das Verlangen eigentlich steht."
+    reviewed: false
+  es:
+    title: "Revisión HALT"
+    blurb: "Hambre, enojo, soledad, cansancio: descubre qué está reemplazando el antojo."
+    reviewed: false
+  zh-Hans:
+    title: "HALT 自查"
+    blurb: "饿、生气、孤独、累——看看这份渴求背后真正缺的是什么。"
+    reviewed: false
 body:
   type: native
   screen: halt

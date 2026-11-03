@@ -5940,4 +5940,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get downloadsLapsedRemove => 'Supprimer';
+
+  @override
+  String get crisisChangeCountry => 'Changer de pays';
+
+  @override
+  String get crisisUsePhoneCountry => 'Utiliser le pays de mon téléphone';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Brouillon : ces numéros n’ont pas encore été vérifiés. En cas d’urgence, appelle le numéro ci-dessus.';
 }

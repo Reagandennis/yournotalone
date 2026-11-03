@@ -1,4 +1,10 @@
-import 'dart:ui' show PlatformDispatcher;
+import 'dart:ui' show Locale, PlatformDispatcher;
+
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../l10n/l10n.dart';
+import 'helplines.dart';
 
 /// One way to reach a human right now.
 class CrisisLine {
@@ -8,6 +14,7 @@ class CrisisLine {
     this.phone,
     this.sms,
     this.url,
+    this.source,
   });
 
   final String name;
@@ -24,18 +31,39 @@ class CrisisLine {
   final (String, String)? sms;
 
   final String? url;
+
+  /// The official page the number was checked against, for the reviewer
+  /// (content/HELPLINES.md). Never shown.
+  final String? source;
 }
 
 class CrisisRegion {
-  const CrisisRegion(this.code, this.label, this.emergency, this.lines);
+  const CrisisRegion(
+    this.code,
+    this.label,
+    this.emergency,
+    this.lines, {
+    this.emergencySource,
+    this.verified = true,
+  });
 
-  /// ISO country code, matched against the device locale.
+  /// ISO country code, matched against the device region.
   final String code;
   final String label;
 
   /// The general emergency number for the region.
   final String emergency;
+
+  /// May be empty when only the emergency number is known; the screen
+  /// then leans on the international list.
   final List<CrisisLine> lines;
+
+  /// Where [emergency] was checked, like [CrisisLine.source].
+  final String? emergencySource;
+
+  /// Whether a person has checked every number here against its source.
+  /// Unchecked regions are shown only in builds with drafts on.
+  final bool verified;
 }
 
 /// Somewhere to go from anywhere — used as the fallback region and always
@@ -124,14 +152,88 @@ const crisisRegions = [
   internationalRegion,
 ];
 
-/// The region to open on, guessed from the device locale. Falls back to the
-/// international list, which works from anywhere.
-CrisisRegion defaultCrisisRegion() {
-  final country = PlatformDispatcher.instance.locale.countryCode;
-  for (final region in crisisRegions) {
+/// The countries this build can show, one region each, by name, with the
+/// international list last: a [countryHelplines] entry once it's verified
+/// (or any, with [drafts] on), otherwise the country's entry in
+/// [crisisRegions], the list that shipped before them.
+List<CrisisRegion> availableCrisisRegions({bool? drafts}) {
+  final showDrafts = drafts ?? l10nDraftsEnabled;
+  final byCode = <String, CrisisRegion>{
+    for (final region in crisisRegions)
+      if (region.code != internationalRegion.code) region.code: region,
+  };
+  for (final region in countryHelplines) {
+    if (region.verified || showDrafts) byCode[region.code] = region;
+  }
+  return [
+    ...byCode.values.toList()..sort((a, b) => a.label.compareTo(b.label)),
+    internationalRegion,
+  ];
+}
+
+/// The region for [country] (an ISO code), or the international list when
+/// this build has nothing for it.
+CrisisRegion crisisRegionFor(String? country, {bool? drafts}) {
+  for (final region in availableCrisisRegions(drafts: drafts)) {
     if (region.code == country) return region;
   }
   return internationalRegion;
+}
+
+/// The country to show helplines for: the one picked on the crisis screen
+/// if any, else the first of the phone's [locales] with a region here.
+String? crisisCountry([Iterable<Locale>? locales, bool? drafts]) {
+  final chosen = CrisisCountrySetting.instance.value;
+  if (chosen != null) return chosen;
+  final codes = {
+    for (final r in availableCrisisRegions(drafts: drafts)) r.code,
+  };
+  for (final locale in locales ?? PlatformDispatcher.instance.locales) {
+    if (codes.contains(locale.countryCode)) return locale.countryCode;
+  }
+  return null;
+}
+
+/// The region to open on: the country picked on the crisis screen, else
+/// the device region. Falls back to the international list, which works
+/// from anywhere.
+CrisisRegion defaultCrisisRegion() => crisisRegionFor(crisisCountry());
+
+/// The country picked under "Change country" on the crisis screen, or null
+/// to follow the phone's region. Kept on this device: someone abroad, or
+/// whose phone is set to another country, picks once.
+class CrisisCountrySetting extends ValueNotifier<String?> {
+  CrisisCountrySetting._() : super(null);
+
+  static final instance = CrisisCountrySetting._();
+
+  static const _key = 'crisis.country';
+
+  /// Reads the saved choice. Never fatal: without storage the phone's
+  /// region is used.
+  Future<void> load() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      value = prefs.getString(_key);
+    } catch (e) {
+      debugPrint('Crisis country unavailable: $e');
+    }
+  }
+
+  /// Saves [code], or null for the phone's region.
+  Future<void> choose(String? code) async {
+    value = code;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (code == null) {
+        await prefs.remove(_key);
+      } else {
+        await prefs.setString(_key, code);
+      }
+    } catch (e) {
+      debugPrint('Couldn\'t save the crisis country: $e');
+    }
+  }
 }
 
 /// Digits only, so `tel:` accepts it.

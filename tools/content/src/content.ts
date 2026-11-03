@@ -101,7 +101,9 @@ function schemas(v: Vocab) {
     prompts: z.array(nonEmpty).optional(),
     paragraphs: z.array(nonEmpty).optional(),
     seed: z.string().optional(),
-    // Translations publish only once a fluent reader has checked them.
+    // Whether a fluent reader has checked this translation. Unreviewed
+    // ones are published flagged, and only builds with drafts on show
+    // them (design §7a). Missing means false.
     reviewed: z.boolean().optional(),
   });
   const body = z.discriminatedUnion('type', [
@@ -229,6 +231,29 @@ export function check(
   const backgrounds: Background[] = [];
   const fail = (path: string, msg: string) => errors.push(`${path}: ${msg}`);
 
+  // A translation has the fields English has, lists of the same length,
+  // so a screen never finds a paragraph or a day's note missing. Whether
+  // it has been reviewed is its own flag; English needs none.
+  const sameShape = (path: string, text: Record<string, object | undefined>) => {
+    const en = text.en as Record<string, unknown> | undefined;
+    if (!en) return;
+    if ('reviewed' in en) fail(path, 'text.en.reviewed: English is the source, not a translation');
+    const fields = (t: object) => Object.keys(t).filter((k) => k !== 'reviewed').sort().join(', ');
+    for (const [locale, t] of Object.entries(text)) {
+      if (locale === 'en' || !t) continue;
+      if (fields(t) !== fields(en)) {
+        fail(path, `text.${locale} has fields [${fields(t)}], English has [${fields(en)}]`);
+        continue;
+      }
+      for (const [k, v] of Object.entries(t as Record<string, unknown>)) {
+        const length = (en[k] as unknown[] | undefined)?.length;
+        if (Array.isArray(v) && v.length !== length) {
+          fail(path, `text.${locale}.${k} has ${v.length} lines, English has ${length}`);
+        }
+      }
+    }
+  };
+
   const parseAll = <T>(
     files: [string, unknown][],
     schema: z.ZodType<T>,
@@ -262,6 +287,7 @@ export function check(
     if (other) fail(path, `background id "${bg.id}" is also used by ${bgPaths.get(other)}`);
     bgById.set(bg.id, bg);
     if (!('en' in bg.text)) fail(path, 'text.en is required');
+    sameShape(path, bg.text);
     if (bg.status !== 'published') continue;
     for (const kind of bg.defaultFor ?? []) {
       const taken = defaults.get(kind);
@@ -278,6 +304,7 @@ export function check(
       fail(path, `accent "${x.accent}" is neither a named accent nor #AARRGGBB`);
     }
     if (!('en' in x.text)) fail(path, 'text.en is required');
+    sameShape(path, x.text);
   };
 
   const byId = new Map<string, Item>();

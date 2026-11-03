@@ -13,6 +13,26 @@ text:
     title: "Why I started"
     blurb: "The reason, in your handwriting, for the days you forget it."
     seed: "I started this because "
+  fr:
+    title: "Pourquoi j’ai commencé"
+    blurb: "La raison, de ta main, pour les jours où tu l’oublies."
+    seed: "J’ai commencé parce que "
+    reviewed: false
+  de:
+    title: "Warum ich angefangen habe"
+    blurb: "Der Grund, in deiner Handschrift, für die Tage, an denen du ihn vergisst."
+    seed: "Ich habe damit angefangen, weil "
+    reviewed: false
+  es:
+    title: "Por qué empecé"
+    blurb: "La razón, con tu propia letra, para los días en que la olvides."
+    seed: "Empecé esto porque "
+    reviewed: false
+  zh-Hans:
+    title: "我为什么开始"
+    blurb: "亲手写下理由，留给忘记它的那些日子。"
+    seed: "我开始这件事，是因为"
+    reviewed: false
 body:
   type: prompt
   group: "Recovery"

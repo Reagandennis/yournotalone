@@ -13,6 +13,26 @@ text:
     title: "What I need"
     blurb: "Name it plainly, then see who could help."
     seed: "Right now, what I need most is "
+  fr:
+    title: "Ce dont j’ai besoin"
+    blurb: "Nomme-le simplement, puis vois qui pourrait t’aider."
+    seed: "En ce moment, ce dont j’ai le plus besoin, c’est "
+    reviewed: false
+  de:
+    title: "Was ich brauche"
+    blurb: "Benenne es klar und schau dann, wer helfen könnte."
+    seed: "Was ich gerade am meisten brauche, ist "
+    reviewed: false
+  es:
+    title: "Lo que necesito"
+    blurb: "Nómbralo con sencillez y luego mira quién podría ayudarte."
+    seed: "Ahora mismo, lo que más necesito es "
+    reviewed: false
+  zh-Hans:
+    title: "我需要什么"
+    blurb: "直白地说出来，再看看谁能帮上忙。"
+    seed: "此刻，我最需要的是"
+    reviewed: false
 body:
   type: prompt
   group: "Everyday"

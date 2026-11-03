@@ -15,6 +15,26 @@ text:
     title: "Thought record"
     blurb: "Catch the thought, check the evidence, write a fairer one."
     area: "CBT"
+  fr:
+    title: "Registre des pensées"
+    blurb: "Attrape la pensée, examine les preuves, écris-en une plus juste."
+    area: "TCC"
+    reviewed: false
+  de:
+    title: "Gedankenprotokoll"
+    blurb: "Fang den Gedanken ein, prüf die Belege, schreib einen faireren auf."
+    area: "KVT"
+    reviewed: false
+  es:
+    title: "Registro de pensamientos"
+    blurb: "Atrapa el pensamiento, revisa las pruebas y escribe uno más justo."
+    area: "TCC"
+    reviewed: false
+  zh-Hans:
+    title: "想法记录"
+    blurb: "抓住这个想法，检验证据，写下一个更公允的想法。"
+    area: "CBT"
+    reviewed: false
 body:
   type: native
   screen: thought-record

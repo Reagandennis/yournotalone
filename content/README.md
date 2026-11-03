@@ -43,10 +43,55 @@ flutter test tool/export_content_test.dart   # Dart catalogues → content/
   are left out of the snapshot. A published course can't include a day
   that isn't published.
 - Translations go under `text.fr`, `text.de`, `text.es` and
-  `text.zh-Hans`. A translation is published only once it has
-  `reviewed: true`. Until then the app shows English.
+  `text.zh-Hans`, with the same fields as `text.en` and lists of the same
+  length. See "Translations" below.
 - A meditation needs one prompt line for each `promptAt` time, in every
   language.
+
+## Translations
+
+Every item, course and background has a draft in French, German, Spanish
+and Simplified Chinese, marked `reviewed: false`:
+
+```yaml
+text:
+  en:
+    title: "Box breathing"
+    blurb: "Even sides, steady mind — used by athletes and navy divers alike."
+  fr:
+    title: "Respiration carrée"
+    blurb: "Des côtés égaux, un esprit stable — …"
+    reviewed: false
+```
+
+- The snapshot carries every translation with its `reviewed` flag. The app
+  shows a reviewed one to anyone using the app in that language. It shows
+  an unreviewed one only in a build with drafts on (debug, or
+  `--dart-define=L10N_DRAFTS=true`, the same switch as the UI drafts in
+  `lib/l10n/README.md`). Otherwise it shows English, marked "EN".
+- Search finds an item by its English text as well as the shown language.
+- Meditation recordings are English, so a meditation shown in another
+  language runs on its text without the voice.
+- The registers match the UI strings: French *tu*, German *du*, Spanish
+  *tú* (neutral, international), Chinese 你. Use the terms the ARB files
+  already use (TCC, KVT, pièges de la pensée, Denkfallen, 思维陷阱 …).
+- To draft new items: `cd tools/content && npm run translate -- <id> --to
+  fr,de,es,zh-Hans` (or `--all`). It asks Claude, needs
+  `ANTHROPIC_API_KEY`, and writes `reviewed: false`. It never overwrites a
+  locale that's there.
+
+### Reviewing a language
+
+1. Build with `CATALOG_SNAPSHOT=true` and `L10N_DRAFTS=true`, set the app
+   to the language and go through the content: titles in lists, lessons,
+   meditations, journal prompt starters and course notes.
+2. Edit `text.<locale>` in the YAML directly. Keep the fields and the
+   number of lines; `npm run check` says if they drift.
+3. Flip `reviewed: false` to `true` for each item read, then
+   `npm run build` and commit `assets/catalog/bundled.json`.
+
+`flutter test tool/export_content_test.dart` keeps the translations when
+it rewrites `items/` and `courses/` from Dart.
 
 ## Backgrounds
 
@@ -81,3 +126,6 @@ text:
   `background:` line when it rewrites the file.
 
 Publishing to R2 is covered in `tools/content/README.md`.
+
+Crisis helplines are country-keyed and live in the app, not here; their
+review checklist is `HELPLINES.md`.

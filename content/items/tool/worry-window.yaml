@@ -14,6 +14,26 @@ text:
     title: "Worry window"
     blurb: "Park worries as they come; give them fifteen minutes, once a day."
     area: "CBT"
+  fr:
+    title: "Moment pour s’inquiéter"
+    blurb: "Mets tes inquiétudes de côté quand elles arrivent ; accorde-leur quinze minutes, une fois par jour."
+    area: "TCC"
+    reviewed: false
+  de:
+    title: "Sorgenzeit"
+    blurb: "Park Sorgen, sobald sie kommen; gib ihnen einmal am Tag fünfzehn Minuten."
+    area: "KVT"
+    reviewed: false
+  es:
+    title: "Ventana de preocupación"
+    blurb: "Aparca las preocupaciones cuando llegan; dales quince minutos, una vez al día."
+    area: "TCC"
+    reviewed: false
+  zh-Hans:
+    title: "担忧时间"
+    blurb: "担忧一来就先放一边；每天只给它们一次，十五分钟。"
+    area: "CBT"
+    reviewed: false
 body:
   type: native
   screen: worry-window

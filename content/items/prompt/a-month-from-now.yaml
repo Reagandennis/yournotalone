@@ -13,6 +13,26 @@ text:
     title: "A month from now"
     blurb: "What you want to be true, in your own words."
     seed: "A month from now, I want to be able to say that I "
+  fr:
+    title: "Dans un mois"
+    blurb: "Ce que tu veux qui soit vrai, avec tes propres mots."
+    seed: "Dans un mois, j’aimerais pouvoir dire que "
+    reviewed: false
+  de:
+    title: "In einem Monat"
+    blurb: "Was dann wahr sein soll, in deinen eigenen Worten."
+    seed: "In einem Monat möchte ich sagen können, dass ich "
+    reviewed: false
+  es:
+    title: "Dentro de un mes"
+    blurb: "Lo que quieres que sea verdad, con tus propias palabras."
+    seed: "Dentro de un mes, quiero poder decir que "
+    reviewed: false
+  zh-Hans:
+    title: "一个月后"
+    blurb: "你希望成真的事，用你自己的话写下来。"
+    seed: "一个月后，我希望自己能说："
+    reviewed: false
 body:
   type: prompt
   group: "Looking back"

@@ -5849,4 +5849,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get downloadsLapsedRemove => 'Remove';
+
+  @override
+  String get crisisChangeCountry => 'Change country';
+
+  @override
+  String get crisisUsePhoneCountry => 'Use my phone\'s country';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Draft: these numbers haven\'t been checked yet. In an emergency, call the number above.';
 }
