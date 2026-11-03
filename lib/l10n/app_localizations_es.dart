@@ -5861,6 +5861,66 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get homeReasonLead => 'Para este momento';
+
+  @override
+  String get homeReasonSupport => 'Aquí cuando lo necesites';
+
+  @override
+  String homeReasonCourseDay(int day, String course) {
+    return 'Día $day de $course';
+  }
+
+  @override
+  String homeReasonFeltBetter(String title) {
+    return 'Porque te sentiste mejor después de $title';
+  }
+
+  @override
+  String homeReasonGoal(String need) {
+    String _temp0 = intl.Intl.selectLogic(need, {
+      'sleep': 'Porque estás trabajando en tu sueño',
+      'anxious': 'Porque estás trabajando en la ansiedad',
+      'panic': 'Porque estás trabajando en el pánico',
+      'low': 'Porque estás trabajando en los bajones',
+      'stressed': 'Porque estás trabajando en el estrés',
+      'angry': 'Porque estás trabajando en el enojo',
+      'urges': 'Porque estás trabajando en los impulsos',
+      'focus': 'Porque estás trabajando en la concentración',
+      'reflect': 'Porque estás trabajando en la reflexión',
+      'good': 'Porque estás trabajando en los días buenos',
+      'other': 'Por lo que estás trabajando',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get homeReasonFresh => 'Recién añadido';
+
+  @override
+  String get homeReasonPopular => 'Popular este mes';
+
+  @override
+  String get homeReasonSaved => 'Lo guardaste tú';
+
+  @override
+  String get homeReasonFallback => 'Algo para probar';
+
+  @override
+  String get downloadsLapsedTitle => '¿Quitar las descargas Premium?';
+
+  @override
+  String downloadsLapsedBody(String size) {
+    return 'Tu Premium terminó hace más de un mes y sus descargas todavía ocupan $size en este teléfono. ¿Quieres quitarlas para liberar espacio? Si vuelves a Premium, podrás descargarlas de nuevo.';
+  }
+
+  @override
+  String get downloadsLapsedKeep => 'Conservar';
+
+  @override
+  String get downloadsLapsedRemove => 'Quitar';
+
+  @override
   String get crisisChangeCountry => 'Cambiar de país';
 
   @override

@@ -9138,6 +9138,84 @@ abstract class AppLocalizations {
   /// **'{first} +{more}'**
   String settingsGoalsMore(String first, int more);
 
+  /// Small line under a suggestion on Home, picked because the person just checked in feeling awful or low. Keep it short (about 25 characters).
+  ///
+  /// In en, this message translates to:
+  /// **'For right now'**
+  String get homeReasonLead;
+
+  /// Small line under the crisis-support suggestion on Home. Keep it short (about 30 characters).
+  ///
+  /// In en, this message translates to:
+  /// **'Here whenever you need it'**
+  String get homeReasonSupport;
+
+  /// Small line under a suggestion on Home: the next day of the course the person is doing. {course} is the course's title, for example '7 days to better sleep'.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {course}'**
+  String homeReasonCourseDay(int day, String course);
+
+  /// Small line under a suggestion on Home: the person said they felt better after {title}, a meditation, exercise or sound with similar aims. Shown on two lines at most.
+  ///
+  /// In en, this message translates to:
+  /// **'Because you felt better after {title}'**
+  String homeReasonFeltBetter(String title);
+
+  /// Small line under a suggestion on Home: it fits one of the goals the person chose in onboarding. {need} picks the goal; translate each sentence whole. Shown on two lines at most.
+  ///
+  /// In en, this message translates to:
+  /// **'{need, select, sleep{Because you\'re working on sleep} anxious{Because you\'re working on anxiety} panic{Because you\'re working on panic} low{Because you\'re working on low moods} stressed{Because you\'re working on stress} angry{Because you\'re working on anger} urges{Because you\'re working on urges} focus{Because you\'re working on focus} reflect{Because you\'re working on reflection} good{Because you\'re working on good days} other{Because of what you\'re working on}}'**
+  String homeReasonGoal(String need);
+
+  /// Small line under a suggestion on Home: the item is new in the app.
+  ///
+  /// In en, this message translates to:
+  /// **'Just added'**
+  String get homeReasonFresh;
+
+  /// Small line under a suggestion on Home: many people used it in the last 30 days.
+  ///
+  /// In en, this message translates to:
+  /// **'Popular this month'**
+  String get homeReasonPopular;
+
+  /// Small line under a suggestion on Home: the person saved (hearted) this item.
+  ///
+  /// In en, this message translates to:
+  /// **'One you saved'**
+  String get homeReasonSaved;
+
+  /// Small line under a suggestion on Home when there's no particular reason for it.
+  ///
+  /// In en, this message translates to:
+  /// **'Something to try'**
+  String get homeReasonFallback;
+
+  /// Title of a dialog shown once, 30 days after someone's Premium subscription ended, asking whether to delete the Premium audio still saved on the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Premium downloads?'**
+  String get downloadsLapsedTitle;
+
+  /// Body of the 'Remove Premium downloads?' dialog. {size} is a file size, for example '48.2 MB'. Gentle: nothing is deleted unless they choose to.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Premium ended over a month ago, and its downloads still take up {size} on this phone. Remove them to free up space? If you come back to Premium, you can download them again.'**
+  String downloadsLapsedBody(String size);
+
+  /// Button in the 'Remove Premium downloads?' dialog: keep the files. It asks again in 30 days.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get downloadsLapsedKeep;
+
+  /// Button in the 'Remove Premium downloads?' dialog: delete the Premium downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get downloadsLapsedRemove;
+
   /// Button on the crisis screen, next to the country name, that opens the list of countries whose helplines can be shown. Crisis wording: needs careful review by a fluent speaker.
   ///
   /// In en, this message translates to:

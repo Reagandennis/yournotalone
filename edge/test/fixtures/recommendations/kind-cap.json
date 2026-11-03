@@ -18,43 +18,83 @@
     "items": [
       {
         "id": "med-morning-reset",
-        "reason": "For this morning"
+        "reason": "For this morning",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "morning"
+        }
       },
       {
         "id": "meditation:Self-compassion",
-        "reason": "Because you're working on low moods"
+        "reason": "Because you're working on low moods",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "low"
+        }
       },
       {
         "id": "sound:Heartbeat",
-        "reason": "Because you're working on stress"
+        "reason": "Because you're working on stress",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "stressed"
+        }
       },
       {
         "id": "prompt:Worst case",
-        "reason": "Because you're working on low moods"
+        "reason": "Because you're working on low moods",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "low"
+        }
       },
       {
         "id": "tool:Physiological sigh",
-        "reason": "Because you're working on stress"
+        "reason": "Because you're working on stress",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "stressed"
+        }
       },
       {
         "id": "breathing:Box breathing",
-        "reason": "Because you're working on stress"
+        "reason": "Because you're working on stress",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "stressed"
+        }
       },
       {
         "id": "meditation:Loving kindness",
-        "reason": "Because you're working on low moods"
+        "reason": "Because you're working on low moods",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "low"
+        }
       },
       {
         "id": "support-crisis-lines",
-        "reason": "Because you're working on low moods"
+        "reason": "Because you're working on low moods",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "low"
+        }
       },
       {
         "id": "lesson:What CBT actually is",
-        "reason": "Because you're working on low moods"
+        "reason": "Because you're working on low moods",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "low"
+        }
       },
       {
         "id": "tool:Thought record",
-        "reason": "Because you're working on low moods"
+        "reason": "Because you're working on low moods",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "low"
+        }
       }
     ],
     "rules": "v1"

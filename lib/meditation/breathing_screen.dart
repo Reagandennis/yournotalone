@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../auth/auth_ui.dart';
+import '../backgrounds/background_picker.dart';
 import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
@@ -502,7 +503,12 @@ class _BreathingScreenState extends State<BreathingScreen>
                               ),
                             ),
                           ),
-                          const SizedBox(width: 42),
+                          // Balances the back chip, so the title sits centred.
+                          BackgroundPickerButton(
+                            itemId: pattern.id,
+                            kind: ContentKind.breathing,
+                            compact: true,
+                          ),
                         ],
                       ),
                     ),

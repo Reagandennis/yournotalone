@@ -26,7 +26,11 @@ afterEach(() => vi.restoreAllMocks());
 const MORNING = { localTime: '2026-11-02T08:00' };
 const restCalls = (m: MockState) => m.requests.filter((r) => r.url.origin === SUPABASE && r.url.pathname.startsWith('/rest/v1/'));
 
-type Body = { items: { id: string; reason: string }[]; rules: string; catalogVersion: number };
+type Body = {
+  items: { id: string; reason: string; reasonKey: string; reasonArgs?: Record<string, string | number> }[];
+  rules: string;
+  catalogVersion: number;
+};
 
 async function ok(res: Response): Promise<Body> {
   expect(res.status).toBe(200);
@@ -143,9 +147,11 @@ describe('POST /v1/recommendations: signals', () => {
       session_feelings: [{ kind: 'meditation', slug: 'Body scan', feeling: 1, created_at: new Date().toISOString() }],
     });
     const body = await ok(await recommendations(await token({ comp: true }), { ...MORNING, limit: 20 }));
-    expect(body.items.find((x) => x.id === 'breathing:Box breathing')?.reason).toBe(
-      'Because you felt better after Body scan',
-    );
+    expect(body.items.find((x) => x.id === 'breathing:Box breathing')).toMatchObject({
+      reason: 'Because you felt better after Body scan',
+      reasonKey: 'feltBetter',
+      reasonArgs: { title: 'meditation:Body scan' },
+    });
   });
 
   it('ranks down what was finished in the last day, mapped from kind + title', async () => {
@@ -160,7 +166,12 @@ describe('POST /v1/recommendations: signals', () => {
 
   it('reads goals from the token', async () => {
     const body = await ok(await recommendations(await token({ goals: ['urges'] }), MORNING));
-    expect(body.items[0]).toEqual({ id: 'recovery:Urge surfing', reason: "Because you're working on urges" });
+    expect(body.items[0]).toEqual({
+      id: 'recovery:Urge surfing',
+      reason: "Because you're working on urges",
+      reasonKey: 'goal',
+      reasonArgs: { need: 'urges' },
+    });
   });
 
   it('uses the popularity snapshot', async () => {
@@ -178,7 +189,12 @@ describe('POST /v1/recommendations: signals', () => {
 
   it('puts the course in progress first', async () => {
     const body = await ok(await recommendations(await token({ comp: true }), { ...MORNING, course: { id: 'calm2', day: 1 } }));
-    expect(body.items[0]).toEqual({ id: 'meditation:Body scan', reason: 'Day 2 of 2 days to calm' });
+    expect(body.items[0]).toEqual({
+      id: 'meditation:Body scan',
+      reason: 'Day 2 of 2 days to calm',
+      reasonKey: 'course',
+      reasonArgs: { course: 'calm2', day: 2 },
+    });
   });
 });
 
@@ -231,7 +247,7 @@ describe('POST /v1/recommendations: safety and premium', () => {
 
   it('after an awful check-in, leads with grounding and leaves out deep and "good" items', async () => {
     const body = await ok(await recommendations(await token(), awful()));
-    expect(body.items[0]).toEqual({ id: 'tool:Grounding: 5-4-3-2-1', reason: REASONS.lead });
+    expect(body.items[0]).toEqual({ id: 'tool:Grounding: 5-4-3-2-1', reason: REASONS.lead, reasonKey: 'lead' });
     const ids = body.items.map((x) => x.id);
     expect(ids).not.toContain('prompt:Worst case');
     expect(ids).not.toContain('meditation:Loving kindness');

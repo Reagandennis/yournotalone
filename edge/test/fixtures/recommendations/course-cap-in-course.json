@@ -1,0 +1,65 @@
+{
+  "description": "The same, but in sleep7 on day 1: that day leads and no other sleep7 day is in the top 6.",
+  "signals": {
+    "now": "2026-11-02T16:30:00Z",
+    "localTime": "2026-11-02T19:30",
+    "premium": true,
+    "goals": [
+      "sleep"
+    ],
+    "course": {
+      "id": "sleep7",
+      "day": 0
+    },
+    "popularity": {
+      "breathing:4-7-8 calm": 120,
+      "meditation:Body scan": 110,
+      "meditation:Sleep wind-down": 100
+    }
+  },
+  "expected": {
+    "items": [
+      {
+        "id": "breathing:4-7-8 calm",
+        "reason": "Day 1 of 7 days to better sleep",
+        "reasonKey": "course",
+        "reasonArgs": {
+          "course": "sleep7",
+          "day": 1
+        }
+      },
+      {
+        "id": "prompt:Gratitude",
+        "reason": "For this evening",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "evening"
+        }
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "Because you're working on sleep",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "sleep"
+        }
+      },
+      {
+        "id": "med-morning-reset",
+        "reason": "Just added",
+        "reasonKey": "fresh"
+      },
+      {
+        "id": "breathing:Panic reset",
+        "reason": "Something to try",
+        "reasonKey": "fallback"
+      },
+      {
+        "id": "sound:Deep focus",
+        "reason": "Something to try",
+        "reasonKey": "fallback"
+      }
+    ],
+    "rules": "v1"
+  }
+}

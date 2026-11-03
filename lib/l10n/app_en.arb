@@ -7787,6 +7787,86 @@
       }
     }
   },
+  "homeReasonLead": "For right now",
+  "@homeReasonLead": {
+    "description": "Small line under a suggestion on Home, picked because the person just checked in feeling awful or low. Keep it short (about 25 characters)."
+  },
+  "homeReasonSupport": "Here whenever you need it",
+  "@homeReasonSupport": {
+    "description": "Small line under the crisis-support suggestion on Home. Keep it short (about 30 characters)."
+  },
+  "homeReasonCourseDay": "Day {day} of {course}",
+  "@homeReasonCourseDay": {
+    "description": "Small line under a suggestion on Home: the next day of the course the person is doing. {course} is the course's title, for example '7 days to better sleep'.",
+    "placeholders": {
+      "day": {
+        "type": "int",
+        "example": "3"
+      },
+      "course": {
+        "type": "String",
+        "example": "7 days to better sleep"
+      }
+    }
+  },
+  "homeReasonFeltBetter": "Because you felt better after {title}",
+  "@homeReasonFeltBetter": {
+    "description": "Small line under a suggestion on Home: the person said they felt better after {title}, a meditation, exercise or sound with similar aims. Shown on two lines at most.",
+    "placeholders": {
+      "title": {
+        "type": "String",
+        "example": "Body scan"
+      }
+    }
+  },
+  "homeReasonGoal": "{need, select, sleep{Because you're working on sleep} anxious{Because you're working on anxiety} panic{Because you're working on panic} low{Because you're working on low moods} stressed{Because you're working on stress} angry{Because you're working on anger} urges{Because you're working on urges} focus{Because you're working on focus} reflect{Because you're working on reflection} good{Because you're working on good days} other{Because of what you're working on}}",
+  "@homeReasonGoal": {
+    "description": "Small line under a suggestion on Home: it fits one of the goals the person chose in onboarding. {need} picks the goal; translate each sentence whole. Shown on two lines at most.",
+    "placeholders": {
+      "need": {
+        "type": "String",
+        "example": "anxious"
+      }
+    }
+  },
+  "homeReasonFresh": "Just added",
+  "@homeReasonFresh": {
+    "description": "Small line under a suggestion on Home: the item is new in the app."
+  },
+  "homeReasonPopular": "Popular this month",
+  "@homeReasonPopular": {
+    "description": "Small line under a suggestion on Home: many people used it in the last 30 days."
+  },
+  "homeReasonSaved": "One you saved",
+  "@homeReasonSaved": {
+    "description": "Small line under a suggestion on Home: the person saved (hearted) this item."
+  },
+  "homeReasonFallback": "Something to try",
+  "@homeReasonFallback": {
+    "description": "Small line under a suggestion on Home when there's no particular reason for it."
+  },
+  "downloadsLapsedTitle": "Remove Premium downloads?",
+  "@downloadsLapsedTitle": {
+    "description": "Title of a dialog shown once, 30 days after someone's Premium subscription ended, asking whether to delete the Premium audio still saved on the phone."
+  },
+  "downloadsLapsedBody": "Your Premium ended over a month ago, and its downloads still take up {size} on this phone. Remove them to free up space? If you come back to Premium, you can download them again.",
+  "@downloadsLapsedBody": {
+    "description": "Body of the 'Remove Premium downloads?' dialog. {size} is a file size, for example '48.2 MB'. Gentle: nothing is deleted unless they choose to.",
+    "placeholders": {
+      "size": {
+        "type": "String",
+        "example": "48.2 MB"
+      }
+    }
+  },
+  "downloadsLapsedKeep": "Keep",
+  "@downloadsLapsedKeep": {
+    "description": "Button in the 'Remove Premium downloads?' dialog: keep the files. It asks again in 30 days."
+  },
+  "downloadsLapsedRemove": "Remove",
+  "@downloadsLapsedRemove": {
+    "description": "Button in the 'Remove Premium downloads?' dialog: delete the Premium downloads."
+  },
   "crisisChangeCountry": "Change country",
   "@crisisChangeCountry": {
     "description": "Button on the crisis screen, next to the country name, that opens the list of countries whose helplines can be shown. Crisis wording: needs careful review by a fluent speaker."

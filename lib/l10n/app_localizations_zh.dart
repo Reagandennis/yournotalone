@@ -5493,6 +5493,66 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String get homeReasonLead => '适合此刻';
+
+  @override
+  String get homeReasonSupport => '你需要时随时都在';
+
+  @override
+  String homeReasonCourseDay(int day, String course) {
+    return '$course · 第 $day 天';
+  }
+
+  @override
+  String homeReasonFeltBetter(String title) {
+    return '因为你在$title之后感觉好些了';
+  }
+
+  @override
+  String homeReasonGoal(String need) {
+    String _temp0 = intl.Intl.selectLogic(need, {
+      'sleep': '因为你在关注睡眠',
+      'anxious': '因为你在关注焦虑',
+      'panic': '因为你在关注惊恐',
+      'low': '因为你在关注情绪低落',
+      'stressed': '因为你在关注压力',
+      'angry': '因为你在关注愤怒',
+      'urges': '因为你在关注冲动',
+      'focus': '因为你在关注专注',
+      'reflect': '因为你在关注自我反思',
+      'good': '因为你在关注美好的日子',
+      'other': '贴合你的目标',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get homeReasonFresh => '新上线';
+
+  @override
+  String get homeReasonPopular => '本月热门';
+
+  @override
+  String get homeReasonSaved => '你收藏过的';
+
+  @override
+  String get homeReasonFallback => '不妨试试';
+
+  @override
+  String get downloadsLapsedTitle => '删除高级版下载内容？';
+
+  @override
+  String downloadsLapsedBody(String size) {
+    return '你的高级版已结束一个多月，它的下载内容仍占用这部手机 $size 的空间。要删除它们来释放空间吗？如果你再次开通高级版，可以重新下载。';
+  }
+
+  @override
+  String get downloadsLapsedKeep => '保留';
+
+  @override
+  String get downloadsLapsedRemove => '删除';
+
+  @override
   String get crisisChangeCountry => '更改国家或地区';
 
   @override

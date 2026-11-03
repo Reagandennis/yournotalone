@@ -9,27 +9,42 @@
     "items": [
       {
         "id": "meditation:Sleep wind-down",
-        "reason": "For tonight"
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       },
       {
         "id": "sound:Rainfall",
-        "reason": "For tonight"
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
+        "id": "breathing:4-7-8 calm",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
       },
       {
         "id": "med-morning-reset",
-        "reason": "Just added"
+        "reason": "Just added",
+        "reasonKey": "fresh"
       },
       {
         "id": "breathing:Panic reset",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       },
       {
         "id": "sound:Deep focus",
-        "reason": "Something to try"
-      },
-      {
-        "id": "lesson:Why avoiding things keeps anxiety alive",
-        "reason": "Something to try"
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       }
     ],
     "rules": "v1"
