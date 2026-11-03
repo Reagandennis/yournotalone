@@ -82,6 +82,7 @@ test('a course day must be a published item', () => {
 
 test('publishes every translation with its review flag, English without one', () => {
   const r = withItem(box[0], (i) => {
+    i.text = { en: i.text.en };
     i.text.fr = { ...i.text.en, title: 'Respiration carrée', reviewed: true };
     i.text.de = { ...i.text.en, title: 'Box-Atmung' };
   });

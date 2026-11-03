@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { cpSync, mkdtempSync, readFileSync } from 'node:fs';
+import { cpSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -8,7 +8,29 @@ import { check, load, repoRoot } from './content.ts';
 import { snapshot } from './snapshot.ts';
 import { insertLocale, localeBlock, model, translate } from './translator.ts';
 
-/// A copy of the repo's content to write into.
+const id = 'meditation:Body scan';
+const file = 'content/items/meditation/body-scan.yaml';
+
+/// [yaml] without its translations: only `text.en` left under `text:`.
+function englishOnly(yaml: string): string {
+  let inText = false;
+  let keep = true;
+  return yaml
+    .split('\n')
+    .filter((line) => {
+      if (!line.startsWith(' ')) {
+        inText = line === 'text:';
+        keep = true;
+      } else if (inText && !line.startsWith('   ')) {
+        keep = line === '  en:';
+      }
+      return keep;
+    })
+    .join('\n');
+}
+
+/// A copy of the repo's content to write into, with the body scan in
+/// English only.
 function sandbox(): string {
   const root = mkdtempSync(join(tmpdir(), 'content-'));
   cpSync(join(repoRoot, 'content'), join(root, 'content'), { recursive: true });
@@ -16,6 +38,8 @@ function sandbox(): string {
     join(repoRoot, 'lib/content/content_icons.dart'),
     join(root, 'lib/content/content_icons.dart'),
   );
+  const path = join(root, file);
+  writeFileSync(path, englishOnly(readFileSync(path, 'utf8')));
   return root;
 }
 
@@ -45,9 +69,6 @@ const tagged = (locale: string) => (en: Record<string, unknown>) =>
       Array.isArray(v) ? v.map((s) => `[${locale}] ${s}`) : v === '' ? '' : `[${locale}] ${v}`,
     ]),
   );
-
-const id = 'meditation:Body scan';
-const file = 'content/items/meditation/body-scan.yaml';
 
 test('drafts each missing locale as unreviewed text the checker accepts', async () => {
   const root = sandbox();
@@ -154,7 +175,7 @@ test('rejects a reply with the wrong shape, a refusal, or no key', async () => {
   // Nothing was written.
   assert.equal(
     readFileSync(join(root, file), 'utf8'),
-    readFileSync(join(repoRoot, file), 'utf8'),
+    englishOnly(readFileSync(join(repoRoot, file), 'utf8')),
   );
 });
 
