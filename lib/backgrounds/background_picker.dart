@@ -10,16 +10,19 @@ import 'scene_background.dart';
 import 'scene_library.dart';
 
 /// A quiet button that opens [showBackgroundPicker]. Sized like the
-/// player's stop button, so it can sit opposite it.
+/// player's stop button, so it can sit opposite it; [compact] is the size
+/// of the back chip, for a screen's header.
 class BackgroundPickerButton extends StatelessWidget {
   const BackgroundPickerButton({
     super.key,
     required this.itemId,
     required this.kind,
+    this.compact = false,
   });
 
   final String itemId;
   final ContentKind kind;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => IconButton(
@@ -27,9 +30,13 @@ class BackgroundPickerButton extends StatelessWidget {
     onPressed: () => showBackgroundPicker(context, itemId: itemId, kind: kind),
     icon: Icon(
       Icons.wallpaper_rounded,
-      size: 24,
+      size: compact ? 21 : 24,
       color: context.brand.textMuted,
     ),
+    padding: compact ? EdgeInsets.zero : null,
+    constraints: compact
+        ? const BoxConstraints.tightFor(width: 42, height: 42)
+        : null,
   );
 }
 
