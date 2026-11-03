@@ -1499,5 +1499,8 @@
   "settingsPasswordResetSent": "Lien de réinitialisation du mot de passe envoyé à {email}",
   "settingsEmailCopied": "Adresse e-mail copiée : {email}",
   "settingsTypeToConfirm": "Tape {word} pour confirmer",
-  "settingsGoalsMore": "{first} +{more}"
+  "settingsGoalsMore": "{first} +{more}",
+  "crisisChangeCountry": "Changer de pays",
+  "crisisUsePhoneCountry": "Utiliser le pays de mon téléphone",
+  "crisisUncheckedNumbers": "Brouillon : ces numéros n’ont pas encore été vérifiés. En cas d’urgence, appelle le numéro ci-dessus."
 }

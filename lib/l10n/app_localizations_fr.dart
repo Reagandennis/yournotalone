@@ -5880,4 +5880,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get crisisChangeCountry => 'Changer de pays';
+
+  @override
+  String get crisisUsePhoneCountry => 'Utiliser le pays de mon téléphone';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Brouillon : ces numéros n’ont pas encore été vérifiés. En cas d’urgence, appelle le numéro ci-dessus.';
 }

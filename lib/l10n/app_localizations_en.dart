@@ -5789,4 +5789,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get crisisChangeCountry => 'Change country';
+
+  @override
+  String get crisisUsePhoneCountry => 'Use my phone\'s country';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Draft: these numbers haven\'t been checked yet. In an emergency, call the number above.';
 }

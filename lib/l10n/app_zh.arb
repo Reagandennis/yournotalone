@@ -1499,5 +1499,8 @@
   "settingsPasswordResetSent": "密码重置链接已发送至 {email}",
   "settingsEmailCopied": "邮箱地址已复制：{email}",
   "settingsTypeToConfirm": "输入 {word} 以确认",
-  "settingsGoalsMore": "{first} +{more}"
+  "settingsGoalsMore": "{first} +{more}",
+  "crisisChangeCountry": "更改国家或地区",
+  "crisisUsePhoneCountry": "使用手机所在的国家或地区",
+  "crisisUncheckedNumbers": "草稿：这些号码还没有核实。紧急情况下，请拨打上面的号码。"
 }

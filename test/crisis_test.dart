@@ -116,7 +116,7 @@ void main() {
     await tester.pumpWidget(wrap(const CrisisScreen()));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Change'));
+    await tester.tap(find.text('Change country'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Kenya').last);
     await tester.pumpAndSettle();

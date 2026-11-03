@@ -5862,4 +5862,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get crisisChangeCountry => 'Land ändern';
+
+  @override
+  String get crisisUsePhoneCountry => 'Land meines Handys verwenden';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Entwurf: Diese Nummern sind noch nicht geprüft. Im Notfall ruf die Nummer oben an.';
 }

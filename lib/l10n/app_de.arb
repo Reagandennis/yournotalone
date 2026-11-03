@@ -1499,5 +1499,8 @@
   "settingsPasswordResetSent": "Link zum Zurücksetzen des Passworts an {email} gesendet",
   "settingsEmailCopied": "E-Mail-Adresse kopiert: {email}",
   "settingsTypeToConfirm": "Gib zur Bestätigung {word} ein",
-  "settingsGoalsMore": "{first} +{more}"
+  "settingsGoalsMore": "{first} +{more}",
+  "crisisChangeCountry": "Land ändern",
+  "crisisUsePhoneCountry": "Land meines Handys verwenden",
+  "crisisUncheckedNumbers": "Entwurf: Diese Nummern sind noch nicht geprüft. Im Notfall ruf die Nummer oben an."
 }

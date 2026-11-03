@@ -1499,5 +1499,8 @@
   "settingsPasswordResetSent": "Enlace para restablecer la contraseña enviado a {email}",
   "settingsEmailCopied": "Dirección de correo copiada: {email}",
   "settingsTypeToConfirm": "Escribe {word} para confirmar",
-  "settingsGoalsMore": "{first} +{more}"
+  "settingsGoalsMore": "{first} +{more}",
+  "crisisChangeCountry": "Cambiar de país",
+  "crisisUsePhoneCountry": "Usar el país de mi teléfono",
+  "crisisUncheckedNumbers": "Borrador: estos números aún no se han comprobado. En una emergencia, llama al número de arriba."
 }

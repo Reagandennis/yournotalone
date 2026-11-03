@@ -5859,4 +5859,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String settingsGoalsMore(String first, int more) {
     return '$first +$more';
   }
+
+  @override
+  String get crisisChangeCountry => 'Cambiar de país';
+
+  @override
+  String get crisisUsePhoneCountry => 'Usar el país de mi teléfono';
+
+  @override
+  String get crisisUncheckedNumbers =>
+      'Borrador: estos números aún no se han comprobado. En una emergencia, llama al número de arriba.';
 }

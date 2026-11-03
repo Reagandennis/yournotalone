@@ -126,3 +126,6 @@ text:
   `background:` line when it rewrites the file.
 
 Publishing to R2 is covered in `tools/content/README.md`.
+
+Crisis helplines are country-keyed and live in the app, not here; their
+review checklist is `HELPLINES.md`.
