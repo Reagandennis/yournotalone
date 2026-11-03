@@ -63,3 +63,7 @@ android/play-service-account.json
 sentry.properties
 # Widget Preview related
 .widget_preview/
+
+# Original recordings: kept in R2 under private/masters/, listed in
+# content/masters.json. Restore with: cd tools/content && npm run masters -- download
+/Sounds/

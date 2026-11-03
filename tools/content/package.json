@@ -2,7 +2,7 @@
   "name": "yournotalone-content",
   "private": true,
   "type": "module",
-  "description": "Validates content/, builds the catalogue snapshot and publishes it to R2 (docs/backend-design.md §8).",
+  "description": "Validates content/, builds the catalogue snapshot and publishes it to R2 (docs/backend-design.md \u00a78).",
   "engines": {
     "node": ">=24"
   },
@@ -10,6 +10,7 @@
     "check": "node src/check.ts",
     "build": "node src/build.ts",
     "publish": "node src/publish.ts",
+    "masters": "node src/masters.ts",
     "test": "node --test src/*.test.ts"
   },
   "dependencies": {
