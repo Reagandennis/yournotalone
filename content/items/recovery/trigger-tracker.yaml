@@ -12,6 +12,22 @@ text:
   en:
     title: "Trigger tracker"
     blurb: "Log a craving: what set it off and how strong it was."
+  fr:
+    title: "Suivi des déclencheurs"
+    blurb: "Note une envie : ce qui l’a déclenchée et sa force."
+    reviewed: false
+  de:
+    title: "Auslöser-Tracker"
+    blurb: "Trag ein Verlangen ein: was es ausgelöst hat und wie stark es war."
+    reviewed: false
+  es:
+    title: "Registro de detonantes"
+    blurb: "Registra un antojo: qué lo detonó y qué tan fuerte fue."
+    reviewed: false
+  zh-Hans:
+    title: "诱因追踪"
+    blurb: "记录一次渴求：是什么引发的，有多强烈。"
+    reviewed: false
 body:
   type: native
   screen: recovery-hub

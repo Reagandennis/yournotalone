@@ -13,6 +13,26 @@ text:
     title: "Wins of the week"
     blurb: "Count what you carried, not what you missed."
     seed: "This week I'm proud that I "
+  fr:
+    title: "Les victoires de la semaine"
+    blurb: "Compte ce que tu as porté, pas ce que tu as manqué."
+    seed: "Cette semaine, je suis fier d’avoir "
+    reviewed: false
+  de:
+    title: "Erfolge der Woche"
+    blurb: "Zähl, was du getragen hast, nicht, was du verpasst hast."
+    seed: "Diese Woche bin ich stolz darauf, dass ich "
+    reviewed: false
+  es:
+    title: "Logros de la semana"
+    blurb: "Cuenta lo que sostuviste, no lo que se te escapó."
+    seed: "Esta semana me siento orgulloso de haber "
+    reviewed: false
+  zh-Hans:
+    title: "本周的小胜利"
+    blurb: "数一数你扛下了什么，而不是错过了什么。"
+    seed: "这一周，我为自己感到骄傲的是"
+    reviewed: false
 body:
   type: prompt
   group: "Looking back"

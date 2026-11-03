@@ -14,6 +14,26 @@ text:
     title: "4-7-8 calm"
     blurb: "A long hold and slow release that tells your body it's safe."
     area: "Breathing · 4 · 7 · 8"
+  fr:
+    title: "Calme 4-7-8"
+    blurb: "Une longue rétention et une expiration lente qui disent à ton corps qu’il est en sécurité."
+    area: "Respiration · 4 · 7 · 8"
+    reviewed: false
+  de:
+    title: "4-7-8-Ruhe"
+    blurb: "Langes Halten und langsames Loslassen – so merkt dein Körper, dass er sicher ist."
+    area: "Atmung · 4 · 7 · 8"
+    reviewed: false
+  es:
+    title: "Calma 4-7-8"
+    blurb: "Una pausa larga y una salida lenta que le dicen a tu cuerpo que está a salvo."
+    area: "Respiración · 4 · 7 · 8"
+    reviewed: false
+  zh-Hans:
+    title: "4-7-8 平静呼吸"
+    blurb: "长长地屏住，再慢慢呼出，告诉身体：现在是安全的。"
+    area: "呼吸 · 4 · 7 · 8"
+    reviewed: false
 body:
   type: breathing
   inhale: 4

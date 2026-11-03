@@ -13,6 +13,26 @@ text:
     title: "Stream"
     blurb: "Water over rocks — busy enough to work through."
     area: "Sound · Focus"
+  fr:
+    title: "Ruisseau"
+    blurb: "De l’eau sur les pierres — assez vivant pour travailler en l’écoutant."
+    area: "Son · Concentration"
+    reviewed: false
+  de:
+    title: "Bach"
+    blurb: "Wasser über Steinen – lebendig genug, um dabei zu arbeiten."
+    area: "Klang · Fokus"
+    reviewed: false
+  es:
+    title: "Arroyo"
+    blurb: "Agua sobre las piedras: con el movimiento justo para trabajar."
+    area: "Sonido · Concentración"
+    reviewed: false
+  zh-Hans:
+    title: "溪流"
+    blurb: "流过石头的溪水——热闹得刚好适合工作时听。"
+    area: "声音 · 专注"
+    reviewed: false
 body:
   type: sound
   category: focus

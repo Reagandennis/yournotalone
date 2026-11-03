@@ -28,10 +28,16 @@ class Sound {
     this.waveSpeed = 1,
     this.waveHeight = 0.5,
     this.pulse = false,
+    this._id,
   });
 
   final String title;
   final String detail;
+  final String? _id;
+
+  /// Its content id. A catalogue item passes its own, since its title may
+  /// be a translation.
+  String get id => _id ?? 'sound:$title';
   final IconData icon;
   final SoundCategory category;
   final String asset;

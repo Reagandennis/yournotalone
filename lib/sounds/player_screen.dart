@@ -155,7 +155,7 @@ class _PlayerScreenState extends State<PlayerScreen>
     );
   }
 
-  String get _itemId => 'sound:${sound.title}';
+  String get _itemId => sound.id;
 
   /// The player over its background, which the person can change.
   @override

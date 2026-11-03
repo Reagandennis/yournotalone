@@ -11,3 +11,15 @@ params:
 text:
   en:
     title: Drifting dust
+  fr:
+    title: "Poussière flottante"
+    reviewed: false
+  de:
+    title: "Schwebender Staub"
+    reviewed: false
+  es:
+    title: "Polvo flotante"
+    reviewed: false
+  zh-Hans:
+    title: "飘浮的微尘"
+    reviewed: false

@@ -13,6 +13,26 @@ text:
     title: "Gratitude"
     blurb: "Three small things that went right."
     seed: "Today, I'm grateful for "
+  fr:
+    title: "Gratitude"
+    blurb: "Trois petites choses qui se sont bien passées."
+    seed: "Aujourd’hui, je suis reconnaissant pour "
+    reviewed: false
+  de:
+    title: "Dankbarkeit"
+    blurb: "Drei kleine Dinge, die gut gelaufen sind."
+    seed: "Heute bin ich dankbar für "
+    reviewed: false
+  es:
+    title: "Gratitud"
+    blurb: "Tres cosas pequeñas que salieron bien."
+    seed: "Hoy agradezco "
+    reviewed: false
+  zh-Hans:
+    title: "感恩"
+    blurb: "三件顺利的小事。"
+    seed: "今天，我感恩的是"
+    reviewed: false
 body:
   type: prompt
   group: "Everyday"

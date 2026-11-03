@@ -23,6 +23,54 @@ text:
       - "Thoughts may drift by. Let them pass like clouds."
       - "Warmth in your hands. Warmth in your feet."
       - "There's nothing to do now but rest."
+  fr:
+    title: "Se préparer au sommeil"
+    blurb: "Pose la journée en douceur et laisse ton corps s’alourdir."
+    prompts:
+      - "Installe-toi confortablement — celle-ci peut se terminer dans le sommeil."
+      - "Laisse cette journée être finie. On n’attend plus rien de toi."
+      - "Ralentis à chaque expiration, en t’enfonçant un peu plus."
+      - "Laisse ton corps devenir lourd, comme du sable qui se dépose."
+      - "Des pensées peuvent passer. Laisse-les filer comme des nuages."
+      - "De la chaleur dans tes mains. De la chaleur dans tes pieds."
+      - "Il n’y a plus rien à faire maintenant, sauf te reposer."
+    reviewed: false
+  de:
+    title: "Zur Ruhe kommen vor dem Schlaf"
+    blurb: "Leg den Tag sanft ab und lass deinen Körper schwer werden."
+    prompts:
+      - "Mach es dir bequem – diese Übung darf im Schlaf enden."
+      - "Lass den heutigen Tag zu Ende sein. Mehr wird nicht von dir gebraucht."
+      - "Atme mit jedem Ausatmen langsamer und sinke ein wenig tiefer."
+      - "Lass deinen Körper schwer werden, wie Sand, der sich setzt."
+      - "Gedanken ziehen vielleicht vorbei. Lass sie weiterziehen wie Wolken."
+      - "Wärme in deinen Händen. Wärme in deinen Füßen."
+      - "Jetzt gibt es nichts mehr zu tun, außer auszuruhen."
+    reviewed: false
+  es:
+    title: "Relajación para dormir"
+    blurb: "Deja el día con suavidad y permite que tu cuerpo se vuelva pesado."
+    prompts:
+      - "Ponte cómodo: esta puede terminar en sueño."
+      - "Deja que el día de hoy termine. No se necesita nada más de ti."
+      - "Respira más despacio en cada exhalación, hundiéndote un poco más."
+      - "Deja que tu cuerpo se sienta pesado, como arena que se asienta."
+      - "Puede que pasen pensamientos. Déjalos pasar como nubes."
+      - "Calor en las manos. Calor en los pies."
+      - "Ahora no hay nada que hacer más que descansar."
+    reviewed: false
+  zh-Hans:
+    title: "睡前放松"
+    blurb: "轻轻放下这一天，让身体变得沉重。"
+    prompts:
+      - "躺舒服——这一段可以直接带你入睡。"
+      - "让今天就此结束。不再需要你做任何事了。"
+      - "每次呼气都更慢一些，再往下沉一点。"
+      - "让身体感觉沉重，像沙子慢慢沉淀。"
+      - "念头也许会飘过。让它们像云一样过去。"
+      - "双手是温暖的。双脚是温暖的。"
+      - "现在除了休息，什么都不用做。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

@@ -16,6 +16,26 @@ text:
     title: "Physiological sigh"
     blurb: "Two breaths in, one long breath out. The fastest way to downshift."
     area: "Stress"
+  fr:
+    title: "Soupir physiologique"
+    blurb: "Deux inspirations, une longue expiration. Le moyen le plus rapide de ralentir."
+    area: "Stress"
+    reviewed: false
+  de:
+    title: "Physiologischer Seufzer"
+    blurb: "Zweimal ein, einmal lang aus. Der schnellste Weg, einen Gang runterzuschalten."
+    area: "Stress"
+    reviewed: false
+  es:
+    title: "Suspiro fisiológico"
+    blurb: "Dos inhalaciones, una exhalación larga. La forma más rápida de bajar una marcha."
+    area: "Estrés"
+    reviewed: false
+  zh-Hans:
+    title: "生理性叹息"
+    blurb: "吸两次气，长长地呼出一口。最快让自己慢下来的方法。"
+    area: "压力"
+    reviewed: false
 body:
   type: native
   screen: physiological-sigh

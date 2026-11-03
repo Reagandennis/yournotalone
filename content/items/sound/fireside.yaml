@@ -15,6 +15,26 @@ text:
     title: "Fireside"
     blurb: "A low roar and the crackle of a fire nearby."
     area: "Sound · Sleep"
+  fr:
+    title: "Coin du feu"
+    blurb: "Un grondement sourd et le crépitement d’un feu tout près."
+    area: "Son · Sommeil"
+    reviewed: false
+  de:
+    title: "Am Kaminfeuer"
+    blurb: "Ein leises Fauchen und das Knistern eines Feuers ganz in der Nähe."
+    area: "Klang · Schlaf"
+    reviewed: false
+  es:
+    title: "Junto al fuego"
+    blurb: "Un rumor grave y el crepitar de un fuego cercano."
+    area: "Sonido · Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "炉火边"
+    blurb: "低低的呼呼声，还有近处柴火的噼啪声。"
+    area: "声音 · 睡眠"
+    reviewed: false
 body:
   type: sound
   category: sleep

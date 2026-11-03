@@ -19,6 +19,46 @@ text:
       - "It usually comes from a mismatch that lasts: more asked than you can give, less control than you need, effort that isn't seen, or work that grinds against what you value. Sleep and breathing help you carry it; they don't fix the mismatch. That takes a conversation, a boundary, or a change."
       - "If this is you, three moves. Name it to one person. Cut one thing — actually cut, not postpone. And talk to someone whose job it is: a GP, or a therapist. Burnout in its later stages looks a lot like depression, and it deserves the same seriousness."
       - "If you're having thoughts of not wanting to be here, that's beyond this app. Use Get help now on the Home screen, today."
+  fr:
+    title: "Rouler sur la réserve"
+    blurb: "Comment distinguer la fatigue de l’épuisement, et que faire dans chaque cas."
+    area: "Stress · lecture"
+    paragraphs:
+      - "La fatigue passe avec du repos. L’épuisement professionnel, non, ou pas vite : un week-end de pause et le lundi a le même goût. Les autres signes sont le cynisme — tenir moins à des choses qui comptaient pour toi — et l’impression que rien de ce que tu fais ne change quoi que ce soit. Les trois ensemble, sur des mois, dessinent le tableau."
+      - "Ça vient en général d’un décalage qui dure : plus de demandes que tu ne peux en donner, moins de contrôle qu’il ne t’en faut, des efforts que personne ne voit, ou un travail qui va à l’encontre de ce qui compte pour toi. Le sommeil et la respiration t’aident à le porter ; ils ne corrigent pas le décalage. Pour ça, il faut une conversation, une limite ou un changement."
+      - "Si tu te reconnais, trois gestes. Dis-le à une personne. Supprime une chose — vraiment, pas la repousser. Et parles-en à quelqu’un dont c’est le métier : un médecin généraliste ou un thérapeute. À un stade avancé, l’épuisement ressemble beaucoup à la dépression, et il mérite d’être pris tout aussi au sérieux."
+      - "Si tu as des pensées de ne plus vouloir être là, ça dépasse ce que cette app peut faire. Utilise « Obtenir de l’aide maintenant » sur l’écran d’accueil, aujourd’hui."
+    reviewed: false
+  de:
+    title: "Auf Reserve"
+    blurb: "Wie du Müdigkeit von Burnout unterscheidest – und was jeweils hilft."
+    area: "Stress · Text"
+    paragraphs:
+      - "Müdigkeit wird mit Erholung besser. Burnout nicht, oder nicht schnell: ein freies Wochenende, und der Montag fühlt sich genauso an. Die anderen Zeichen sind Zynismus – dir ist weniger wichtig, was dir früher wichtig war – und das Gefühl, dass nichts, was du tust, einen Unterschied macht. Zusammen, über Monate, ergeben diese drei das Bild."
+      - "Meist entsteht es aus einem Missverhältnis, das anhält: mehr verlangt, als du geben kannst, weniger Kontrolle, als du brauchst, Einsatz, den niemand sieht, oder Arbeit, die gegen deine Werte reibt. Schlaf und Atmung helfen dir, es zu tragen; das Missverhältnis lösen sie nicht. Dafür braucht es ein Gespräch, eine Grenze oder eine Veränderung."
+      - "Wenn du dich hier wiedererkennst, drei Schritte. Sprich es bei einer Person aus. Streich eine Sache – wirklich streichen, nicht verschieben. Und sprich mit jemandem, dessen Aufgabe das ist: deiner Hausärztin oder deinem Hausarzt oder einer Therapeutin oder einem Therapeuten. Burnout sieht in späteren Phasen einer Depression sehr ähnlich und verdient denselben Ernst."
+      - "Wenn du Gedanken hast, nicht mehr da sein zu wollen, geht das über diese App hinaus. Nutze heute noch „Hol dir jetzt Hilfe“ auf dem Startbildschirm."
+    reviewed: false
+  es:
+    title: "Con el tanque vacío"
+    blurb: "Cómo distinguir el cansancio del agotamiento, y qué hacer con cada uno."
+    area: "Lectura · Estrés"
+    paragraphs:
+      - "El cansancio mejora con descanso. El agotamiento no, o no rápido: te tomas el fin de semana libre y el lunes se siente igual. Las otras señales son el cinismo —que te importen menos cosas que antes te importaban— y la sensación de que nada de lo que haces cambia nada. Juntas, a lo largo de meses, esas tres forman el cuadro."
+      - "Suele venir de un desajuste que dura: te piden más de lo que puedes dar, tienes menos control del que necesitas, tu esfuerzo no se ve o tu trabajo choca con lo que valoras. Dormir y respirar te ayudan a sobrellevarlo, pero no arreglan el desajuste. Eso requiere una conversación, un límite o un cambio."
+      - "Si te ves reflejado, tres pasos. Cuéntaselo a una persona. Deja una cosa: déjala de verdad, no la pospongas. Y habla con alguien que se dedique a esto: tu médico de cabecera o un terapeuta. En sus etapas avanzadas, el agotamiento se parece mucho a la depresión, y merece la misma seriedad."
+      - "Si tienes pensamientos de no querer estar aquí, eso va más allá de esta app. Usa Pide ayuda ahora en la pantalla de Inicio, hoy mismo."
+    reviewed: false
+  zh-Hans:
+    title: "油箱见底"
+    blurb: "怎么分辨是累了还是倦怠了，以及各自该怎么办。"
+    area: "压力 · 短文"
+    paragraphs:
+      - "累了，休息一下就会好转。倦怠不会，至少不会很快：休息一个周末，星期一的感觉还是一样。另外两个迹象是冷漠——对过去在乎的事情不再那么在乎——以及觉得自己做什么都没有用。这三样持续几个月一起出现，就是倦怠的样子。"
+      - "它通常来自一种长期的不匹配：被要求的比你能给的多，你能掌控的比你需要的少，付出没有被看见，或者工作总和你看重的东西相互摩擦。睡眠和呼吸能帮你扛住它，却解决不了这种不匹配。那需要一次谈话、一条界限，或是一次改变。"
+      - "如果你就是这样，可以走三步。告诉一个人。砍掉一件事——真的砍掉，不是推迟。再和专业的人谈谈：全科医生或心理咨询师。到了后期，倦怠和抑郁看起来非常相像，它同样值得认真对待。"
+      - "如果你有不想活下去的念头，那已经超出了这个 App 能帮的范围。请今天就使用首页上的“立即求助”。"
+    reviewed: false
 body:
   type: lesson
   art: battery

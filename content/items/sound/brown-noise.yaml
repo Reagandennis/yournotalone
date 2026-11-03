@@ -13,6 +13,26 @@ text:
     title: "Brown noise"
     blurb: "Deeper than white — a low rumble that buries a noisy room."
     area: "Sound · Focus"
+  fr:
+    title: "Bruit brun"
+    blurb: "Plus grave que le bruit blanc — un grondement sourd qui couvre une pièce bruyante."
+    area: "Son · Concentration"
+    reviewed: false
+  de:
+    title: "Braunes Rauschen"
+    blurb: "Tiefer als weißes – ein dunkles Grollen, das einen lauten Raum überdeckt."
+    area: "Klang · Fokus"
+    reviewed: false
+  es:
+    title: "Ruido marrón"
+    blurb: "Más grave que el blanco: un murmullo bajo que tapa una habitación ruidosa."
+    area: "Sonido · Concentración"
+    reviewed: false
+  zh-Hans:
+    title: "棕噪音"
+    blurb: "比白噪音更低沉——一种低低的轰鸣，能盖住嘈杂的房间。"
+    area: "声音 · 专注"
+    reviewed: false
 body:
   type: sound
   category: focus

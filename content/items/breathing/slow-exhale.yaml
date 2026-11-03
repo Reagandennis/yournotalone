@@ -16,6 +16,26 @@ text:
     title: "Slow exhale"
     blurb: "Breathing out longer than in — the quickest way to downshift."
     area: "Breathing · 4 · 7"
+  fr:
+    title: "Expiration lente"
+    blurb: "Expirer plus longtemps qu’on inspire — le moyen le plus rapide de ralentir."
+    area: "Respiration · 4 · 7"
+    reviewed: false
+  de:
+    title: "Langsam ausatmen"
+    blurb: "Länger aus- als einatmen – der schnellste Weg, einen Gang runterzuschalten."
+    area: "Atmung · 4 · 7"
+    reviewed: false
+  es:
+    title: "Exhalación lenta"
+    blurb: "Exhalar durante más tiempo del que inhalas: la forma más rápida de bajar una marcha."
+    area: "Respiración · 4 · 7"
+    reviewed: false
+  zh-Hans:
+    title: "慢慢呼气"
+    blurb: "呼气比吸气长——最快让自己慢下来的方法。"
+    area: "呼吸 · 4 · 7"
+    reviewed: false
 body:
   type: breathing
   inhale: 4

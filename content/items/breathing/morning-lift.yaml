@@ -14,6 +14,26 @@ text:
     title: "Morning lift"
     blurb: "A fuller inhale to wake the body up without rushing it."
     area: "Breathing · 6 · 2 · 4"
+  fr:
+    title: "Élan du matin"
+    blurb: "Une inspiration plus ample pour réveiller le corps sans le brusquer."
+    area: "Respiration · 6 · 2 · 4"
+    reviewed: false
+  de:
+    title: "Morgenschwung"
+    blurb: "Ein vollerer Atemzug, der den Körper weckt, ohne ihn zu hetzen."
+    area: "Atmung · 6 · 2 · 4"
+    reviewed: false
+  es:
+    title: "Impulso matutino"
+    blurb: "Una inhalación más plena para despertar el cuerpo sin apresurarlo."
+    area: "Respiración · 6 · 2 · 4"
+    reviewed: false
+  zh-Hans:
+    title: "晨间提神"
+    blurb: "吸气吸得更饱一些，不慌不忙地唤醒身体。"
+    area: "呼吸 · 6 · 2 · 4"
+    reviewed: false
 body:
   type: breathing
   inhale: 6

@@ -19,6 +19,46 @@ text:
       - "Effort is arousal. Lying there commanding yourself to sleep raises exactly the thing that keeps you awake. This is why the harder you try, the worse it goes, and why people often sleep best on the sofa, where they weren't trying at all."
       - "So the work of sleeping better happens in the daytime and the hour before bed, not in bed. Get up at the same time. Be active. Let the evening dim. Get out of bed when you're wide awake. Then trust the pressure you've built to do the rest."
       - "One bad night proves nothing. Bodies are good at catching up on their own if you don't interfere — the deep sleep comes first the next night. The thing to protect isn't tonight; it's the routine."
+  fr:
+    title: "Pourquoi forcer le sommeil ne marche pas"
+    blurb: "Le sommeil est quelque chose qui t’arrive, pas quelque chose que tu fais."
+    area: "Sommeil · lecture"
+    paragraphs:
+      - "Deux choses décident si tu t’endors : la pression de sommeil accumulée depuis ta dernière nuit, et le niveau d’activation de ton système nerveux. La pression, tu ne peux la construire qu’en étant éveillé et actif. L’activation, tu ne peux que la faire baisser — en ralentissant, en ne luttant pas."
+      - "L’effort, c’est de l’activation. Rester allongé à t’ordonner de dormir augmente justement ce qui te tient éveillé. C’est pour ça que plus tu essaies, pire c’est, et que les gens dorment souvent mieux sur le canapé, là où ils n’essayaient pas du tout."
+      - "Le travail pour mieux dormir se fait donc dans la journée et dans l’heure avant le coucher, pas au lit. Lève-toi à la même heure. Bouge. Laisse la soirée s’assombrir. Sors du lit quand tu es bien réveillé. Puis fais confiance à la pression que tu as construite pour faire le reste."
+      - "Une mauvaise nuit ne prouve rien. Le corps sait très bien rattraper tout seul si on ne s’en mêle pas — le sommeil profond vient en premier la nuit suivante. Ce qu’il faut protéger, ce n’est pas cette nuit ; c’est la routine."
+    reviewed: false
+  de:
+    title: "Warum Anstrengung beim Schlafen nicht hilft"
+    blurb: "Schlaf ist etwas, das dir passiert – nicht etwas, das du tust."
+    area: "Schlaf · Text"
+    paragraphs:
+      - "Zwei Dinge entscheiden, ob du einschläfst: wie viel Schlafdruck sich aufgebaut hat, seit du zuletzt geschlafen hast, und wie aufgedreht dein Nervensystem ist. Druck baust du nur auf, indem du wach und aktiv bist. Die Anspannung kannst du nur senken – indem du runterkommst und nicht dagegen ankämpfst."
+      - "Anstrengung ist Anspannung. Wer daliegt und sich befiehlt zu schlafen, steigert genau das, was wach hält. Darum wird es umso schlimmer, je mehr du es versuchst – und darum schlafen viele am besten auf dem Sofa, wo sie es gar nicht versucht haben."
+      - "Die Arbeit für besseren Schlaf passiert also tagsüber und in der Stunde vor dem Zubettgehen, nicht im Bett. Steh immer zur selben Zeit auf. Sei aktiv. Lass den Abend dunkler werden. Steh auf, wenn du hellwach bist. Und vertrau dann dem Druck, den du aufgebaut hast, den Rest zu erledigen."
+      - "Eine schlechte Nacht beweist nichts. Der Körper holt von selbst gut auf, wenn du ihn lässt – in der nächsten Nacht kommt der Tiefschlaf zuerst. Schützen musst du nicht die heutige Nacht, sondern deinen Rhythmus."
+    reviewed: false
+  es:
+    title: "Por qué esforzarte más no te ayuda a dormir"
+    blurb: "El sueño es algo que te pasa, no algo que haces."
+    area: "Lectura · Sueño"
+    paragraphs:
+      - "Dos cosas deciden si te quedas dormido: cuánta presión de sueño se ha acumulado desde la última vez que dormiste, y qué tan activado está tu sistema nervioso. La presión solo puedes acumularla estando despierto y activo. La activación solo puedes bajarla: desconectando, sin pelear."
+      - "El esfuerzo es activación. Quedarte acostado ordenándote dormir aumenta justo lo que te mantiene despierto. Por eso, cuanto más lo intentas, peor sale, y por eso la gente a menudo duerme mejor en el sofá, donde no lo estaba intentando para nada."
+      - "Así que el trabajo para dormir mejor ocurre durante el día y en la hora antes de acostarte, no en la cama. Levántate a la misma hora. Mantente activo. Deja que la noche se vaya atenuando. Sal de la cama cuando estés totalmente despierto. Y luego confía en que la presión que acumulaste haga el resto."
+      - "Una mala noche no demuestra nada. El cuerpo sabe recuperarse solo si no interfieres: la noche siguiente, el sueño profundo llega primero. Lo que hay que proteger no es esta noche; es la rutina."
+    reviewed: false
+  zh-Hans:
+    title: "为什么睡觉不能靠更努力"
+    blurb: "睡眠是自然发生在你身上的事，而不是你去做的事。"
+    area: "睡眠 · 短文"
+    paragraphs:
+      - "决定你能不能睡着的有两样东西：从上次睡觉到现在积累了多少睡意压力，以及你的神经系统有多兴奋。睡意压力只能靠清醒和活动来积累。兴奋程度只能往下降——靠放松，靠不去对抗。"
+      - "用力本身就是一种兴奋。躺在那里命令自己睡着，恰恰提高了让你清醒的那样东西。这就是为什么越努力越糟糕，也是为什么人们常常在沙发上睡得最好——因为那时他们根本没在努力。"
+      - "所以，睡得更好的功夫是在白天和睡前一小时里下的，而不是在床上。每天同一时间起床。多活动。让夜晚慢慢暗下来。完全清醒时就离开床。然后相信你积累的睡意压力会完成剩下的事。"
+      - "一个糟糕的夜晚说明不了什么。只要你不去干预，身体很擅长自己补回来——第二天晚上会先补上深睡眠。要守护的不是今晚，而是你的作息。"
+    reviewed: false
 body:
   type: lesson
   art: moon

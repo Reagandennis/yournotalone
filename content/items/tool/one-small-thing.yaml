@@ -14,6 +14,26 @@ text:
     title: "One small thing"
     blurb: "Plan up to three doable things for today. Mood follows action."
     area: "CBT"
+  fr:
+    title: "Une petite chose"
+    blurb: "Prévois jusqu’à trois choses faisables aujourd’hui. L’humeur suit l’action."
+    area: "TCC"
+    reviewed: false
+  de:
+    title: "Eine kleine Sache"
+    blurb: "Plane bis zu drei machbare Dinge für heute. Die Stimmung folgt dem Tun."
+    area: "KVT"
+    reviewed: false
+  es:
+    title: "Una cosa pequeña"
+    blurb: "Planea hasta tres cosas posibles para hoy. El ánimo sigue a la acción."
+    area: "TCC"
+    reviewed: false
+  zh-Hans:
+    title: "一件小事"
+    blurb: "为今天计划最多三件做得到的事。行动在前，情绪随后。"
+    area: "CBT"
+    reviewed: false
 body:
   type: native
   screen: one-small-thing

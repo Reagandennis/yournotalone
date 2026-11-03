@@ -15,6 +15,26 @@ text:
     title: "Singing bowl"
     blurb: "A struck bowl and its long, slow fade."
     area: "Sound · Calm"
+  fr:
+    title: "Bol chantant"
+    blurb: "Un bol qu’on frappe et sa résonance longue et lente."
+    area: "Son · Calme"
+    reviewed: false
+  de:
+    title: "Klangschale"
+    blurb: "Eine angeschlagene Schale und ihr langes, langsames Verklingen."
+    area: "Klang · Ruhe"
+    reviewed: false
+  es:
+    title: "Cuenco tibetano"
+    blurb: "Un cuenco que suena y se apaga lento y largo."
+    area: "Sonido · Calma"
+    reviewed: false
+  zh-Hans:
+    title: "颂钵"
+    blurb: "敲响一只颂钵，余音长长地、慢慢地消散。"
+    area: "声音 · 平静"
+    reviewed: false
 body:
   type: sound
   category: calm

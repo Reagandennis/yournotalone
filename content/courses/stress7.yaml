@@ -24,3 +24,51 @@ text:
       - "How to tell your body the danger has passed."
       - "Sort the load into control, influence and accept."
       - "What drains you, what refills you — and one refill today."
+  fr:
+    title: "7 jours pour alléger le stress"
+    blurb: "Calme d’abord le corps, puis fais le tri dans ce que tu as sur les épaules."
+    notes:
+      - "Le moyen le plus rapide de ralentir, à tout moment."
+      - "À quoi sert le stress, et quand il déborde."
+      - "Où tu en es cette semaine, pour voir l’évolution."
+      - "Relâche ce que tes muscles retenaient."
+      - "Comment dire à ton corps que le danger est passé."
+      - "Classe la charge : contrôle, influence, accepter."
+      - "Ce qui te vide, ce qui te recharge — et une recharge aujourd’hui."
+    reviewed: false
+  de:
+    title: "7 Tage zu weniger Stress"
+    blurb: "Erst den Körper beruhigen, dann sortieren, was auf deinem Teller liegt."
+    notes:
+      - "Der schnellste Weg, runterzuschalten – für jeden Moment."
+      - "Wozu Stress da ist und wann er kippt."
+      - "Wo du diese Woche stehst, damit du sehen kannst, wie es sich verändert."
+      - "Lass los, was deine Muskeln festgehalten haben."
+      - "Wie du deinem Körper sagst, dass die Gefahr vorbei ist."
+      - "Sortier die Last: kontrollieren, beeinflussen, annehmen."
+      - "Was dich auslaugt, was dich auftankt – und heute eine Sache zum Auftanken."
+    reviewed: false
+  es:
+    title: "7 días para aligerar el estrés"
+    blurb: "Calma el cuerpo y luego ordena lo que tienes entre manos."
+    notes:
+      - "La forma más rápida de bajar una marcha, para cualquier momento."
+      - "Para qué sirve el estrés, y cuándo se desborda."
+      - "Dónde estás esta semana, para que puedas ver cómo cambia."
+      - "Suelta lo que tus músculos han estado sosteniendo."
+      - "Cómo decirle a tu cuerpo que el peligro ya pasó."
+      - "Clasifica la carga en controlar, influir y aceptar."
+      - "Lo que te agota, lo que te recarga, y una recarga hoy."
+    reviewed: false
+  zh-Hans:
+    title: "减轻压力的 7 天"
+    blurb: "先让身体平静下来，再理一理手头的事。"
+    notes:
+      - "最快让自己慢下来的方法，任何时刻都能用。"
+      - "压力的作用是什么，什么时候会过了头。"
+      - "看看这周的你在哪里，好观察它的变化。"
+      - "放下肌肉一直紧抓着的东西。"
+      - "怎样告诉身体危险已经过去了。"
+      - "把负担分成三类：能掌控的、能影响的、需要接受的。"
+      - "什么在消耗你，什么能给你充电——以及今天的一次充电。"
+    reviewed: false

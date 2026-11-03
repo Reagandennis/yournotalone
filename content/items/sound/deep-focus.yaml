@@ -13,6 +13,26 @@ text:
     title: "Deep focus"
     blurb: "Low, steady noise that softens distraction."
     area: "Sound · Focus"
+  fr:
+    title: "Concentration profonde"
+    blurb: "Un bruit grave et régulier qui atténue les distractions."
+    area: "Son · Concentration"
+    reviewed: false
+  de:
+    title: "Tiefer Fokus"
+    blurb: "Tiefes, gleichmäßiges Rauschen, das Ablenkungen dämpft."
+    area: "Klang · Fokus"
+    reviewed: false
+  es:
+    title: "Concentración profunda"
+    blurb: "Un ruido bajo y constante que suaviza las distracciones."
+    area: "Sonido · Concentración"
+    reviewed: false
+  zh-Hans:
+    title: "深度专注"
+    blurb: "低沉、平稳的声音，让干扰变得柔和。"
+    area: "声音 · 专注"
+    reviewed: false
 body:
   type: sound
   category: focus

@@ -14,6 +14,26 @@ text:
     title: "Triangle breath"
     blurb: "In, hold, then a longer way out — for when your head is loud."
     area: "Breathing · 4 · 4 · 6"
+  fr:
+    title: "Respiration en triangle"
+    blurb: "Inspire, retiens, puis une expiration plus longue — pour quand ta tête fait trop de bruit."
+    area: "Respiration · 4 · 4 · 6"
+    reviewed: false
+  de:
+    title: "Dreiecksatmung"
+    blurb: "Ein, halten, dann ein längerer Weg hinaus – wenn es in deinem Kopf laut ist."
+    area: "Atmung · 4 · 4 · 6"
+    reviewed: false
+  es:
+    title: "Respiración triangular"
+    blurb: "Inhala, sostén y luego exhala más despacio: para cuando tu cabeza hace mucho ruido."
+    area: "Respiración · 4 · 4 · 6"
+    reviewed: false
+  zh-Hans:
+    title: "三角呼吸"
+    blurb: "吸气，屏住，再更长地呼出——适合脑子里很吵的时候。"
+    area: "呼吸 · 4 · 4 · 6"
+    reviewed: false
 body:
   type: breathing
   inhale: 4

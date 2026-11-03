@@ -26,6 +26,66 @@ text:
       - "Think of tomorrow-you, grateful that you held on today."
       - "Still here. Still riding. The wave is passing."
       - "You surfed it. Every urge you outlast makes the next one smaller."
+  fr:
+    title: "Surfer sur la pulsion"
+    blurb: "Les pulsions sont des vagues — surfe sur celle-ci jusqu’à ce qu’elle retombe."
+    prompts:
+      - "Tu es là — c’est le geste le plus fort que tu pouvais faire."
+      - "Une pulsion est une vague. Elle monte, atteint un pic, et retombe toujours."
+      - "Ne lutte pas. Observe-la, comme une météo qui passe."
+      - "Où la sens-tu dans ton corps ? Remarque-la, sans agir."
+      - "Expire lentement — plus longtemps que tu n’inspires."
+      - "Tu n’as pas à agir. Tu as seulement à attendre."
+      - "Elle perd déjà de sa force, même lentement."
+      - "Pense à toi demain, reconnaissant d’avoir tenu aujourd’hui."
+      - "Toujours là. Toujours sur la vague. Elle est en train de passer."
+      - "Tu l’as surfée. Chaque pulsion que tu laisses passer rend la suivante plus petite."
+    reviewed: false
+  de:
+    title: "Urge Surfing"
+    blurb: "Ein Drang ist eine Welle – reite diese, bis sie bricht."
+    prompts:
+      - "Du bist hier – das ist der stärkste Schritt, den du machen konntest."
+      - "Ein Drang ist eine Welle. Er steigt, erreicht seinen Höhepunkt und fällt immer wieder ab."
+      - "Kämpf nicht dagegen an. Beobachte ihn einfach, wie Wetter, das vorüberzieht."
+      - "Wo spürst du ihn in deinem Körper? Bemerke es nur, ohne zu handeln."
+      - "Atme langsam aus – länger aus als ein."
+      - "Du musst nicht handeln. Du musst nur warten."
+      - "Er verliert schon an Kraft, auch wenn es langsam geht."
+      - "Denk an dein Ich von morgen, das dankbar ist, dass du heute durchgehalten hast."
+      - "Immer noch hier. Immer noch auf der Welle. Sie zieht vorbei."
+      - "Du hast sie geritten. Jeder Drang, den du übersteht, macht den nächsten kleiner."
+    reviewed: false
+  es:
+    title: "Surfear el impulso"
+    blurb: "Los impulsos son olas: surfea esta hasta que rompa."
+    prompts:
+      - "Estás aquí, y eso es lo más fuerte que podías hacer."
+      - "Un impulso es una ola. Sube, llega a su punto más alto y siempre baja."
+      - "No pelees con él. Solo obsérvalo, como un cambio de clima que pasa."
+      - "¿Dónde lo sientes en el cuerpo? Solo nótalo, sin actuar."
+      - "Exhala despacio, más largo al exhalar que al inhalar."
+      - "No tienes que actuar. Solo tienes que esperar."
+      - "Ya está perdiendo fuerza, aunque sea despacio."
+      - "Piensa en tu yo de mañana, agradecido de que hoy aguantaste."
+      - "Sigues aquí. Sigues surfeando. La ola está pasando."
+      - "Lo surfeaste. Cada impulso que superas hace que el siguiente sea más pequeño."
+    reviewed: false
+  zh-Hans:
+    title: "冲动冲浪"
+    blurb: "冲动就像海浪——驾驭这一道，直到它碎开。"
+    prompts:
+      - "你来到了这里——这是你能做出的最有力的一步。"
+      - "冲动是一道浪。它升起，到达顶点，然后总会落下。"
+      - "不要和它对抗。只是看着它，像看着天气经过。"
+      - "你在身体的哪里感觉到它？只是留意，不去行动。"
+      - "慢慢地呼气——呼气比吸气长。"
+      - "你不必行动。你只需要等待。"
+      - "它已经在减弱了，哪怕很慢。"
+      - "想想明天的你，会感谢今天坚持住的自己。"
+      - "你还在这里。还在乘着浪。这道浪正在过去。"
+      - "你驾驭住了它。每熬过一次冲动，下一次就会更小一些。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

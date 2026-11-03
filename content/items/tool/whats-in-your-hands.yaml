@@ -14,6 +14,26 @@ text:
     title: "What's in your hands"
     blurb: "Sort what's weighing on you into control, influence and accept."
     area: "Stress"
+  fr:
+    title: "Ce qui est entre tes mains"
+    blurb: "Classe ce qui te pèse en trois cercles : contrôle, influence, accepter."
+    area: "Stress"
+    reviewed: false
+  de:
+    title: "Was in deiner Hand liegt"
+    blurb: "Sortier, was dich belastet: kontrollieren, beeinflussen, annehmen."
+    area: "Stress"
+    reviewed: false
+  es:
+    title: "Lo que está en tus manos"
+    blurb: "Clasifica lo que te pesa en controlar, influir y aceptar."
+    area: "Estrés"
+    reviewed: false
+  zh-Hans:
+    title: "你能掌控什么"
+    blurb: "把压在你心上的事分成三类：能掌控的、能影响的、需要接受的。"
+    area: "压力"
+    reviewed: false
 body:
   type: native
   screen: whats-in-your-hands

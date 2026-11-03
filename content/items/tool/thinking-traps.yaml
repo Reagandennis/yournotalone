@@ -14,6 +14,26 @@ text:
     title: "Thinking traps"
     blurb: "Eleven patterns anxious and low moods run on, and how to spot them."
     area: "CBT"
+  fr:
+    title: "Pièges de la pensée"
+    blurb: "Onze schémas dont se nourrissent l’anxiété et le moral en berne, et comment les repérer."
+    area: "TCC"
+    reviewed: false
+  de:
+    title: "Denkfallen"
+    blurb: "Elf Muster, von denen Angst und gedrückte Stimmung leben – und wie du sie erkennst."
+    area: "KVT"
+    reviewed: false
+  es:
+    title: "Trampas del pensamiento"
+    blurb: "Once patrones de los que se alimentan la ansiedad y el ánimo bajo, y cómo detectarlos."
+    area: "TCC"
+    reviewed: false
+  zh-Hans:
+    title: "思维陷阱"
+    blurb: "焦虑和低落情绪常见的十一种思维模式，以及如何识别它们。"
+    area: "CBT"
+    reviewed: false
 body:
   type: native
   screen: thinking-traps

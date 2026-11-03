@@ -13,6 +13,26 @@ text:
     title: "Three lines"
     blurb: "One thing that happened, one feeling, one thought."
     seed: "What happened:\n\nHow it felt:\n\nWhat I make of it:\n"
+  fr:
+    title: "Trois lignes"
+    blurb: "Une chose qui s’est passée, une émotion, une pensée."
+    seed: "Ce qui s’est passé :\n\nCe que j’ai ressenti :\n\nCe que j’en pense :\n"
+    reviewed: false
+  de:
+    title: "Drei Zeilen"
+    blurb: "Eine Sache, die passiert ist, ein Gefühl, ein Gedanke."
+    seed: "Was passiert ist:\n\nWie es sich angefühlt hat:\n\nWas ich daraus mache:\n"
+    reviewed: false
+  es:
+    title: "Tres líneas"
+    blurb: "Algo que pasó, una emoción, un pensamiento."
+    seed: "Qué pasó:\n\nCómo me sentí:\n\nQué pienso de ello:\n"
+    reviewed: false
+  zh-Hans:
+    title: "三行字"
+    blurb: "一件发生的事，一种感受，一个想法。"
+    seed: "发生了什么：\n\n感觉怎样：\n\n我怎么看：\n"
+    reviewed: false
 body:
   type: prompt
   group: "Everyday"

@@ -15,6 +15,26 @@ text:
     title: "Rainfall"
     blurb: "Steady rain on a quiet evening."
     area: "Sound · Sleep"
+  fr:
+    title: "Pluie"
+    blurb: "Une pluie régulière par une soirée tranquille."
+    area: "Son · Sommeil"
+    reviewed: false
+  de:
+    title: "Regen"
+    blurb: "Gleichmäßiger Regen an einem ruhigen Abend."
+    area: "Klang · Schlaf"
+    reviewed: false
+  es:
+    title: "Lluvia"
+    blurb: "Lluvia constante en una tarde tranquila."
+    area: "Sonido · Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "雨声"
+    blurb: "安静的夜晚，绵绵不断的雨。"
+    area: "声音 · 睡眠"
+    reviewed: false
 body:
   type: sound
   category: sleep

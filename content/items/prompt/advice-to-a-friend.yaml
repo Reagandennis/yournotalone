@@ -13,6 +13,26 @@ text:
     title: "Advice to a friend"
     blurb: "The kindness you'd hand someone else, turned around."
     seed: "If a friend told me they were going through this, I'd say "
+  fr:
+    title: "Un conseil à un ami"
+    blurb: "La bienveillance que tu offrirais à quelqu’un d’autre, tournée vers toi."
+    seed: "Si un ami me disait qu’il traverse ça, je lui dirais "
+    reviewed: false
+  de:
+    title: "Rat an eine Freundin, einen Freund"
+    blurb: "Die Freundlichkeit, die du anderen schenkst – einmal umgedreht."
+    seed: "Wenn mir jemand, der mir nahesteht, erzählen würde, dass er das gerade durchmacht, würde ich sagen: "
+    reviewed: false
+  es:
+    title: "Un consejo para un amigo"
+    blurb: "La amabilidad que le darías a otra persona, dirigida a ti."
+    seed: "Si un amigo me contara que está pasando por esto, le diría "
+    reviewed: false
+  zh-Hans:
+    title: "给朋友的建议"
+    blurb: "把你会给别人的那份善意，转回给自己。"
+    seed: "如果一个朋友告诉我他正在经历这些，我会说："
+    reviewed: false
 body:
   type: prompt
   group: "Hard days"

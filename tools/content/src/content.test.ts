@@ -80,15 +80,31 @@ test('a course day must be a published item', () => {
   assert.match(r.errors.join('\n'), /is draft, so the course can't be published/);
 });
 
-test('publishes only reviewed translations, without the flag', () => {
+test('publishes every translation with its review flag, English without one', () => {
   const r = withItem(box[0], (i) => {
-    i.text.fr = { title: 'Respiration carrée', blurb: 'x', reviewed: true };
-    i.text.de = { title: 'Box-Atmung', blurb: 'x' };
+    i.text.fr = { ...i.text.en, title: 'Respiration carrée', reviewed: true };
+    i.text.de = { ...i.text.en, title: 'Box-Atmung' };
   });
+  assert.deepEqual(r.errors, []);
   const snap = snapshot(r, 0);
   const item = snap.items.find((x) => x.id === 'breathing:Box breathing')!;
-  assert.deepEqual(Object.keys(item.text).sort(), ['en', 'fr']);
-  assert.equal('reviewed' in item.text.fr!, false);
+  assert.deepEqual(Object.keys(item.text).sort(), ['de', 'en', 'fr']);
+  assert.equal(item.text.fr!.reviewed, true);
+  // Missing means not reviewed.
+  assert.equal(item.text.de!.reviewed, false);
+  assert.equal('reviewed' in item.text.en!, false);
+});
+
+test('a translation has the fields and line counts English has', () => {
+  let r = withItem(box[0], (i) => (i.text.fr = { title: 'Respiration carrée', blurb: 'x' }));
+  assert.match(r.errors.join('\n'), /text\.fr has fields \[blurb, title\], English has \[area, blurb, title\]/);
+  const lesson = base.items.find(([p]) => p.includes('/lesson/'))!;
+  r = withItem(lesson[0], (i) => {
+    i.text.de = { ...i.text.en, paragraphs: i.text.en.paragraphs.slice(1), reviewed: false };
+  });
+  assert.match(r.errors.join('\n'), /text\.de\.paragraphs has \d+ lines/);
+  r = withItem(box[0], (i) => (i.text.en.reviewed = true));
+  assert.match(r.errors.join('\n'), /English is the source/);
 });
 
 test('leaves drafts out of the snapshot', () => {
@@ -152,7 +168,7 @@ test('the snapshot carries published backgrounds and item preferences', () => {
   const snap = snapshot(r, 0);
   const bg = snap.backgrounds.find((b) => b.id === 'dusk-waves')!;
   assert.equal('status' in bg, false);
-  assert.deepEqual(Object.keys(bg.text), ['en']);
+  assert.deepEqual(bg.text.fr, { title: 'Vagues', reviewed: false });
   assert.equal(bg.engine, 'waves');
   const crickets = snap.items.find((i) => i.id === 'sound:Crickets at night')!;
   assert.equal(crickets.background, 'fireflies');

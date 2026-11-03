@@ -14,6 +14,26 @@ text:
     title: "Sleep habits check"
     blurb: "Ten questions, and a fix for each one you say yes to."
     area: "Sleep"
+  fr:
+    title: "Bilan des habitudes de sommeil"
+    blurb: "Dix questions, et une solution pour chaque oui."
+    area: "Sommeil"
+    reviewed: false
+  de:
+    title: "Schlafgewohnheiten-Check"
+    blurb: "Zehn Fragen – und für jedes Ja eine Lösung."
+    area: "Schlaf"
+    reviewed: false
+  es:
+    title: "Revisión de hábitos de sueño"
+    blurb: "Diez preguntas, y una solución para cada una a la que digas que sí."
+    area: "Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "睡眠习惯自查"
+    blurb: "十个问题，每个回答“是”的都附有一个改善办法。"
+    area: "睡眠"
+    reviewed: false
 body:
   type: native
   screen: sleep-habits-check

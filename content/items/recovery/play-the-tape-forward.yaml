@@ -13,6 +13,22 @@ text:
   en:
     title: "Play the tape forward"
     blurb: "Watch the rest of the film before you decide."
+  fr:
+    title: "Dérouler le film jusqu’au bout"
+    blurb: "Regarde la suite du film avant de décider."
+    reviewed: false
+  de:
+    title: "Den Film zu Ende denken"
+    blurb: "Schau dir den Rest des Films an, bevor du dich entscheidest."
+    reviewed: false
+  es:
+    title: "Adelanta la película"
+    blurb: "Mira el resto de la película antes de decidir."
+    reviewed: false
+  zh-Hans:
+    title: "把画面快进"
+    blurb: "做决定前，先把这部电影看完。"
+    reviewed: false
 body:
   type: native
   screen: tape-forward

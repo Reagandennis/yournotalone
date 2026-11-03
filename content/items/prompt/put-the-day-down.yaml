@@ -13,6 +13,26 @@ text:
     title: "Put the day down"
     blurb: "Close the loops so they stop reopening at 2am."
     seed: "Finished today:\n\n- \n\nWaiting for tomorrow:\n\n- \n"
+  fr:
+    title: "Poser la journée"
+    blurb: "Boucle ce qui est en suspens pour que ça ne revienne pas à 2 h du matin."
+    seed: "Terminé aujourd’hui :\n\n- \n\nEn attente pour demain :\n\n- \n"
+    reviewed: false
+  de:
+    title: "Den Tag ablegen"
+    blurb: "Schließ die offenen Schleifen, damit sie nicht um zwei Uhr nachts wieder aufgehen."
+    seed: "Heute erledigt:\n\n- \n\nWartet auf morgen:\n\n- \n"
+    reviewed: false
+  es:
+    title: "Cierra el día"
+    blurb: "Cierra los pendientes para que no vuelvan a abrirse a las 2 de la madrugada."
+    seed: "Terminado hoy:\n\n- \n\nPendiente para mañana:\n\n- \n"
+    reviewed: false
+  zh-Hans:
+    title: "把今天放下"
+    blurb: "把没收尾的事情了结，免得它们凌晨两点又冒出来。"
+    seed: "今天完成的：\n\n- \n\n留给明天的：\n\n- \n"
+    reviewed: false
 body:
   type: prompt
   group: "Before sleep"

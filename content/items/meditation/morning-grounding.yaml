@@ -24,6 +24,58 @@ text:
       - "Ask quietly: what would make today feel gentle?"
       - "Rest here a little longer. There's nowhere else to be."
       - "Slowly bring small movements back. You're ready."
+  fr:
+    title: "Ancrage du matin"
+    blurb: "Arrive dans ta journée avant qu’elle ne te tombe dessus."
+    prompts:
+      - "Trouve une position assise confortable et laisse tes yeux se détendre ou se fermer."
+      - "Inspire lentement… et expire jusqu’au bout."
+      - "Sens le poids de ton corps — porté, soutenu."
+      - "Remarque ta respiration qui va toute seule. Pas besoin de la changer."
+      - "Quand ton esprit s’égare, ce n’est pas grave. Reviens doucement."
+      - "Demande-toi doucement : qu’est-ce qui rendrait cette journée plus douce ?"
+      - "Reste ici encore un peu. Il n’y a nulle part ailleurs où être."
+      - "Reprends doucement de petits mouvements. Tu es prêt."
+    reviewed: false
+  de:
+    title: "Ankommen am Morgen"
+    blurb: "Komm in deinem Tag an, bevor der Tag bei dir ankommt."
+    prompts:
+      - "Such dir einen bequemen Platz und lass die Augen weich werden oder schließ sie."
+      - "Atme langsam ein … und ganz aus."
+      - "Spür das Gewicht deines Körpers – gehalten und getragen."
+      - "Bemerke, wie dein Atem von allein fließt. Du musst nichts ändern."
+      - "Wenn deine Gedanken wandern, ist das in Ordnung. Komm sanft zurück."
+      - "Frag dich still: Was würde den heutigen Tag sanft machen?"
+      - "Bleib noch ein wenig hier. Du musst nirgendwo anders sein."
+      - "Bring langsam kleine Bewegungen zurück. Du bist bereit."
+    reviewed: false
+  es:
+    title: "Anclaje matutino"
+    blurb: "Llega a tu día antes de que el día llegue a ti."
+    prompts:
+      - "Busca una postura cómoda y deja que tu mirada se suavice o que tus ojos se cierren."
+      - "Inhala despacio… y suelta todo el aire."
+      - "Siente el peso de tu cuerpo, sostenido y apoyado."
+      - "Nota cómo la respiración se mueve sola. No hace falta cambiarla."
+      - "Si tu mente se distrae, está bien. Vuelve con suavidad."
+      - "Pregúntate en silencio: ¿qué haría que hoy se sintiera más amable?"
+      - "Descansa aquí un poco más. No hay otro lugar donde estar."
+      - "Poco a poco, vuelve a moverte. Ya estás listo."
+    reviewed: false
+  zh-Hans:
+    title: "晨间扎根"
+    blurb: "在一天找上你之前，先走进你的一天。"
+    prompts:
+      - "找一个舒服的姿势坐好，让目光柔和下来，或闭上眼睛。"
+      - "慢慢吸一口气……再把它完完全全地呼出去。"
+      - "感受身体的重量——被承托着，被支撑着。"
+      - "留意呼吸自己在流动。不需要去改变它。"
+      - "当思绪飘走时，没关系。温柔地回来。"
+      - "轻声问自己：怎样能让今天过得温和一些？"
+      - "在这里再多待一会儿。没有别的地方要去。"
+      - "慢慢地动一动身体。你准备好了。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

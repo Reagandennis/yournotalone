@@ -13,6 +13,26 @@ text:
     title: "Body check-in"
     blurb: "Where the day is sitting — shoulders, chest, jaw."
     seed: "My body today feels "
+  fr:
+    title: "Check-in du corps"
+    blurb: "Où la journée s’est installée — épaules, poitrine, mâchoire."
+    seed: "Aujourd’hui, mon corps se sent "
+    reviewed: false
+  de:
+    title: "Check-in mit dem Körper"
+    blurb: "Wo der Tag in dir sitzt – Schultern, Brust, Kiefer."
+    seed: "Heute fühlt sich mein Körper so an: "
+    reviewed: false
+  es:
+    title: "Cómo está mi cuerpo"
+    blurb: "Dónde se ha quedado el día: hombros, pecho, mandíbula."
+    seed: "Hoy mi cuerpo se siente "
+    reviewed: false
+  zh-Hans:
+    title: "身体打卡"
+    blurb: "这一天落在了哪里——肩膀、胸口、下巴。"
+    seed: "今天我的身体感觉"
+    reviewed: false
 body:
   type: prompt
   group: "Everyday"

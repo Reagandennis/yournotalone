@@ -14,6 +14,26 @@ text:
     title: "Let it out"
     blurb: "No filter, no editing — just get it down."
     seed: "What's sitting heaviest on me right now is "
+  fr:
+    title: "Tout lâcher"
+    blurb: "Sans filtre, sans corriger — pose-le, simplement."
+    seed: "Ce qui me pèse le plus en ce moment, c’est "
+    reviewed: false
+  de:
+    title: "Raus damit"
+    blurb: "Kein Filter, kein Überarbeiten – schreib es einfach hin."
+    seed: "Was mich gerade am meisten belastet, ist "
+    reviewed: false
+  es:
+    title: "Sácalo"
+    blurb: "Sin filtro, sin corregir: solo escríbelo."
+    seed: "Lo que más me pesa ahora mismo es "
+    reviewed: false
+  zh-Hans:
+    title: "说出来"
+    blurb: "不过滤，不修改——只管写下来。"
+    seed: "此刻压在我心上最重的是"
+    reviewed: false
 body:
   type: prompt
   group: "Everyday"

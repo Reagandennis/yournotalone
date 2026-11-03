@@ -18,6 +18,42 @@ text:
       - "When something frightens you and you step away from it, the fear drops. That drop is a reward, and your brain learns from it: \"avoiding worked\". Next time the pull to avoid is stronger, and the thing itself never gets the chance to turn out fine."
       - "The way out is the opposite, done gently: approach the feared thing in steps small enough to manage, stay long enough for the fear to come down on its own, and repeat. Each time, your brain updates. This is called graded exposure, and it is one of the most reliable findings in all of psychology."
       - "You don't have to do it alone or all at once. Write the steps down, start with one that's uncomfortable but doable, and treat each one as an experiment: \"what do I predict will happen — and what actually happened?\""
+  fr:
+    title: "Pourquoi l’évitement entretient l’anxiété"
+    blurb: "Éviter soulage sur le moment. En réalité, c’est ce qui l’alimente."
+    area: "TCC · lecture"
+    paragraphs:
+      - "Quand quelque chose te fait peur et que tu t’en écartes, la peur retombe. Ce soulagement est une récompense, et ton cerveau en tire une leçon : « éviter, ça marche ». La fois suivante, l’envie d’éviter est plus forte, et la chose elle-même n’a jamais l’occasion de bien se passer."
+      - "La sortie, c’est l’inverse, en douceur : approcher ce qui fait peur par étapes assez petites pour être gérables, rester assez longtemps pour que la peur redescende d’elle-même, et recommencer. À chaque fois, ton cerveau se met à jour. On appelle ça l’exposition progressive, et c’est l’un des résultats les plus solides de toute la psychologie."
+      - "Tu n’as pas à le faire seul, ni d’un coup. Écris les étapes, commence par une qui est inconfortable mais faisable, et considère chacune comme une expérience : « qu’est-ce que je prédis — et qu’est-ce qui s’est vraiment passé ? »"
+    reviewed: false
+  de:
+    title: "Warum Vermeiden die Angst am Leben hält"
+    blurb: "Vermeiden fühlt sich wie Erleichterung an. In Wahrheit ist es der Treibstoff."
+    area: "KVT · Text"
+    paragraphs:
+      - "Wenn dir etwas Angst macht und du ihm ausweichst, lässt die Angst nach. Dieses Nachlassen ist eine Belohnung, und dein Gehirn lernt daraus: „Vermeiden hat funktioniert.“ Beim nächsten Mal ist der Sog zum Ausweichen stärker, und die Sache selbst bekommt nie die Chance, gut auszugehen."
+      - "Der Weg hinaus ist das Gegenteil, behutsam gemacht: Geh auf das, was dir Angst macht, in Schritten zu, die klein genug sind, bleib lange genug, bis die Angst von selbst sinkt, und wiederhole das. Jedes Mal lernt dein Gehirn dazu. Das nennt man abgestufte Exposition, und es gehört zu den verlässlichsten Erkenntnissen der ganzen Psychologie."
+      - "Du musst das nicht allein und nicht auf einmal schaffen. Schreib die Schritte auf, fang mit einem an, der unangenehm, aber machbar ist, und behandle jeden wie ein Experiment: „Was sage ich voraus – und was ist wirklich passiert?“"
+    reviewed: false
+  es:
+    title: "Por qué evitar las cosas mantiene viva la ansiedad"
+    blurb: "Evitar se siente como un alivio. En realidad, es el combustible."
+    area: "Lectura · TCC"
+    paragraphs:
+      - "Cuando algo te da miedo y te alejas, el miedo baja. Esa bajada es una recompensa, y tu cerebro aprende de ella: «evitar funcionó». La próxima vez, las ganas de evitar son más fuertes, y aquello que temes nunca tiene la oportunidad de salir bien."
+      - "La salida es lo contrario, hecho con suavidad: acércate a lo que temes en pasos lo bastante pequeños como para manejarlos, quédate el tiempo suficiente para que el miedo baje solo, y repite. Cada vez, tu cerebro se actualiza. Esto se llama exposición gradual, y es uno de los hallazgos más sólidos de toda la psicología."
+      - "No tienes que hacerlo solo ni todo de una vez. Escribe los pasos, empieza por uno que sea incómodo pero posible, y trata cada uno como un experimento: «¿qué predigo que va a pasar? ¿Y qué pasó en realidad?»."
+    reviewed: false
+  zh-Hans:
+    title: "为什么回避会让焦虑一直存在"
+    blurb: "回避让人松一口气，但它其实是焦虑的燃料。"
+    area: "CBT · 短文"
+    paragraphs:
+      - "当某件事让你害怕，而你躲开它时，恐惧就会下降。这种下降是一种奖励，大脑会从中学到：“回避有用”。下一次，想要回避的拉力会更强，而那件事本身永远没有机会证明其实没那么糟。"
+      - "出路正好相反，而且要温和地进行：一步一步地接近让你害怕的事，每一步都小到你能应付；停留足够久，让恐惧自己降下来；然后重复。每一次，大脑都会更新它的认识。这叫作“逐级暴露”，是整个心理学中最可靠的发现之一。"
+      - "你不必独自一人去做，也不必一次做完。把步骤写下来，从一个让你不舒服、但做得到的开始，把每一步都当作一次实验：“我预测会发生什么——实际又发生了什么？”"
+    reviewed: false
 body:
   type: lesson
   art: traps

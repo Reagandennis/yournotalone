@@ -24,6 +24,58 @@ text:
       - "You don't have to solve anything right now."
       - "With each exhale, let your jaw and hands soften."
       - "You're safe in this moment. Stay as long as you like."
+  fr:
+    title: "Apaiser l’anxiété"
+    blurb: "Ancre-toi dans ce qui est réel, ici et maintenant."
+    prompts:
+      - "Installe-toi. Laisse tes épaules s’éloigner de tes oreilles."
+      - "Expire plus longtemps que tu n’inspires, juste un moment."
+      - "Nomme cinq choses que tu sens au contact de ton corps."
+      - "L’anxiété est une vague — elle monte, atteint un pic, et passe toujours."
+      - "Pose une main sur ta poitrine. Sens-la monter et descendre."
+      - "Tu n’as rien à résoudre maintenant."
+      - "À chaque expiration, laisse ta mâchoire et tes mains se détendre."
+      - "Tu es en sécurité en ce moment. Reste aussi longtemps que tu veux."
+    reviewed: false
+  de:
+    title: "Angst lindern"
+    blurb: "Verankere dich in dem, was echt ist und genau hier."
+    prompts:
+      - "Komm an. Lass deine Schultern von den Ohren wegsinken."
+      - "Atme eine Weile länger aus, als du einatmest."
+      - "Nenne fünf Dinge, die du an deinem Körper spürst."
+      - "Angst ist eine Welle – sie steigt, erreicht ihren Höhepunkt und vergeht immer."
+      - "Leg eine Hand auf deine Brust. Spür, wie sie sich hebt und senkt."
+      - "Du musst gerade nichts lösen."
+      - "Lass mit jedem Ausatmen Kiefer und Hände weicher werden."
+      - "In diesem Moment bist du sicher. Bleib, so lange du magst."
+    reviewed: false
+  es:
+    title: "Alivio para la ansiedad"
+    blurb: "Ánclate en lo que es real y está aquí mismo."
+    prompts:
+      - "Acomódate. Deja que los hombros bajen y se alejen de las orejas."
+      - "Exhala durante más tiempo del que inhalas, solo por un rato."
+      - "Nombra cinco cosas que sientes en contacto con tu cuerpo."
+      - "La ansiedad es una ola: sube, llega a su punto más alto y siempre pasa."
+      - "Pon una mano en el pecho. Siente cómo sube y baja."
+      - "No tienes que resolver nada ahora mismo."
+      - "Con cada exhalación, deja que tu mandíbula y tus manos se aflojen."
+      - "En este momento estás a salvo. Quédate todo el tiempo que quieras."
+    reviewed: false
+  zh-Hans:
+    title: "缓解焦虑"
+    blurb: "让自己扎根于真实的、就在此处的事物。"
+    prompts:
+      - "安顿下来。让肩膀从耳边慢慢放下。"
+      - "呼气比吸气长一些，先这样呼吸一会儿。"
+      - "说出你能感觉到的、正碰触着身体的五样东西。"
+      - "焦虑像一道浪——它升起，到达顶点，然后总会退去。"
+      - "把一只手放在胸口，感受它的起伏。"
+      - "现在你什么都不必解决。"
+      - "每一次呼气，都让下巴和双手放松一些。"
+      - "此刻的你是安全的。想待多久就待多久。"
+    reviewed: false
 body:
   type: meditation
   promptAt:

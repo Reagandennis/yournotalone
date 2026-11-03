@@ -2,9 +2,10 @@
 /// `content/` (see docs/backend-design.md §4). The app bundles one at
 /// `assets/catalog/bundled.json`; later a newer one can be downloaded.
 ///
-/// Nothing reads this for display yet — the Dart catalogues are still what
-/// the screens use, and `test/content_snapshot_test.dart` checks the two
-/// say exactly the same thing.
+/// The screens read it only in a build with `CATALOG_SNAPSHOT=true` (see
+/// `content_catalog.dart`); otherwise the Dart catalogues are what they
+/// use, and `test/content_snapshot_test.dart` checks the two say exactly
+/// the same thing in English.
 library;
 
 import 'dart:convert';
@@ -16,6 +17,7 @@ import '../backgrounds/background_spec.dart';
 import '../brand.dart';
 import '../cbt/cbt_content.dart';
 import '../discover/content_index.dart';
+import '../l10n/l10n.dart';
 import '../sleep/sleep_content.dart';
 import '../stress/stress_content.dart';
 import 'content_icons.dart';
@@ -52,6 +54,7 @@ class ItemText {
     this.prompts = const [],
     this.paragraphs = const [],
     this.seed,
+    this.reviewed = true,
   });
 
   factory ItemText.fromJson(Map<String, dynamic> json) => ItemText(
@@ -62,6 +65,7 @@ class ItemText {
     prompts: [...?(json['prompts'] as List?)?.cast<String>()],
     paragraphs: [...?(json['paragraphs'] as List?)?.cast<String>()],
     seed: json['seed'] as String?,
+    reviewed: _reviewed(json),
   );
 
   final String title;
@@ -71,12 +75,28 @@ class ItemText {
   final List<String> prompts;
   final List<String> paragraphs;
   final String? seed;
+
+  /// Whether a fluent reader has checked this translation. English, the
+  /// source, always is.
+  final bool reviewed;
 }
 
-/// Picks [locale]'s copy, falling back to English. Only reviewed
-/// translations are ever in a snapshot.
-T _localised<T>(Map<String, T> text, String locale) =>
-    text[locale] ?? text['en']!;
+/// A translation's `reviewed` flag. Snapshots from before drafts were
+/// published carried only reviewed translations, without the flag.
+bool _reviewed(Map<String, dynamic> json) => json['reviewed'] as bool? ?? true;
+
+/// Which locale's copy to show someone reading [locale], given which
+/// translations exist and whether each is [reviewed]: theirs if it has
+/// been reviewed, or with [drafts] on if there's one at all; otherwise
+/// English.
+String pickLocale(
+  Map<String, bool> reviewed,
+  String locale, {
+  bool drafts = false,
+}) => switch (reviewed[locale]) {
+  final ok? when ok || drafts => locale,
+  _ => 'en',
+};
 
 class CatalogItem {
   const CatalogItem({
@@ -144,7 +164,17 @@ class CatalogItem {
   /// The id of the background it opens with, if not its kind's default.
   final String? background;
 
-  ItemText textFor(String locale) => _localised(text, locale);
+  /// The locale [textFor] shows for [locale] (see [pickLocale]).
+  String localeFor(String locale, {bool drafts = false}) => pickLocale(
+    {for (final MapEntry(:key, :value) in text.entries) key: value.reviewed},
+    locale,
+    drafts: drafts,
+  );
+
+  /// The copy for someone reading [locale]: theirs if reviewed (or if
+  /// [drafts] is on), otherwise English.
+  ItemText textFor(String locale, {bool drafts = false}) =>
+      text[localeFor(locale, drafts: drafts)]!;
 }
 
 class CourseText {
@@ -152,12 +182,14 @@ class CourseText {
     required this.title,
     required this.blurb,
     required this.notes,
+    this.reviewed = true,
   });
 
   factory CourseText.fromJson(Map<String, dynamic> json) => CourseText(
     title: json['title'] as String,
     blurb: json['blurb'] as String,
     notes: (json['notes'] as List).cast<String>(),
+    reviewed: _reviewed(json),
   );
 
   final String title;
@@ -165,6 +197,9 @@ class CourseText {
 
   /// One per day.
   final List<String> notes;
+
+  /// See [ItemText.reviewed].
+  final bool reviewed;
 }
 
 class CatalogCourse {
@@ -202,7 +237,16 @@ class CatalogCourse {
   final List<String> days;
   final Map<String, CourseText> text;
 
-  CourseText textFor(String locale) => _localised(text, locale);
+  /// See [CatalogItem.localeFor].
+  String localeFor(String locale, {bool drafts = false}) => pickLocale(
+    {for (final MapEntry(:key, :value) in text.entries) key: value.reviewed},
+    locale,
+    drafts: drafts,
+  );
+
+  /// See [CatalogItem.textFor].
+  CourseText textFor(String locale, {bool drafts = false}) =>
+      text[localeFor(locale, drafts: drafts)]!;
 }
 
 /// Where a published audio file lives. Public files are at
@@ -257,7 +301,9 @@ class CatalogSnapshot {
       // one skips any background it can't draw.
       backgrounds: [
         for (final b in (json['backgrounds'] as List?) ?? const [])
-          ?BackgroundSpec.fromJson(b as Map<String, dynamic>),
+          ?BackgroundSpec.fromJson(
+            _withoutUnreviewed(b as Map<String, dynamic>, l10nDraftsEnabled),
+          ),
       ],
       media: {
         for (final MapEntry(key: id, value: refs)
@@ -269,6 +315,25 @@ class CatalogSnapshot {
           },
       },
     );
+  }
+
+  /// [json] with only the translations a build with [drafts] as given may
+  /// show. A background keeps only its titles by locale, so the gate is
+  /// applied here, before they're read.
+  static Map<String, dynamic> _withoutUnreviewed(
+    Map<String, dynamic> json,
+    bool drafts,
+  ) {
+    final text = json['text'];
+    if (drafts || text is! Map<String, dynamic>) return json;
+    return {
+      ...json,
+      'text': {
+        for (final MapEntry(:key, :value) in text.entries)
+          if (key == 'en' || value is! Map<String, dynamic> || _reviewed(value))
+            key: value,
+      },
+    };
   }
 
   /// The copy built into the app.

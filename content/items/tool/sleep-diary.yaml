@@ -14,6 +14,26 @@ text:
     title: "Sleep diary"
     blurb: "Log last night in a minute. Two weeks in, it tells you what to change."
     area: "Sleep"
+  fr:
+    title: "Journal du sommeil"
+    blurb: "Note ta nuit en une minute. Au bout de deux semaines, il te dit quoi changer."
+    area: "Sommeil"
+    reviewed: false
+  de:
+    title: "Schlaftagebuch"
+    blurb: "Trag die letzte Nacht in einer Minute ein. Nach zwei Wochen zeigt es dir, was du ändern kannst."
+    area: "Schlaf"
+    reviewed: false
+  es:
+    title: "Diario de sueño"
+    blurb: "Registra la noche anterior en un minuto. En dos semanas te dirá qué cambiar."
+    area: "Sueño"
+    reviewed: false
+  zh-Hans:
+    title: "睡眠日记"
+    blurb: "一分钟记下昨晚。坚持两周，它会告诉你该改变什么。"
+    area: "睡眠"
+    reviewed: false
 body:
   type: native
   screen: sleep-diary

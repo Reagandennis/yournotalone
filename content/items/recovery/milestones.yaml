@@ -12,6 +12,22 @@ text:
   en:
     title: "Milestones"
     blurb: "Every marker, reached and ahead, for each commitment."
+  fr:
+    title: "Étapes"
+    blurb: "Chaque étape, atteinte ou à venir, pour chaque engagement."
+    reviewed: false
+  de:
+    title: "Meilensteine"
+    blurb: "Jede Marke, erreicht und vor dir, für jedes Vorhaben."
+    reviewed: false
+  es:
+    title: "Hitos"
+    blurb: "Cada marca, alcanzada y por venir, para cada compromiso."
+    reviewed: false
+  zh-Hans:
+    title: "里程碑"
+    blurb: "每个承诺的每一个节点，已达成的和还在前方的。"
+    reviewed: false
 body:
   type: native
   screen: milestones

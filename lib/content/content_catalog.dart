@@ -8,6 +8,7 @@ library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +22,7 @@ import '../cbt/cbt_catalog.dart';
 import '../courses/course_catalog.dart';
 import '../discover/content_index.dart';
 import '../journal/new_entry.dart';
+import '../l10n/l10n.dart';
 import '../meditation/breathing_screen.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
@@ -40,9 +42,27 @@ import 'catalog_snapshot.dart';
 
 const catalogSnapshotEnabled = bool.fromEnvironment('CATALOG_SNAPSHOT');
 
-/// The language content is shown in. English until the UI itself is
-/// translated, so a screen never mixes two languages.
-const contentLocale = 'en';
+/// The language content is shown in: the app's own, picked in Settings or
+/// followed from the phone. Each item then uses its translation only if
+/// that is allowed (see [textFor]), and otherwise English.
+String get contentLocale {
+  final locale =
+      LocaleSetting.instance.locale ??
+      resolveDeviceLocale(PlatformDispatcher.instance.locales);
+  for (final language in appLanguages) {
+    if (language.locale == locale) return language.tag;
+  }
+  return 'en';
+}
+
+/// [item]'s copy in [contentLocale]: a reviewed translation always, an
+/// unreviewed one only in a build with drafts on, otherwise English.
+ItemText textFor(CatalogItem item) =>
+    item.textFor(contentLocale, drafts: l10nDraftsEnabled);
+
+/// The locale [textFor] picks for [item].
+String _shownLocale(CatalogItem item) =>
+    item.localeFor(contentLocale, drafts: l10nDraftsEnabled);
 
 /// The key a `native` item uses to name its screen: the tool's title,
 /// lower-case and hyphenated ("Awake at 3am?" → `awake-at-3am`).
@@ -106,7 +126,7 @@ List<MediaEntry> mediaEntriesFrom(CatalogSnapshot snapshot) => [
       if (item.body[role] case final String path)
         MediaEntry(
           itemId: item.id,
-          title: item.textFor(contentLocale).title,
+          title: textFor(item).title,
           role: role,
           path: path,
           ref: ref,
@@ -126,7 +146,7 @@ WidgetBuilder? screenFor(
   CatalogItem item, {
   Map<String, MediaRef> media = const {},
 }) {
-  final t = item.textFor(contentLocale);
+  final t = textFor(item);
   final body = item.body;
   try {
     switch (item.bodyType) {
@@ -140,6 +160,7 @@ WidgetBuilder? screenFor(
           exhale: body['exhale'] as int,
           holdOut: body['holdOut'] as int,
           premium: item.premium,
+          id: item.id,
         );
         return (_) => BreathingScreen(pattern: pattern);
       case 'meditation':
@@ -155,11 +176,17 @@ WidgetBuilder? screenFor(
             for (var i = 0; i < at.length; i++)
               (at[i].toDouble(), t.prompts[i]),
           ],
-          // Without its recording a meditation still runs on its text.
+          // Without its recording a meditation still runs on its text. The
+          // recording is English, so text in another language runs without
+          // it rather than against a voice saying something else (§7a).
           narration: switch (body['narration']) {
-            final String path when _playable(path, media['narration']) => path,
+            final String path
+                when _shownLocale(item) == 'en' &&
+                    _playable(path, media['narration']) =>
+              path,
             _ => null,
           },
+          id: item.id,
         );
         return (_) => MeditationScreen(meditation: meditation);
       case 'sound':
@@ -176,6 +203,7 @@ WidgetBuilder? screenFor(
           waveSpeed: body['waveSpeed'] as int,
           waveHeight: (body['waveHeight'] as num).toDouble(),
           pulse: body['pulse'] as bool,
+          id: item.id,
         );
         return (_) => PlayerScreen(sound: sound);
       case 'lesson':
@@ -207,7 +235,9 @@ List<ContentItem> contentItemsFrom(CatalogSnapshot snapshot) => [
 ];
 
 ContentItem? _contentItem(CatalogItem item, Map<String, MediaRef> media) {
-  final t = item.textFor(contentLocale);
+  final t = textFor(item);
+  final english = _shownLocale(item) == 'en';
+  final en = item.textFor('en');
   void Function(BuildContext) open;
   if (item.bodyType == 'prompt') {
     open = (context) =>
@@ -231,6 +261,9 @@ ContentItem? _contentItem(CatalogItem item, Map<String, MediaRef> media) {
     needs: item.needs,
     dayParts: item.dayParts,
     addedOn: item.addedOn,
+    id: item.id,
+    alsoMatches: english ? const [] : [en.title, en.blurb],
+    inEnglish: english && contentLocale != 'en',
   );
 }
 
@@ -243,18 +276,21 @@ List<Course> coursesFrom(CatalogSnapshot snapshot, List<ContentItem> items) {
       if (c.days.every(ids.contains))
         Course(
           id: c.id,
-          title: c.textFor(contentLocale).title,
-          blurb: c.textFor(contentLocale).blurb,
+          title: _courseText(c).title,
+          blurb: _courseText(c).blurb,
           accent: c.accent,
           icon: c.icon,
           need: c.need,
           days: [
             for (var i = 0; i < c.days.length; i++)
-              CourseDay(c.days[i], c.textFor(contentLocale).notes[i]),
+              CourseDay(c.days[i], _courseText(c).notes[i]),
           ],
         ),
   ];
 }
+
+CourseText _courseText(CatalogCourse c) =>
+    c.textFor(contentLocale, drafts: l10nDraftsEnabled);
 
 /// Where published catalogues are fetched from.
 const catalogBaseUrl = String.fromEnvironment(
@@ -329,6 +365,8 @@ class ContentCatalog {
   /// snapshot, or failing that the Dart catalogues, stay in use.
   Future<void> load() async {
     if (!catalogSnapshotEnabled) return;
+    // Content follows the app's language when it's changed in Settings.
+    LocaleSetting.instance.addListener(relocalise);
     try {
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       _bundledAssets = manifest.listAssets().toSet();
@@ -413,6 +451,12 @@ class ContentCatalog {
       (_mediaByItem[e.itemId] ??= []).add(e);
     }
     _mediaByPath = {for (final e in media) e.path: e};
+  }
+
+  /// Rebuilds the items and courses in the current [contentLocale].
+  void relocalise() {
+    final snapshot = _snapshot;
+    if (snapshot != null) use(snapshot);
   }
 
   @visibleForTesting

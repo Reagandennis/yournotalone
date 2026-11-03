@@ -12,6 +12,22 @@ text:
   en:
     title: "Trigger insights"
     blurb: "What sets cravings off, when they land, and how hard."
+  fr:
+    title: "Analyse des déclencheurs"
+    blurb: "Ce qui déclenche les envies, quand elles arrivent, et avec quelle force."
+    reviewed: false
+  de:
+    title: "Auslöser-Einblicke"
+    blurb: "Was das Verlangen auslöst, wann es kommt und wie stark."
+    reviewed: false
+  es:
+    title: "Patrones de detonantes"
+    blurb: "Qué detona los antojos, cuándo llegan y con cuánta fuerza."
+    reviewed: false
+  zh-Hans:
+    title: "诱因洞察"
+    blurb: "是什么引发渴求，它们在什么时候出现，有多强烈。"
+    reviewed: false
 body:
   type: native
   screen: trigger-insights

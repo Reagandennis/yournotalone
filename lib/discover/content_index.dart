@@ -179,6 +179,9 @@ class ContentItem {
     this.needs = const {},
     this.dayParts = const {},
     this.addedOn,
+    this._id,
+    this.alsoMatches = const [],
+    this.inEnglish = false,
   });
 
   final ContentKind kind;
@@ -199,14 +202,28 @@ class ContentItem {
   final Set<DayPart> dayParts;
   final DateTime? addedOn;
 
-  String get id => '${kind.name}:$title';
+  final String? _id;
+
+  /// What saves, course days and practice history know it by. Built-in
+  /// items are named after their English title; catalogue items carry the
+  /// id from `content/`, so it stays put whatever language the title is in.
+  String get id => _id ?? '${kind.name}:$title';
+
+  /// More text search should find it by: the English title and blurb when
+  /// it's shown in another language.
+  final List<String> alsoMatches;
+
+  /// Shown in English inside an app in another language, because its
+  /// translation isn't there or isn't reviewed yet: [meta] says "EN".
+  final bool inEnglish;
 
   /// "CBT · 5 min": the programme (or the kind), then the length. In the
   /// app's current language unless [l10n] is given.
   String meta([AppLocalizations? l10n]) {
     final l = l10n ?? currentL10n();
     final what = area ?? kind.label(l);
-    return minutes == null ? what : l.contentMeta(what, minutes!);
+    final meta = minutes == null ? what : l.contentMeta(what, minutes!);
+    return inEnglish ? '$meta · EN' : meta;
   }
 
   /// How long an item is badged "New" after it ships.

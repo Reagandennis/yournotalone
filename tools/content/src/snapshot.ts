@@ -1,6 +1,7 @@
 // The published catalogue: what the app bundles and, later, what
-// `publish` uploads. One JSON file, published items only, in list order,
-// with only the translations that have been reviewed.
+// `publish` uploads. One JSON file, published items only, in list order.
+// Every translation goes in with `reviewed: true` or `false`; the app
+// shows an unreviewed one only in a build with drafts on (design §7a).
 import { createHash } from 'node:crypto';
 import type { Background, Course, Item } from './content.ts';
 
@@ -9,12 +10,15 @@ export const snapshotFormat = 1;
 
 type Localised = Record<string, { reviewed?: boolean }>;
 
-function reviewedText<T extends Localised>(text: T): T {
+/// English as it is; each translation with an explicit `reviewed` flag.
+/// Apps from before translations read only `en`; ones that read other
+/// locales treat a missing flag as reviewed, which is what snapshots
+/// before this one meant.
+function localisedText<T extends Localised>(text: T): T {
   const out: Localised = {};
   for (const [locale, t] of Object.entries(text)) {
-    if (locale !== 'en' && !t.reviewed) continue;
-    const { reviewed: _, ...rest } = t;
-    out[locale] = rest;
+    const { reviewed, ...rest } = t;
+    out[locale] = locale === 'en' ? rest : { ...rest, reviewed: reviewed === true };
   }
   return out as T;
 }
@@ -48,17 +52,17 @@ export function snapshot(
     items: items
       .filter((i) => i.status === 'published')
       .sort(byOrder)
-      .map(({ status: _, ...i }) => ({ ...i, text: reviewedText(i.text) })),
+      .map(({ status: _, ...i }) => ({ ...i, text: localisedText(i.text) })),
     courses: courses
       .filter((c) => c.status === 'published')
       .sort(byOrder)
-      .map(({ status: _, ...c }) => ({ ...c, text: reviewedText(c.text) })),
+      .map(({ status: _, ...c }) => ({ ...c, text: localisedText(c.text) })),
     // Scene parameters, not files: the app draws them (lib/backgrounds/).
     // Apps from before backgrounds ignore the field.
     backgrounds: backgrounds
       .filter((b) => b.status === 'published')
       .sort(byOrder)
-      .map(({ status: _, ...b }) => ({ ...b, text: reviewedText(b.text) })),
+      .map(({ status: _, ...b }) => ({ ...b, text: localisedText(b.text) })),
   };
   // With media, the hash covers it too, so a re-recorded file publishes a
   // new version even when the YAML didn't change. Without it, the hash and

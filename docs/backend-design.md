@@ -408,11 +408,15 @@ There are two separate jobs.
 **Content.** This is the `text` (and optional narration) per locale in the
 content YAML.
 
-- `content:translate ID --to fr,de,es,zh-Hans` drafts translations with
-  Claude into a `drafts:` block.
-- Nothing publishes until a locale is marked `reviewed: true`. Mental-health
-  wording (CBT terms, crisis copy) needs a fluent human check. Machine
-  translation alone isn't good enough here.
+- `npm run translate -- ID --to fr,de,es,zh-Hans` (in `tools/content`)
+  drafts translations with Claude into `text.<locale>` with
+  `reviewed: false`.
+- Nothing is shown in release builds until a locale is marked
+  `reviewed: true`. Mental-health wording (CBT terms, crisis copy) needs a
+  fluent human check. Machine translation alone isn't good enough here.
+  (Changed 2026-11-03: drafts are published with `reviewed: false` so
+  testers can see them in builds with drafts on; release builds ignore
+  them.)
 - The app shows an item in your language if that locale is reviewed, and
   otherwise in English with a small "EN" label. Search and tags work across
   languages because tags are language-neutral.

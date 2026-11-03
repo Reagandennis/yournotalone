@@ -16,6 +16,26 @@ text:
     title: "Coherent breath"
     blurb: "Five in, five out — the steady pace your heart settles into."
     area: "Breathing · 5 · 5"
+  fr:
+    title: "Cohérence cardiaque"
+    blurb: "Cinq temps pour inspirer, cinq pour expirer — le rythme régulier où ton cœur se pose."
+    area: "Respiration · 5 · 5"
+    reviewed: false
+  de:
+    title: "Kohärentes Atmen"
+    blurb: "Fünf ein, fünf aus – das ruhige Tempo, in dem dein Herz zur Ruhe kommt."
+    area: "Atmung · 5 · 5"
+    reviewed: false
+  es:
+    title: "Respiración coherente"
+    blurb: "Cinco al inhalar, cinco al exhalar: el ritmo estable en el que tu corazón se asienta."
+    area: "Respiración · 5 · 5"
+    reviewed: false
+  zh-Hans:
+    title: "共振呼吸"
+    blurb: "吸五拍，呼五拍——心跳会慢慢跟上这个平稳的节奏。"
+    area: "呼吸 · 5 · 5"
+    reviewed: false
 body:
   type: breathing
   inhale: 5

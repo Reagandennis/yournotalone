@@ -13,6 +13,26 @@ text:
     title: "Letter to myself"
     blurb: "Write to the you who reads this next month."
     seed: "Dear me,\n\nBy the time you read this, "
+  fr:
+    title: "Lettre à moi-même"
+    blurb: "Écris à la personne que tu seras en la lisant le mois prochain."
+    seed: "Cher moi,\n\nQuand tu liras ceci, "
+    reviewed: false
+  de:
+    title: "Brief an mich"
+    blurb: "Schreib an dein Ich, das das nächsten Monat liest."
+    seed: "Liebes Ich,\n\nwenn du das liest, "
+    reviewed: false
+  es:
+    title: "Carta para mí"
+    blurb: "Escríbele a la persona que leerá esto el mes que viene."
+    seed: "Querido yo:\n\nCuando leas esto, "
+    reviewed: false
+  zh-Hans:
+    title: "写给自己的信"
+    blurb: "写给下个月读到这封信的你。"
+    seed: "亲爱的我：\n\n当你读到这封信的时候，"
+    reviewed: false
 body:
   type: prompt
   group: "Looking back"

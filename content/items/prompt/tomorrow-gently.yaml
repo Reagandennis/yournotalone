@@ -13,6 +13,26 @@ text:
     title: "Tomorrow, gently"
     blurb: "One thing you'll do, and one thing you won't."
     seed: "Tomorrow I'll make room for \n\nAnd I'm letting go of "
+  fr:
+    title: "Demain, en douceur"
+    blurb: "Une chose que tu feras, et une que tu ne feras pas."
+    seed: "Demain, je vais faire de la place pour \n\nEt je laisse tomber "
+    reviewed: false
+  de:
+    title: "Morgen, ganz sanft"
+    blurb: "Eine Sache, die du tun wirst, und eine, die du nicht tun wirst."
+    seed: "Morgen mache ich Platz für \n\nUnd ich lasse los: "
+    reviewed: false
+  es:
+    title: "Mañana, con calma"
+    blurb: "Una cosa que harás y una que no."
+    seed: "Mañana voy a hacer espacio para \n\nY voy a soltar "
+    reviewed: false
+  zh-Hans:
+    title: "明天，温和一点"
+    blurb: "一件你会做的事，一件你不会做的事。"
+    seed: "明天我会给这件事留出空间：\n\n我会放下的是："
+    reviewed: false
 body:
   type: prompt
   group: "Before sleep"

@@ -14,6 +14,26 @@ text:
     title: "Worst case"
     blurb: "Follow the fear all the way down, then look at it."
     seed: "The thing I'm afraid of is \n\nIf that happened, I would "
+  fr:
+    title: "Le pire scénario"
+    blurb: "Suis la peur jusqu’au bout, puis regarde-la en face."
+    seed: "Ce dont j’ai peur, c’est \n\nSi ça arrivait, je "
+    reviewed: false
+  de:
+    title: "Schlimmster Fall"
+    blurb: "Folge der Angst bis ganz nach unten – und schau sie dir dann an."
+    seed: "Wovor ich Angst habe, ist \n\nWenn das passieren würde, würde ich "
+    reviewed: false
+  es:
+    title: "En el peor de los casos"
+    blurb: "Sigue el miedo hasta el fondo y luego míralo de frente."
+    seed: "Lo que me da miedo es \n\nSi eso pasara, yo "
+    reviewed: false
+  zh-Hans:
+    title: "最坏的情况"
+    blurb: "顺着恐惧一路走到底，再好好看看它。"
+    seed: "我害怕的事情是\n\n如果它真的发生了，我会"
+    reviewed: false
 body:
   type: prompt
   group: "Hard days"

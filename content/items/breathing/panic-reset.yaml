@@ -16,6 +16,26 @@ text:
     title: "Panic reset"
     blurb: "For the minutes when your chest races and you need out fast."
     area: "Breathing · 4 · 6 · 2"
+  fr:
+    title: "Apaiser la panique"
+    blurb: "Pour les minutes où ta poitrine s’emballe et où tu as besoin d’en sortir vite."
+    area: "Respiration · 4 · 6 · 2"
+    reviewed: false
+  de:
+    title: "Panik-Reset"
+    blurb: "Für die Minuten, in denen dein Herz rast und du schnell raus musst."
+    area: "Atmung · 4 · 6 · 2"
+    reviewed: false
+  es:
+    title: "Calmar el pánico"
+    blurb: "Para esos minutos en que el pecho se te acelera y necesitas salir de ahí rápido."
+    area: "Respiración · 4 · 6 · 2"
+    reviewed: false
+  zh-Hans:
+    title: "惊慌重置"
+    blurb: "胸口怦怦直跳、只想赶快脱身的那几分钟，用这个。"
+    area: "呼吸 · 4 · 6 · 2"
+    reviewed: false
 body:
   type: breathing
   inhale: 4

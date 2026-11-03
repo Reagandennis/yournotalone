@@ -10,6 +10,7 @@
     "check": "node src/check.ts",
     "build": "node src/build.ts",
     "publish": "node src/publish.ts",
+    "translate": "node src/translate.ts",
     "test": "node --test src/*.test.ts"
   },
   "dependencies": {

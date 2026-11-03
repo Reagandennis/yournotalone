@@ -14,6 +14,26 @@ text:
     title: "Anger on paper"
     blurb: "Say the unsaid version here, where it costs nothing."
     seed: "What I'm actually angry about is "
+  fr:
+    title: "La colère sur papier"
+    blurb: "Dis ici ce que tu n’as pas dit, là où ça ne coûte rien."
+    seed: "Ce qui me met vraiment en colère, c’est "
+    reviewed: false
+  de:
+    title: "Wut auf Papier"
+    blurb: "Sag hier, was ungesagt geblieben ist – hier kostet es nichts."
+    seed: "Worüber ich eigentlich wütend bin, ist "
+    reviewed: false
+  es:
+    title: "El enojo en papel"
+    blurb: "Di aquí lo que no dijiste, donde no cuesta nada."
+    seed: "Lo que de verdad me enoja es "
+    reviewed: false
+  zh-Hans:
+    title: "纸上的愤怒"
+    blurb: "把没说出口的话写在这里，不用付出任何代价。"
+    seed: "我真正生气的是"
+    reviewed: false
 body:
   type: prompt
   group: "Hard days"
