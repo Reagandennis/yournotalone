@@ -567,7 +567,7 @@ checks that the bundled snapshot reproduces today's index item for item.
 2. **Worker hostname:** the free `*.workers.dev` address for now.
 3. **Supabase JWT signing:** the project uses asymmetric signing keys
    (JWKS), so no JWT secret is stored on Cloudflare.
-4. **`Sounds/` masters:** move them to the private bucket and stop tracking
+4. **`Sounds/` masters:** (done 2026-11-03: in R2 under `private/masters/`, listed in `content/masters.json`) move them to the private bucket and stop tracking
    them in git from then on. Git history keeps the old copies. It won't be
    rewritten unless you ask separately.
 5. **Saves sync across devices** through Supabase (§6a).
