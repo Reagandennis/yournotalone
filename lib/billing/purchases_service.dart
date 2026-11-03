@@ -8,6 +8,7 @@ import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/l10n.dart';
+import '../media/lapsed_downloads.dart';
 import 'trial_reminder.dart';
 
 /// Must match the entitlement identifier in the RevenueCat dashboard.
@@ -101,6 +102,8 @@ class PurchasesService {
   void _onCustomerInfo(CustomerInfo info) {
     final pro = info.entitlements.active[proEntitlementId];
     isPro.value = pro != null;
+    // When premium was last active, for its downloads after it ends.
+    if (pro != null) unawaited(LapsedDownloads.instance.notePremium());
     // The paywall promises a reminder before a trial turns into a charge.
     unawaited(TrialReminder.sync(pro));
   }
