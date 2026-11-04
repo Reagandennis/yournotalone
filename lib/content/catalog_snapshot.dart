@@ -51,6 +51,8 @@ class ItemText {
     this.meta,
     this.prompts = const [],
     this.paragraphs = const [],
+    this.steps = const [],
+    this.stepTitles = const [],
     this.seed,
     this.reviewed = true,
   });
@@ -62,6 +64,8 @@ class ItemText {
     meta: json['meta'] as String?,
     prompts: [...?(json['prompts'] as List?)?.cast<String>()],
     paragraphs: [...?(json['paragraphs'] as List?)?.cast<String>()],
+    steps: [...?(json['steps'] as List?)?.cast<String>()],
+    stepTitles: [...?(json['stepTitles'] as List?)?.cast<String>()],
     seed: json['seed'] as String?,
     reviewed: _reviewed(json),
   );
@@ -72,6 +76,11 @@ class ItemText {
   final String? meta;
   final List<String> prompts;
   final List<String> paragraphs;
+
+  /// A guided exercise's steps: what to do, and a short heading for each,
+  /// one per `body.steps`.
+  final List<String> steps;
+  final List<String> stepTitles;
   final String? seed;
 
   /// Whether a fluent reader has checked this translation. English, the

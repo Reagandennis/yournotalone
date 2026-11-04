@@ -4325,6 +4325,54 @@ abstract class AppLocalizations {
   /// **'Go again'**
   String get toolkitGoAgain;
 
+  /// Last step's button in a guided exercise (a tool or recovery exercise built from steps).
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get guidedFinish;
+
+  /// Placeholder in the box where you write your answer during a guided exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Write here…'**
+  String get guidedWriteHint;
+
+  /// Heading when a guided exercise is finished.
+  ///
+  /// In en, this message translates to:
+  /// **'Nicely done'**
+  String get guidedDoneTitle;
+
+  /// Line under the finished heading of a guided exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a moment to notice how you feel now.'**
+  String get guidedDoneBody;
+
+  /// Button when a guided exercise is finished: saves what you wrote as a journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to journal'**
+  String get guidedSaveToJournal;
+
+  /// Button that starts a step's countdown in a guided exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Start timer'**
+  String get guidedTimerStart;
+
+  /// Button that pauses a step's countdown in a guided exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get guidedTimerPause;
+
+  /// Shown in the timer circle when a step's countdown in a guided exercise reaches zero. Keep it short.
+  ///
+  /// In en, this message translates to:
+  /// **'Time\'s up'**
+  String get guidedTimerDone;
+
   /// Big button in the grounding exercise: tap each time you notice one thing (e.g. one thing you can see).
   ///
   /// In en, this message translates to:

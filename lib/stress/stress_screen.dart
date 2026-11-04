@@ -28,7 +28,7 @@ class StressScreen extends StatelessWidget {
       accent: stressAccent,
       headline: l10n.stressHeadline,
       intro: l10n.stressIntro,
-      tools: stressTools,
+      tools: toolkitTools(stressAccent, stressTools, ToolkitArtKind.pause),
       lessons: toolkitLessons(stressAccent, stressLessons),
       resources: stressResources,
       resourceArt: ToolkitArtKind.resources,

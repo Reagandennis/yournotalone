@@ -2669,6 +2669,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get toolkitGoAgain => 'Recommencer';
 
   @override
+  String get guidedFinish => 'Terminer';
+
+  @override
+  String get guidedWriteHint => 'Écris ici…';
+
+  @override
+  String get guidedDoneTitle => 'Bien joué';
+
+  @override
+  String get guidedDoneBody =>
+      'Prends un instant pour remarquer comment tu te sens maintenant.';
+
+  @override
+  String get guidedSaveToJournal => 'Enregistrer dans le journal';
+
+  @override
+  String get guidedTimerStart => 'Lancer le minuteur';
+
+  @override
+  String get guidedTimerPause => 'Pause';
+
+  @override
+  String get guidedTimerDone => 'C\'est l\'heure';
+
+  @override
   String get groundingFoundOne => 'J’en ai trouvé une';
 
   @override

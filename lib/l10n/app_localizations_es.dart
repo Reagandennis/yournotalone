@@ -2666,6 +2666,31 @@ class AppLocalizationsEs extends AppLocalizations {
   String get toolkitGoAgain => 'Otra vez';
 
   @override
+  String get guidedFinish => 'Terminar';
+
+  @override
+  String get guidedWriteHint => 'Escribe aquí…';
+
+  @override
+  String get guidedDoneTitle => 'Bien hecho';
+
+  @override
+  String get guidedDoneBody =>
+      'Tómate un momento para notar cómo te sientes ahora.';
+
+  @override
+  String get guidedSaveToJournal => 'Guardar en el diario';
+
+  @override
+  String get guidedTimerStart => 'Iniciar temporizador';
+
+  @override
+  String get guidedTimerPause => 'Pausa';
+
+  @override
+  String get guidedTimerDone => 'Se acabó el tiempo';
+
+  @override
   String get groundingFoundOne => 'Encontré una';
 
   @override

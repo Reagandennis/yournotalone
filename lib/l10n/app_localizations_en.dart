@@ -2646,6 +2646,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toolkitGoAgain => 'Go again';
 
   @override
+  String get guidedFinish => 'Finish';
+
+  @override
+  String get guidedWriteHint => 'Write here…';
+
+  @override
+  String get guidedDoneTitle => 'Nicely done';
+
+  @override
+  String get guidedDoneBody => 'Take a moment to notice how you feel now.';
+
+  @override
+  String get guidedSaveToJournal => 'Save to journal';
+
+  @override
+  String get guidedTimerStart => 'Start timer';
+
+  @override
+  String get guidedTimerPause => 'Pause';
+
+  @override
+  String get guidedTimerDone => 'Time\'s up';
+
+  @override
   String get groundingFoundOne => 'Found one';
 
   @override

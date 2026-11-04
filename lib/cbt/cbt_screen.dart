@@ -26,7 +26,7 @@ class CbtScreen extends StatelessWidget {
       accent: cbtAccent,
       headline: l10n.cbtHeadline,
       intro: l10n.cbtIntro,
-      tools: cbtTools,
+      tools: toolkitTools(cbtAccent, cbtTools, ToolkitArtKind.learn),
       lessons: toolkitLessons(cbtAccent, cbtLessons),
       resources: cbtResources,
       resourceArt: ToolkitArtKind.resources,

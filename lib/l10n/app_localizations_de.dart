@@ -2673,6 +2673,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get toolkitGoAgain => 'Noch einmal';
 
   @override
+  String get guidedFinish => 'Fertig';
+
+  @override
+  String get guidedWriteHint => 'Schreib hier…';
+
+  @override
+  String get guidedDoneTitle => 'Gut gemacht';
+
+  @override
+  String get guidedDoneBody =>
+      'Nimm dir einen Moment und spür, wie es dir jetzt geht.';
+
+  @override
+  String get guidedSaveToJournal => 'Im Tagebuch speichern';
+
+  @override
+  String get guidedTimerStart => 'Timer starten';
+
+  @override
+  String get guidedTimerPause => 'Pause';
+
+  @override
+  String get guidedTimerDone => 'Zeit um';
+
+  @override
   String get groundingFoundOne => 'Gefunden';
 
   @override

@@ -81,15 +81,16 @@ const slug = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/);
 export const sceneEngines = ['waves', 'aurora', 'particles', 'gradient'] as const;
 
 /// Which bodies each kind may carry. Recovery holds both the urge-surfing
-/// meditation and app-built screens.
+/// meditation and app-built screens; tools and recovery can also be
+/// guided exercises built from steps in the content admin.
 const bodiesFor: Record<string, string[]> = {
   breathing: ['breathing'],
   meditation: ['meditation'],
   sound: ['sound'],
   prompt: ['prompt'],
   lesson: ['lesson'],
-  tool: ['native'],
-  recovery: ['meditation', 'native'],
+  tool: ['native', 'guided'],
+  recovery: ['meditation', 'native', 'guided'],
 };
 
 function schemas(v: Vocab) {
@@ -100,6 +101,9 @@ function schemas(v: Vocab) {
     meta: nonEmpty.optional(),
     prompts: z.array(nonEmpty).optional(),
     paragraphs: z.array(nonEmpty).optional(),
+    // A guided exercise: what to do at each step, and its heading.
+    steps: z.array(nonEmpty).optional(),
+    stepTitles: z.array(nonEmpty).optional(),
     seed: z.string().optional(),
     // Whether a fluent reader has checked this translation. Unreviewed
     // ones are published flagged, and only builds with drafts on show
@@ -132,6 +136,22 @@ function schemas(v: Vocab) {
     z.strictObject({ type: z.literal('prompt'), group: z.enum(v.promptGroups) }),
     z.strictObject({ type: z.literal('lesson'), art: nonEmpty }),
     z.strictObject({ type: z.literal('native'), screen: nonEmpty, art: nonEmpty.optional() }),
+    z.strictObject({
+      type: z.literal('guided'),
+      art: nonEmpty.optional(),
+      steps: z
+        .array(
+          z.strictObject({
+            // Seconds; the person starts it, and it never moves them on.
+            timer: z.int().min(5).max(3600).optional(),
+            input: z.enum(['none', 'note', 'list']).optional(),
+            // Lines in a list step.
+            count: z.int().min(1).max(10).optional(),
+          }),
+        )
+        .min(1)
+        .max(20),
+    }),
   ]);
   const item = z.strictObject({
     // Existing items keep their `kind:Title` id forever (saves, course days
@@ -344,6 +364,15 @@ export function check(
       }
       if (body.type !== 'lesson' && t.paragraphs) {
         fail(path, `${where}.paragraphs only belongs on lessons`);
+      }
+      if (body.type === 'guided') {
+        for (const k of ['steps', 'stepTitles'] as const) {
+          if (t[k]?.length !== body.steps.length) {
+            fail(path, `${where}.${k} needs one line per step (${body.steps.length})`);
+          }
+        }
+      } else if (t.steps || t.stepTitles) {
+        fail(path, `${where}.steps and stepTitles only belong on guided exercises`);
       }
       if (body.type === 'prompt' && t.seed === undefined) {
         fail(path, `${where}.seed is required for a journal prompt`);

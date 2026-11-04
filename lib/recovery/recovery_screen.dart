@@ -4,11 +4,13 @@ import '../billing/pricing_copy.dart';
 import '../auth/auth_ui.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import '../meditation/meditation_catalog.dart';
 import '../meditation/meditation_screen.dart';
 import '../support/crisis_screen.dart';
+import '../toolkit/guided_exercise.dart';
 import 'halt_screen.dart';
 import 'insights_screen.dart';
 import 'milestones_screen.dart';
@@ -670,9 +672,10 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     required String title,
     required String detail,
     required WidgetBuilder open,
+    bool premium = true,
   }) {
     final c = context.brand;
-    final locked = !_premium;
+    final locked = premium && !_premium;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Material(
@@ -894,6 +897,16 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   detail: l10n.recoveryTapeCardDetail,
                   open: (_) => const TapeForwardScreen(),
                 ),
+                // Exercises added in the content admin.
+                for (final g in ContentCatalog.instance.guidedRecovery)
+                  _toolCard(
+                    icon: g.icon,
+                    accent: g.accent,
+                    title: g.title,
+                    detail: g.blurb,
+                    premium: g.premium,
+                    open: (_) => GuidedExerciseScreen(exercise: g),
+                  ),
                 const SizedBox(height: 16),
                 Row(
                   children: [

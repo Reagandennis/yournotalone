@@ -38,6 +38,7 @@ import '../sleep/sleep_catalog.dart';
 import '../sounds/player_screen.dart';
 import '../sounds/sounds_catalog.dart';
 import '../stress/stress_catalog.dart';
+import '../toolkit/guided_exercise.dart';
 import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_content.dart';
 import '../toolkit/toolkit_lesson_screen.dart';
@@ -150,7 +151,7 @@ final _tools = {
 };
 
 /// What [item] is, built from its body: a [BreathPattern], [Meditation],
-/// [Sound], [ToolkitLesson] or [JournalPrompt]. Null for a `native` item,
+/// [Sound], [ToolkitLesson], [JournalPrompt] or [GuidedExercise]. Null for a `native` item,
 /// or when this build can't use it (a field it doesn't understand, a sound
 /// with no file here or online). [media] is the item's published audio by
 /// role, for files the app doesn't ship.
@@ -221,6 +222,35 @@ Object? modelFor(CatalogItem item, {Map<String, MediaRef> media = const {}}) {
           paragraphs: t.paragraphs,
           premium: item.premium,
         );
+      case 'guided':
+        final steps = (body['steps'] as List).cast<Map<String, dynamic>>();
+        // Each language carries one heading and one instruction per step.
+        if (t.steps.length != steps.length ||
+            t.stepTitles.length != steps.length) {
+          return null;
+        }
+        return GuidedExercise(
+          id: item.id,
+          title: t.title,
+          blurb: t.blurb,
+          minutes: item.minutes ?? 5,
+          icon: item.icon,
+          accent: item.accent,
+          premium: item.premium,
+          art: ToolkitArtKind.values.asNameMap()[body['art']],
+          steps: [
+            for (final (i, s) in steps.indexed)
+              GuidedStep(
+                title: t.stepTitles[i],
+                text: t.steps[i],
+                timerSeconds: s['timer'] as int?,
+                input: GuidedInput.values.byName(
+                  s['input'] as String? ?? 'none',
+                ),
+                count: s['count'] as int? ?? 3,
+              ),
+          ],
+        );
       case 'prompt':
         final group = body['group'];
         return JournalPrompt(
@@ -264,6 +294,7 @@ WidgetBuilder? screenFor(
       lesson: l,
       accent: item.accent,
     ),
+    final GuidedExercise g => (_) => GuidedExerciseScreen(exercise: g),
     _ => null,
   };
 }
@@ -390,6 +421,8 @@ class ContentCatalog {
   List<Meditation>? _meditations;
   List<JournalPrompt>? _journalPrompts;
   Map<Color, List<ToolkitLesson>>? _lessons;
+  Map<Color, List<GuidedExercise>>? _guidedTools;
+  List<GuidedExercise>? _guidedRecovery;
   Map<String, List<MediaEntry>> _mediaByItem = const {};
   Map<String, MediaEntry> _mediaByPath = const {};
 
@@ -404,6 +437,13 @@ class ContentCatalog {
   /// The lessons of the toolkit with [accent] (CBT, Sleep or Stress).
   List<ToolkitLesson>? lessonsFor(Color accent) =>
       _lessons == null ? null : _lessons![accent] ?? const [];
+
+  /// Guided tools for the toolkit with [accent]; empty with no snapshot.
+  List<GuidedExercise> guidedToolsFor(Color accent) =>
+      _guidedTools?[accent] ?? const [];
+
+  /// Guided recovery exercises; empty with no snapshot.
+  List<GuidedExercise> get guidedRecovery => _guidedRecovery ?? const [];
   int? get version => _snapshot?.version;
 
   /// [itemId]'s published audio; empty with no snapshot, or none.
@@ -532,8 +572,17 @@ class ContentCatalog {
         if (m is JournalPrompt) m,
     ];
     _lessons = {};
+    _guidedTools = {};
+    _guidedRecovery = [];
     for (final (item, m) in models) {
       if (m is ToolkitLesson) (_lessons![item.accent] ??= []).add(m);
+      if (m is GuidedExercise) {
+        if (item.kind == ContentKind.recovery) {
+          _guidedRecovery!.add(m);
+        } else {
+          (_guidedTools![item.accent] ??= []).add(m);
+        }
+      }
     }
     SceneLibrary.instance.use(snapshot);
     _mediaByItem = {};
@@ -559,6 +608,8 @@ class ContentCatalog {
     _meditations = null;
     _journalPrompts = null;
     _lessons = null;
+    _guidedTools = null;
+    _guidedRecovery = null;
     _mediaByItem = const {};
     _mediaByPath = const {};
   }
@@ -584,6 +635,17 @@ List<Meditation> get meditationLibrary =>
 /// Every journal prompt, each with its hub group.
 List<JournalPrompt> get journalPromptLibrary =>
     ContentCatalog.instance.journalPrompts ?? journalPrompts;
+
+/// The tools of the toolkit with [accent]: [builtIn], then any guided ones
+/// added in the content admin, drawn with their own picture or [art].
+List<ToolkitTool> toolkitTools(
+  Color accent,
+  List<ToolkitTool> builtIn,
+  ToolkitArtKind art,
+) => [
+  ...builtIn,
+  for (final g in ContentCatalog.instance.guidedToolsFor(accent)) g.toTool(art),
+];
 
 /// The lessons of the toolkit with [accent]; [builtIn] without a snapshot.
 List<ToolkitLesson> toolkitLessons(Color accent, List<ToolkitLesson> builtIn) =>

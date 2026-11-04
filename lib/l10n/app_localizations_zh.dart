@@ -2495,6 +2495,30 @@ class AppLocalizationsZh extends AppLocalizations {
   String get toolkitGoAgain => '再来一次';
 
   @override
+  String get guidedFinish => '完成';
+
+  @override
+  String get guidedWriteHint => '写在这里…';
+
+  @override
+  String get guidedDoneTitle => '做得很好';
+
+  @override
+  String get guidedDoneBody => '花一点时间，留意你现在的感受。';
+
+  @override
+  String get guidedSaveToJournal => '保存到日记';
+
+  @override
+  String get guidedTimerStart => '开始计时';
+
+  @override
+  String get guidedTimerPause => '暂停';
+
+  @override
+  String get guidedTimerDone => '时间到';
+
+  @override
   String get groundingFoundOne => '找到一个';
 
   @override

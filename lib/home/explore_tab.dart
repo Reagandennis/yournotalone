@@ -23,6 +23,7 @@ import '../stress/stress_catalog.dart';
 import '../stress/stress_content.dart';
 import '../stress/stress_screen.dart';
 import '../therapy/therapy_screen.dart';
+import '../toolkit/toolkit_art.dart';
 import '../toolkit/toolkit_hub.dart';
 import 'home_ui.dart';
 
@@ -109,7 +110,11 @@ List<_Program> get _programs => [
     _cardRed,
     CbtScreen.route,
     counts: _programCounts(
-      cbtTools.map((t) => t.premium),
+      toolkitTools(
+        cbtAccent,
+        cbtTools,
+        ToolkitArtKind.learn,
+      ).map((t) => t.premium),
       toolkitLessons(cbtAccent, cbtLessons).map((l) => l.premium),
     ),
   ),
@@ -120,7 +125,11 @@ List<_Program> get _programs => [
     _cardBlue,
     SleepScreen.route,
     counts: _programCounts(
-      sleepTools.map((t) => t.premium),
+      toolkitTools(
+        sleepAccent,
+        sleepTools,
+        ToolkitArtKind.moon,
+      ).map((t) => t.premium),
       toolkitLessons(sleepAccent, sleepLessons).map((l) => l.premium),
     ),
   ),
@@ -131,7 +140,11 @@ List<_Program> get _programs => [
     _cardYellow,
     StressScreen.route,
     counts: _programCounts(
-      stressTools.map((t) => t.premium),
+      toolkitTools(
+        stressAccent,
+        stressTools,
+        ToolkitArtKind.pause,
+      ).map((t) => t.premium),
       toolkitLessons(stressAccent, stressLessons).map((l) => l.premium),
     ),
   ),

@@ -6,6 +6,16 @@ import { snapshot } from './snapshot.ts';
 const base = load();
 const box = base.items.find(([p]) => p.endsWith('box-breathing.yaml'))!;
 const bodyScan = base.items.find(([p]) => p.endsWith('body-scan.yaml'))!;
+const awake = base.items.find(([p]) => p.endsWith('awake-at-3am.yaml'))!;
+
+/// [i], a native tool, turned into a two-step guided exercise.
+function guided(i: any) {
+  i.body = { type: 'guided', steps: [{ timer: 60 }, { input: 'list', count: 3 }] };
+  for (const t of Object.values(i.text) as any[]) {
+    t.stepTitles = ['Breathe', 'Name three things'];
+    t.steps = ['Slow your breathing for a minute.', 'Write three things you can do next.'];
+  }
+}
 
 /// The repo's content with one item swapped for an edited copy.
 function withItem(path: string, edit: (item: any) => void) {
@@ -69,6 +79,33 @@ test('needs one prompt line per timing, in every locale', () => {
 test('rejects a body that does not suit the kind', () => {
   const { errors } = withItem(box[0], (i) => (i.body = { type: 'lesson', art: 'moon' }));
   assert.match(errors.join('\n'), /can't have a lesson body/);
+});
+
+test('a tool can be a guided exercise with one heading and line per step', () => {
+  assert.deepEqual(withItem(awake[0], guided).errors, []);
+  const short = withItem(awake[0], (i) => {
+    guided(i);
+    i.text.fr.steps.pop();
+  });
+  assert.match(short.errors.join('\n'), /text\.fr\.steps needs one line per step \(2\)/);
+});
+
+test('a guided step has a sane timer and list size', () => {
+  const timer = withItem(awake[0], (i) => {
+    guided(i);
+    i.body.steps[0].timer = 2;
+  });
+  assert.match(timer.errors.join('\n'), /timer/);
+  const input = withItem(awake[0], (i) => {
+    guided(i);
+    i.body.steps[1].input = 'drawing';
+  });
+  assert.match(input.errors.join('\n'), /input/);
+});
+
+test('step text only belongs on guided exercises', () => {
+  const { errors } = withItem(box[0], (i) => (i.text.en.steps = ['Breathe']));
+  assert.match(errors.join('\n'), /only belong on guided exercises/);
 });
 
 test('a course day must be a published item', () => {

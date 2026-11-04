@@ -27,7 +27,7 @@ class SleepScreen extends StatelessWidget {
       accent: sleepAccent,
       headline: l10n.sleepHubHeadline,
       intro: l10n.sleepHubIntro,
-      tools: sleepTools,
+      tools: toolkitTools(sleepAccent, sleepTools, ToolkitArtKind.moon),
       lessons: toolkitLessons(sleepAccent, sleepLessons),
       resources: sleepResources,
       resourceArt: ToolkitArtKind.resources,

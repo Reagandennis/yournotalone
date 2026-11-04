@@ -3606,6 +3606,38 @@
   "@toolkitGoAgain": {
     "description": "Button after an exercise: start it again from the beginning."
   },
+  "guidedFinish": "Finish",
+  "@guidedFinish": {
+    "description": "Last step's button in a guided exercise (a tool or recovery exercise built from steps)."
+  },
+  "guidedWriteHint": "Write here…",
+  "@guidedWriteHint": {
+    "description": "Placeholder in the box where you write your answer during a guided exercise."
+  },
+  "guidedDoneTitle": "Nicely done",
+  "@guidedDoneTitle": {
+    "description": "Heading when a guided exercise is finished."
+  },
+  "guidedDoneBody": "Take a moment to notice how you feel now.",
+  "@guidedDoneBody": {
+    "description": "Line under the finished heading of a guided exercise."
+  },
+  "guidedSaveToJournal": "Save to journal",
+  "@guidedSaveToJournal": {
+    "description": "Button when a guided exercise is finished: saves what you wrote as a journal entry."
+  },
+  "guidedTimerStart": "Start timer",
+  "@guidedTimerStart": {
+    "description": "Button that starts a step's countdown in a guided exercise."
+  },
+  "guidedTimerPause": "Pause",
+  "@guidedTimerPause": {
+    "description": "Button that pauses a step's countdown in a guided exercise."
+  },
+  "guidedTimerDone": "Time's up",
+  "@guidedTimerDone": {
+    "description": "Shown in the timer circle when a step's countdown in a guided exercise reaches zero. Keep it short."
+  },
   "groundingFoundOne": "Found one",
   "@groundingFoundOne": {
     "description": "Big button in the grounding exercise: tap each time you notice one thing (e.g. one thing you can see)."
