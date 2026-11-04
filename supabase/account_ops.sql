@@ -32,6 +32,23 @@
 --   from auth.users
 --  where raw_app_meta_data ->> 'premium_comp' = 'true';
 
+-- ── 1b. Let an account use the content admin page ───────────────
+-- https://yournotalone-api.reaganprezzo.workers.dev/admin lets this
+-- account add and edit content and publish it (edge/README.md, "Admin
+-- page"). Same reasoning as premium_comp: app metadata, so only this
+-- editor or the service role can grant it. Sign out of the admin page and
+-- back in afterwards.
+--
+-- update auth.users
+--    set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb)
+--                            || '{"content_admin": true}'::jsonb
+--  where email = 'you@example.com';
+--
+-- Take it away again:
+-- update auth.users
+--    set raw_app_meta_data = raw_app_meta_data - 'content_admin'
+--  where email = 'you@example.com';
+
 -- ── 2. Deletion queue: requests the Edge Function never closed out ─
 -- Needs migration 0006.
 --

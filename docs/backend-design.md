@@ -528,6 +528,49 @@ today's `contentIndex` and catalogues and writes `content/items/**.yaml`,
 keeping `kind:Title` ids and merging in `content_tags.dart`. A test then
 checks that the bundled snapshot reproduces today's index item for item.
 
+## 8a. Admin page (2026-11-04)
+
+The CLI workflow above needs git, Node, ffmpeg and R2 keys on a laptop, so
+it isn't how content gets added day to day. `/admin` on the production
+Worker is a form on top of the same files:
+
+```
+browser ──(Supabase session, content_admin)──► Worker /admin/api
+   │  recording, in 25 MB parts ─────────────► R2 private/masters/<name>
+   │  item YAML + masters.json, one commit ──► GitHub main
+   ▼
+GitHub Actions content.yml: masters download → translate (drafts) → check
+                            → publish staging   [button] → publish production
+                                                           + bundled.json
+```
+
+- **Sign-in:** the app's Supabase accounts. The Worker checks the JWT and
+  `app_metadata.content_admin`, which only the service role can set. No
+  separate password or Cloudflare Access setup, since one person uses it.
+- **Git stays the record.** Every save is a commit on `main`, so it can be
+  reviewed, diffed and reverted like any change. The workflow's own commits
+  (translation drafts, `bundled.json`) use the built-in token, which
+  doesn't trigger another run.
+- **Recordings** never pass through git. They're uploaded in parts through
+  the Worker's R2 binding (no bucket CORS, no browser-held keys), named
+  `<id>-<time>.<ext>`, and listed in `content/masters.json` with the sha256
+  the browser computed; `masters download` refuses a file that doesn't match.
+  An item points at it as `Sounds/<name>`, which the publisher transcodes
+  like any master. The app treats that path as a name only.
+- **CPU:** the free plan gives a Worker about 10 ms of CPU per request, so the
+  Worker doesn't parse the YAML. The browser does, and a save reads only
+  the id, kind and order of the other files with a regular expression.
+- **What it can create:** sounds, meditations, breathing, journal prompts
+  and lessons. Tools and recovery screens are code in the app; their text,
+  tags and translations can be edited.
+- **Checks:** the form only catches what a form gets wrong (no need picked,
+  no title, deep and calming at once). The full checker runs in the
+  workflow before anything is published, and a failing run publishes
+  nothing.
+- **Translations:** drafted for missing languages after each save and
+  marked unreviewed. Changing the English sends unchanged translations back
+  to review. A reviewer ticks "checked" per language on the same form.
+
 ## 9. Testing and operations
 
 - **Worker:** Vitest with `@cloudflare/vitest-pool-workers`. It covers JWT

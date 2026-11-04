@@ -5,6 +5,7 @@ import { requireAuth } from './auth';
 import { getCatalog } from './catalog';
 import { registerSign } from './sign';
 import { registerRecommendations } from './recommend/route';
+import { registerAdmin } from './admin/routes';
 import { HttpError, jsonError } from './http';
 import { logError } from './log';
 
@@ -32,6 +33,9 @@ export function createApp() {
   app.use('/v1/*', requireAuth);
   registerSign(app);
   registerRecommendations(app);
+
+  // The content admin page; its API needs a content-admin session.
+  registerAdmin(app);
 
   app.notFound((c) => jsonError(c, 404, 'not_found'));
   app.onError((error, c) => {

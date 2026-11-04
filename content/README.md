@@ -1,5 +1,9 @@
 # Content
 
+The easy way to add or change content is the admin page (`edge/README.md`,
+"Admin page"): a form, an upload and a publish button. Everything below is
+what it writes, for when you want to work on the files directly.
+
 Everything the app offers, as data: one YAML file per item in `items/`, one
 per course in `courses/`, and the allowed tags in `vocab.yaml`. Design:
 `docs/backend-design.md` §4 and §8.

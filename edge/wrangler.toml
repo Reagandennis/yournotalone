@@ -4,7 +4,7 @@
 # Secrets are set per environment with `wrangler secret put NAME --env <env>`:
 #   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, REVENUECAT_SECRET_KEY,
 #   REVENUECAT_PROJECT_ID, SUPABASE_SERVICE_ROLE_KEY (the cron),
-#   SENTRY_DSN (optional).
+#   SENTRY_DSN (optional), ADMIN_GITHUB_TOKEN (production only: the admin page).
 #
 # The top-level block is what `wrangler dev` and the tests use. Deploy only
 # with --env staging or --env production.
@@ -85,6 +85,8 @@ workers_dev = true
 crons = ["0 3 * * *"]
 
 [env.production.vars]
+# The admin page (/admin) saves content here; it's off without ADMIN_GITHUB_TOKEN.
+GITHUB_REPO = "Reagandennis/yournotalone"
 SUPABASE_URL = "https://zpcfavemnvfhqaxqhmri.supabase.co"
 SUPABASE_ANON_KEY = "sb_publishable_yKBVrkk13Sm5hMZtrerdiw_uTrhlNd9"
 PUBLIC_BASE_URL = "https://database.techgetafrica.com"

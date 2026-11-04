@@ -26,7 +26,7 @@ export function resetAuthState(): void {
 }
 
 interface SupabaseClaims extends JWTPayload {
-  app_metadata?: { premium_comp?: unknown };
+  app_metadata?: { premium_comp?: unknown; content_admin?: unknown };
   user_metadata?: { goals?: unknown };
 }
 
@@ -60,6 +60,7 @@ export const requireAuth: MiddlewareHandler<AppEnv> = async (c, next) => {
   c.set('user', {
     id: payload.sub,
     premiumComp: payload.app_metadata?.premium_comp === true,
+    contentAdmin: payload.app_metadata?.content_admin === true,
     goals: Array.isArray(goals) ? goals.filter((g): g is string => typeof g === 'string').slice(0, 20) : [],
     token: match[1],
   });

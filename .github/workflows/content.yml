@@ -1,0 +1,131 @@
+# Publishes content/ to Cloudflare R2 (docs/backend-design.md §8a).
+#
+#   push to main touching content/  -> draft missing translations, check,
+#                                      publish to staging
+#   "Run workflow" / admin page     -> publish main to staging or production;
+#                                      production also rebuilds the
+#                                      catalogue the app bundles
+#
+# The admin page commits item files to main, so a save there lands here.
+# Commits this workflow makes (translations, bundled.json) use the built-in
+# token, which doesn't start another run.
+#
+# Repository secrets (Settings → Secrets and variables → Actions):
+#   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY  bucket-scoped Object Read & Write
+#   ANTHROPIC_API_KEY                       optional; drafts translations
+
+name: Content
+run-name: "Publish to ${{ inputs.env || 'staging' }}: ${{ github.event.head_commit.message || 'from the admin page' }}"
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/**"
+      - "tools/content/**"
+      - ".github/workflows/content.yml"
+  workflow_dispatch:
+    inputs:
+      env:
+        description: Where to publish
+        type: choice
+        options: [staging, production]
+        default: staging
+
+permissions:
+  contents: write
+
+# One publish at a time, in order: each reads the version the last wrote.
+concurrency:
+  group: content
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TARGET: ${{ inputs.env || 'staging' }}
+      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    defaults:
+      run:
+        working-directory: tools/content
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: tools/content/package-lock.json
+
+      - name: Install ffmpeg
+        working-directory: .
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - run: npm ci
+
+      # Transcodes are keyed by the source's hash and settings, so they can
+      # be kept between runs; a new recording just adds to the cache.
+      - uses: actions/cache@v4
+        with:
+          path: |
+            tools/content/.cache
+            Sounds
+          key: content-media-${{ hashFiles('content/masters.json') }}
+          restore-keys: content-media-
+
+      - name: Fetch the recordings items point at
+        run: |
+          names=$(grep -rhoE 'Sounds/[A-Za-z0-9._-]+' ../../content/items | sed 's#^Sounds/##' | sort -u)
+          if [ -n "$names" ]; then npm run masters -- download $names; else echo "No item uses a recording from Sounds/."; fi
+
+      # A translation failure shouldn't hold back the English publish.
+      - name: Draft missing translations
+        if: env.TARGET == 'staging' && github.event_name == 'push'
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::notice::ANTHROPIC_API_KEY isn't set, so new items stay English-only until translated."
+          else
+            npm run translate -- --all --to fr,de,es,zh-Hans
+          fi
+
+      - name: Check
+        run: npm run check
+
+      - name: Commit the drafted translations
+        if: env.TARGET == 'staging' && github.event_name == 'push'
+        working-directory: .
+        run: |
+          git add content/items content/courses content/backgrounds
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Draft translations for review"
+          git pull --rebase --quiet origin main
+          git push origin HEAD:main
+
+      - name: Publish to ${{ env.TARGET }}
+        run: npm run publish -- --env "$TARGET"
+
+      # The app ships with a copy of the catalogue for its first launch and
+      # for offline use; keep it the same as what production serves.
+      - name: Rebuild the bundled catalogue
+        if: env.TARGET == 'production'
+        run: npm run build
+
+      - name: Commit the bundled catalogue
+        if: env.TARGET == 'production'
+        working-directory: .
+        run: |
+          git add assets/catalog/bundled.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Bundle the catalogue published to production"
+          git pull --rebase --quiet origin main
+          git push origin HEAD:main

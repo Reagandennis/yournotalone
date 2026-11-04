@@ -14,6 +14,8 @@ export interface Env {
   PRO_ENTITLEMENT_ID?: string;
   /** Entitlement identifier as the app knows it ("Techgetafrica Pro"). */
   PRO_ENTITLEMENT_LOOKUP_KEY?: string;
+  /** `owner/repo` the admin page saves content to. */
+  GITHUB_REPO?: string;
 
   // secrets
   R2_ACCESS_KEY_ID: string;
@@ -23,6 +25,11 @@ export interface Env {
   SENTRY_DSN?: string;
   /** Only the daily cron uses it, for the content_popularity RPC. */
   SUPABASE_SERVICE_ROLE_KEY?: string;
+  /**
+   * Fine-grained GitHub token for the admin page: this repository only,
+   * Contents and Actions read & write. Without it the admin page is off.
+   */
+  ADMIN_GITHUB_TOKEN?: string;
 
   // bindings (optional: the code skips rate limiting if absent)
   RATE_LIMITER?: RateLimit;
@@ -38,6 +45,8 @@ export interface Vars {
 export interface AuthUser {
   id: string;
   premiumComp: boolean;
+  /** `app_metadata.content_admin`: may use the admin page. Only the service role can set it. */
+  contentAdmin: boolean;
   /** `user_metadata.goals`: the needs picked at onboarding or in Settings. */
   goals: string[];
   /** The verified access token, for Supabase reads under the user's own RLS. Never log it. */

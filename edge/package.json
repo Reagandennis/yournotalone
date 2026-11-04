@@ -13,7 +13,8 @@
     "@sentry/cloudflare": "^11.10.0",
     "aws4fetch": "^1.0.20",
     "hono": "^4.13.16",
-    "jose": "^6.2.15"
+    "jose": "^6.2.15",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@cloudflare/vitest-plugin": "^1.4.12",

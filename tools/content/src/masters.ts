@@ -6,7 +6,9 @@
 // folder can be put back on any machine and checked byte for byte.
 //
 //   upload    hashes Sounds/, uploads what R2 doesn't have, rewrites the list
-//   download  fetches every listed file into Sounds/ and checks its hash
+//   download  fetches every listed file into Sounds/ and checks its hash;
+//             with names after it, only those (the content workflow
+//             fetches just the recordings items point at)
 //   check     compares Sounds/ with the list, with no network
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
@@ -108,11 +110,18 @@ if (import.meta.main) {
       writeFileSync(manifestPath, `${JSON.stringify(list, null, 2)}\n`);
       console.log(`${list.length} master(s) in R2; wrote content/masters.json.`);
     } else {
-      await download(store, readManifest());
+      const names = new Set(process.argv.slice(3));
+      const list = readManifest();
+      const unknown = [...names].filter((n) => !list.some((m) => m.name === n));
+      if (unknown.length) {
+        console.error(`Not in content/masters.json: ${unknown.join(', ')}`);
+        process.exit(1);
+      }
+      await download(store, names.size ? list.filter((m) => names.has(m.name)) : list);
       console.log('Sounds/ matches content/masters.json.');
     }
   } else {
-    console.error('Usage: npm run masters -- upload|download|check');
+    console.error('Usage: npm run masters -- upload|download [name…]|check');
     process.exit(1);
   }
 }
