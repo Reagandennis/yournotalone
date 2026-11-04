@@ -45,7 +45,7 @@ text:
 body:
   type: sound
   category: focus
-  audio: assets/sounds/deep_focus.m4a
+  audio: Sounds/sound-deep-focus-mw2hqfjr.wav
   loop: true
   waveFreq: 2.5
   waveSpeed: 1
