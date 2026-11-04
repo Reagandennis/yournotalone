@@ -6,7 +6,8 @@
 #                                      production also rebuilds the
 #                                      catalogue the app bundles
 #
-# The admin page commits item files to main, so a save there lands here.
+# The admin page (the yournotalone-admin repository) commits item files to
+# main, so a save there lands here.
 # Commits this workflow makes (translations, bundled.json) use the built-in
 # token, which doesn't start another run.
 #

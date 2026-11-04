@@ -531,11 +531,15 @@ checks that the bundled snapshot reproduces today's index item for item.
 ## 8a. Admin page (2026-11-04)
 
 The CLI workflow above needs git, Node, ffmpeg and R2 keys on a laptop, so
-it isn't how content gets added day to day. `/admin` on the production
-Worker is a form on top of the same files:
+it isn't how content gets added day to day. The admin page is a form on top
+of the same files. It lives in its own repository and Worker,
+[Reagandennis/yournotalone-admin](https://github.com/Reagandennis/yournotalone-admin)
+(`https://yournotalone-admin.reaganprezzo.workers.dev`), so the app's API
+Worker stays just media links and recommendations. This repository keeps the
+content, the tools and the workflow it starts:
 
 ```
-browser ──(Supabase session, content_admin)──► Worker /admin/api
+browser ──(Supabase session, content_admin)──► admin Worker /api
    │  recording, in 25 MB parts ─────────────► R2 private/masters/<name>
    │  item YAML + masters.json, one commit ──► GitHub main
    ▼
@@ -544,7 +548,7 @@ GitHub Actions content.yml: masters download → translate (drafts) → check
                                                            + bundled.json
 ```
 
-- **Sign-in:** the app's Supabase accounts. The Worker checks the JWT and
+- **Sign-in:** the app's Supabase accounts. The admin Worker checks the JWT and
   `app_metadata.content_admin`, which only the service role can set. No
   separate password or Cloudflare Access setup, since one person uses it.
 - **Git stays the record.** Every save is a commit on `main`, so it can be

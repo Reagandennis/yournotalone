@@ -120,46 +120,6 @@ If you reuse the key the Supabase functions already use, check that it has these
    `https://yournotalone-api-staging.<subdomain>.workers.dev`. Production is
    `npx wrangler deploy --env production` (`yournotalone-api.<subdomain>.workers.dev`).
 
-## Admin page
-
-`https://yournotalone-api.reaganprezzo.workers.dev/admin` adds and edits sounds,
-meditations, breathing exercises, journal prompts and lessons, without a terminal:
-
-1. Sign in with your yournotalone account (Google or email and password). Only an account
-   with `content_admin: true` in its app metadata gets past the sign-in.
-2. Pick an item or **+ Add new…**, fill in the form, choose the recording if it has one, and
-   **Save and publish to staging**. The recording goes straight into R2 under
-   `private/masters/`; the item file (and `content/masters.json`) is committed to `main`.
-3. That commit starts `.github/workflows/content.yml`: it drafts the missing translations,
-   runs the content checker, converts the audio and publishes to staging. The page shows the
-   run and what's live.
-4. Check it in a staging build, then **Publish to production**. That run also rebuilds
-   `assets/catalog/bundled.json` and commits it, ready for the next app release.
-
-Tools and recovery screens are built into the app, so only their text, tags and translations
-can be edited there. Pull `main` before working on content locally: the page commits to it.
-
-**One-time setup:**
-
-1. **Make your account an admin:** run section 1b of `supabase/account_ops.sql` in the SQL
-   Editor with your email.
-2. **For Google sign-in**, add `https://yournotalone-api.reaganprezzo.workers.dev/admin` to
-   Supabase → Authentication → URL Configuration → Redirect URLs. (Email and password works
-   without it.)
-3. **GitHub token for the Worker:** github.com → Settings → Developer settings → Fine-grained
-   tokens → Generate. Repository access: only `Reagandennis/yournotalone`. Permissions:
-   **Contents: Read and write**, **Actions: Read and write** (Metadata: read is added
-   for you). Then `npx wrangler secret put ADMIN_GITHUB_TOKEN --env production`.
-4. **Secrets for the workflow:** GitHub → the repository → Settings → Secrets and variables →
-   Actions: `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY` (a bucket-scoped **Object Read &
-   Write** token), and optionally `ANTHROPIC_API_KEY` for the translation drafts.
-5. Deploy production.
-
-Security: the page itself is public HTML with no secrets; every `/admin/api` call checks the
-Supabase session and the `content_admin` flag, which only the service role can set. Uploads
-can only land under `private/masters/` with a plain file name, and the workflow checks each
-recording's sha256 before using it.
-
 ## curl
 
 ```sh

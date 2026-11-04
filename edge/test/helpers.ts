@@ -32,21 +32,13 @@ export interface TokenOptions {
   expiresIn?: number; // seconds from now; negative = already expired
   comp?: boolean;
   goals?: unknown;
-  /** app_metadata.content_admin */
-  admin?: boolean;
   forged?: boolean; // signed by a key not in the JWKS (same kid)
 }
 
 export async function token(o: TokenOptions = {}): Promise<string> {
   const now = Math.floor(Date.now() / 1000);
   const claims: Record<string, unknown> = { role: 'authenticated' };
-  if (o.comp !== undefined || o.admin !== undefined) {
-    claims.app_metadata = {
-      provider: 'email',
-      ...(o.comp !== undefined ? { premium_comp: o.comp } : {}),
-      ...(o.admin !== undefined ? { content_admin: o.admin } : {}),
-    };
-  }
+  if (o.comp !== undefined) claims.app_metadata = { provider: 'email', premium_comp: o.comp };
   if (o.goals !== undefined) claims.user_metadata = { goals: o.goals };
   return new SignJWT(claims)
     .setProtectedHeader({ alg: 'ES256', kid: 'test-kid', typ: 'JWT' })
@@ -124,8 +116,6 @@ export interface MockState {
   supabase: RcHandler;
   /** {CDN}/stats/popularity.json; null means 404. */
   popularity: unknown;
-  /** api.github.com, for the admin page. */
-  github: RcHandler;
 }
 
 export const json = (body: unknown, status = 200) =>
@@ -158,7 +148,6 @@ export function mockFetch(): MockState {
     catalogUp: true,
     supabase: () => json([]),
     popularity: null,
-    github: () => json({ message: 'Not Found' }, 404),
   };
   vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
     const url = new URL(input instanceof Request ? input.url : String(input));
@@ -176,7 +165,6 @@ export function mockFetch(): MockState {
       return new Response('not found', { status: 404 });
     }
     if (url.origin === 'https://api.revenuecat.com') return state.revenueCat(url, init);
-    if (url.origin === 'https://api.github.com') return state.github(url, init);
     throw new Error(`unexpected fetch ${url}`);
   });
   return state;

@@ -33,9 +33,9 @@
 --  where raw_app_meta_data ->> 'premium_comp' = 'true';
 
 -- ── 1b. Let an account use the content admin page ───────────────
--- https://yournotalone-api.reaganprezzo.workers.dev/admin lets this
--- account add and edit content and publish it (edge/README.md, "Admin
--- page"). Same reasoning as premium_comp: app metadata, so only this
+-- https://yournotalone-admin.reaganprezzo.workers.dev lets this account
+-- add and edit content and publish it (the yournotalone-admin
+-- repository). Same reasoning as premium_comp: app metadata, so only this
 -- editor or the service role can grant it. Sign out of the admin page and
 -- back in afterwards.
 --

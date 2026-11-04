@@ -1,7 +1,9 @@
 # Content
 
-The easy way to add or change content is the admin page (`edge/README.md`,
-"Admin page"): a form, an upload and a publish button. Everything below is
+The easy way to add or change content is the admin page,
+`https://yournotalone-admin.reaganprezzo.workers.dev` (its own repository,
+[yournotalone-admin](https://github.com/Reagandennis/yournotalone-admin)):
+a form, an upload and a publish button. Everything below is
 what it writes, for when you want to work on the files directly.
 
 Everything the app offers, as data: one YAML file per item in `items/`, one
