@@ -1,4 +1,4 @@
-id: "sound:Deep focus"
+id: sound:Deep focus
 kind: sound
 status: published
 order: 210
@@ -6,37 +6,46 @@ premium: false
 icon: graphic_eq_rounded
 accent: yellow
 tags:
-  needs: [focus]
-  dayParts: []
+  needs:
+    - anxious
+    - panic
+    - low
+    - stressed
+    - focus
+  dayParts:
+    - morning
+    - afternoon
+    - evening
+    - night
 text:
   en:
-    title: "Deep focus"
-    blurb: "Low, steady noise that softens distraction."
-    area: "Sound · Focus"
+    title: Deep focus
+    blurb: Low, steady noise that softens distraction.
+    area: Sound · Focus
   fr:
-    title: "Concentration profonde"
-    blurb: "Un bruit grave et régulier qui atténue les distractions."
-    area: "Son · Concentration"
+    title: Concentration profonde
+    blurb: Un bruit grave et régulier qui atténue les distractions.
+    area: Son · Concentration
     reviewed: false
   de:
-    title: "Tiefer Fokus"
-    blurb: "Tiefes, gleichmäßiges Rauschen, das Ablenkungen dämpft."
-    area: "Klang · Fokus"
+    title: Tiefer Fokus
+    blurb: Tiefes, gleichmäßiges Rauschen, das Ablenkungen dämpft.
+    area: Klang · Fokus
     reviewed: false
   es:
-    title: "Concentración profunda"
-    blurb: "Un ruido bajo y constante que suaviza las distracciones."
-    area: "Sonido · Concentración"
+    title: Concentración profunda
+    blurb: Un ruido bajo y constante que suaviza las distracciones.
+    area: Sonido · Concentración
     reviewed: false
   zh-Hans:
-    title: "深度专注"
-    blurb: "低沉、平稳的声音，让干扰变得柔和。"
-    area: "声音 · 专注"
+    title: 深度专注
+    blurb: 低沉、平稳的声音，让干扰变得柔和。
+    area: 声音 · 专注
     reviewed: false
 body:
   type: sound
   category: focus
-  audio: "assets/sounds/deep_focus.m4a"
+  audio: assets/sounds/deep_focus.m4a
   loop: true
   waveFreq: 2.5
   waveSpeed: 1
