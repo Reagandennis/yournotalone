@@ -43,7 +43,10 @@ concurrency:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    # The spare Azure server (yournotalone-ops repository), as the
+    # unprivileged gha-runner user. ffmpeg is installed there, and the
+    # workspace and converted audio persist between runs.
+    runs-on: [self-hosted, linux, yournotalone-content]
     timeout-minutes: 45
     env:
       TARGET: ${{ inputs.env || 'staging' }}
@@ -61,9 +64,9 @@ jobs:
           cache: npm
           cache-dependency-path: tools/content/package-lock.json
 
-      - name: Install ffmpeg
+      - name: Check ffmpeg
         working-directory: .
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+        run: ffmpeg -version | head -1
 
       - run: npm ci
 
