@@ -331,7 +331,7 @@ function kindFields(item) {
         + '<label for="f-seed">Starter text <span class="hint">what the journal entry opens with</span></label><textarea id="f-seed">' + esc(en.seed || '') + '</textarea>';
       break;
     case 'lesson':
-      html = '<div class="grid2"><div><label for="f-area">Toolkit</label><select id="f-area">' + options(['CBT', 'Sleep', 'Stress'], en.area || 'CBT') + '</select></div>'
+      html = '<div class="grid2"><div><label for="f-area">Toolkit</label><select id="f-area">' + options(['CBT', 'Sleep', 'Stress'], { cbt: 'CBT', sleep: 'Sleep', stress: 'Stress' }[item.accent] || 'CBT') + '</select></div>'
         + '<div class="grid2" style="gap:0 10px"><div><label for="f-minutes">Minutes</label><input id="f-minutes" type="number" min="1" max="30" value="' + (item.minutes || 3) + '"></div>'
         + '<div><label for="f-art">Picture</label><select id="f-art">' + options(LESSON_ART, b.art) + '</select></div></div></div>'
         + '<label for="f-paragraphs">Text <span class="hint">a blank line between paragraphs</span></label>'
@@ -409,6 +409,8 @@ function collect() {
       item.minutes = Number($('f-minutes').value);
       b.art = $('f-art').value;
       en.area = $('f-area').value;
+      // The app files a lesson under the hub its colour names.
+      item.accent = en.area.toLowerCase();
       en.paragraphs = $('f-paragraphs').value.split(/\\n\\s*\\n/).map((p) => p.trim()).filter(Boolean);
       if (!en.paragraphs.length) throw new Error('Add the lesson text.');
       break;
