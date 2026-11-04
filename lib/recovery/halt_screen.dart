@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import '../meditation/meditation_catalog.dart';
@@ -9,6 +10,7 @@ import '../meditation/meditation_screen.dart';
 import '../sounds/sounds_catalog.dart';
 import '../sounds/player_screen.dart';
 import '../therapy/therapy_screen.dart';
+import '../toolkit/toolkit_links.dart';
 
 /// What a craving is often standing in for. Each one carries the thing
 /// worth doing about it, and where in the app to do it.
@@ -41,14 +43,15 @@ class _Need {
 // title is ever edited, which would crash the screen at the worst possible
 // moment — so fall back to the first entry, and let a test catch the
 // broken link instead of a user.
-Meditation _meditation(String title) => meditations.firstWhere(
-      (m) => m.title == title,
-      orElse: () => meditations.first,
-    );
+// Looked up by content id, so a translated title still finds it.
+Meditation _meditation(String title) => meditationTitled(title);
 
-Sound _sound(String title) => soundsCatalog.firstWhere(
-      (s) => s.title == title,
-      orElse: () => soundsCatalog.first,
+Sound _sound(String title) => soundLibrary.firstWhere(
+      (s) => s.id == 'sound:$title',
+      orElse: () => soundsCatalog.firstWhere(
+        (s) => s.title == title,
+        orElse: () => soundsCatalog.first,
+      ),
     );
 
 /// The catalogue entries HALT sends people to. Checked by a test, so

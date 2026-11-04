@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../billing/pricing_copy.dart';
+import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import '../meditation/breathing_screen.dart';
@@ -12,15 +13,25 @@ import '../meditation/meditation_screen.dart';
 /// same Premium gate the Meditations list does, so a toolkit card can't
 /// slip past it.
 
-Meditation meditationTitled(String title) => meditations.firstWhere(
-  (m) => m.title == title,
-  orElse: () => meditations.first,
+// By content id, so a translated title still finds it; the built-in list
+// if the catalogue doesn't have it.
+
+Meditation meditationTitled(String title) => meditationLibrary.firstWhere(
+  (m) => m.id == 'meditation:$title',
+  orElse: () => meditations.firstWhere(
+    (m) => m.title == title,
+    orElse: () => meditations.first,
+  ),
 );
 
-BreathPattern breathPatternTitled(String title) => breathPatterns.firstWhere(
-  (p) => p.title == title,
-  orElse: () => breathPatterns.first,
-);
+BreathPattern breathPatternTitled(String title) =>
+    breathPatternLibrary.firstWhere(
+      (p) => p.id == 'breathing:$title',
+      orElse: () => breathPatterns.firstWhere(
+        (p) => p.title == title,
+        orElse: () => breathPatterns.first,
+      ),
+    );
 
 /// True when [item] may open now; otherwise shows the upgrade sheet and
 /// returns false. The gate every toolkit practice card goes through.

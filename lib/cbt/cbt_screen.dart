@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../l10n/l10n.dart';
 import '../therapy/therapy_screen.dart';
 import '../toolkit/toolkit_art.dart';
@@ -26,7 +27,7 @@ class CbtScreen extends StatelessWidget {
       headline: l10n.cbtHeadline,
       intro: l10n.cbtIntro,
       tools: cbtTools,
-      lessons: cbtLessons,
+      lessons: toolkitLessons(cbtAccent, cbtLessons),
       resources: cbtResources,
       resourceArt: ToolkitArtKind.resources,
       source: 'cbt',

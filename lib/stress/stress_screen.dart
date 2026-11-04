@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../l10n/l10n.dart';
 import '../cbt/cbt_screen.dart';
 import '../therapy/therapy_screen.dart';
@@ -28,7 +29,7 @@ class StressScreen extends StatelessWidget {
       headline: l10n.stressHeadline,
       intro: l10n.stressIntro,
       tools: stressTools,
-      lessons: stressLessons,
+      lessons: toolkitLessons(stressAccent, stressLessons),
       resources: stressResources,
       resourceArt: ToolkitArtKind.resources,
       source: 'stress',

@@ -29,12 +29,16 @@ class SessionCloseOut extends StatefulWidget {
     required this.title,
     required this.accent,
     required this.kind,
+    this.slug,
     this.feelings,
   });
 
-  /// The session just finished — seeds the journal entry, and is the slug
-  /// the feeling is kept against.
+  /// The session just finished, as shown — seeds the journal entry.
   final String title;
+
+  /// What the feeling is kept against ([practiceSlug] of the item's id);
+  /// [title] when not given.
+  final String? slug;
   final Color accent;
   final PracticeKind kind;
 
@@ -80,7 +84,7 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
     // Never throws; the session still counted either way.
     await (widget.feelings ?? FeelingStore.instance).record(
       kind: widget.kind,
-      slug: widget.title,
+      slug: widget.slug ?? widget.title,
       feeling: feeling,
     );
   }

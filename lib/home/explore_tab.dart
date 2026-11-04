@@ -4,6 +4,7 @@ import '../brand.dart';
 import '../cbt/cbt_catalog.dart';
 import '../cbt/cbt_content.dart';
 import '../cbt/cbt_screen.dart';
+import '../content/content_catalog.dart';
 import '../courses/course_catalog.dart';
 import '../courses/course_screen.dart';
 import '../discover/content_index.dart';
@@ -99,7 +100,8 @@ String _programCounts(Iterable<bool> tools, Iterable<bool> lessons) =>
 
 typedef RouteBuilder = Route<void> Function();
 
-final _programs = <_Program>[
+// A getter, so the counts follow the catalogue in use.
+List<_Program> get _programs => [
   _Program(
     (l) => l.exploreProgramCbtTitle,
     (l) => l.exploreProgramCbtBlurb,
@@ -108,7 +110,7 @@ final _programs = <_Program>[
     CbtScreen.route,
     counts: _programCounts(
       cbtTools.map((t) => t.premium),
-      cbtLessons.map((l) => l.premium),
+      toolkitLessons(cbtAccent, cbtLessons).map((l) => l.premium),
     ),
   ),
   _Program(
@@ -119,7 +121,7 @@ final _programs = <_Program>[
     SleepScreen.route,
     counts: _programCounts(
       sleepTools.map((t) => t.premium),
-      sleepLessons.map((l) => l.premium),
+      toolkitLessons(sleepAccent, sleepLessons).map((l) => l.premium),
     ),
   ),
   _Program(
@@ -130,7 +132,7 @@ final _programs = <_Program>[
     StressScreen.route,
     counts: _programCounts(
       stressTools.map((t) => t.premium),
-      stressLessons.map((l) => l.premium),
+      toolkitLessons(stressAccent, stressLessons).map((l) => l.premium),
     ),
   ),
 ];

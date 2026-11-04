@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../l10n/l10n.dart';
 import '../sounds/sounds_screen.dart';
 import '../toolkit/toolkit_art.dart';
@@ -27,7 +28,7 @@ class SleepScreen extends StatelessWidget {
       headline: l10n.sleepHubHeadline,
       intro: l10n.sleepHubIntro,
       tools: sleepTools,
-      lessons: sleepLessons,
+      lessons: toolkitLessons(sleepAccent, sleepLessons),
       resources: sleepResources,
       resourceArt: ToolkitArtKind.resources,
       source: 'sleep',

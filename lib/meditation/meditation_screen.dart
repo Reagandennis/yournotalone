@@ -9,6 +9,7 @@ import '../backgrounds/background_picker.dart';
 import '../backgrounds/scene_background.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../content/content_catalog.dart';
 import '../discover/content_index.dart';
 import '../home/home_ui.dart';
 import '../media/download_buttons.dart';
@@ -53,9 +54,14 @@ class _MeditationScreenState extends State<MeditationScreen>
   Meditation get meditation => widget.meditation;
 
   // A small, calm subset of the sound library to sit underneath.
-  static final _ambientChoices = [
-    for (final s in soundsCatalog)
-      if (const {'Rainfall', 'Ocean waves', 'Deep focus'}.contains(s.title)) s,
+  static List<Sound> get _ambientChoices => [
+    for (final s in soundLibrary)
+      if (const {
+        'sound:Rainfall',
+        'sound:Ocean waves',
+        'sound:Deep focus',
+      }.contains(s.id))
+        s,
   ];
 
   @override
@@ -94,7 +100,7 @@ class _MeditationScreenState extends State<MeditationScreen>
     unawaited(
       (widget.practice ?? PracticeRepository()).logSession(
         kind: PracticeKind.meditation,
-        slug: meditation.title,
+        slug: practiceSlug(meditation.id),
         title: meditation.title,
         minutes: meditation.minutes.toDouble(),
       ),
@@ -297,6 +303,7 @@ class _MeditationScreenState extends State<MeditationScreen>
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 20),
           child: SessionCloseOut(
             title: meditation.title,
+            slug: practiceSlug(meditation.id),
             accent: meditation.accent,
             kind: PracticeKind.meditation,
           ),
