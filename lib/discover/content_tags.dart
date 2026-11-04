@@ -3,10 +3,10 @@
 /// "Hard days" prompt is for low days — see `content_index.dart`); this
 /// table adds what can't be guessed from that.
 ///
-/// Adding content: put the item in its catalogue as usual, then add a line
-/// here keyed `kind:Title` with the needs it answers, the times of day it
-/// suits, and `addedOn` so Explore badges it "New" for a few weeks. A test
-/// fails if a key here no longer matches a real item.
+/// These tags only feed the frozen Dart fallback ([builtInContentIndex]).
+/// New content is added in `content/`, with its tags in its YAML; don't
+/// add lines here. A test fails if a key here no longer matches a real
+/// item.
 library;
 
 import 'content_index.dart';

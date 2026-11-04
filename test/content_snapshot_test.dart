@@ -4,26 +4,20 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:yournotalone/cbt/cbt_catalog.dart';
-import 'package:yournotalone/cbt/cbt_content.dart';
 import 'package:yournotalone/content/catalog_snapshot.dart';
+import 'package:yournotalone/content/content_catalog.dart';
 import 'package:yournotalone/courses/course_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
 import 'package:yournotalone/discover/content_tags.dart';
-import 'package:yournotalone/journal/journal_prompts.dart';
-import 'package:yournotalone/meditation/meditation_catalog.dart';
-import 'package:yournotalone/recovery/recovery_screen.dart';
+import 'package:yournotalone/recovery/halt_screen.dart';
 import 'package:yournotalone/sleep/sleep_catalog.dart';
-import 'package:yournotalone/sleep/sleep_content.dart';
-import 'package:yournotalone/sounds/sounds_catalog.dart';
 import 'package:yournotalone/stress/stress_catalog.dart';
-import 'package:yournotalone/stress/stress_content.dart';
 
-/// Until the app reads its catalogue from the snapshot, the Dart
-/// catalogues and `content/` must say the same thing. If this fails after
-/// a content change in Dart, re-run the export and rebuild:
-///
-///   flutter test tool/export_content_test.dart
-///   (cd tools/content && npm run build)
+/// `content/` is the source of the catalogue; the Dart catalogues are a
+/// frozen fallback. They no longer have to match field for field, but
+/// everything built into the app that points at content by id (HALT,
+/// toolkit links, native screens, courses) must still find it in the
+/// bundled snapshot.
 void main() {
   final snapshot = CatalogSnapshot.fromJson(
     jsonDecode(File(bundledCatalogAsset).readAsStringSync())
@@ -47,111 +41,53 @@ void main() {
     expect(snapshot.hash, hasLength(16));
   });
 
-  test('lists every index item, in the same order', () {
-    expect(
-      [for (final i in snapshot.items) i.id],
-      [for (final i in builtInContentIndex) i.id],
-    );
-  });
-
-  test('matches every index item field for field', () {
+  test('still has every built-in item, as the same kind', () {
     for (final item in builtInContentIndex) {
-      final s = byId[item.id]!;
-      final en = s.textFor('en');
-      final reason = item.id;
-      expect(s.kind, item.kind, reason: reason);
-      expect(en.title, item.title, reason: reason);
-      expect(en.blurb, item.blurb, reason: reason);
-      expect(en.area, item.area, reason: reason);
-      expect(s.icon, item.icon, reason: reason);
-      expect(s.accent, item.accent, reason: reason);
-      expect(s.premium, item.premium, reason: reason);
-      expect(s.minutes, item.minutes, reason: reason);
-      expect(s.needs, item.needs, reason: reason);
-      expect(s.dayParts, item.dayParts, reason: reason);
-      expect(s.addedOn, item.addedOn, reason: reason);
+      expect(byId[item.id]?.kind, item.kind, reason: item.id);
     }
   });
 
-  test('carries each kind\'s body', () {
-    for (final p in breathPatterns) {
-      final s = byId['breathing:${p.title}']!;
-      expect(s.body, {
-        'type': 'breathing',
-        'inhale': p.inhale,
-        'holdIn': p.holdIn,
-        'exhale': p.exhale,
-        'holdOut': p.holdOut,
-      });
+  test('has what the app links to by id', () {
+    final linked = [
+      for (final t in haltMeditationTitles) 'meditation:$t',
+      for (final t in haltSoundTitles) 'sound:$t',
+      'meditation:$sleepMeditationTitle',
+      'breathing:$sleepBreathingTitle',
+      'meditation:$stressMeditationTitle',
+      'breathing:$stressBreathingTitle',
+      for (final id in const [
+        'sound:Rainfall',
+        'sound:Ocean waves',
+        'sound:Deep focus',
+      ])
+        id,
+    ];
+    for (final id in linked) {
+      expect(byId, contains(id), reason: id);
     }
+  });
 
-    void meditation(String id, Meditation m) {
-      final s = byId[id]!;
-      expect(s.bodyType, 'meditation', reason: id);
-      expect(s.body['promptAt'], [for (final (at, _) in m.prompts) at]);
-      expect(s.textFor('en').prompts, [for (final (_, l) in m.prompts) l]);
-      expect(s.body['narration'], m.narration, reason: id);
+  test('every native tool names a screen this build has', () {
+    for (final item in snapshot.items) {
+      if (item.bodyType != 'native') continue;
+      expect(screenFor(item), isNotNull, reason: item.id);
     }
-
-    for (final m in meditations) {
-      meditation('meditation:${m.title}', m);
-    }
-    meditation('recovery:${urgeSurfMeditation.title}', urgeSurfMeditation);
-
-    for (final sound in soundsCatalog) {
-      final s = byId['sound:${sound.title}']!;
-      expect(s.body, {
-        'type': 'sound',
-        'category': sound.category.name,
-        'audio': sound.asset,
-        'loop': true,
-        'waveFreq': sound.waveFreq,
-        'waveSpeed': sound.waveSpeed,
-        'waveHeight': sound.waveHeight,
-        'pulse': sound.pulse,
-      });
-    }
-
-    for (final p in journalPrompts) {
-      final s = byId['prompt:${p.title}']!;
-      expect(s.body, {'type': 'prompt', 'group': p.group});
-      expect(s.textFor('en').seed, p.seed);
-    }
-
-    for (final l in [...cbtLessons, ...sleepLessons, ...stressLessons]) {
-      final s = byId['lesson:${l.title}']!;
-      expect(s.body, {'type': 'lesson', 'art': l.art.name});
-      expect(s.textFor('en').paragraphs, l.paragraphs);
-    }
-
     for (final t in [...cbtTools, ...sleepTools, ...stressTools]) {
-      final s = byId['tool:${t.title}'];
       // A tool with a guard hands on to an item listed under its own name.
-      if (t.guard != null) {
-        expect(s, isNull, reason: t.title);
-        continue;
-      }
-      expect(s!.bodyType, 'native');
-      expect(s.body['art'], t.art.name);
-      expect(s.textFor('en').meta, t.meta);
+      if (t.guard != null) continue;
+      expect(byId['tool:${t.title}']?.bodyType, 'native', reason: t.title);
     }
   });
 
-  test('matches the courses', () {
-    expect(
-      [for (final c in snapshot.courses) c.id],
-      [for (final c in builtInCourses) c.id],
-    );
+  test('still has every built-in course and the days it lists', () {
+    final ids = {for (final c in snapshot.courses) c.id};
     for (final c in builtInCourses) {
-      final s = snapshot.courses.firstWhere((x) => x.id == c.id);
-      final en = s.textFor('en');
-      expect(en.title, c.title);
-      expect(en.blurb, c.blurb);
-      expect(s.icon, c.icon);
-      expect(s.accent, c.accent);
-      expect(s.need, c.need);
-      expect(s.days, [for (final d in c.days) d.itemId]);
-      expect(en.notes, [for (final d in c.days) d.note]);
+      expect(ids, contains(c.id));
+    }
+    for (final c in snapshot.courses) {
+      for (final day in c.days) {
+        expect(byId, contains(day), reason: '${c.id}: $day');
+      }
     }
   });
 

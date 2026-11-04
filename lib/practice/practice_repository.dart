@@ -35,6 +35,15 @@ enum PracticeKind {
       values.firstWhere((k) => k.key == key, orElse: () => meditation);
 }
 
+/// The slug a session or feeling is kept against, from the item's content
+/// id: the title part of an older `kind:Title` id (what rows have always
+/// held, in English whatever language the app shows), or a newer slug id
+/// whole. Never the shown title, which may be translated.
+String practiceSlug(String itemId) {
+  final colon = itemId.indexOf(':');
+  return colon < 0 ? itemId : itemId.substring(colon + 1);
+}
+
 /// One finished session.
 class PracticeSession {
   const PracticeSession({

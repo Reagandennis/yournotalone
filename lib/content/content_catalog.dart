@@ -1,9 +1,11 @@
 /// Turns a [CatalogSnapshot] into what the screens use — [ContentItem]s
-/// that open the right screen, and [Course]s — and holds the one in use.
+/// that open the right screen, [Course]s, and the sounds, breathing
+/// patterns, meditations, journal prompts and lessons the hubs list — and
+/// holds the one in use.
 ///
-/// Off unless the app is built with `--dart-define=CATALOG_SNAPSHOT=true`;
-/// until then [contentIndex] and [courses] come from the Dart catalogues,
-/// exactly as before.
+/// `content/` is the source of all of it. The Dart catalogues are a frozen
+/// fallback, used only with `--dart-define=CATALOG_SNAPSHOT=false` (tests)
+/// or when no snapshot could be read at all.
 library;
 
 import 'dart:async';
@@ -21,6 +23,7 @@ import '../backgrounds/scene_library.dart';
 import '../cbt/cbt_catalog.dart';
 import '../courses/course_catalog.dart';
 import '../discover/content_index.dart';
+import '../journal/journal_prompts.dart';
 import '../journal/new_entry.dart';
 import '../l10n/l10n.dart';
 import '../meditation/breathing_screen.dart';
@@ -42,8 +45,9 @@ import 'catalog_snapshot.dart';
 
 /// On by default: the app reads its catalogue from the bundled snapshot and
 /// downloads newer published ones. `--dart-define=CATALOG_SNAPSHOT=false`
-/// goes back to the Dart catalogues, for comparing the two in tests; most
-/// sounds aren't bundled any more, so don't ship a build like that.
+/// goes back to the frozen Dart catalogues, for tests only: they miss
+/// anything added in `content/` since, and most sounds aren't bundled any
+/// more, so don't ship a build like that.
 const catalogSnapshotEnabled = bool.fromEnvironment(
   'CATALOG_SNAPSHOT',
   defaultValue: true,
@@ -145,20 +149,18 @@ final _tools = {
     screenKey(t.title): t,
 };
 
-/// The screen [item] opens, or null when this build can't show it (a
-/// screen it doesn't have, a field it doesn't understand) — such items are
-/// left out rather than shown as tiles that do nothing. [media] is the
-/// item's published audio by role, for files the app doesn't ship.
-WidgetBuilder? screenFor(
-  CatalogItem item, {
-  Map<String, MediaRef> media = const {},
-}) {
+/// What [item] is, built from its body: a [BreathPattern], [Meditation],
+/// [Sound], [ToolkitLesson] or [JournalPrompt]. Null for a `native` item,
+/// or when this build can't use it (a field it doesn't understand, a sound
+/// with no file here or online). [media] is the item's published audio by
+/// role, for files the app doesn't ship.
+Object? modelFor(CatalogItem item, {Map<String, MediaRef> media = const {}}) {
   final t = textFor(item);
   final body = item.body;
   try {
     switch (item.bodyType) {
       case 'breathing':
-        final pattern = BreathPattern(
+        return BreathPattern(
           t.title,
           t.blurb,
           item.accent,
@@ -169,10 +171,9 @@ WidgetBuilder? screenFor(
           premium: item.premium,
           id: item.id,
         );
-        return (_) => BreathingScreen(pattern: pattern);
       case 'meditation':
         final at = (body['promptAt'] as List).cast<num>();
-        final meditation = Meditation(
+        return Meditation(
           t.title,
           t.blurb,
           item.minutes!,
@@ -195,11 +196,10 @@ WidgetBuilder? screenFor(
           },
           id: item.id,
         );
-        return (_) => MeditationScreen(meditation: meditation);
       case 'sound':
         // A sound with no file here or online can't play: leave it out.
         if (!_playable(body['audio'] as String, media['audio'])) return null;
-        final sound = Sound(
+        return Sound(
           t.title,
           t.blurb,
           item.icon,
@@ -212,9 +212,8 @@ WidgetBuilder? screenFor(
           pulse: body['pulse'] as bool,
           id: item.id,
         );
-        return (_) => PlayerScreen(sound: sound);
       case 'lesson':
-        final lesson = ToolkitLesson(
+        return ToolkitLesson(
           title: t.title,
           blurb: t.blurb,
           minutes: item.minutes!,
@@ -222,17 +221,51 @@ WidgetBuilder? screenFor(
           paragraphs: t.paragraphs,
           premium: item.premium,
         );
-        return (_) => ToolkitLessonScreen(lesson: lesson, accent: item.accent);
-      case 'native':
-        final key = body['screen'] as String;
-        return item.kind == ContentKind.tool
-            ? _tools[key]?.open
-            : _recoveryScreens[key];
+      case 'prompt':
+        final group = body['group'];
+        return JournalPrompt(
+          t.title,
+          t.blurb,
+          item.icon,
+          item.accent,
+          // A group the hub has no heading for goes under the first one.
+          group: promptGroups.contains(group)
+              ? group as String
+              : promptGroups.first,
+          seed: t.seed ?? '',
+          premium: item.premium,
+        );
     }
   } catch (e) {
     debugPrint('Can\'t show ${item.id}: $e');
   }
   return null;
+}
+
+/// The screen [item] opens, or null when this build can't show it (a
+/// screen it doesn't have, a field it doesn't understand) — such items are
+/// left out rather than shown as tiles that do nothing. [media] is the
+/// item's published audio by role, for files the app doesn't ship.
+WidgetBuilder? screenFor(
+  CatalogItem item, {
+  Map<String, MediaRef> media = const {},
+}) {
+  if (item.bodyType == 'native') {
+    final key = item.body['screen'];
+    return item.kind == ContentKind.tool
+        ? _tools[key]?.open
+        : _recoveryScreens[key];
+  }
+  return switch (modelFor(item, media: media)) {
+    final BreathPattern p => (_) => BreathingScreen(pattern: p),
+    final Meditation m => (_) => MeditationScreen(meditation: m),
+    final Sound s => (_) => PlayerScreen(sound: s),
+    final ToolkitLesson l => (_) => ToolkitLessonScreen(
+      lesson: l,
+      accent: item.accent,
+    ),
+    _ => null,
+  };
 }
 
 /// [snapshot]'s items as the index lists them.
@@ -352,12 +385,25 @@ class ContentCatalog {
   CatalogSnapshot? _snapshot;
   List<ContentItem>? _items;
   List<Course>? _courses;
+  List<Sound>? _sounds;
+  List<BreathPattern>? _breathPatterns;
+  List<Meditation>? _meditations;
+  List<JournalPrompt>? _journalPrompts;
+  Map<Color, List<ToolkitLesson>>? _lessons;
   Map<String, List<MediaEntry>> _mediaByItem = const {};
   Map<String, MediaEntry> _mediaByPath = const {};
 
   /// Null means "use the Dart catalogues".
   List<ContentItem>? get items => _items;
   List<Course>? get courses => _courses;
+  List<Sound>? get sounds => _sounds;
+  List<BreathPattern>? get breathPatterns => _breathPatterns;
+  List<Meditation>? get meditations => _meditations;
+  List<JournalPrompt>? get journalPrompts => _journalPrompts;
+
+  /// The lessons of the toolkit with [accent] (CBT, Sleep or Stress).
+  List<ToolkitLesson>? lessonsFor(Color accent) =>
+      _lessons == null ? null : _lessons![accent] ?? const [];
   int? get version => _snapshot?.version;
 
   /// [itemId]'s published audio; empty with no snapshot, or none.
@@ -463,6 +509,32 @@ class ContentCatalog {
     _snapshot = snapshot;
     _items = items;
     _courses = coursesFrom(snapshot, items);
+    // What the hubs list, by kind, in the snapshot's order. Recovery's
+    // urge surfing is a meditation too, but it lives on the recovery hub.
+    final models = [
+      for (final item in snapshot.items)
+        (item, modelFor(item, media: snapshot.media[item.id] ?? const {})),
+    ];
+    _sounds = [
+      for (final (_, m) in models)
+        if (m is Sound) m,
+    ];
+    _breathPatterns = [
+      for (final (_, m) in models)
+        if (m is BreathPattern) m,
+    ];
+    _meditations = [
+      for (final (item, m) in models)
+        if (m is Meditation && item.kind == ContentKind.meditation) m,
+    ];
+    _journalPrompts = [
+      for (final (_, m) in models)
+        if (m is JournalPrompt) m,
+    ];
+    _lessons = {};
+    for (final (item, m) in models) {
+      if (m is ToolkitLesson) (_lessons![item.accent] ??= []).add(m);
+    }
     SceneLibrary.instance.use(snapshot);
     _mediaByItem = {};
     for (final e in media) {
@@ -482,6 +554,11 @@ class ContentCatalog {
     _snapshot = null;
     _items = null;
     _courses = null;
+    _sounds = null;
+    _breathPatterns = null;
+    _meditations = null;
+    _journalPrompts = null;
+    _lessons = null;
     _mediaByItem = const {};
     _mediaByPath = const {};
   }
@@ -489,3 +566,25 @@ class ContentCatalog {
 
 @visibleForTesting
 set bundledAssetsForTest(Set<String>? assets) => _bundledAssets = assets;
+
+// What the hubs list: the catalogue in use, or the Dart catalogues when
+// there's no snapshot (see [catalogSnapshotEnabled]).
+
+/// Every sound, for the Sounds tab and the player.
+List<Sound> get soundLibrary => ContentCatalog.instance.sounds ?? soundsCatalog;
+
+/// Every breathing pattern.
+List<BreathPattern> get breathPatternLibrary =>
+    ContentCatalog.instance.breathPatterns ?? breathPatterns;
+
+/// Every meditation on the meditations hub (not recovery's urge surfing).
+List<Meditation> get meditationLibrary =>
+    ContentCatalog.instance.meditations ?? meditations;
+
+/// Every journal prompt, each with its hub group.
+List<JournalPrompt> get journalPromptLibrary =>
+    ContentCatalog.instance.journalPrompts ?? journalPrompts;
+
+/// The lessons of the toolkit with [accent]; [builtIn] without a snapshot.
+List<ToolkitLesson> toolkitLessons(Color accent, List<ToolkitLesson> builtIn) =>
+    ContentCatalog.instance.lessonsFor(accent) ?? builtIn;

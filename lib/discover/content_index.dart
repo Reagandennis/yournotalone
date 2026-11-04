@@ -361,8 +361,8 @@ List<ContentItem> _toolkit(
 List<ContentItem> get contentIndex =>
     ContentCatalog.instance.items ?? builtInContentIndex;
 
-/// Built once from the Dart catalogues, so it covers exactly what this
-/// build ships with.
+/// Built once from the frozen Dart catalogues: the fallback when there's no
+/// snapshot. New content goes in `content/`, not here.
 final List<ContentItem> builtInContentIndex = [
   for (final p in breathPatterns)
     _tagged(
@@ -516,7 +516,10 @@ ContentItem? contentForPractice(PracticeSession session) {
     PracticeKind.sound => const [ContentKind.sound],
   };
   for (final item in contentIndex) {
-    if (kinds.contains(item.kind) && item.title == session.slug) return item;
+    if (kinds.contains(item.kind) &&
+        (practiceSlug(item.id) == session.slug || item.title == session.slug)) {
+      return item;
+    }
   }
   return null;
 }

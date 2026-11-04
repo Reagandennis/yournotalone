@@ -35,12 +35,15 @@ void main() {
     }
   });
 
-  test('builds the same index as the Dart catalogues', () {
+  test('builds an index item from every snapshot item, field for field', () {
     expect(
       [for (final i in fromSnapshot) i.id],
-      [for (final i in builtInContentIndex) i.id],
+      [for (final i in snapshot.items) i.id],
     );
-    for (final (s, d) in IterableZip2(fromSnapshot, builtInContentIndex)) {
+    final byId = {for (final i in snapshot.items) i.id: i};
+    for (final s in fromSnapshot) {
+      final d = byId[s.id]!;
+      final en = d.textFor('en');
       expect(
         (
           s.kind,
@@ -57,13 +60,13 @@ void main() {
         ),
         (
           d.kind,
-          d.title,
-          d.blurb,
+          en.title,
+          en.blurb,
           d.icon,
           d.accent,
           d.premium,
           d.minutes,
-          d.area,
+          en.area,
           _names(d.needs),
           _names(d.dayParts),
           d.addedOn,
@@ -73,20 +76,22 @@ void main() {
     }
   });
 
-  test('builds the same courses', () {
+  test('builds the snapshot\'s courses', () {
     final built = coursesFrom(snapshot, fromSnapshot);
     expect(
       [for (final c in built) c.id],
-      [for (final c in builtInCourses) c.id],
+      [for (final c in snapshot.courses) c.id],
     );
-    for (final (s, d) in IterableZip2(built, builtInCourses)) {
+    for (final s in built) {
+      final d = snapshot.courses.firstWhere((c) => c.id == s.id);
+      final en = d.textFor('en');
       expect(
         (s.title, s.blurb, s.icon, s.accent, s.need),
-        (d.title, d.blurb, d.icon, d.accent, d.need),
+        (en.title, en.blurb, d.icon, d.accent, d.need),
       );
       expect(
         [for (final day in s.days) (day.itemId, day.note)],
-        [for (final day in d.days) (day.itemId, day.note)],
+        [for (var i = 0; i < d.days.length; i++) (d.days[i], en.notes[i])],
       );
     }
   });
@@ -157,8 +162,8 @@ void main() {
 
     ContentCatalog.instance.use(snapshot);
     expect(identical(contentIndex, builtInContentIndex), isFalse);
-    expect(contentIndex, hasLength(builtInContentIndex.length));
-    expect(courses, hasLength(builtInCourses.length));
+    expect(contentIndex, hasLength(snapshot.items.length));
+    expect(courses, hasLength(snapshot.courses.length));
   });
 
   test('screen keys match the tool titles', () {
@@ -170,15 +175,3 @@ void main() {
 /// Sets compare by identity inside a record; sorted names compare by value.
 String _names(Set<Enum> values) =>
     ([for (final v in values) v.name]..sort()).join(',');
-
-/// Pairs two lists of the same length.
-class IterableZip2<A, B> extends Iterable<(A, B)> {
-  IterableZip2(this.a, this.b) : assert(a.length == b.length);
-
-  final List<A> a;
-  final List<B> b;
-
-  @override
-  Iterator<(A, B)> get iterator =>
-      [for (var i = 0; i < a.length; i++) (a[i], b[i])].iterator;
-}

@@ -98,7 +98,7 @@ class _BreathingScreenState extends State<BreathingScreen>
     // Keep the session, so it can add up to something.
     (widget.practice ?? PracticeRepository()).logSession(
       kind: PracticeKind.breathing,
-      slug: pattern.title,
+      slug: practiceSlug(pattern.id),
       title: pattern.title,
       minutes: _minutes.toDouble(),
     );
@@ -348,6 +348,7 @@ class _BreathingScreenState extends State<BreathingScreen>
           padding: const EdgeInsets.fromLTRB(28, 0, 28, 20),
           child: SessionCloseOut(
             title: pattern.title,
+            slug: practiceSlug(pattern.id),
             accent: pattern.accent,
             kind: PracticeKind.breathing,
           ),

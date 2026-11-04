@@ -8,19 +8,39 @@ Everything the app offers, as data: one YAML file per item in `items/`, one
 per course in `courses/`, and the allowed tags in `vocab.yaml`. Design:
 `docs/backend-design.md` §4 and §8.
 
-## For now the Dart catalogues are still the source of truth
+## This folder is the source of truth
 
-The screens read the catalogues in `lib/` unless the app is built with
-`--dart-define=CATALOG_SNAPSHOT=true`, and these files were exported from
-them. Until the app switches over for good, change content in Dart and then
-regenerate:
+Every screen reads the catalogue built from these files: Home, Explore,
+search, the Sounds tab, the meditations and breathing hub, the journal
+prompts and the CBT, Sleep and Stress reads. Add or change content here,
+then:
 
 ```
-flutter test tool/export_content_test.dart   # Dart catalogues → content/
-(cd tools/content && npm run build)          # content/ → assets/catalog/bundled.json
+(cd tools/content && npm run check)   # validate
+(cd tools/content && npm run build)   # content/ → assets/catalog/bundled.json
 ```
 
-`test/content_snapshot_test.dart` fails if the two drift apart.
+and publish (`tools/content/README.md`) so installed apps get it without
+an update.
+
+The Dart catalogues in `lib/` (`soundsCatalog`, `meditations`, …) are a
+frozen fallback, used only by tests built with
+`--dart-define=CATALOG_SNAPSHOT=false`. Don't add content there.
+`test/content_snapshot_test.dart` only checks that what the app links to
+by id (HALT, toolkit links, native screens, courses) is still here.
+
+Where a new item shows:
+
+- A lesson goes under the CBT, Sleep or Stress hub by its `accent`: `cbt`,
+  `sleep` or `stress`.
+- A prompt goes under its `body.group` heading in the journal hub
+  (`Everyday`, `Hard days`, `Looking back`, `Recovery`, `Before sleep`);
+  any other group goes under `Everyday`.
+- A meditation of kind `meditation` is on the meditations hub; a breathing
+  item on the breathing row; a sound on the Sounds tab under its
+  `body.category`.
+- Practice history is kept against the id: the part after `kind:` for an
+  older `kind:Title` id, otherwise the whole id. So never change an id.
 
 ## Rules the checker enforces (`cd tools/content && npm run check`)
 
@@ -33,7 +53,8 @@ flutter test tool/export_content_test.dart   # Dart catalogues → content/
 - Every item needs at least one need. Tags must come from `vocab.yaml`.
   Icons must come from `lib/content/content_icons.dart`.
 - Three optional tags feed the recommendation safety rules (design §5) and
-  exist only here, not in Dart (the export carries them over):
+  exist only here, not in Dart (except `deepContent` in
+  `lib/discover/content_tags.dart`, which a test keeps in step):
   - `intensity`: `gentle`, `moderate` or `deep`. Deep items dig into
     what's hard (worst-case writing, thought records).
   - `calmingSafe: true`: allowed straight after an awful or low check-in.
@@ -94,9 +115,6 @@ text:
 3. Flip `reviewed: false` to `true` for each item read, then
    `npm run build` and commit `assets/catalog/bundled.json`.
 
-`flutter test tool/export_content_test.dart` keeps the translations when
-it rewrites `items/` and `courses/` from Dart.
-
 ## Backgrounds
 
 `backgrounds/` holds the animated scenes behind the sound player and the
@@ -126,8 +144,6 @@ text:
   the page, and text sits on top.
 - An item can prefer one with `background: <id>`; otherwise it gets its
   kind's `defaultFor`. A kind can have only one default.
-- The export (`tool/export_content_test.dart`) keeps an item's
-  `background:` line when it rewrites the file.
 
 Publishing to R2 is covered in `tools/content/README.md`.
 

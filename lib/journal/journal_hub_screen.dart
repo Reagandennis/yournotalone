@@ -3,6 +3,7 @@ import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../home/mood_history_screen.dart';
 import '../l10n/l10n.dart';
@@ -55,7 +56,7 @@ class JournalHubScreen extends StatelessWidget {
         context,
         context.l10n.journalHubPromptPremiumTitle,
         context.l10n.journalHubPromptPremiumMessage(
-          journalPrompts.length,
+          journalPromptLibrary.length,
           introOffer,
         ),
         item: prompt.title,
@@ -217,7 +218,7 @@ class JournalHubScreen extends StatelessWidget {
                   const SizedBox(height: 14),
                   SectionHeader(title: group),
                   const SizedBox(height: 12),
-                  for (final prompt in journalPrompts)
+                  for (final prompt in journalPromptLibrary)
                     if (prompt.group == group)
                       _card(
                         context,

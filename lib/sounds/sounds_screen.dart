@@ -3,6 +3,7 @@ import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'player_screen.dart';
@@ -204,8 +205,8 @@ class _SoundsScreenState extends State<SoundsScreen> {
   /// screen you bought from still locked.
   Widget _buildContent(BuildContext context) {
     final visible = _filter == null
-        ? soundsCatalog
-        : [for (final s in soundsCatalog) if (s.category == _filter) s];
+        ? soundLibrary
+        : [for (final s in soundLibrary) if (s.category == _filter) s];
     final player = SoundPlayer.instance;
     final c = context.brand;
     return Scaffold(

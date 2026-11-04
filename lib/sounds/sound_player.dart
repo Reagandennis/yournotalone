@@ -6,12 +6,12 @@ import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
+import '../content/content_catalog.dart';
 import '../media/download_store.dart';
 import '../media/media_source.dart';
 import '../media/narration_stream.dart';
 import '../l10n/l10n.dart';
 import '../practice/practice_repository.dart';
-import 'sounds_catalog.dart';
 
 /// App-wide ambient sound player: one sound at a time, looping seamlessly,
 /// and it keeps playing while the user moves around the app.
@@ -113,12 +113,12 @@ class SoundPlayer {
     if (started == null || asset == null) return;
     final minutes = clock().difference(started).inSeconds / 60;
     if (minutes < _minLoggedMinutes) return;
-    final matches = soundsCatalog.where((s) => s.asset == asset);
+    final matches = soundLibrary.where((s) => s.asset == asset);
     if (matches.isEmpty) return;
     final sound = matches.first;
     unawaited(practice.logSession(
       kind: PracticeKind.sound,
-      slug: sound.title,
+      slug: practiceSlug(sound.id),
       title: sound.title,
       minutes: minutes,
     ));
@@ -171,7 +171,7 @@ class SoundPlayer {
           if (nowPlaying.value != asset) return;
       }
       if (backgroundAudioReady) {
-        final matches = soundsCatalog.where((s) => s.asset == asset);
+        final matches = soundLibrary.where((s) => s.asset == asset);
         title ??= matches.isEmpty ? currentL10n().soundPlayerFallbackTitle : matches.first.title;
         // What the lock screen and notification show while it plays.
         final tag = MediaItem(id: asset, title: title, artist: 'yournotalone');

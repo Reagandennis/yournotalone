@@ -2,10 +2,8 @@
 /// `content/` (see docs/backend-design.md §4). The app bundles one at
 /// `assets/catalog/bundled.json`; later a newer one can be downloaded.
 ///
-/// The screens read it only in a build with `CATALOG_SNAPSHOT=true` (see
-/// `content_catalog.dart`); otherwise the Dart catalogues are what they
-/// use, and `test/content_snapshot_test.dart` checks the two say exactly
-/// the same thing in English.
+/// Every screen reads it (see `content_catalog.dart`). The Dart catalogues
+/// are only a frozen fallback for builds with `CATALOG_SNAPSHOT=false`.
 library;
 
 import 'dart:convert';
