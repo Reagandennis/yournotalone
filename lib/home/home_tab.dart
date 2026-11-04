@@ -10,6 +10,7 @@ import '../courses/course_catalog.dart';
 import '../courses/course_progress.dart';
 import '../courses/course_screen.dart';
 import '../discover/content_index.dart';
+import '../discover/content_tags.dart';
 import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
 import '../discover/recommendations.dart';
@@ -498,6 +499,8 @@ class _HomeTabState extends State<HomeTab> {
     final needs = Need.forMood(index);
     final picks = recommend(
       needs: needs,
+      // After an awful or low check-in, something gentle, not deep work.
+      exclude: index <= 1 ? deepContent : const {},
       count: 1,
       now: DateTime.now(),
       premium: isPremiumUser(),

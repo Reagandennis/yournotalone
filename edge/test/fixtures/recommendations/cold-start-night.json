@@ -1,5 +1,5 @@
 {
-  "description": "No history, premium, at night: night items first, then the daily shuffle.",
+  "description": "No history, premium, at night: night items first, then gentle starters; nothing for morning or focus.",
   "signals": {
     "now": "2026-11-02T18:30:00Z",
     "localTime": "2026-11-02T21:30",
@@ -32,21 +32,21 @@
         }
       },
       {
-        "id": "med-morning-reset",
-        "reason": "Just added",
-        "reasonKey": "fresh"
-      },
-      {
         "id": "breathing:Panic reset",
         "reason": "Something to try",
         "reasonKey": "fallback"
       },
       {
-        "id": "sound:Deep focus",
+        "id": "lesson:Why avoiding things keeps anxiety alive",
+        "reason": "Something to try",
+        "reasonKey": "fallback"
+      },
+      {
+        "id": "tool:Physiological sigh",
         "reason": "Something to try",
         "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

@@ -99,7 +99,7 @@ describe('POST /v1/recommendations: auth and input', () => {
         course: null,
       }),
     );
-    expect(body.rules).toBe('v1');
+    expect(body.rules).toBe('v2');
     expect(body.catalogVersion).toBe(7);
     expect(body.items.length).toBeGreaterThan(0);
     for (const x of body.items) expect(typeof x.reason).toBe('string');
@@ -176,8 +176,16 @@ describe('POST /v1/recommendations: signals', () => {
 
   it('uses the popularity snapshot', async () => {
     m.popularity = { format: 1, days: 30, items: [{ kind: 'prompt', slug: 'Worst case', users: 80 }] };
+    // Saving a low-mood item shows the need, which lets deep content for it in.
+    m.supabase = tables({ saved_items: [{ item_id: 'meditation:Loving kindness' }] });
     const body = await ok(await recommendations(await token({ comp: true }), { ...MORNING, limit: 20 }));
     expect(body.items.find((x) => x.id === 'prompt:Worst case')?.reason).toBe(REASONS.popular);
+  });
+
+  it('popularity never brings deep content to someone who has not shown the need', async () => {
+    m.popularity = { format: 1, days: 30, items: [{ kind: 'prompt', slug: 'Worst case', users: 80 }] };
+    const body = await ok(await recommendations(await token({ comp: true }), { ...MORNING, limit: 20 }));
+    expect(body.items.map((x) => x.id)).not.toContain('prompt:Worst case');
   });
 
   it('loads popularity once an hour, not per request', async () => {
@@ -198,22 +206,27 @@ describe('POST /v1/recommendations: signals', () => {
   });
 });
 
+// What a cold start gets in the morning from SNAPSHOT: Box breathing,
+// Grounding and Loving kindness. The rest is for the evening or night,
+// deep, or for urges.
+const COLD_MORNING = 3;
+
 describe('POST /v1/recommendations: degraded', () => {
   it('still answers 200 when Supabase errors', async () => {
     m.supabase = () => json({ message: 'down' }, 500);
-    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(6);
+    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(COLD_MORNING);
   });
 
   it('still answers 200 when Supabase is unreachable', async () => {
     m.supabase = () => {
       throw new TypeError('fetch failed');
     };
-    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(6);
+    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(COLD_MORNING);
   });
 
   it('still answers 200 when the tables are not migrated yet (404)', async () => {
     m.supabase = () => json({ code: '42P01' }, 404);
-    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(6);
+    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(COLD_MORNING);
   });
 
   it('still answers 200 when Supabase hangs: the timeout ends the wait', async () => {
@@ -223,7 +236,7 @@ describe('POST /v1/recommendations: degraded', () => {
         if (!signal) return reject(new Error('no timeout signal passed'));
         signal.addEventListener('abort', () => reject(signal.reason));
       });
-    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(6);
+    expect((await ok(await recommendations(await token(), MORNING))).items).toHaveLength(COLD_MORNING);
   }, 10_000);
 
   it('still answers 200 when the popularity file is missing or broken', async () => {
@@ -261,7 +274,9 @@ describe('POST /v1/recommendations: safety and premium', () => {
   });
 
   it('a comp user is premium without asking RevenueCat', async () => {
-    const body = await ok(await recommendations(await token({ comp: true }), { ...MORNING, limit: 20 }));
+    const body = await ok(
+      await recommendations(await token({ comp: true, goals: ['low', 'anxious'] }), { localTime: '2026-11-02T19:00', limit: 20 }),
+    );
     const premium = ['meditation:Body scan', 'prompt:Worst case', 'meditation:Loving kindness'];
     expect(body.items.filter((x) => premium.includes(x.id)).length).toBe(3);
     expect(rcCalls(m)).toHaveLength(0);

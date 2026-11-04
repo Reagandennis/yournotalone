@@ -46,19 +46,6 @@
         }
       },
       {
-        "id": "med-morning-reset",
-        "reason": "Because you're working on focus",
-        "reasonKey": "goal",
-        "reasonArgs": {
-          "need": "focus"
-        }
-      },
-      {
-        "id": "breathing:Panic reset",
-        "reason": "Something to try",
-        "reasonKey": "fallback"
-      },
-      {
         "id": "sound:Deep focus",
         "reason": "Because you're working on focus",
         "reasonKey": "goal",
@@ -67,11 +54,27 @@
         }
       },
       {
+        "id": "breathing:Box breathing",
+        "reason": "Because you're working on focus",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "focus"
+        }
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
         "id": "lesson:Why avoiding things keeps anxiety alive",
         "reason": "Something to try",
         "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

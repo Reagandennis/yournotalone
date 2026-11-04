@@ -45,6 +45,6 @@
         "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

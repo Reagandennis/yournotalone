@@ -8,6 +8,7 @@ import 'package:yournotalone/cbt/cbt_content.dart';
 import 'package:yournotalone/content/catalog_snapshot.dart';
 import 'package:yournotalone/courses/course_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
+import 'package:yournotalone/discover/content_tags.dart';
 import 'package:yournotalone/journal/journal_prompts.dart';
 import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/recovery/recovery_screen.dart';
@@ -29,6 +30,17 @@ void main() {
         as Map<String, dynamic>,
   )!;
   final byId = {for (final i in snapshot.items) i.id: i};
+
+  test('deepContent is every item tagged intensity: deep', () {
+    final raw =
+        jsonDecode(File(bundledCatalogAsset).readAsStringSync())
+            as Map<String, dynamic>;
+    final deep = {
+      for (final i in (raw['items'] as List).cast<Map<String, dynamic>>())
+        if ((i['tags'] as Map?)?['intensity'] == 'deep') i['id'] as String,
+    };
+    expect(deepContent, deep);
+  });
 
   test('is the bundled copy, in a format this build reads', () {
     expect(snapshot.version, 0);

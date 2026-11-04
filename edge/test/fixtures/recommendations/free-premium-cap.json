@@ -12,22 +12,6 @@
   "expected": {
     "items": [
       {
-        "id": "breathing:4-7-8 calm",
-        "reason": "Because you're working on sleep",
-        "reasonKey": "goal",
-        "reasonArgs": {
-          "need": "sleep"
-        }
-      },
-      {
-        "id": "meditation:Sleep wind-down",
-        "reason": "For tonight",
-        "reasonKey": "dayPart",
-        "reasonArgs": {
-          "part": "night"
-        }
-      },
-      {
         "id": "breathing:Box breathing",
         "reason": "Because you're working on anxiety",
         "reasonKey": "goal",
@@ -44,6 +28,22 @@
         }
       },
       {
+        "id": "breathing:4-7-8 calm",
+        "reason": "Because you're working on sleep",
+        "reasonKey": "goal",
+        "reasonArgs": {
+          "need": "sleep"
+        }
+      },
+      {
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
         "id": "tool:Grounding: 5-4-3-2-1",
         "reason": "Because you're working on anxiety",
         "reasonKey": "goal",
@@ -52,11 +52,11 @@
         }
       },
       {
-        "id": "sound:Deep focus",
+        "id": "tool:Physiological sigh",
         "reason": "Something to try",
         "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

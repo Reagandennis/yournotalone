@@ -24,22 +24,6 @@
   "expected": {
     "items": [
       {
-        "id": "meditation:Sleep wind-down",
-        "reason": "For tonight",
-        "reasonKey": "dayPart",
-        "reasonArgs": {
-          "part": "night"
-        }
-      },
-      {
-        "id": "sound:Rainfall",
-        "reason": "For tonight",
-        "reasonKey": "dayPart",
-        "reasonArgs": {
-          "part": "night"
-        }
-      },
-      {
         "id": "support-crisis-lines",
         "reason": "Because you're working on low moods",
         "reasonKey": "goal",
@@ -56,16 +40,32 @@
         }
       },
       {
-        "id": "sound:Deep focus",
+        "id": "meditation:Sleep wind-down",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
+        "id": "sound:Rainfall",
+        "reason": "For tonight",
+        "reasonKey": "dayPart",
+        "reasonArgs": {
+          "part": "night"
+        }
+      },
+      {
+        "id": "tool:Physiological sigh",
         "reason": "Something to try",
         "reasonKey": "fallback"
       },
       {
-        "id": "breathing:Box breathing",
+        "id": "tool:Grounding: 5-4-3-2-1",
         "reason": "Something to try",
         "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

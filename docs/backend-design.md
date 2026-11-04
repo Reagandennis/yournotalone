@@ -266,7 +266,7 @@ Workers rate-limiting binding.
 { "items": [ { "id": "breathing:Panic reset", "reason": "For right now", "reasonKey": "lead" },
              { "id": "…", "reason": "Because you felt better after Body scan",
                "reasonKey": "feltBetter", "reasonArgs": { "title": "meditation:Body scan" } }, … ],
-  "rules": "v1" }
+  "rules": "v2" }
 ```
 
 The server adds the last 90 days of `practice_sessions` and
@@ -274,33 +274,56 @@ The server adds the last 90 days of `practice_sessions` and
 applies, so the Worker never sees anyone else's rows), plus goals from the
 JWT and the daily popularity snapshot.
 
-**Scoring, v1** (deterministic, so the same code can run on the device):
+**Scoring, v2** (deterministic, so the same code can run on the device).
+v1 ranked everything and let weak matches fill the list, so a new user
+could get addiction-recovery tools, a morning meditation at 10pm, or two
+locked items on top. v2 makes each pick earn its place:
 
 1. **Safety first.** If `lastMood ≤ 1` (awful or low) in the last 2 hours,
    the list leads with the panic or grounding items and the support card.
    Only items tagged `calmingSafe` are allowed, and nothing tagged
    `Need.good` or "high intensity". Crisis and support items are always free
    and never ranked down.
-2. **Continue the course** in progress, if any.
-3. Score = need affinity (goals, then needs of items finished with
-   "felt better", minus needs of items finished "felt worse")
+2. **Continue the course** in progress, if any (whatever the time of day).
+3. **Who it's for.** Before scoring, an item is left out when:
+   - it's tagged for parts of the day and now isn't one of them;
+   - it's only for sleep, it's morning or afternoon, and the person hasn't
+     shown a sleep need;
+   - it's a recovery tool, or only for urges, anger or panic, and the
+     person hasn't shown that need;
+   - it's `deep` and the person hasn't shown one of its needs.
+
+   "Shown a need" means a goal, or an item with that need they did, saved
+   or felt better after in the last 90 days (or, for panic, an awful
+   check-in just now). Opening recovery tools on the device also counts.
+4. Score = need affinity (goals; needs of items finished "felt better",
+   minus "felt worse"; a little for needs they've shown)
+   + an okay-or-better check-in in the last 6 hours (reflection, good days)
    + time-of-day fit
    + freshness (`addedOn` < 21 days)
    + small popularity prior
    − recently done (finished in the last 24h).
-4. **Diversity:** at most 2 items of one kind in the top 6, and at most 2
+5. **Filling the list:** first everything with a positive term, then, if
+   the top 6 isn't full, gentle starters for the time of day (anxiety and
+   stress, plus focus by day or sleep in the evening), then anything else
+   still allowed. Deep and support items never fill; they need a reason.
+6. **Diversity:** at most 2 items of one kind in the top 6, and at most 2
    from one course. The course in progress is the exception: only its next
    day (step 2) is in the top 6. (It was 1 per course, but most popular
    items are days of the 7-day courses, so that held back too many good
    matches.)
-5. **Reason:** the strongest scoring term becomes a short line, for example
+7. **Reason:** the strongest scoring term becomes a short line, for example
    "Because you felt better after Body scan". It's sent as a code with
    arguments (`reasonKey: "feltBetter"`, `reasonArgs: {title: <item id>}`)
    that the app renders in its own language, plus the English line for
    older apps.
-6. For a free user, premium items are capped at 2 of the top 6, so Home
-   never looks like a wall of locks. Locked items still show, because they
-   lead to the upgrade sheet.
+8. For a free user, premium items are capped at 2 of the top 6 and never
+   take the first two places while there's something free to put there.
+   Locked items still show, because they lead to the upgrade sheet.
+
+The app's own fallback (offline, and the one suggestion after a check-in)
+leaves `deep` items out after an awful or low check-in; `deepContent` in
+`lib/discover/content_tags.dart` lists them, checked against `content/`.
 
 Unit tests cover every safety rule (§9). The function lives in its own
 module. If we decide later to run it on the device too, it's small enough

@@ -1,4 +1,4 @@
-// Recommendation scoring, v1 (design §5). Pure and deterministic: the same
+// Recommendation scoring, v2 (design §5). Pure and deterministic: the same
 // catalogue and signals always give the same list, so the shared fixtures
 // in test/fixtures/recommendations/ can check a Dart port later. No I/O,
 // no clock: `now` and `localTime` come in with the signals.
@@ -9,10 +9,23 @@
 //      for feeling good, and the list leads with a panic/grounding item and
 //      the support items.
 //   2. The next day of the course in progress.
-//   3. Everything else by score (TERMS below).
+//   3. Everything else that has a reason to be there, by score (TERMS
+//      below). An item has to earn its place:
+//        - one tagged for parts of the day only shows in those parts;
+//        - one only for sleep shows in the evening or at night, unless
+//          the person is working on sleep or has done sleep items;
+//        - one only for urges, anger or panic, a recovery tool, or a deep
+//          one, needs the person to have shown that need (a goal, or
+//          something they did, saved or felt better after);
+//        - and it needs a positive term: a goal, history, the time of
+//          day, a recent check-in, saved, new or popular.
+//      If that leaves the window short, gentle starters fill it (free
+//      ones first for a free user), then anything else still eligible
+//      that isn't deep or crisis support: those two only show with a reason.
 //   4. Caps on the top 6: at most 2 of one kind, at most 2 from one
 //      course (only the day to continue from the course in progress), and
-//      for a free user at most 2 premium items.
+//      for a free user at most 2 premium items, never in the first two
+//      places while there's something free to put there.
 //
 // Every suggestion carries a reason twice: an English line (`reason`, for
 // older apps) and a code with arguments (`reasonKey`, `reasonArgs`) that
@@ -22,7 +35,7 @@
 // Support items (crisis content) are always free, skip the caps and never
 // get a negative term.
 
-export const RULES = 'v1';
+export const RULES = 'v2';
 
 /** The window the diversity and premium caps apply to. */
 export const TOP = 6;
@@ -35,6 +48,8 @@ const SAFE_WINDOW = 2 * HOUR;
 const RECENT_WINDOW = DAY;
 const FEELINGS_WINDOW = 90 * DAY;
 const FRESH_DAYS = 21;
+/** How long an okay-or-better check-in steers the list. */
+const MOOD_WINDOW = 6 * HOUR;
 
 export const WEIGHTS = {
   /** Per need shared with the person's goals, at most two. */
@@ -45,13 +60,16 @@ export const WEIGHTS = {
   mood: 2,
   dayPart: 1.5,
   /** Tagged for other parts of the day only. */
-  wrongDayPart: -0.5,
   fresh: 0.75,
   /** Times count / the top count. */
   popular: 0.5,
   saved: 0.5,
   /** Times opens of this kind / the most-opened kind. */
   habit: 0.3,
+  /** Per need shared with what they've done, saved or felt better after (90 days), at most two. */
+  interest: 0.5,
+  /** An okay-or-better check-in in the last 6 hours: per need it points to. */
+  checkIn: 1,
   /** Finished in the last 24 hours. */
   recent: -3,
 } as const;
@@ -71,6 +89,9 @@ const NEED_LABEL: Record<string, string> = {
   reflect: 'reflection',
   good: 'good days',
 };
+
+/** Needs most people don't have: content for them waits until the person shows the need. */
+const NICHE = new Set(['urges', 'angry', 'panic']);
 
 /** Need.forMood: what each check-in face (0 awful … 4 great) points to. */
 function needsForMood(mood: number): string[] {
@@ -109,6 +130,14 @@ export const REASONS = {
   saved: 'One you saved',
   fallback: 'Something to try',
 } as const;
+
+/** Broad needs a cold start can be offered, by the part of the day. */
+const STARTER_NEEDS: Record<DayPart, string[]> = {
+  morning: ['anxious', 'stressed', 'focus'],
+  afternoon: ['anxious', 'stressed', 'focus'],
+  evening: ['anxious', 'stressed', 'sleep'],
+  night: ['anxious', 'stressed', 'sleep'],
+};
 
 // ------------------------------------------------------------------ types
 
@@ -252,10 +281,56 @@ const reasonOf = (key: Exclude<ReasonKey, 'course' | 'feltBetter' | 'goal' | 'da
 /** Premium as far as the caps (and the app) should see it. */
 const lockedFor = (item: ScoreItem, premium: boolean) => !premium && item.premium && !item.support;
 
+// ------------------------------------------------------------ eligible
+
+/** Tagged for parts of the day, and now isn't one of them. */
+const wrongTime = (item: ScoreItem, c: Context) => item.dayParts.length > 0 && !item.dayParts.includes(c.dayPart);
+
+/**
+ * Whether the item may be suggested to this person at all, before any
+ * scoring. Support items always may.
+ */
+function eligible(item: ScoreItem, c: Context): boolean {
+  if (item.support) return true;
+  if (wrongTime(item, c)) return false;
+  const shown = (n: string) => c.interest.has(n) || c.moodNeeds.has(n);
+  // Sleep-only content belongs to the evening and night, unless sleep is
+  // what they're working on.
+  if (
+    item.needs.length > 0 &&
+    item.needs.every((n) => n === 'sleep') &&
+    c.dayPart !== 'evening' &&
+    c.dayPart !== 'night' &&
+    !shown('sleep')
+  ) {
+    return false;
+  }
+  // Recovery tools and content only for urges, anger or panic wait until
+  // the person has shown that need.
+  const niche = item.needs.length > 0 && item.needs.every((n) => NICHE.has(n));
+  if ((niche || item.kind === 'recovery') && !item.needs.some(shown) && !c.openedKinds.has('recovery')) return false;
+  // Deep work (worst-case writing, thought records) only for a need
+  // they've shown.
+  if (item.intensity === 'deep' && !item.needs.some(shown)) return false;
+  return true;
+}
+
+/** Fills a short list for someone the signals say little about. */
+function starter(item: ScoreItem, c: Context): boolean {
+  return (
+    !item.support &&
+    item.intensity !== 'deep' &&
+    item.kind !== 'recovery' &&
+    !item.needs.every((n) => NICHE.has(n)) &&
+    item.needs.some((n) => STARTER_NEEDS[c.dayPart].includes(n)) &&
+    eligible(item, c)
+  );
+}
+
 // ------------------------------------------------------------------ score
 
 interface Term {
-  name: 'felt' | 'goal' | 'mood' | 'dayPart' | 'fresh' | 'saved' | 'popular' | 'habit';
+  name: 'felt' | 'goal' | 'interest' | 'checkIn' | 'mood' | 'dayPart' | 'fresh' | 'saved' | 'popular' | 'habit';
   value: number;
   /** Null when the term can't be put into words. */
   reason: Reason | null;
@@ -265,6 +340,8 @@ interface Scored {
   item: ScoreItem;
   score: number;
   reason: Reason;
+  /** Has a term that says why this person, now (habit alone doesn't). */
+  relevant: boolean;
   tie: number;
 }
 
@@ -276,6 +353,12 @@ interface Context {
   distressed: boolean;
   goals: Set<string>;
   moodNeeds: Set<string>;
+  /** Needs an okay-or-better check-in in the last 6 hours points to. */
+  checkInNeeds: Set<string>;
+  /** Needs the person has shown: goals, and what they did, saved or felt better after. */
+  interest: Set<string>;
+  /** Kinds they've opened on this device. */
+  openedKinds: Set<string>;
   /** Need -> summed feeling (+1 better, -1 worse), clamped to ±1 after /2. */
   needWeight: Map<string, number>;
   /** Need -> the latest item that felt better and has it. */
@@ -312,6 +395,19 @@ function context(catalog: ScoreCatalog, s: Signals): Context {
   const popularity = s.popularity ?? {};
   const opens = s.opensByKind ?? {};
   const distressed = isDistressed(s, now);
+
+  const interest = new Set(s.goals ?? []);
+  const shown = [
+    ...(s.sessions ?? []).filter((x) => within(x.at, now, FEELINGS_WINDOW)).map((x) => x.id),
+    ...(s.saved ?? []),
+  ];
+  for (const id of shown) for (const n of byId.get(id)?.needs ?? []) interest.add(n);
+  for (const n of betterAfter.keys()) interest.add(n);
+
+  const checkInNeeds =
+    !distressed && typeof s.lastMood === 'number' && s.lastMood >= 2 && s.lastMoodAt && within(s.lastMoodAt, now, MOOD_WINDOW)
+      ? needsForMood(s.lastMood)
+      : [];
   return {
     now,
     today,
@@ -319,6 +415,9 @@ function context(catalog: ScoreCatalog, s: Signals): Context {
     distressed,
     goals: new Set(s.goals ?? []),
     moodNeeds: new Set(distressed ? needsForMood(s.lastMood!) : []),
+    checkInNeeds: new Set(checkInNeeds),
+    interest,
+    openedKinds: new Set(Object.entries(opens).filter(([, n]) => Number.isFinite(n) && n > 0).map(([k]) => k)),
     needWeight,
     betterAfter,
     recent: new Set((s.sessions ?? []).filter((x) => within(x.at, now, RECENT_WINDOW)).map((x) => x.id)),
@@ -372,16 +471,22 @@ function terms(item: ScoreItem, c: Context): Term[] {
     });
   }
 
+  const shownNeeds = needs.filter((n) => c.interest.has(n) && !c.goals.has(n)).length;
+  if (shownNeeds) out.push({ name: 'interest', value: Math.min(2, shownNeeds) * WEIGHTS.interest, reason: null });
+
+  const checkIn = needs.filter((n) => c.checkInNeeds.has(n)).length;
+  if (checkIn) out.push({ name: 'checkIn', value: checkIn * WEIGHTS.checkIn, reason: null });
+
   if (c.distressed) {
     const fit = needs.filter((n) => c.moodNeeds.has(n)).length;
     if (fit) out.push({ name: 'mood', value: fit * WEIGHTS.mood, reason: reasonOf('lead') });
   }
 
-  if (item.dayParts.length) {
-    const fits = item.dayParts.includes(c.dayPart);
+  // Items for other parts of the day never get this far (see eligible).
+  if (item.dayParts.includes(c.dayPart)) {
     out.push({
       name: 'dayPart',
-      value: fits ? WEIGHTS.dayPart : WEIGHTS.wrongDayPart,
+      value: WEIGHTS.dayPart,
       reason: { reason: DAY_PART_REASON[c.dayPart], reasonKey: 'dayPart', reasonArgs: { part: c.dayPart } },
     });
   }
@@ -421,6 +526,13 @@ function score(item: ScoreItem, c: Context, day: number): Scored {
     item,
     score: total,
     reason: best?.reason ?? reasonOf('fallback'),
+    // History alone makes deep and support items allowed, not suggested.
+    relevant: all.some(
+      (t) =>
+        t.value > 0 &&
+        t.name !== 'habit' &&
+        (t.reason !== null || (item.intensity !== 'deep' && !item.support)),
+    ),
     tie: (stableHash(item.id) + day * 7919) % 1009,
   };
 }
@@ -434,7 +546,10 @@ function byRank(a: Scored, b: Scored): number {
 export function recommend(catalog: ScoreCatalog, s: Signals): Recommendations {
   const c = context(catalog, s);
   const limit = clamp(Math.floor(s.limit ?? DEFAULT_LIMIT), 1, MAX_LIMIT);
-  const pool = c.distressed ? catalog.items.filter(isCalmingSafe) : catalog.items;
+  // Safe mode keeps its own pool; the time of day still applies there.
+  const pool = c.distressed
+    ? catalog.items.filter((i) => isCalmingSafe(i) && eligible(i, c))
+    : catalog.items.filter((i) => eligible(i, c));
   const ranked = pool.map((item) => score(item, c, c.today)).sort(byRank);
 
   const coursesOf = new Map<string, string[]>();
@@ -459,11 +574,13 @@ export function recommend(catalog: ScoreCatalog, s: Signals): Recommendations {
     current && Number.isInteger(s.course!.day) && s.course!.day >= 0 ? current.days[s.course!.day] : undefined;
   const courseCap = (id: string) => (nextDay && id === current!.id ? 1 : COURSE_CAP);
   const window = Math.min(TOP, limit);
-  const fits = (item: ScoreItem) =>
+  const freeExists = ranked.some((x) => !lockedFor(x.item, s.premium) && !x.item.support);
+  const fits = (item: ScoreItem, strict: boolean) =>
     item.support ||
     ((kinds.get(item.kind) ?? 0) < 2 &&
       (coursesOf.get(item.id) ?? []).every((id) => (courses.get(id) ?? 0) < courseCap(id)) &&
-      (!lockedFor(item, s.premium) || premiumCount < 2));
+      (!lockedFor(item, s.premium) ||
+        (premiumCount < 2 && !(strict && freeExists && picks.length < 2))));
   const add = (item: ScoreItem, reason: Reason) => {
     if (picked.has(item.id) || picks.length >= limit) return;
     picks.push({ id: item.id, ...reason });
@@ -486,10 +603,11 @@ export function recommend(catalog: ScoreCatalog, s: Signals): Recommendations {
     }
   }
 
-  // 2. The course in progress.
+  // 2. The course in progress: its day shows whatever the time, but in
+  //    safe mode only if it's calming.
   if (current && nextDay) {
     const day = s.course!.day;
-    const item = pool.find((i) => i.id === nextDay);
+    const item = (c.distressed ? pool : catalog.items).find((i) => i.id === nextDay);
     if (item) {
       add(item, {
         reason: `Day ${day + 1} of ${current.title}`,
@@ -499,14 +617,27 @@ export function recommend(catalog: ScoreCatalog, s: Signals): Recommendations {
     }
   }
 
-  // 3–4. By score, with the caps on the top window. Nothing is let past a
-  // cap to fill the window; anything held back can follow it.
-  for (const x of ranked) {
-    if (picks.length >= window) break;
-    if (!picked.has(x.item.id) && fits(x.item)) add(x.item, x.reason);
+  // 3–4. By score, with the caps on the top window: first what has a
+  // reason, then gentle starters, then the rest of what's eligible. Nothing is let past a cap to fill the
+  // window; anything held back can follow it. A first pass keeps
+  // premium out of the first two places for a free user; a second lets
+  // it fill what's left.
+  const relevant = ranked.filter((x) => x.relevant || c.distressed);
+  const starters = ranked
+    .filter((x) => !x.relevant && !c.distressed && starter(x.item, c))
+    .sort((a, b) => Number(lockedFor(a.item, s.premium)) - Number(lockedFor(b.item, s.premium)) || byRank(a, b));
+  const tiered = new Set([...relevant, ...starters]);
+  const rest = ranked.filter((x) => !tiered.has(x) && x.item.intensity !== 'deep' && !x.item.support);
+  for (const strict of [true, false]) {
+    for (const list of [relevant, starters, rest]) {
+      for (const x of list) {
+        if (picks.length >= window || (strict && picks.length >= 2)) break;
+        if (!picked.has(x.item.id) && fits(x.item, strict)) add(x.item, x.reason);
+      }
+    }
   }
   if (picks.length >= window) {
-    for (const x of ranked) {
+    for (const x of [...relevant, ...starters, ...rest]) {
       if (picks.length >= limit) break;
       if (!picked.has(x.item.id)) add(x.item, x.reason);
     }

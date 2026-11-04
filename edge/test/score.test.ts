@@ -293,3 +293,66 @@ describe('scoring', () => {
     expect(top.filter((i) => sleep7.days.includes(i.id))).toHaveLength(2);
   });
 });
+
+describe('v2: every pick has to earn its place', () => {
+  const MORNING = { now: '2026-11-02T05:00:00Z', localTime: '2026-11-02T08:00' };
+  const cold = (s: Partial<Signals>) => itemsOf(real, { ...MORNING, premium: false, limit: 20, ...s });
+
+  for (const [name, catalog] of [['fixture', fixture], ['bundled', real]] as const) {
+    for (const [when, time] of [['morning', MORNING], ['night', NIGHT]] as const) {
+      it(`${name}, ${when}: nothing tagged for another part of the day`, () => {
+        const part = when === 'morning' ? 'morning' : 'night';
+        for (const item of itemsOf(catalog, { ...time, premium: true, limit: 20 })) {
+          if (item.dayParts.length) expect(item.dayParts, item.id).toContain(part);
+        }
+      });
+    }
+  }
+
+  it('a new user never gets urges, anger-only or recovery content, or deep work', () => {
+    for (const time of [MORNING, NIGHT]) {
+      for (const item of itemsOf(real, { ...time, premium: true, limit: 20 })) {
+        expect(item.kind, item.id).not.toBe('recovery');
+        expect(item.needs.every((n) => ['urges', 'angry', 'panic'].includes(n)), item.id).toBe(false);
+        expect(item.intensity, item.id).not.toBe('deep');
+      }
+    }
+  });
+
+  it('a goal for urges lets recovery content in', () => {
+    expect(cold({ goals: ['urges'] }).some((i) => i.kind === 'recovery')).toBe(true);
+  });
+
+  it('having done a recovery item lets recovery content in', () => {
+    const items = cold({ sessions: [{ id: 'recovery:Urge surfing', at: '2026-10-20T10:00:00Z' }] });
+    expect(items.some((i) => i.kind === 'recovery')).toBe(true);
+  });
+
+  it('sleep-only content waits for the evening unless sleep is a goal', () => {
+    const sleepOnly = (i: ScoreItem) => i.needs.length > 0 && i.needs.every((n) => n === 'sleep');
+    expect(cold({}).filter(sleepOnly)).toEqual([]);
+    expect(cold({ goals: ['sleep'] }).some(sleepOnly)).toBe(true);
+  });
+
+  it('a free user gets free items in the first two places', () => {
+    for (const goals of [[], ['sleep'], ['focus'], ['low', 'anxious']]) {
+      for (const time of [MORNING, NIGHT]) {
+        const items = itemsOf(real, { ...time, premium: false, goals });
+        expect(items.slice(0, 2).map((i) => i.premium), JSON.stringify(goals)).toEqual([false, false]);
+      }
+    }
+  });
+
+  it('a new user still gets a full top 6', () => {
+    for (const time of [MORNING, NIGHT]) {
+      expect(recommend(real, { ...time, premium: false }).items).toHaveLength(TOP);
+      expect(recommend(real, { ...time, premium: true }).items).toHaveLength(TOP);
+    }
+  });
+
+  it('an okay-or-better check-in lifts reflection and good-day items', () => {
+    const evening = { now: '2026-11-02T16:00:00Z', localTime: '2026-11-02T19:00', premium: true, limit: 6 };
+    const good = itemsOf(real, { ...evening, lastMood: 4, lastMoodAt: '2026-11-02T15:00:00Z' });
+    expect(good.some((i) => i.needs.includes('good'))).toBe(true);
+  });
+});

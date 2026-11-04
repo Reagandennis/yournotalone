@@ -44,14 +44,6 @@
         }
       },
       {
-        "id": "med-morning-reset",
-        "reason": "Because you felt better after Body scan",
-        "reasonKey": "feltBetter",
-        "reasonArgs": {
-          "title": "meditation:Body scan"
-        }
-      },
-      {
         "id": "tool:Physiological sigh",
         "reason": "Because you felt better after Body scan",
         "reasonKey": "feltBetter",
@@ -66,8 +58,16 @@
         "reasonArgs": {
           "title": "meditation:Body scan"
         }
+      },
+      {
+        "id": "sound:Heartbeat",
+        "reason": "Because you felt better after Body scan",
+        "reasonKey": "feltBetter",
+        "reasonArgs": {
+          "title": "meditation:Body scan"
+        }
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

@@ -147,3 +147,17 @@ const contentTags = <String, ContentTags>{
   // ── Recovery (all tagged for urges by default) ─────────────────
   'recovery:HALT check': ContentTags({Need.angry}),
 };
+
+/// Deep work: content that digs into what's hard (worst-case writing,
+/// thought records). Never the suggestion straight after an awful or low
+/// check-in. The same items as `intensity: deep` in `content/`; a test
+/// keeps the two in step.
+const deepContent = {
+  'meditation:Letting go of anger',
+  'prompt:Let it out',
+  'prompt:After a panic',
+  'prompt:Anger on paper',
+  'prompt:Worst case',
+  'tool:Thought record',
+  'recovery:Play the tape forward',
+};

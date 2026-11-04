@@ -34,21 +34,21 @@
         }
       },
       {
-        "id": "med-morning-reset",
-        "reason": "Just added",
-        "reasonKey": "fresh"
-      },
-      {
         "id": "breathing:Panic reset",
         "reason": "Something to try",
         "reasonKey": "fallback"
       },
       {
-        "id": "sound:Deep focus",
+        "id": "lesson:Why avoiding things keeps anxiety alive",
+        "reason": "Something to try",
+        "reasonKey": "fallback"
+      },
+      {
+        "id": "tool:Physiological sigh",
         "reason": "Something to try",
         "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }

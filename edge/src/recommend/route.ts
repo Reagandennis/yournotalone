@@ -9,7 +9,7 @@
 //   { "items": [{"id": "breathing:Panic reset", "reason": "For right now", "reasonKey": "lead"},
 //               {"id": "…", "reason": "Because you felt better after Body scan",
 //                "reasonKey": "feltBetter", "reasonArgs": {"title": "meditation:Body scan"}}, …],
-//     "rules": "v1", "catalogVersion": 42 }
+//     "rules": "v2", "catalogVersion": 42 }
 //   `reason` is English, for apps older than reasonKey; see Reason in score.ts.
 //
 // Supabase history, the premium check and popularity are fetched in

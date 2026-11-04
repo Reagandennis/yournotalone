@@ -23,14 +23,19 @@
         }
       },
       {
+        "id": "meditation:Self-compassion",
+        "reason": "One you saved",
+        "reasonKey": "saved"
+      },
+      {
         "id": "sound:Deep focus",
         "reason": "Popular this month",
         "reasonKey": "popular"
       },
       {
-        "id": "meditation:Self-compassion",
-        "reason": "One you saved",
-        "reasonKey": "saved"
+        "id": "lesson:What CBT actually is",
+        "reason": "Something to try",
+        "reasonKey": "fallback"
       },
       {
         "id": "breathing:Box breathing",
@@ -41,13 +46,8 @@
         "id": "breathing:Panic reset",
         "reason": "Something to try",
         "reasonKey": "fallback"
-      },
-      {
-        "id": "lesson:Why avoiding things keeps anxiety alive",
-        "reason": "Something to try",
-        "reasonKey": "fallback"
       }
     ],
-    "rules": "v1"
+    "rules": "v2"
   }
 }
