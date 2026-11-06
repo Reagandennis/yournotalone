@@ -1,8 +1,12 @@
 /// The Privacy Policy and Terms of Service shown in-app.
 ///
 /// Written for GDPR (EU), Apple App Store Review Guideline 5.1, and
-/// Google Play User Data / Health policies. The same text lives in
-/// docs/legal/*.html for hosting — keep both in sync when editing.
+/// Google Play User Data / Health policies. The same text is published
+/// in docs/legal/*.html and on the website (privacy-policy.html and
+/// terms-of-service.html in the yournotalone-web repo, served at
+/// https://yournotalone.techgetafrica.com) — the website copy is the one
+/// the App Store and Google Play listings link to. Keep all three in sync
+/// when editing.
 library;
 
 const legalEntityName = 'Techgetafrica';
