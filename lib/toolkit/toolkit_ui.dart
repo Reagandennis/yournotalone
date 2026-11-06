@@ -56,6 +56,7 @@ class ToolkitScaffold extends StatelessWidget {
     this.actions = const [],
     this.bottom,
     this.padding = const EdgeInsets.fromLTRB(20, 20, 20, 32),
+    this.maxWidth = kReadableMaxWidth,
   });
 
   final String title;
@@ -69,6 +70,10 @@ class ToolkitScaffold extends StatelessWidget {
   /// Pinned under the list, for a step's main button.
   final Widget? bottom;
   final EdgeInsets padding;
+
+  /// How wide the page gets on a tablet: reading width for an exercise,
+  /// wider for a hub that lays its cards out in columns.
+  final double maxWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +97,7 @@ class ToolkitScaffold extends StatelessWidget {
         ),
         body: SafeArea(
           child: ReadableWidth(
+            maxWidth: maxWidth,
             child: Column(
               children: [
                 Expanded(

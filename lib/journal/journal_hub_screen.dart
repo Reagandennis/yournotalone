@@ -3,6 +3,7 @@ import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../home/mood_history_screen.dart';
@@ -162,7 +163,7 @@ class JournalHubScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
               children: [
@@ -218,24 +219,29 @@ class JournalHubScreen extends StatelessWidget {
                   const SizedBox(height: 14),
                   SectionHeader(title: group),
                   const SizedBox(height: 12),
-                  for (final prompt in journalPromptLibrary)
-                    if (prompt.group == group)
-                      _card(
-                        context,
-                        icon: prompt.icon,
-                        accent: prompt.accent,
-                        title: prompt.title,
-                        detail: prompt.detail,
-                        locked: prompt.premium && !isPremiumUser(),
-                        onTap: () {
-                          if (!_guardPrompt(context, prompt)) return;
-                          _openEditor(
-                            context,
-                            title: prompt.title,
-                            content: prompt.seed,
-                          );
-                        },
-                      ),
+                  CardGrid(
+                    spacing: 14,
+                    children: [
+                        for (final prompt in journalPromptLibrary)
+                          if (prompt.group == group)
+                            _card(
+                              context,
+                              icon: prompt.icon,
+                              accent: prompt.accent,
+                              title: prompt.title,
+                              detail: prompt.detail,
+                              locked: prompt.premium && !isPremiumUser(),
+                              onTap: () {
+                                if (!_guardPrompt(context, prompt)) return;
+                                _openEditor(
+                                  context,
+                                  title: prompt.title,
+                                  content: prompt.seed,
+                                );
+                              },
+                            ),
+                    ],
+                  ),
                 ],
                 const SizedBox(height: 14),
                 SectionHeader(title: l10n.journalHubMoodSection),

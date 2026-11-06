@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'journal_editor_screen.dart';
@@ -221,7 +222,7 @@ class _JournalScreenState extends State<JournalScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(28, 12, 28, 100),
               children: [

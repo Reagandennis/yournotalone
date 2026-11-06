@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../l10n/l10n.dart';
 import '../practice/feeling_store.dart';
 import '../practice/practice_repository.dart';
@@ -131,7 +132,7 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
             child: FutureBuilder<List<Insight>>(
               future: _insights,
               builder: (context, snapshot) => ListView(

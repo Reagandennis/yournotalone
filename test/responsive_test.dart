@@ -497,6 +497,13 @@ void main() {
     'HomeTab', 'ExploreTab', 'SettingsTab',
   };
 
+  /// Screens of cards: on a tablet they lay their cards out in columns,
+  /// up to [kWideMaxWidth], rather than keeping a phone's single column.
+  const laidOutInColumns = {
+    'HomeShell', 'MeditationsScreen', 'SoundsScreen', 'JournalHubScreen',
+    'RecoveryScreen', 'CbtScreen', 'ContentListScreen',
+  };
+
   for (final (label, size) in [
     ('iPad portrait', const Size(1024, 1366)),
     ('iPad landscape', const Size(1366, 1024)),
@@ -505,7 +512,10 @@ void main() {
       addTearDown(tester.view.reset);
       final tooWide = <String>[];
       for (final entry in screens.entries) {
-        if (stillFullWidth.contains(entry.key)) continue;
+        if (stillFullWidth.contains(entry.key) ||
+            laidOutInColumns.contains(entry.key)) {
+          continue;
+        }
         await pumpAt(tester, size, entry.value());
         tester.takeException();
         final widths = readingWidths(tester);
@@ -517,6 +527,35 @@ void main() {
       expect(tooWide, isEmpty,
           reason: 'Content wider than ${kReadableMaxWidth}pt on $label:\n'
               '${tooWide.join('\n')}');
+    });
+
+    testWidgets('screens of cards use columns on $label', (tester) async {
+      addTearDown(tester.view.reset);
+      final problems = <String>[];
+      for (final name in laidOutInColumns) {
+        await pumpAt(tester, size, screens[name]!());
+        tester.takeException();
+        final widest = readingWidths(tester).reduce(math.max);
+        if (widest > kWideMaxWidth) {
+          problems.add('$name: ${widest.toStringAsFixed(0)}pt wide');
+        }
+        // Some grid on the page has more than one column.
+        final grids = find.byType(CardGrid).evaluate();
+        final columned = grids.any((e) {
+          final grid = e.widget as CardGrid;
+          return CardGrid.columnsFor(
+                (e.renderObject! as RenderBox).size.width,
+                minTileWidth: grid.minTileWidth,
+                maxColumns: grid.maxColumns,
+                spacing: grid.spacing,
+              ) >
+              1;
+        });
+        final twoColumns = find.byType(TwoColumns).evaluate().isNotEmpty ||
+            name == 'HomeShell';
+        if (!columned && !twoColumns) problems.add('$name: one column');
+      }
+      expect(problems, isEmpty, reason: problems.join('\n'));
     });
   }
 
@@ -542,20 +581,49 @@ void main() {
     }
   });
 
-  testWidgets('tab bar spans a phone, and groups its tabs on an iPad',
+  testWidgets('tabs along the bottom on a phone, down the side when wide',
       (tester) async {
     addTearDown(tester.view.reset);
+    for (final (size, rail) in [
+      (const Size(390, 844), false),
+      // Slide Over and a narrow Split View pane are phone-shaped.
+      (const Size(320, 1024), false),
+      (const Size(683, 1024), true),
+      // iPhone Duo open, upright and on its side.
+      (const Size(620, 1130), true),
+      (const Size(1130, 620), true),
+      (const Size(1366, 1024), true),
+    ]) {
+      await pumpAt(tester, size, const HomeShell());
+      expect(tester.takeException(), isNull, reason: '$size');
+      expect(find.byType(NavigationRail), rail ? findsOneWidget : findsNothing,
+          reason: '$size');
+      expect(find.byType(NavigationBar), rail ? findsNothing : findsOneWidget,
+          reason: '$size');
+    }
+    // The bar runs edge to edge on a phone.
     await pumpAt(tester, const Size(390, 844), const HomeShell());
     expect(tester.getSize(find.byType(NavigationBar)).width, 390);
+  });
 
-    await pumpAt(tester, const Size(1366, 1024), const HomeShell());
-    expect(tester.getSize(find.byType(NavigationBar)).width, 520);
-    // The bar's colour still runs edge to edge.
-    final bar = find.ancestor(
-      of: find.byType(NavigationBar),
-      matching: find.byType(Container),
+  testWidgets('unfolding keeps the tab you were on', (tester) async {
+    addTearDown(tester.view.reset);
+    // Folded: a phone, on Explore.
+    await pumpAt(tester, const Size(390, 844), const HomeShell());
+    await tester.tap(find.byIcon(Icons.explore_outlined));
+    await tester.pump(const Duration(milliseconds: 400));
+    // Unfolded: the rail, still on Explore, and back again.
+    await pumpAt(tester, const Size(620, 1130), const HomeShell());
+    expect(
+      tester.widget<NavigationRail>(find.byType(NavigationRail)).selectedIndex,
+      1,
     );
-    expect(tester.getSize(bar.first).width, 1366);
+    await pumpAt(tester, const Size(390, 844), const HomeShell());
+    expect(
+      tester.widget<NavigationBar>(find.byType(NavigationBar)).selectedIndex,
+      1,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('splash logo: phone size unchanged, capped on iPad',

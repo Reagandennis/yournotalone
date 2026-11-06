@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import 'reminders_service.dart';
@@ -178,7 +179,7 @@ class _RemindersScreenState extends State<RemindersScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
               children: [

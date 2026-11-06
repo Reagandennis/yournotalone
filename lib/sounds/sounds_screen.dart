@@ -3,6 +3,7 @@ import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
@@ -213,7 +214,7 @@ class _SoundsScreenState extends State<SoundsScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
             child: AnimatedBuilder(
               animation: Listenable.merge([player.nowPlaying, player.paused]),
               builder: (context, _) => ListView(
@@ -258,8 +259,13 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  for (final sound in visible)
-                    _soundCard(sound, active: player.isActive(sound.asset)),
+                  CardGrid(
+                    spacing: 14,
+                    children: [
+                      for (final sound in visible)
+                        _soundCard(sound, active: player.isActive(sound.asset)),
+                    ],
+                  ),
                   if (player.nowPlaying.value != null) ...[
                     const SizedBox(height: 8),
                     Center(

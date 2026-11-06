@@ -3,6 +3,7 @@ import '../billing/pricing_copy.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
@@ -222,7 +223,7 @@ class MeditationsScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
               children: [
@@ -254,13 +255,23 @@ class MeditationsScreen extends StatelessWidget {
                 const SizedBox(height: 24),
                 SectionHeader(title: context.l10n.meditationsBreathingHeader),
                 const SizedBox(height: 12),
-                for (final pattern in breathPatternLibrary)
-                  _breathCard(context, pattern),
+                CardGrid(
+                  spacing: 14,
+                  children: [
+                    for (final pattern in breathPatternLibrary)
+                      _breathCard(context, pattern),
+                  ],
+                ),
                 const SizedBox(height: 14),
                 SectionHeader(title: context.l10n.meditationsMeditationsHeader),
                 const SizedBox(height: 12),
-                for (final meditation in meditationLibrary)
-                  _meditationCard(context, meditation),
+                CardGrid(
+                  spacing: 14,
+                  children: [
+                    for (final meditation in meditationLibrary)
+                      _meditationCard(context, meditation),
+                  ],
+                ),
               ],
             ),
           ),

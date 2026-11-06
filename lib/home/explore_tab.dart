@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../cbt/cbt_catalog.dart';
 import '../cbt/cbt_content.dart';
 import '../cbt/cbt_screen.dart';
@@ -342,22 +343,19 @@ class ExploreTab extends StatelessWidget {
     );
   }
 
-  Widget _pillarGrid(BuildContext context) {
-    Widget row(_Pillar a, _Pillar b) => Row(
-      children: [
-        Expanded(child: _pillarTile(context, a)),
-        const SizedBox(width: 12),
-        Expanded(child: _pillarTile(context, b)),
-      ],
-    );
-    return Column(
-      children: [
-        row(_pillars[0], _pillars[1]),
-        const SizedBox(height: 12),
-        row(_pillars[2], _pillars[3]),
-      ],
-    );
-  }
+  /// Two by two on a phone, one row of four where there's room.
+  Widget _pillarGrid(BuildContext context) => CardGrid(
+    minTileWidth: 150,
+    maxColumns: 4,
+    spacing: 12,
+    children: [
+      for (final pillar in _pillars)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _pillarTile(context, pillar),
+        ),
+    ],
+  );
 
   Widget _programCard(BuildContext context, _Program program) {
     return Padding(
@@ -455,7 +453,13 @@ class ExploreTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          for (final program in _programs) _programCard(context, program),
+          CardGrid(
+            minTileWidth: 300,
+            spacing: 12,
+            children: [
+              for (final program in _programs) _programCard(context, program),
+            ],
+          ),
         ],
       ),
     );
@@ -600,7 +604,7 @@ class ExploreTab extends StatelessWidget {
           left: 18,
           right: 18,
           bottom: 12,
-          child: _bookSession(context),
+          child: ReadableWidth(child: _bookSession(context)),
         ),
       ],
     );
@@ -615,7 +619,7 @@ class ExploreTab extends StatelessWidget {
         _needs(context),
         const SizedBox(height: 22),
         _pillarGrid(context),
-        const SizedBox(height: 22),
+        const SizedBox(height: 10),
         Padding(
           padding: const EdgeInsets.only(left: 4, bottom: 4),
           child: Text(
@@ -634,11 +638,16 @@ class ExploreTab extends StatelessWidget {
             style: TextStyle(fontSize: 12.5, color: context.brand.textMuted),
           ),
         ),
-        for (final course in courses)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: CourseCard(course: course),
-          ),
+        CardGrid(
+          spacing: 12,
+          children: [
+            for (final course in courses)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: CourseCard(course: course),
+              ),
+          ],
+        ),
         const SizedBox(height: 12),
         _featuredPanel(context),
         const SizedBox(height: 22),
@@ -653,8 +662,13 @@ class ExploreTab extends StatelessWidget {
             ),
           ),
         ),
-        for (final collection in _collections)
-          _collectionCard(context, collection),
+        CardGrid(
+          spacing: 12,
+          children: [
+            for (final collection in _collections)
+              _collectionCard(context, collection),
+          ],
+        ),
       ],
     );
   }

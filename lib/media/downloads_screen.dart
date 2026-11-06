@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import 'download_store.dart';
 import 'download_strings.dart';
 
@@ -169,7 +170,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
             child: AnimatedBuilder(
               animation: Listenable.merge([_store, _store.waiting]),
               builder: (context, _) {

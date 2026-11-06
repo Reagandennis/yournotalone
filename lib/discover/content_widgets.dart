@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'content_index.dart';
@@ -426,7 +427,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
               children: [
@@ -486,8 +487,13 @@ class _ContentListScreenState extends State<ContentListScreen> {
                     ),
                   )
                 else
-                  for (final item in shown)
-                    ContentRow(item: item, source: widget.source),
+                  CardGrid(
+                    spacing: 14,
+                    children: [
+                      for (final item in shown)
+                        ContentRow(item: item, source: widget.source),
+                    ],
+                  ),
               ],
             ),
           ),

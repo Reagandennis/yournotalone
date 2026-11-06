@@ -1270,87 +1270,145 @@ class _HomeTabState extends State<HomeTab> {
         (suggested != null && !CourseStore.instance.of(suggested).started
             ? suggested
             : null);
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+    // Where there's room for two columns (an iPad, an open iPhone Duo),
+    // how you're doing on the left and what to do next on the right.
+    // Narrower, one column in the phone order.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth - 56 >= 2 * 380 + 28;
+        final header = <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _greeting,
+                      style: TextStyle(fontSize: 14, color: c.textMuted),
+                    ),
+                    Text(
+                      firstNameOf(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: c.ink,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Image.asset(c.pillarsAsset, height: 44),
+            ],
+          ),
+          const SizedBox(height: 12),
+          const PillarStripe(),
+          _crisisLink(),
+        ];
+        final mood = <Widget>[
+          const SizedBox(height: 12),
+          _moodCard(),
+          if (_rhythm case final rhythm?) ...[
+            const SizedBox(height: 16),
+            RhythmCard(rhythm: rhythm, onTap: () => _openRhythm(rhythm)),
+          ],
+        ];
+        final todayBlock = <Widget>[
+          const SizedBox(height: 20),
+          _todayCard(today),
+          if (course != null) ...[
+            const SizedBox(height: 12),
+            CourseCard(course: course, suggested: active == null),
+          ],
+        ];
+        final forNowStrip = <Widget>[
+          const SizedBox(height: 28),
+          if (forNow.isNotEmpty) ...[
+            SectionHeader(title: dayPart.heading(context.l10n)),
+            const SizedBox(height: 12),
+            ContentStrip(
+              items: forNow,
+              source: 'home:${dayPart.name}',
+              // Only the Worker says why; the on-device order doesn't.
+              reasons: fromWorker == null ? const {} : _reasons(context.l10n),
+            ),
+            const SizedBox(height: 28),
+          ],
+        ];
+        final progress = <Widget>[
+          _practiceCard(),
+          _insightsTeaser(premium),
+        ];
+        final quickAccess = <Widget>[
+          SectionHeader(title: context.l10n.homeQuickAccess),
+          const SizedBox(height: 12),
+          // A fixed aspect ratio ties tile height to screen width, so the
+          // contents overflowed on narrow phones and clipped at larger text
+          // sizes. An absolute extent that tracks the text scale doesn't.
+          GridView(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              mainAxisExtent: 80 + 38 * MediaQuery.textScalerOf(context).scale(1),
+            ),
+            children: [for (final item in _quick) _quickCard(item)],
+          ),
+          const SizedBox(height: 24),
+        ];
+        final therapy = <Widget>[
+          ..._therapyNotes(),
+          _therapyBanner(),
+        ];
+        return ListView(
+          padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
           children: [
-            Expanded(
-              child: Column(
+            ...header,
+            if (wide)
+              Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    _greeting,
-                    style: TextStyle(fontSize: 14, color: c.textMuted),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [...mood, ...todayBlock, ...progress],
+                    ),
                   ),
-                  Text(
-                    firstNameOf(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                      color: c.ink,
-                      height: 1.2,
+                  const SizedBox(width: 28),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      // The strip's own top gap dropped, to line up with
+                      // the mood card opposite.
+                      children: [
+                        const SizedBox(height: 12),
+                        ...forNowStrip.skip(1),
+                        _savedStrip(),
+                        ...quickAccess,
+                        ...therapy,
+                      ],
                     ),
                   ),
                 ],
-              ),
-            ),
-            Image.asset(c.pillarsAsset, height: 44),
+              )
+            else ...[
+              ...mood,
+              ...todayBlock,
+              ...forNowStrip,
+              _savedStrip(),
+              ...progress,
+              ...quickAccess,
+              ...therapy,
+            ],
           ],
-        ),
-        const SizedBox(height: 12),
-        const PillarStripe(),
-        _crisisLink(),
-        const SizedBox(height: 12),
-        _moodCard(),
-        if (_rhythm case final rhythm?) ...[
-          const SizedBox(height: 16),
-          RhythmCard(rhythm: rhythm, onTap: () => _openRhythm(rhythm)),
-        ],
-        const SizedBox(height: 20),
-        _todayCard(today),
-        if (course != null) ...[
-          const SizedBox(height: 12),
-          CourseCard(course: course, suggested: active == null),
-        ],
-        const SizedBox(height: 28),
-        if (forNow.isNotEmpty) ...[
-          SectionHeader(title: dayPart.heading(context.l10n)),
-          const SizedBox(height: 12),
-          ContentStrip(
-            items: forNow,
-            source: 'home:${dayPart.name}',
-            // Only the Worker says why; the on-device order doesn't.
-            reasons: fromWorker == null ? const {} : _reasons(context.l10n),
-          ),
-          const SizedBox(height: 28),
-        ],
-        _savedStrip(),
-        _practiceCard(),
-        _insightsTeaser(premium),
-        SectionHeader(title: context.l10n.homeQuickAccess),
-        const SizedBox(height: 12),
-        // A fixed aspect ratio ties tile height to screen width, so the
-        // contents overflowed on narrow phones and clipped at larger text
-        // sizes. An absolute extent that tracks the text scale doesn't.
-        GridView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            mainAxisExtent: 80 + 38 * MediaQuery.textScalerOf(context).scale(1),
-          ),
-          children: [for (final item in _quick) _quickCard(item)],
-        ),
-        const SizedBox(height: 24),
-        ..._therapyNotes(),
-        _therapyBanner(),
-      ],
+        );
+      },
     );
   }
 }

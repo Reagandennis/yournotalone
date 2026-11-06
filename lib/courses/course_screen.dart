@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../discover/content_index.dart';
 import '../home/home_ui.dart';
 import '../media/download_buttons.dart';
@@ -183,7 +184,7 @@ class _CourseScreenState extends State<CourseScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
               children: [

@@ -4,6 +4,7 @@ import '../billing/pricing_copy.dart';
 import '../auth/auth_ui.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
@@ -786,7 +787,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
             child: ListView(
               padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
               children: [
@@ -883,156 +884,169 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 const SizedBox(height: 26),
                 SectionHeader(title: l10n.recoveryInTheMoment),
                 const SizedBox(height: 10),
-                _toolCard(
-                  icon: Icons.psychology_alt_rounded,
-                  accent: Pillars.yellow,
-                  title: l10n.recoveryHaltCardTitle,
-                  detail: l10n.recoveryHaltCardDetail,
-                  open: (_) => const HaltScreen(),
-                ),
-                _toolCard(
-                  icon: Icons.movie_filter_rounded,
-                  accent: Pillars.red,
-                  title: l10n.recoveryTapeCardTitle,
-                  detail: l10n.recoveryTapeCardDetail,
-                  open: (_) => const TapeForwardScreen(),
-                ),
-                // Exercises added in the content admin.
-                for (final g in ContentCatalog.instance.guidedRecovery)
-                  _toolCard(
-                    icon: g.icon,
-                    accent: g.accent,
-                    title: g.title,
-                    detail: g.blurb,
-                    premium: g.premium,
-                    open: (_) => GuidedExerciseScreen(exercise: g),
-                  ),
-                const SizedBox(height: 16),
-                Row(
+                CardGrid(
+                  spacing: 14,
                   children: [
-                    Expanded(
-                      child: SectionHeader(title: l10n.recoveryMyCommitments),
+                    _toolCard(
+                      icon: Icons.psychology_alt_rounded,
+                      accent: Pillars.yellow,
+                      title: l10n.recoveryHaltCardTitle,
+                      detail: l10n.recoveryHaltCardDetail,
+                      open: (_) => const HaltScreen(),
                     ),
-                    if (_premium)
-                      TextButton(
-                        onPressed: _addHabitSheet,
-                        child: Text(l10n.recoveryAddButton),
+                    _toolCard(
+                      icon: Icons.movie_filter_rounded,
+                      accent: Pillars.red,
+                      title: l10n.recoveryTapeCardTitle,
+                      detail: l10n.recoveryTapeCardDetail,
+                      open: (_) => const TapeForwardScreen(),
+                    ),
+                    // Exercises added in the content admin.
+                    for (final g in ContentCatalog.instance.guidedRecovery)
+                      _toolCard(
+                        icon: g.icon,
+                        accent: g.accent,
+                        title: g.title,
+                        detail: g.blurb,
+                        premium: g.premium,
+                        open: (_) => GuidedExerciseScreen(exercise: g),
                       ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                if (!_premium)
-                  _lockedCard(l10n.recoveryCommitmentsLocked)
-                else if (_error)
-                  Column(
-                    children: [
-                      Text(
-                        l10n.recoveryLoadError,
-                        style:
-                            TextStyle(fontSize: 13.5, color: c.textMuted),
-                      ),
-                      TextButton(
-                          onPressed: _load, child: Text(l10n.commonTryAgain)),
-                    ],
-                  )
-                else if (habits == null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: c.ink,
-                        strokeWidth: 2.6,
-                      ),
+                // Commitments and the trigger tracker side by side where
+                // there's room for both.
+                TwoColumns(
+                  first: [
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SectionHeader(title: l10n.recoveryMyCommitments),
+                        ),
+                        if (_premium)
+                          TextButton(
+                            onPressed: _addHabitSheet,
+                            child: Text(l10n.recoveryAddButton),
+                          ),
+                      ],
                     ),
-                  )
-                else if (habits.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      l10n.recoveryCommitmentsEmpty,
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        color: c.textMuted,
-                        height: 1.5,
-                      ),
-                    ),
-                  )
-                else
-                  for (final habit in habits) _habitCard(habit),
-                const SizedBox(height: 4),
-                _toolCard(
-                  icon: Icons.emoji_events_rounded,
-                  accent: Pillars.blue,
-                  title: l10n.recoveryMilestonesCardTitle,
-                  detail: l10n.recoveryMilestonesCardDetail,
-                  open: (_) => const MilestonesScreen(),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SectionHeader(title: l10n.recoveryTriggerTracker),
-                    ),
-                    if (_premium)
-                      TextButton(
-                        onPressed: _logCravingSheet,
-                        child: Text(l10n.recoveryLogButton),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                if (!_premium)
-                  _lockedCard(l10n.recoveryTrackerLocked)
-                else if (cravings != null) ...[
-                  if (_topTrigger != null)
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: c.tint(Pillars.yellow, 0.12),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Row(
+                    const SizedBox(height: 10),
+                    if (!_premium)
+                      _lockedCard(l10n.recoveryCommitmentsLocked)
+                    else if (_error)
+                      Column(
                         children: [
-                          Icon(Icons.insights_rounded,
-                              size: 18, color: c.ink),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              l10n.recoveryTopTrigger(
-                                l10n.midSentence(
-                                  recoveryTriggerLabel(l10n, _topTrigger!),
+                          Text(
+                            l10n.recoveryLoadError,
+                            style:
+                                TextStyle(fontSize: 13.5, color: c.textMuted),
+                          ),
+                          TextButton(
+                              onPressed: _load, child: Text(l10n.commonTryAgain)),
+                        ],
+                      )
+                    else if (habits == null)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: c.ink,
+                            strokeWidth: 2.6,
+                          ),
+                        ),
+                      )
+                    else if (habits.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          l10n.recoveryCommitmentsEmpty,
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            color: c.textMuted,
+                            height: 1.5,
+                          ),
+                        ),
+                      )
+                    else
+                      for (final habit in habits) _habitCard(habit),
+                    const SizedBox(height: 4),
+                    _toolCard(
+                      icon: Icons.emoji_events_rounded,
+                      accent: Pillars.blue,
+                      title: l10n.recoveryMilestonesCardTitle,
+                      detail: l10n.recoveryMilestonesCardDetail,
+                      open: (_) => const MilestonesScreen(),
+                    ),
+                  ],
+                  second: [
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SectionHeader(title: l10n.recoveryTriggerTracker),
+                        ),
+                        if (_premium)
+                          TextButton(
+                            onPressed: _logCravingSheet,
+                            child: Text(l10n.recoveryLogButton),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    if (!_premium)
+                      _lockedCard(l10n.recoveryTrackerLocked)
+                    else if (cravings != null) ...[
+                      if (_topTrigger != null)
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: c.tint(Pillars.yellow, 0.12),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.insights_rounded,
+                                  size: 18, color: c.ink),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  l10n.recoveryTopTrigger(
+                                    l10n.midSentence(
+                                      recoveryTriggerLabel(l10n, _topTrigger!),
+                                    ),
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: c.ink,
+                                    height: 1.45,
+                                  ),
                                 ),
                               ),
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                color: c.ink,
-                                height: 1.45,
-                              ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      if (cravings.isEmpty)
+                        Text(
+                          l10n.recoveryCravingsEmpty,
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            color: c.textMuted,
+                            height: 1.5,
+                          ),
+                        )
+                      else
+                        for (final log in cravings) _cravingRow(log),
+                    ],
+                    const SizedBox(height: 16),
+                    _toolCard(
+                      icon: Icons.query_stats_rounded,
+                      accent: Pillars.black,
+                      title: l10n.recoveryInsightsCardTitle,
+                      detail: l10n.recoveryInsightsCardDetail,
+                      open: (_) => const TriggerInsightsScreen(),
                     ),
-                  if (cravings.isEmpty)
-                    Text(
-                      l10n.recoveryCravingsEmpty,
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        color: c.textMuted,
-                        height: 1.5,
-                      ),
-                    )
-                  else
-                    for (final log in cravings) _cravingRow(log),
-                ],
-                const SizedBox(height: 16),
-                _toolCard(
-                  icon: Icons.query_stats_rounded,
-                  accent: Pillars.black,
-                  title: l10n.recoveryInsightsCardTitle,
-                  detail: l10n.recoveryInsightsCardDetail,
-                  open: (_) => const TriggerInsightsScreen(),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 CrisisFooter(

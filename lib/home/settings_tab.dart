@@ -15,6 +15,7 @@ import '../backgrounds/calm_visuals.dart';
 import '../auth/login_screen.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../care/care_dashboard_screen.dart';
 import '../care/care_repository.dart';
 import '../care/therapist_sessions_screen.dart';
@@ -440,7 +441,17 @@ class _SettingsTabState extends State<SettingsTab> {
               ),
             ),
             if (value != null) ...[
-              Text(value, style: TextStyle(fontSize: 13, color: c.textMuted)),
+              // Shortened rather than pushed off the edge, on a small
+              // phone with large text.
+              Flexible(
+                child: Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.end,
+                  style: TextStyle(fontSize: 13, color: c.textMuted),
+                ),
+              ),
               const SizedBox(width: 8),
             ],
             Icon(Icons.arrow_forward_ios_rounded, size: 14, color: c.border),
@@ -668,132 +679,140 @@ class _SettingsTabState extends State<SettingsTab> {
         const SizedBox(height: 12),
         const PillarStripe(),
         const SizedBox(height: 24),
-        _profileCard(context),
-        const SizedBox(height: 14),
-        _planCard(context),
-        _careSection(context),
-        const SizedBox(height: 28),
-        _sectionLabel(context.l10n.settingsAccount),
-        _row(
-          context,
-          Icons.person_outline_rounded,
-          context.l10n.settingsEditProfile,
-          onTap: () => _openEditProfile(context),
-        ),
-        _row(
-          context,
-          Icons.lock_outline_rounded,
-          context.l10n.settingsChangePassword,
-          onTap: () => _sendPasswordReset(context),
-        ),
-        _row(
-          context,
-          Icons.notifications_none_rounded,
-          context.l10n.settingsReminders,
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const RemindersScreen())),
-        ),
-        _row(
-          context,
-          Icons.flag_outlined,
-          context.l10n.settingsGoals,
-          value: _goalsSummary(),
-          onTap: () => _chooseGoals(context),
-        ),
-        ValueListenableBuilder<ThemeMode>(
-          valueListenable: AppearanceSetting.instance,
-          builder: (context, mode, _) => _row(
-            context,
-            Icons.contrast_rounded,
-            context.l10n.settingsAppearance,
-            value: appearanceLabel(context.l10n, mode),
-            onTap: () => _chooseAppearance(context),
-          ),
-        ),
-        ValueListenableBuilder<String?>(
-          valueListenable: LocaleSetting.instance,
-          builder: (context, tag, _) => _row(
-            context,
-            Icons.translate_rounded,
-            context.l10n.languageTitle,
-            value: languageSummary(context, tag),
-            onTap: () => showLanguagePicker(context),
-          ),
-        ),
-        _calmVisualsRow(context),
-        // Only with the catalogue snapshot on: before that, all audio ships
-        // inside the app and there's nothing to download.
-        if (catalogSnapshotEnabled)
-          _row(
-            context,
-            Icons.download_for_offline_outlined,
-            DownloadStrings.settingsRow,
-            onTap: () => Navigator.of(context).push(DownloadsScreen.route()),
-          ),
-        _row(
-          context,
-          Icons.restore_rounded,
-          context.l10n.settingsRestorePurchases,
-          onTap: () => _restorePurchases(context),
-        ),
-        const SizedBox(height: 22),
-        _sectionLabel(context.l10n.settingsSupport),
-        _row(
-          context,
-          Icons.health_and_safety_outlined,
-          context.l10n.settingsCrisisResources,
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const CrisisScreen())),
-        ),
-        _row(
-          context,
-          Icons.mail_outline_rounded,
-          context.l10n.settingsContactUs,
-          onTap: () => _contactSupport(context),
-        ),
-        _row(
-          context,
-          Icons.help_outline_rounded,
-          context.l10n.settingsFaq,
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const FaqScreen())),
-        ),
-        const SizedBox(height: 22),
-        _sectionLabel(context.l10n.settingsLegal),
-        _row(
-          context,
-          Icons.privacy_tip_outlined,
-          context.l10n.settingsPrivacyPolicy,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => LegalScreen(doc: privacyPolicy)),
-          ),
-        ),
-        _row(
-          context,
-          Icons.description_outlined,
-          context.l10n.settingsTerms,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => LegalScreen(doc: termsOfService)),
-          ),
-        ),
-        const SizedBox(height: 22),
-        _sectionLabel(context.l10n.settingsAccountActions),
-        _row(
-          context,
-          Icons.logout_rounded,
-          context.l10n.settingsLogOut,
-          color: c.red,
-          onTap: () => _confirmLogout(context),
-        ),
-        _row(
-          context,
-          Icons.delete_outline_rounded,
-          context.l10n.settingsDeleteAccount,
-          color: c.red,
-          onTap: () => _confirmDelete(context),
+        // Side by side where there's room: you and your settings on the
+        // left, help and the small print on the right.
+        TwoColumns(
+          first: [
+            _profileCard(context),
+            const SizedBox(height: 14),
+            _planCard(context),
+            _careSection(context),
+            const SizedBox(height: 28),
+            _sectionLabel(context.l10n.settingsAccount),
+            _row(
+              context,
+              Icons.person_outline_rounded,
+              context.l10n.settingsEditProfile,
+              onTap: () => _openEditProfile(context),
+            ),
+            _row(
+              context,
+              Icons.lock_outline_rounded,
+              context.l10n.settingsChangePassword,
+              onTap: () => _sendPasswordReset(context),
+            ),
+            _row(
+              context,
+              Icons.notifications_none_rounded,
+              context.l10n.settingsReminders,
+              onTap: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const RemindersScreen())),
+            ),
+            _row(
+              context,
+              Icons.flag_outlined,
+              context.l10n.settingsGoals,
+              value: _goalsSummary(),
+              onTap: () => _chooseGoals(context),
+            ),
+            ValueListenableBuilder<ThemeMode>(
+              valueListenable: AppearanceSetting.instance,
+              builder: (context, mode, _) => _row(
+                context,
+                Icons.contrast_rounded,
+                context.l10n.settingsAppearance,
+                value: appearanceLabel(context.l10n, mode),
+                onTap: () => _chooseAppearance(context),
+              ),
+            ),
+            ValueListenableBuilder<String?>(
+              valueListenable: LocaleSetting.instance,
+              builder: (context, tag, _) => _row(
+                context,
+                Icons.translate_rounded,
+                context.l10n.languageTitle,
+                value: languageSummary(context, tag),
+                onTap: () => showLanguagePicker(context),
+              ),
+            ),
+            _calmVisualsRow(context),
+            // Only with the catalogue snapshot on: before that, all audio ships
+            // inside the app and there's nothing to download.
+            if (catalogSnapshotEnabled)
+              _row(
+                context,
+                Icons.download_for_offline_outlined,
+                DownloadStrings.settingsRow,
+                onTap: () => Navigator.of(context).push(DownloadsScreen.route()),
+              ),
+            _row(
+              context,
+              Icons.restore_rounded,
+              context.l10n.settingsRestorePurchases,
+              onTap: () => _restorePurchases(context),
+            ),
+          ],
+          second: [
+            const SizedBox(height: 22),
+            _sectionLabel(context.l10n.settingsSupport),
+            _row(
+              context,
+              Icons.health_and_safety_outlined,
+              context.l10n.settingsCrisisResources,
+              onTap: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const CrisisScreen())),
+            ),
+            _row(
+              context,
+              Icons.mail_outline_rounded,
+              context.l10n.settingsContactUs,
+              onTap: () => _contactSupport(context),
+            ),
+            _row(
+              context,
+              Icons.help_outline_rounded,
+              context.l10n.settingsFaq,
+              onTap: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const FaqScreen())),
+            ),
+            const SizedBox(height: 22),
+            _sectionLabel(context.l10n.settingsLegal),
+            _row(
+              context,
+              Icons.privacy_tip_outlined,
+              context.l10n.settingsPrivacyPolicy,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => LegalScreen(doc: privacyPolicy)),
+              ),
+            ),
+            _row(
+              context,
+              Icons.description_outlined,
+              context.l10n.settingsTerms,
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => LegalScreen(doc: termsOfService)),
+              ),
+            ),
+            const SizedBox(height: 22),
+            _sectionLabel(context.l10n.settingsAccountActions),
+            _row(
+              context,
+              Icons.logout_rounded,
+              context.l10n.settingsLogOut,
+              color: c.red,
+              onTap: () => _confirmLogout(context),
+            ),
+            _row(
+              context,
+              Icons.delete_outline_rounded,
+              context.l10n.settingsDeleteAccount,
+              color: c.red,
+              onTap: () => _confirmDelete(context),
+            ),
+          ],
         ),
         const SizedBox(height: 30),
         const Center(child: PillarStripe(width: 90, height: 4)),

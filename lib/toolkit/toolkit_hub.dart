@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'toolkit_art.dart';
@@ -110,6 +111,7 @@ class ToolkitHub extends StatelessWidget {
       accent: accent,
       title: title,
       padding: const EdgeInsets.fromLTRB(20, 22, 20, 32),
+      maxWidth: kWideMaxWidth,
       children: [
         Text(
           headline,
@@ -134,30 +136,40 @@ class ToolkitHub extends StatelessWidget {
           title: toolsTitle ?? l10n.toolkitToolsTitle,
           subtitle: countLine(tools.map((t) => t.premium), l10n),
         ),
-        for (final tool in tools)
-          ToolkitCard(
-            title: tool.title,
-            blurb: tool.blurb,
-            meta: tool.meta ?? l10n.toolkitMinutes(tool.minutes),
-            art: tool.art,
-            locked: tool.premium && !premium,
-            onTap: () => _open(context, tool),
-          ),
+        CardGrid(
+          spacing: 12,
+          children: [
+            for (final tool in tools)
+              ToolkitCard(
+                title: tool.title,
+                blurb: tool.blurb,
+                meta: tool.meta ?? l10n.toolkitMinutes(tool.minutes),
+                art: tool.art,
+                locked: tool.premium && !premium,
+                onTap: () => _open(context, tool),
+              ),
+          ],
+        ),
         if (lessons.isNotEmpty) ...[
           const SizedBox(height: 14),
           ToolkitSection(
             title: lessonsTitle ?? l10n.toolkitLessonsTitle,
             subtitle: countLine(lessons.map((l) => l.premium), l10n),
           ),
-          for (final lesson in lessons)
-            ToolkitCard(
-              title: lesson.title,
-              blurb: lesson.blurb,
-              meta: l10n.toolkitMinutesRead(lesson.minutes),
-              art: lesson.art,
-              locked: lesson.premium && !premium,
-              onTap: () => _read(context, lesson),
-            ),
+          CardGrid(
+            spacing: 12,
+            children: [
+              for (final lesson in lessons)
+                ToolkitCard(
+                  title: lesson.title,
+                  blurb: lesson.blurb,
+                  meta: l10n.toolkitMinutesRead(lesson.minutes),
+                  art: lesson.art,
+                  locked: lesson.premium && !premium,
+                  onTap: () => _read(context, lesson),
+                ),
+            ],
+          ),
         ],
         if (resources.isNotEmpty) ...[
           const SizedBox(height: 14),
@@ -165,14 +177,19 @@ class ToolkitHub extends StatelessWidget {
             title: l10n.toolkitFreeResources,
             subtitle: resourcesIntro ?? l10n.toolkitResourcesIntro,
           ),
-          for (final r in resources)
-            ToolkitCard(
-              title: r.title,
-              blurb: r.blurb,
-              meta: r.by,
-              art: resourceArt,
-              onTap: () => toolkitOpenLink(context, r.url),
-            ),
+          CardGrid(
+            spacing: 12,
+            children: [
+              for (final r in resources)
+                ToolkitCard(
+                  title: r.title,
+                  blurb: r.blurb,
+                  meta: r.by,
+                  art: resourceArt,
+                  onTap: () => toolkitOpenLink(context, r.url),
+                ),
+            ],
+          ),
         ],
         if (footer != null) ...[const SizedBox(height: 14), footer!],
         if (footnote != null) ...[

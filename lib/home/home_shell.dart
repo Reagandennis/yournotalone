@@ -89,8 +89,8 @@ void openReminderTarget(NavigatorState navigator, String kindName) {
   }
 }
 
-/// The signed-in shell: bottom navigation between Home, Explore, and
-/// Settings.
+/// The signed-in shell: navigation between Home, Explore, and Settings —
+/// a bottom bar on phones, a side rail where there's room.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 
@@ -151,52 +151,103 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     }
   }
 
+  /// Keeps each tab's state (scroll position, filters) when the layout
+  /// switches between the bottom bar and the side rail — an iPhone Duo
+  /// unfolding, an iPad window being resized.
+  final _tabsKey = GlobalKey();
+
+  List<(IconData, IconData, String)> _destinations(BuildContext context) => [
+    (Icons.home_outlined, Icons.home_rounded, context.l10n.shellTabHome),
+    (
+      Icons.explore_outlined,
+      Icons.explore_rounded,
+      context.l10n.shellTabExplore,
+    ),
+    (
+      Icons.settings_outlined,
+      Icons.settings_rounded,
+      context.l10n.shellTabSettings,
+    ),
+  ];
+
+  void _select(int i) => setState(() => _index = i);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: IndexedStack(
-              index: _index,
-              children: const [HomeTab(), ExploreTab(), SettingsTab()],
+    final tabs = IndexedStack(
+      key: _tabsKey,
+      index: _index,
+      children: const [HomeTab(), ExploreTab(), SettingsTab()],
+    );
+    final barColor = Theme.of(context).navigationBarTheme.backgroundColor;
+    final border = BorderSide(color: context.brand.border, width: 1);
+
+    // Wide: the tabs down the side, as on iPad and iPhone Duo, and the
+    // whole width for the page.
+    if (isWideLayout(context)) {
+      return Scaffold(
+        body: Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: barColor,
+                border: Border(right: border),
+              ),
+              child: SafeArea(
+                right: false,
+                child: NavigationRail(
+                  backgroundColor: Colors.transparent,
+                  selectedIndex: _index,
+                  onDestinationSelected: _select,
+                  labelType: NavigationRailLabelType.all,
+                  groupAlignment: -0.85,
+                  destinations: [
+                    for (final (icon, selected, label) in _destinations(
+                      context,
+                    ))
+                      NavigationRailDestination(
+                        icon: Icon(icon),
+                        selectedIcon: Icon(selected),
+                        label: Text(label),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          ),
+            Expanded(
+              child: SafeArea(
+                left: false,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
+                    child: tabs,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ),
+      );
+    }
+
+    return Scaffold(
+      body: SafeArea(child: tabs),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          // The bar's own colour, edge to edge, so the narrower set of tabs
-          // on a tablet doesn't leave bare strips either side.
-          color: Theme.of(context).navigationBarTheme.backgroundColor,
-          border: Border(top: BorderSide(color: context.brand.border, width: 1)),
+          color: barColor,
+          border: Border(top: border),
         ),
-        // Three tabs spread across a 1366-point landscape iPad sit a hand's
-        // width apart; keep them grouped under the content column instead.
-        child: ReadableWidth(
-          maxWidth: 520,
-          child: NavigationBar(
-            selectedIndex: _index,
-            onDestinationSelected: (i) => setState(() => _index = i),
-            destinations: [
+        child: NavigationBar(
+          selectedIndex: _index,
+          onDestinationSelected: _select,
+          destinations: [
+            for (final (icon, selected, label) in _destinations(context))
               NavigationDestination(
-                icon: const Icon(Icons.home_outlined),
-                selectedIcon: const Icon(Icons.home_rounded),
-                label: context.l10n.shellTabHome,
+                icon: Icon(icon),
+                selectedIcon: Icon(selected),
+                label: label,
               ),
-              NavigationDestination(
-                icon: const Icon(Icons.explore_outlined),
-                selectedIcon: const Icon(Icons.explore_rounded),
-                label: context.l10n.shellTabExplore,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.settings_outlined),
-                selectedIcon: const Icon(Icons.settings_rounded),
-                label: context.l10n.shellTabSettings,
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );
