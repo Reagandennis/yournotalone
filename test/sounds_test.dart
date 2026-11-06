@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/content/content_catalog.dart';
 import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
 import 'package:yournotalone/sounds/sound_player.dart';
@@ -57,7 +58,7 @@ void main() {
       ..practice = practice
       ..clock = () => now;
 
-    final sound = soundsCatalog.first;
+    final sound = soundLibrary.first;
     await player.play(sound.asset);
     now = now.add(const Duration(minutes: 5));
 
@@ -152,7 +153,7 @@ void main() {
     expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
     expect(find.byType(Slider), findsOneWidget);
     expect(SoundPlayer.instance.nowPlaying.value,
-        'assets/sounds/deep_focus.m4a');
+        soundLibrary.firstWhere((s) => s.title == 'Deep focus').asset);
 
     // Pause flips the control and the service state.
     await tester.tap(find.byIcon(Icons.pause_rounded));
