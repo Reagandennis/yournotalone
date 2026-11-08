@@ -8,6 +8,19 @@ Mood journal & real therapists
 
 Check in with your mood, write it out, breathe, and unwind with calming sounds — with a licensed therapist a tap away when you want more than an app.
 
+## What's New in This Version (4000 max) — 1.2.0
+
+A bigger update, with more ways to look after yourself:
+
+• Now in French, German, Spanish and Chinese. Pick your language in Settings.
+• Download sounds and sessions to use offline, and manage them in Downloads & storage.
+• Calming animated backgrounds behind sounds, meditation and breathing. Turn on Calm visuals for stiller scenes.
+• Home suggestions that explain why they were picked for you.
+• New exercises, sounds and lessons arrive without waiting for an app update.
+• Crisis helplines for your country.
+• A roomier layout on iPad and iPhone Duo, with the tabs down the side and cards side by side.
+• Fixes and performance improvements.
+
 ## Description (4000 max)
 
 yournotalone means exactly that: you're not alone. A gentle mental-wellness companion for looking after your mind a little every day, with a real, licensed therapist behind it when you want more than an app.
