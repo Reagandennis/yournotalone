@@ -1892,6 +1892,35 @@ begin
 end;
 $$;
 
+-- Same, plus the currency (was 0010_session_notifications.sql)
+create or replace function public.session_notification_data(
+  r public.therapy_requests,
+  p_role text
+)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select jsonb_build_object(
+    'request_id', r.id,
+    'role', p_role,
+    'scheduled_at', r.scheduled_at,
+    'duration_minutes', r.duration_minutes,
+    'topic', r.topic,
+    'payment_status', r.payment_status,
+    'price_cents', r.price_cents,
+    'currency', r.currency,
+    'is_free_session', r.is_free_session,
+    'counterpart', case
+      when p_role = 'client' then
+        (select t.full_name from public.therapists t where t.id = r.therapist_id)
+      else public.therapy_client_first_name(r.user_id)
+    end
+  );
+$$;
+
 -- Same, plus the agreement and country (was 0029_therapist_kyc.sql)
 create or replace function public.therapist_portal_status()
 returns jsonb
