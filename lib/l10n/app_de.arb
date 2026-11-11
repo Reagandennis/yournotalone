@@ -1523,5 +1523,13 @@
   "downloadsLapsedRemove": "Entfernen",
   "crisisChangeCountry": "Land ändern",
   "crisisUsePhoneCountry": "Land meines Handys verwenden",
-  "crisisUncheckedNumbers": "Entwurf: Diese Nummern sind noch nicht geprüft. Im Notfall ruf die Nummer oben an."
+  "crisisUncheckedNumbers": "Entwurf: Diese Nummern sind noch nicht geprüft. Im Notfall ruf die Nummer oben an.",
+  "therapyPricesFor": "Preise: {country}",
+  "therapyPricesNoCountry": "Die Preise hängen davon ab, wo du wohnst",
+  "therapyPriceCountryChange": "Ändern",
+  "therapyPriceCountryTitle": "Wo wohnst du?",
+  "therapyPriceCountryDetail": "Der Preis einer Sitzung richtet sich nach dem Land, in dem du wohnst. Du kannst es ändern, bis du eine Sitzung bezahlt hast.",
+  "therapyPriceCountrySearch": "Land suchen",
+  "therapyPriceCountryFailed": "Land ändern hat nicht geklappt – prüf deine Verbindung.",
+  "therapyPriceUpdated": "Die Sitzung kostet {price}. Prüf den Preis, bevor du bezahlst."
 }

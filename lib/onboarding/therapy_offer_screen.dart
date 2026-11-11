@@ -12,10 +12,17 @@ import 'paywall_screen.dart';
 /// session is paid for when it's requested, from Talk to a therapist — so
 /// this only asks whether they'd like to, and remembers the answer.
 class TherapyOfferScreen extends StatefulWidget {
-  const TherapyOfferScreen({super.key, required this.checkin});
+  const TherapyOfferScreen({
+    super.key,
+    required this.checkin,
+    this.repository,
+  });
 
   /// The wellbeing check-in answer, saved when onboarding completes.
   final String checkin;
+
+  /// Where the session price comes from; injectable for tests.
+  final TherapyRepository? repository;
 
   @override
   State<TherapyOfferScreen> createState() => _TherapyOfferScreenState();
@@ -23,6 +30,19 @@ class TherapyOfferScreen extends StatefulWidget {
 
 class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
   bool _loading = false;
+
+  /// The price for their country; null while it loads, and the card's
+  /// title waits for it rather than showing one price and then another.
+  TherapyPriceQuote? _quote;
+
+  @override
+  void initState() {
+    super.initState();
+    final repository = widget.repository ?? TherapyRepository();
+    loadTherapyPriceQuote(repository).then((quote) {
+      if (mounted) setState(() => _quote = quote);
+    });
+  }
 
   Future<void> _finish({required bool interested}) async {
     setState(() => _loading = true);
@@ -46,7 +66,7 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
   Widget build(BuildContext context) {
     final c = context.brand;
     final l10n = context.l10n;
-    final price = formatPrice(therapySessionPriceCents);
+    final price = (_quote ?? TherapyPriceQuote.fallback).priceLabel;
     return OnboardingScaffold(
       bottom: Column(
         mainAxisSize: MainAxisSize.min,
@@ -109,12 +129,16 @@ class _TherapyOfferScreenState extends State<TherapyOfferScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      l10n.onboardingTherapyPrice(price),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: c.ink,
+                    AnimatedOpacity(
+                      opacity: _quote == null ? 0 : 1,
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        l10n.onboardingTherapyPrice(price),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: c.ink,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 4),

@@ -5584,6 +5584,34 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get crisisUncheckedNumbers => '草稿：这些号码还没有核实。紧急情况下，请拨打上面的号码。';
+
+  @override
+  String therapyPricesFor(String country) {
+    return '$country的价格';
+  }
+
+  @override
+  String get therapyPricesNoCountry => '价格取决于你所在的国家或地区';
+
+  @override
+  String get therapyPriceCountryChange => '更改';
+
+  @override
+  String get therapyPriceCountryTitle => '你住在哪里？';
+
+  @override
+  String get therapyPriceCountryDetail => '咨询价格按你居住的国家或地区而定。在你为一次咨询付款之前，都可以更改。';
+
+  @override
+  String get therapyPriceCountrySearch => '搜索国家或地区';
+
+  @override
+  String get therapyPriceCountryFailed => '没能更改国家或地区——请检查网络连接。';
+
+  @override
+  String therapyPriceUpdated(String price) {
+    return '本次咨询的价格是 $price。请在付款前确认。';
+  }
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

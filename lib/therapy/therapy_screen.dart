@@ -10,8 +10,10 @@ import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
+import '../support/countries.dart';
 import '../support/crisis_screen.dart';
 import 'call_screen.dart';
+import 'country_picker.dart';
 import 'session_format.dart';
 import 'session_widgets.dart';
 import 'therapy_art.dart';
@@ -44,6 +46,7 @@ class TherapyScreen extends StatefulWidget {
     this.payments,
     this.notifications,
     this.clock,
+    this.detectCountry,
   });
 
   /// Injectable so the booking flow can be exercised without a backend.
@@ -53,6 +56,10 @@ class TherapyScreen extends StatefulWidget {
 
   /// Injectable so tests can put "now" anywhere around a session.
   final DateTime Function()? clock;
+
+  /// The phone's country, for pricing someone who hasn't chosen one
+  /// ([deviceCountry] unless a test says otherwise).
+  final String? Function()? detectCountry;
 
   static const routeName = '/therapy';
 
@@ -87,6 +94,13 @@ class _TherapyScreenState extends State<TherapyScreen> {
   final _slots = <String>{};
   bool _submitting = false;
   bool _paying = false;
+
+  /// What a session costs this person, by their country; null until the
+  /// first load, when [TherapyPriceQuote.fallback] stands in.
+  TherapyPriceQuote? _quote;
+  bool _changingCountry = false;
+
+  TherapyPriceQuote get _price => _quote ?? TherapyPriceQuote.fallback;
 
   /// Sessions whose Paystack payment went through but the server hasn't seen
   /// yet. Their card offers "Check payment" instead of "Pay", so a slow
@@ -126,6 +140,11 @@ class _TherapyScreenState extends State<TherapyScreen> {
         _failed = false;
       });
     }
+    // Never fails: today's price stands in when it can't be had.
+    final quote = loadTherapyPriceQuote(
+      _repo,
+      detectCountry: widget.detectCountry ?? deviceCountry,
+    );
     try {
       final requests = await _repo.fetchRequests();
       final therapistIds = [
@@ -139,8 +158,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ? await _repo.fetchMyRatings()
           : const <String, int>{};
       final notificationsOn = await _notifications.isEnabled();
+      final price = await quote;
       if (!mounted) return;
       setState(() {
+        _quote = price;
         _requests = requests;
         _therapists = therapists;
         _myRatings = ratings;
@@ -176,6 +197,15 @@ class _TherapyScreenState extends State<TherapyScreen> {
         note: _noteController.text.trim(),
       );
       if (!mounted) return;
+      // The database priced it (by their country, 0031). If that isn't
+      // what the form said — the price changed while it was open — show
+      // the request with its own price instead of going straight to the
+      // checkout. The form stays as it was, should they discard it.
+      if (draft.needsPayment && !_price.matches(draft)) {
+        _say(context.l10n.therapyPriceUpdated(draft.priceLabel));
+        await _load(quiet: true);
+        return;
+      }
       // An account the care team has waived the fee for: the request is
       // already with them, so there's nothing to pay (migration 0023).
       final outcome = draft.needsPayment
@@ -223,6 +253,32 @@ class _TherapyScreenState extends State<TherapyScreen> {
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  /// Lets someone say where they live, which sets their prices. Hidden
+  /// once they've paid for a session; the database has the last word.
+  Future<void> _changeCountry() async {
+    final current = _price.country;
+    final picked = await showPriceCountryPicker(context, selected: current);
+    if (picked == null || picked == current || !mounted) return;
+    setState(() => _changingCountry = true);
+    try {
+      final quote = await _repo.setPriceCountry(picked);
+      if (mounted) setState(() => _quote = quote);
+    } catch (e) {
+      if (!mounted) return;
+      if (e is PostgrestException && e.code == 'P0001' && e.message.isNotEmpty) {
+        // Their country is fixed since they paid for a session, said in
+        // plain words. Refreshing takes the Change button away.
+        _say(e.message);
+        final quote = await _repo.fetchPriceQuote();
+        if (mounted) setState(() => _quote = quote);
+      } else {
+        _say(errorMessage(e, context.l10n.therapyPriceCountryFailed));
+      }
+    } finally {
+      if (mounted) setState(() => _changingCountry = false);
     }
   }
 
@@ -554,7 +610,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       (
         Icons.tune_rounded,
         l10n.therapyStepPayTitle,
-        l10n.therapyStepPayDetail(formatPrice(therapySessionPriceCents)),
+        l10n.therapyStepPayDetail(_price.priceLabel),
       ),
       (
         Icons.mark_email_read_rounded,
@@ -743,7 +799,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   Widget _bookingForm() {
     final c = context.brand;
     final l10n = context.l10n;
-    final price = formatPrice(therapySessionPriceCents);
+    final price = _price.priceLabel;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -752,8 +808,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
           iconColor: c.blue,
           title: l10n.therapyOfferTitle(price),
           detail: l10n.therapyOfferDetail(
-              l10n.therapyPaymentMethods, therapySessionChargeLabel),
+              l10n.therapyPaymentMethods, _price.chargeLabel),
         ),
+        _priceCountryLine(),
         const SizedBox(height: 26),
         SectionHeader(title: l10n.therapyFocusQuestion),
         const SizedBox(height: 12),
@@ -819,6 +876,58 @@ class _TherapyScreenState extends State<TherapyScreen> {
           style: TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.5),
         ),
       ],
+    );
+  }
+
+  /// "Prices for Kenya · Change" under the price. Nothing when the price
+  /// is the stand-in, or when there's no country and none can be chosen.
+  Widget _priceCountryLine() {
+    final quote = _price;
+    final country = quote.country;
+    if (!quote.fromServer || (country == null && !quote.canChange)) {
+      return const SizedBox.shrink();
+    }
+    final c = context.brand;
+    final l10n = context.l10n;
+    final style = TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.4);
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, left: 4),
+      child: Row(
+        children: [
+          Icon(Icons.public_rounded, size: 15, color: c.textMuted),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(
+              country == null
+                  ? l10n.therapyPricesNoCountry
+                  : l10n.therapyPricesFor(countryName(country)),
+              style: style,
+            ),
+          ),
+          if (quote.canChange) ...[
+            Text(' · ', style: style),
+            TextButton(
+              onPressed:
+                  _changingCountry || _submitting ? null : _changeCountry,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 6),
+                minimumSize: const Size(0, 32),
+                textStyle: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              child: _changingCountry
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text(l10n.therapyPriceCountryChange),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -1012,9 +1121,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 ? l10n.therapyPaymentVerifyingDetail
                 : request.isAwaitingPayment
                     ? l10n.therapyPayDetailRequest(methods,
-                        therapySessionChargeLabel, l10n.therapyCancellationPolicy)
+                        request.chargeLabel, l10n.therapyCancellationPolicy)
                     : l10n.therapyPayDetailSession(
-                        methods, therapySessionChargeLabel),
+                        methods, request.chargeLabel),
             style: TextStyle(
               fontSize: 12.5,
               color: c.textMuted,

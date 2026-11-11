@@ -5954,4 +5954,34 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get crisisUncheckedNumbers =>
       'Borrador: estos números aún no se han comprobado. En una emergencia, llama al número de arriba.';
+
+  @override
+  String therapyPricesFor(String country) {
+    return 'Precios: $country';
+  }
+
+  @override
+  String get therapyPricesNoCountry => 'Los precios dependen de dónde vives';
+
+  @override
+  String get therapyPriceCountryChange => 'Cambiar';
+
+  @override
+  String get therapyPriceCountryTitle => '¿Dónde vives?';
+
+  @override
+  String get therapyPriceCountryDetail =>
+      'El precio de las sesiones depende del país en el que vives. Puedes cambiarlo hasta que pagues una sesión.';
+
+  @override
+  String get therapyPriceCountrySearch => 'Buscar país';
+
+  @override
+  String get therapyPriceCountryFailed =>
+      'No se pudo cambiar tu país. Revisa tu conexión.';
+
+  @override
+  String therapyPriceUpdated(String price) {
+    return 'La sesión cuesta $price. Revisa el precio antes de pagar.';
+  }
 }

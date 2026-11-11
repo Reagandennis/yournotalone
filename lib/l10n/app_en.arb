@@ -7910,5 +7910,49 @@
   "crisisUncheckedNumbers": "Draft: these numbers haven't been checked yet. In an emergency, call the number above.",
   "@crisisUncheckedNumbers": {
     "description": "Warning on the crisis screen, only in test builds, above helplines nobody has checked yet. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "therapyPricesFor": "Prices for {country}",
+  "@therapyPricesFor": {
+    "description": "Small line under the price on the therapy booking form, followed by a Change button. {country} is the name of the country session prices are for, e.g. \"Kenya\" (country names aren't translated). Use a form that needs no article if your language would need one before a country name.",
+    "placeholders": {
+      "country": {
+        "type": "String",
+        "example": "Kenya"
+      }
+    }
+  },
+  "therapyPricesNoCountry": "Prices depend on where you live",
+  "@therapyPricesNoCountry": {
+    "description": "Small line under the price on the therapy booking form when no country has been chosen yet, followed by a Change button that opens the list of countries."
+  },
+  "therapyPriceCountryChange": "Change",
+  "@therapyPriceCountryChange": {
+    "description": "Small button after therapyPricesFor / therapyPricesNoCountry on the booking form: opens the list of countries. Keep it short."
+  },
+  "therapyPriceCountryTitle": "Where do you live?",
+  "@therapyPriceCountryTitle": {
+    "description": "Title of the sheet listing every country, opened from the therapy booking form. Session prices depend on the country the person lives in."
+  },
+  "therapyPriceCountryDetail": "Sessions are priced for the country you live in. You can change it until you've paid for a session.",
+  "@therapyPriceCountryDetail": {
+    "description": "Under the title of the country sheet on the therapy booking form. After the first paid session the country can only be changed by emailing the care team."
+  },
+  "therapyPriceCountrySearch": "Search countries",
+  "@therapyPriceCountrySearch": {
+    "description": "Hint in the search box at the top of the country sheet on the therapy booking form."
+  },
+  "therapyPriceCountryFailed": "Couldn't change your country — check your connection.",
+  "@therapyPriceCountryFailed": {
+    "description": "Snackbar: saving the country chosen for therapy prices failed (likely offline)."
+  },
+  "therapyPriceUpdated": "The session price is {price}. Check it before you pay.",
+  "@therapyPriceUpdated": {
+    "description": "Snackbar when the price saved with a new therapy request differs from the one the booking form showed (it changed in between), so the app shows the request instead of going straight to payment. {price} e.g. \"£45\".",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "£45"
+      }
+    }
   }
 }

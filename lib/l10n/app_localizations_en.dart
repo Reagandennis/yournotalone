@@ -5883,4 +5883,34 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get crisisUncheckedNumbers =>
       'Draft: these numbers haven\'t been checked yet. In an emergency, call the number above.';
+
+  @override
+  String therapyPricesFor(String country) {
+    return 'Prices for $country';
+  }
+
+  @override
+  String get therapyPricesNoCountry => 'Prices depend on where you live';
+
+  @override
+  String get therapyPriceCountryChange => 'Change';
+
+  @override
+  String get therapyPriceCountryTitle => 'Where do you live?';
+
+  @override
+  String get therapyPriceCountryDetail =>
+      'Sessions are priced for the country you live in. You can change it until you\'ve paid for a session.';
+
+  @override
+  String get therapyPriceCountrySearch => 'Search countries';
+
+  @override
+  String get therapyPriceCountryFailed =>
+      'Couldn\'t change your country — check your connection.';
+
+  @override
+  String therapyPriceUpdated(String price) {
+    return 'The session price is $price. Check it before you pay.';
+  }
 }

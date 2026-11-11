@@ -5975,4 +5975,35 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get crisisUncheckedNumbers =>
       'Brouillon : ces numéros n’ont pas encore été vérifiés. En cas d’urgence, appelle le numéro ci-dessus.';
+
+  @override
+  String therapyPricesFor(String country) {
+    return 'Tarifs : $country';
+  }
+
+  @override
+  String get therapyPricesNoCountry =>
+      'Les tarifs dépendent de l’endroit où tu vis';
+
+  @override
+  String get therapyPriceCountryChange => 'Changer';
+
+  @override
+  String get therapyPriceCountryTitle => 'Où vis-tu ?';
+
+  @override
+  String get therapyPriceCountryDetail =>
+      'Le prix des séances dépend du pays où tu vis. Tu peux le changer tant que tu n’as pas payé de séance.';
+
+  @override
+  String get therapyPriceCountrySearch => 'Rechercher un pays';
+
+  @override
+  String get therapyPriceCountryFailed =>
+      'Impossible de changer ton pays — vérifie ta connexion.';
+
+  @override
+  String therapyPriceUpdated(String price) {
+    return 'Le prix de la séance est de $price. Vérifie-le avant de payer.';
+  }
 }

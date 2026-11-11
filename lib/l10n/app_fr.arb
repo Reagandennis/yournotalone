@@ -1523,5 +1523,13 @@
   "downloadsLapsedRemove": "Supprimer",
   "crisisChangeCountry": "Changer de pays",
   "crisisUsePhoneCountry": "Utiliser le pays de mon téléphone",
-  "crisisUncheckedNumbers": "Brouillon : ces numéros n’ont pas encore été vérifiés. En cas d’urgence, appelle le numéro ci-dessus."
+  "crisisUncheckedNumbers": "Brouillon : ces numéros n’ont pas encore été vérifiés. En cas d’urgence, appelle le numéro ci-dessus.",
+  "therapyPricesFor": "Tarifs : {country}",
+  "therapyPricesNoCountry": "Les tarifs dépendent de l’endroit où tu vis",
+  "therapyPriceCountryChange": "Changer",
+  "therapyPriceCountryTitle": "Où vis-tu ?",
+  "therapyPriceCountryDetail": "Le prix des séances dépend du pays où tu vis. Tu peux le changer tant que tu n’as pas payé de séance.",
+  "therapyPriceCountrySearch": "Rechercher un pays",
+  "therapyPriceCountryFailed": "Impossible de changer ton pays — vérifie ta connexion.",
+  "therapyPriceUpdated": "Le prix de la séance est de {price}. Vérifie-le avant de payer."
 }

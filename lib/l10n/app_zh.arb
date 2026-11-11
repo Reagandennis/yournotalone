@@ -1523,5 +1523,13 @@
   "downloadsLapsedRemove": "删除",
   "crisisChangeCountry": "更改国家或地区",
   "crisisUsePhoneCountry": "使用手机所在的国家或地区",
-  "crisisUncheckedNumbers": "草稿：这些号码还没有核实。紧急情况下，请拨打上面的号码。"
+  "crisisUncheckedNumbers": "草稿：这些号码还没有核实。紧急情况下，请拨打上面的号码。",
+  "therapyPricesFor": "{country}的价格",
+  "therapyPricesNoCountry": "价格取决于你所在的国家或地区",
+  "therapyPriceCountryChange": "更改",
+  "therapyPriceCountryTitle": "你住在哪里？",
+  "therapyPriceCountryDetail": "咨询价格按你居住的国家或地区而定。在你为一次咨询付款之前，都可以更改。",
+  "therapyPriceCountrySearch": "搜索国家或地区",
+  "therapyPriceCountryFailed": "没能更改国家或地区——请检查网络连接。",
+  "therapyPriceUpdated": "本次咨询的价格是 {price}。请在付款前确认。"
 }

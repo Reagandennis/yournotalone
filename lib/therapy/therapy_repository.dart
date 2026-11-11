@@ -1,19 +1,25 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/l10n.dart';
+import '../support/crisis_resources.dart';
 import 'session_format.dart';
 
-/// What a session costs. The database holds the real price
-/// (`therapy_session_price_cents()` in migration 0009) and stamps it on each
-/// request; this is only for copy shown before a request exists.
+/// What a session costs when the server can't say: before migration 0031
+/// (`therapy_price_quote()`) is applied, or offline. The database prices
+/// each request itself, by the client's country (0031), so this is only
+/// ever copy — the '*' row of `therapy_prices`.
 const therapySessionPriceCents = 2000;
 
-/// What Paystack actually charges for a session: prices are shown in USD,
-/// but the Paystack account settles in Kenyan shillings, so its page shows
-/// this. Keep in step with CHARGE_AMOUNT in supabase/functions/
-/// paystack-payment.
-const therapySessionChargeLabel = 'Ksh 2,600';
+/// What Paystack charges for a session at that price: the Paystack account
+/// settles in Kenyan shillings, so its page shows this. Keep in step with
+/// CHARGE_AMOUNT in supabase/functions/paystack-payment, which charges it
+/// for sessions booked before 0031.
+const therapySessionChargeMinor = 260000;
+const therapySessionChargeCurrency = 'KES';
 
 /// How a session can be paid for on the Paystack page — only the channels
 /// switched on for the Paystack account (Settings → Preferences → Payment
@@ -58,13 +64,178 @@ String therapyTopicLabel(AppLocalizations l10n, String topic) =>
       _ => topic,
     };
 
-/// "$20"; cents only when there are some.
+/// "$20", "£45", "Ksh 2,600", "€49.50": an amount in minor units (cents,
+/// pence) with its currency's sign, or its ISO code for one without a sign
+/// here; thousands grouped, and cents only when there are some. Matches
+/// `therapy_price_label()` (migration 0031), which writes the emails,
+/// except that dollars stay "$" rather than "US$".
 String formatPrice(int cents, [String currency = 'USD']) {
-  final symbol = currency == 'USD' ? '\$' : '$currency ';
-  final amount = cents % 100 == 0
-      ? '${cents ~/ 100}'
-      : (cents / 100).toStringAsFixed(2);
-  return '$symbol$amount';
+  final code = currency.trim().toUpperCase();
+  final symbol = switch (code) {
+    'USD' => '\$',
+    'GBP' => '£',
+    'EUR' => '€',
+    'KES' => 'Ksh ',
+    'UGX' => 'USh ',
+    'TZS' => 'TSh ',
+    'NGN' => '₦',
+    'ZAR' => 'R',
+    'CAD' => 'CA\$',
+    'AUD' => 'A\$',
+    _ => '$code ',
+  };
+  final whole = '${cents.abs() ~/ 100}'.replaceAllMapped(
+    RegExp(r'\B(?=(\d{3})+$)'),
+    (_) => ',',
+  );
+  final fraction = cents.abs() % 100;
+  final amount =
+      fraction == 0 ? whole : '$whole.${'$fraction'.padLeft(2, '0')}';
+  return '${cents < 0 ? '-' : ''}$symbol$amount';
+}
+
+/// What a session costs the signed-in person, from `therapy_price_quote()`
+/// (migration 0031): the price shown, in their currency, and what Paystack
+/// charges for it. Both depend on the country they've chosen; with none,
+/// the price for everywhere without its own applies.
+class TherapyPriceQuote {
+  const TherapyPriceQuote({
+    required this.country,
+    required this.canChange,
+    required this.currency,
+    required this.priceMinor,
+    required this.chargeCurrency,
+    required this.chargeMinor,
+    this.pricedCountries = const [],
+    this.fromServer = true,
+  });
+
+  factory TherapyPriceQuote.fromJson(Map<String, dynamic> json) {
+    final country = json['country'];
+    return TherapyPriceQuote(
+      country: country is String && country.isNotEmpty ? country : null,
+      canChange: json['can_change'] == true,
+      currency: json['currency'] as String? ?? 'USD',
+      priceMinor:
+          (json['price_minor'] as num?)?.toInt() ?? therapySessionPriceCents,
+      chargeCurrency:
+          json['charge_currency'] as String? ?? therapySessionChargeCurrency,
+      chargeMinor:
+          (json['charge_minor'] as num?)?.toInt() ?? therapySessionChargeMinor,
+      pricedCountries: [
+        for (final code in json['priced_countries'] as List? ?? const [])
+          if (code is String) code,
+      ],
+    );
+  }
+
+  /// Today's price, for when the server can't be asked: nothing about the
+  /// person's country is known, and there's nothing to change.
+  static const fallback = TherapyPriceQuote(
+    country: null,
+    canChange: false,
+    currency: 'USD',
+    priceMinor: therapySessionPriceCents,
+    chargeCurrency: therapySessionChargeCurrency,
+    chargeMinor: therapySessionChargeMinor,
+    fromServer: false,
+  );
+
+  /// The ISO code of the country prices are for, or null until one is
+  /// chosen.
+  final String? country;
+
+  /// False once they've paid for a session: from then on only the care
+  /// team can change their country.
+  final bool canChange;
+  final String currency;
+  final int priceMinor;
+  final String chargeCurrency;
+  final int chargeMinor;
+
+  /// Countries with a price of their own; everywhere else gets the default.
+  final List<String> pricedCountries;
+
+  /// False for [fallback].
+  final bool fromServer;
+
+  String get priceLabel => formatPrice(priceMinor, currency);
+  String get chargeLabel => formatPrice(chargeMinor, chargeCurrency);
+
+  /// Whether [request] was priced the way this quote says.
+  bool matches(TherapyRequest request) =>
+      request.priceCents == priceMinor &&
+      request.currency.toUpperCase() == currency.toUpperCase();
+}
+
+/// The quote [call] (the `therapy_price_quote()` RPC) answers, or
+/// [TherapyPriceQuote.fallback] when there's none to be had: the function
+/// isn't there yet (PostgREST's PGRST202, before 0031), the phone is
+/// offline, or the answer can't be read.
+@visibleForTesting
+Future<TherapyPriceQuote> readPriceQuote(Future<Object?> Function() call) async {
+  try {
+    final data = await call().timeout(const Duration(seconds: 15));
+    return TherapyPriceQuote.fromJson(Map<String, dynamic>.from(data as Map));
+  } on PostgrestException catch (e) {
+    if (e.code != 'PGRST202' && e.code != '42883') {
+      // Not the expected "not there yet": worth knowing about.
+      unawaited(Sentry.captureException(e));
+    }
+    return TherapyPriceQuote.fallback;
+  } catch (e) {
+    debugPrint('Therapy price quote unavailable: $e');
+    return TherapyPriceQuote.fallback;
+  }
+}
+
+/// The phone's country as an ISO code: the one picked on the crisis screen,
+/// else the first of the phone's locales that names a country. Null when
+/// none does.
+String? deviceCountry() {
+  final crisis = crisisCountry();
+  if (crisis != null) return crisis;
+  for (final locale in PlatformDispatcher.instance.locales) {
+    final code = locale.countryCode?.toUpperCase();
+    // Skips numeric regions like es-419 (Latin America).
+    if (code != null && RegExp(r'^[A-Z]{2}$').hasMatch(code)) return code;
+  }
+  return null;
+}
+
+/// The price to show, never failing: the server's quote, else
+/// [TherapyPriceQuote.fallback]. The first time — no country chosen yet,
+/// and still free to choose — it quietly sets the phone's country
+/// ([detectCountry]), so the price is the local one from the start.
+Future<TherapyPriceQuote> loadTherapyPriceQuote(
+  TherapyRepository repository, {
+  String? Function() detectCountry = deviceCountry,
+}) async {
+  final TherapyPriceQuote quote;
+  try {
+    quote = await repository.fetchPriceQuote();
+  } catch (_) {
+    return TherapyPriceQuote.fallback;
+  }
+  if (!quote.fromServer || quote.country != null || !quote.canChange) {
+    return quote;
+  }
+  final String? detected;
+  try {
+    detected = detectCountry();
+  } catch (_) {
+    return quote;
+  }
+  if (detected == null) return quote;
+  try {
+    return await repository
+        .setPriceCountry(detected)
+        .timeout(const Duration(seconds: 15));
+  } catch (e) {
+    // Shown with the default price; tried again next time.
+    debugPrint('Couldn\'t set the therapy price country: $e');
+    return quote;
+  }
 }
 
 /// Where a session's call stands at a given moment.
@@ -108,6 +279,8 @@ class TherapyRequest {
     this.durationMinutes = 50,
     this.priceCents = 0,
     this.currency = 'USD',
+    this.chargeMinor,
+    this.chargeCurrency,
     this.paymentStatus = 'not_required',
     this.clientSummary,
     this.completedAt,
@@ -128,6 +301,8 @@ class TherapyRequest {
         durationMinutes: (row['duration_minutes'] as num?)?.toInt() ?? 50,
         priceCents: (row['price_cents'] as num?)?.toInt() ?? 0,
         currency: row['currency'] as String? ?? 'USD',
+        chargeMinor: (row['charge_minor'] as num?)?.toInt(),
+        chargeCurrency: row['charge_currency'] as String?,
         paymentStatus: row['payment_status'] as String? ?? 'not_required',
         clientSummary: row['client_summary'] as String?,
         completedAt: _time(row['completed_at']),
@@ -158,6 +333,11 @@ class TherapyRequest {
   final int durationMinutes;
   final int priceCents;
   final String currency;
+
+  /// What Paystack charges for it (migration 0031); null on sessions booked
+  /// before then, which are charged [therapySessionChargeMinor].
+  final int? chargeMinor;
+  final String? chargeCurrency;
 
   /// One of: unpaid, paid, waived (not_required on rows from before 0019).
   final String paymentStatus;
@@ -214,6 +394,11 @@ class TherapyRequest {
       isConfirmed && !canCancelAt(now) && !needsPayment;
 
   String get priceLabel => formatPrice(priceCents, currency);
+
+  /// What the Paystack page will show, e.g. "Ksh 2,600".
+  String get chargeLabel => chargeMinor == null
+      ? formatPrice(therapySessionChargeMinor, therapySessionChargeCurrency)
+      : formatPrice(chargeMinor!, chargeCurrency ?? therapySessionChargeCurrency);
 
   JoinState joinStateAt(DateTime now) => isConfirmed
       ? sessionJoinState(now,
@@ -376,6 +561,27 @@ class TherapyRepository {
         .select()
         .single();
     return TherapyRequest.fromRow(row);
+  }
+
+  /// What a session costs this person ([TherapyPriceQuote]). Never fails:
+  /// before migration 0031, offline, or signed out it's
+  /// [TherapyPriceQuote.fallback], today's price.
+  Future<TherapyPriceQuote> fetchPriceQuote() async {
+    if (_client.auth.currentUser == null) return TherapyPriceQuote.fallback;
+    return readPriceQuote(() => _client.rpc('therapy_price_quote'));
+  }
+
+  /// Sets the country this person's sessions are priced for (an ISO code)
+  /// and returns the new quote. Once they've paid for a session the
+  /// database refuses a different country with a [PostgrestException]
+  /// (P0001) whose message is written for people.
+  Future<TherapyPriceQuote> setPriceCountry(String country) async {
+    if (_client.auth.currentUser == null) throw StateError('Not signed in');
+    final data = await _client.rpc(
+      'therapy_set_country',
+      params: {'p_country': country.toUpperCase()},
+    );
+    return TherapyPriceQuote.fromJson(Map<String, dynamic>.from(data as Map));
   }
 
   Future<void> cancelRequest(String id) => _client

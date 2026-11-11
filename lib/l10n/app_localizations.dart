@@ -9281,6 +9281,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Draft: these numbers haven\'t been checked yet. In an emergency, call the number above.'**
   String get crisisUncheckedNumbers;
+
+  /// Small line under the price on the therapy booking form, followed by a Change button. {country} is the name of the country session prices are for, e.g. "Kenya" (country names aren't translated). Use a form that needs no article if your language would need one before a country name.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices for {country}'**
+  String therapyPricesFor(String country);
+
+  /// Small line under the price on the therapy booking form when no country has been chosen yet, followed by a Change button that opens the list of countries.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices depend on where you live'**
+  String get therapyPricesNoCountry;
+
+  /// Small button after therapyPricesFor / therapyPricesNoCountry on the booking form: opens the list of countries. Keep it short.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get therapyPriceCountryChange;
+
+  /// Title of the sheet listing every country, opened from the therapy booking form. Session prices depend on the country the person lives in.
+  ///
+  /// In en, this message translates to:
+  /// **'Where do you live?'**
+  String get therapyPriceCountryTitle;
+
+  /// Under the title of the country sheet on the therapy booking form. After the first paid session the country can only be changed by emailing the care team.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions are priced for the country you live in. You can change it until you\'ve paid for a session.'**
+  String get therapyPriceCountryDetail;
+
+  /// Hint in the search box at the top of the country sheet on the therapy booking form.
+  ///
+  /// In en, this message translates to:
+  /// **'Search countries'**
+  String get therapyPriceCountrySearch;
+
+  /// Snackbar: saving the country chosen for therapy prices failed (likely offline).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t change your country — check your connection.'**
+  String get therapyPriceCountryFailed;
+
+  /// Snackbar when the price saved with a new therapy request differs from the one the booking form showed (it changed in between), so the app shows the request instead of going straight to payment. {price} e.g. "£45".
+  ///
+  /// In en, this message translates to:
+  /// **'The session price is {price}. Check it before you pay.'**
+  String therapyPriceUpdated(String price);
 }
 
 class _AppLocalizationsDelegate

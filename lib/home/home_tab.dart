@@ -107,6 +107,7 @@ class HomeTab extends StatefulWidget {
     super.key,
     this.practice,
     this.therapyRequests,
+    this.therapyPrice,
     this.recommendations,
   });
 
@@ -115,6 +116,9 @@ class HomeTab extends StatefulWidget {
 
   /// Injectable so the session banner can be tested without a backend.
   final Future<List<TherapyRequest>> Function()? therapyRequests;
+
+  /// Injectable so the therapy banner's price can be set; never fails.
+  final Future<TherapyPriceQuote> Function()? therapyPrice;
 
   /// Injectable so the suggestions can come from a fake Worker.
   final RecommendationsClient? recommendations;
@@ -136,6 +140,9 @@ class _HomeTabState extends State<HomeTab> {
   /// Check-ins from the last seven days; null until loaded.
   List<MoodEntry>? _week;
   TherapyRequest? _session;
+
+  /// What a session costs them, by their country; null until loaded.
+  TherapyPriceQuote? _therapyPrice;
 
   /// The most recent finished session with a note from the therapist,
   /// within the last fortnight.
@@ -190,6 +197,16 @@ class _HomeTabState extends State<HomeTab> {
         })
         .catchError((_) {
           // No session to show; the plain banner stays.
+        });
+    (widget.therapyPrice ??
+            () async => loadTherapyPriceQuote(TherapyRepository()))()
+        .then((quote) {
+          if (mounted) setState(() => _therapyPrice = quote);
+        })
+        .catchError((_) {
+          if (mounted) {
+            setState(() => _therapyPrice = TherapyPriceQuote.fallback);
+          }
         });
     unawaited(_orderQuickAccess());
     unawaited(_loadSuggestions());
@@ -1167,16 +1184,25 @@ class _HomeTabState extends State<HomeTab> {
     final now = DateTime.now();
     final open = session != null && session.joinStateAt(now) == JoinState.open;
     final l10n = context.l10n;
-    final (title, sub) = switch (session) {
+    // The price line waits for the price for their country rather than
+    // showing one price and then another.
+    final (title, sub, waiting) = switch (session) {
       final s? when s.isConfirmed && s.scheduledAt != null => (
         l10n.homeYourSession(_when(s.scheduledAt!, now)),
         open ? l10n.homeSessionOpen : l10n.homeSessionDetails,
+        false,
       ),
       final s? when s.isPending => (
         l10n.homeFindingTherapist,
         l10n.homeFindingTherapistSub,
+        false,
       ),
-      _ => (l10n.homeTalkToTherapist, l10n.homeTalkToTherapistSub('\$20')),
+      _ => (
+        l10n.homeTalkToTherapist,
+        l10n.homeTalkToTherapistSub(
+            (_therapyPrice ?? TherapyPriceQuote.fallback).priceLabel),
+        _therapyPrice == null,
+      ),
     };
     return Material(
       color: open ? c.tint(Pillars.red, 0.10) : c.tint(Pillars.blue, 0.06),
@@ -1217,9 +1243,13 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    Text(
-                      sub,
-                      style: TextStyle(fontSize: 13, color: c.textMuted),
+                    AnimatedOpacity(
+                      opacity: waiting ? 0 : 1,
+                      duration: const Duration(milliseconds: 200),
+                      child: Text(
+                        sub,
+                        style: TextStyle(fontSize: 13, color: c.textMuted),
+                      ),
                     ),
                   ],
                 ),

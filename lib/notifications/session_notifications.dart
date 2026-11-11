@@ -95,7 +95,12 @@ int sessionNotificationId(String sessionId) =>
   final when = at == null ? l10n.notificationBookedTime : formatDateTime(at);
   final minutes = (data['duration_minutes'] as num?)?.toInt() ?? 50;
   final unpaid = data['payment_status'] == 'unpaid';
-  final price = formatPrice((data['price_cents'] as num?)?.toInt() ?? 0);
+  // In the session's own currency once the payload names it; dollars for
+  // payloads from before sessions were priced by country.
+  final price = formatPrice(
+    (data['price_cents'] as num?)?.toInt() ?? 0,
+    data['currency'] as String? ?? 'USD',
+  );
 
   switch (kind) {
     case 'session_booked':
