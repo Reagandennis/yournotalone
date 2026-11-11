@@ -20,12 +20,13 @@
 //                                 (sk_test_… while testing, sk_live_… after)
 //          PAYSTACK_CALLBACK_URL  optional; where Paystack sends the browser
 //                                 after paying, e.g. a "return to the app" page
-// Prices are shown in USD (the session's price_cents), but the Paystack
-// account settles in Kenyan shillings, so every checkout charges
-// CHARGE_AMOUNT in CHARGE_CURRENCY instead. Optional secrets
-// PAYSTACK_CHARGE_AMOUNT (in cents, e.g. 260000) and PAYSTACK_CHARGE_CURRENCY
-// override them without a redeploy; change therapySessionChargeLabel in
-// lib/therapy/therapy_repository.dart to match.
+// Prices are shown in the client's currency (the session's price_cents and
+// currency), but the Paystack account settles in Kenyan shillings, so each
+// checkout charges the session's charge_minor in charge_currency, set from
+// the price list for the client's country when they booked (migration
+// 0031). Sessions booked before that have no charge on them and get
+// CHARGE_AMOUNT in CHARGE_CURRENCY; optional secrets PAYSTACK_CHARGE_AMOUNT
+// (in cents, e.g. 260000) and PAYSTACK_CHARGE_CURRENCY override those.
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by the platform.
 
 import { createClient } from 'jsr:@supabase/supabase-js@2';
@@ -40,7 +41,7 @@ import {
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const CALLBACK_URL = Deno.env.get('PAYSTACK_CALLBACK_URL');
-// Ksh 2,600, in cents.
+// Ksh 2,600, in cents, for sessions booked before 0031.
 const CHARGE_AMOUNT = Number(Deno.env.get('PAYSTACK_CHARGE_AMOUNT') ?? 260000);
 const CHARGE_CURRENCY = (Deno.env.get('PAYSTACK_CHARGE_CURRENCY') ?? 'KES').toUpperCase();
 
@@ -85,7 +86,7 @@ Deno.serve(async (req: Request) => {
 
   const { data: session, error: sessionError } = await admin
     .from('therapy_requests')
-    .select('id, user_id, status, payment_status, price_cents, currency')
+    .select('id, user_id, status, payment_status, price_cents, currency, charge_minor, charge_currency')
     .eq('id', requestId)
     .maybeSingle();
   if (sessionError) {
@@ -136,8 +137,8 @@ Deno.serve(async (req: Request) => {
 
   if (!user.email) return json({ error: 'email_required' }, 400);
   if (!(Number(session.price_cents) > 0)) return json({ error: 'not_payable' }, 409);
-  const amount = CHARGE_AMOUNT;
-  const currency = CHARGE_CURRENCY;
+  const amount = Number(session.charge_minor) > 0 ? Number(session.charge_minor) : CHARGE_AMOUNT;
+  const currency = session.charge_minor ? String(session.charge_currency ?? 'KES').toUpperCase() : CHARGE_CURRENCY;
   if (!(amount > 0)) {
     console.error('paystack-payment: bad PAYSTACK_CHARGE_AMOUNT');
     return json({ error: 'not_configured' }, 503);
@@ -172,8 +173,8 @@ Deno.serve(async (req: Request) => {
             { display_name: 'Item', variable_name: 'item', value: 'Therapy session' },
             {
               display_name: 'Price',
-              variable_name: 'price_usd',
-              value: `US$${(Number(session.price_cents) / 100).toFixed(2)}`,
+              variable_name: 'price',
+              value: `${String(session.currency ?? 'USD').toUpperCase()} ${(Number(session.price_cents) / 100).toFixed(2)}`,
             },
           ],
         },
