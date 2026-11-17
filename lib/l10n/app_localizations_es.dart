@@ -1783,7 +1783,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get faqCostA =>
-      'Cada sesión cuesta \$20 y se paga de forma segura en la app al reservar. Eso es lo que envía tu solicitud a nuestro equipo de atención, y recibes el recibo por correo electrónico al instante. Sin suscripción: reservas una sesión cada vez.';
+      'Cada sesión tiene el precio del país donde vives, que la app toma de tu cuenta de App Store o Google Play, así que no tienes que elegir nada. Pagas de forma segura en la app al reservar. Eso es lo que envía tu solicitud a nuestro equipo de atención, y recibes el recibo por correo electrónico al instante. Sin suscripción: reservas una sesión cada vez.';
 
   @override
   String get faqMoveQ => '¿Y si necesito cancelar o cambiar mi sesión?';

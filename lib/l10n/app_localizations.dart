@@ -2894,7 +2894,7 @@ abstract class AppLocalizations {
   /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person. Keep the price "$20" as is.
   ///
   /// In en, this message translates to:
-  /// **'Each session is \$20, paid securely in the app when you book — that\'s what sends your request to our care team, and you get a receipt by email straight away. No subscription; you book one session at a time.'**
+  /// **'Each session is priced for the country you live in, which the app takes from your App Store or Google Play account, so there\'s nothing to choose. You pay securely in the app when you book — that\'s what sends your request to our care team, and you get a receipt by email straight away. No subscription; you book one session at a time.'**
   String get faqCostA;
 
   /// FAQ question (a heading people tap to open the answer).

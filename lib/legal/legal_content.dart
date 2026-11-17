@@ -14,7 +14,7 @@ const legalEntityAddress = '179 Runda Drive, Nairobi, Kenya';
 const legalContactEmail = 'reaganprezzo@gmail.com';
 const legalGoverningCountry = 'Kenya';
 
-const legalLastUpdated = '6 October 2026';
+const legalLastUpdated = '17 November 2026';
 
 class LegalDoc {
   const LegalDoc({
@@ -73,6 +73,12 @@ final privacyPolicy = LegalDoc(
           'for you, and any rating or comment you give. Your therapist can '
           'also rate the session and flag concerns for our care team — '
           'such as a missed session or a worry about your safety.\n\n'
+          'Your country, for session prices — the country of your App Store '
+          'or Google Play account, your SIM card\'s country (on Android) and '
+          'your phone\'s region setting. The app reads these without asking '
+          'for any permission. We keep them with your account to set the '
+          'price of your therapy sessions, and so our care team can put it '
+          'right if it\'s wrong. They don\'t tell us where you are.\n\n'
           'Video calls — therapy sessions are live audio and video between '
           'you and your therapist. They are not recorded, and no audio or '
           'video is stored.\n\n'
@@ -113,9 +119,10 @@ final privacyPolicy = LegalDoc(
           'To record your wellbeing data — legal basis: your explicit '
           'consent (Art. 6(1)(a) and 9(2)(a) GDPR).\n\n'
           'To arrange and run the therapy sessions you request — matching '
-          'you with a therapist, scheduling, the video call, payment, and '
-          'feedback afterwards — legal basis: performance of a contract and '
-          'your explicit consent.\n\n'
+          'you with a therapist, scheduling, the video call, pricing them '
+          'for the country you live in, payment, and feedback afterwards — '
+          'legal basis: performance of a contract and your explicit '
+          'consent.\n\n'
           'To act on a safety concern a therapist raises — legal basis: '
           'your explicit consent and, where someone\'s life may be at risk, '
           'the protection of vital interests (Art. 6(1)(d) GDPR).\n\n'
@@ -297,10 +304,16 @@ final termsOfService = LegalDoc(
           'in the app and by email. Sessions are private video calls inside '
           'the app and are not recorded. They are delivered by licensed '
           'professionals responsible for their own clinical practice.\n\n'
-          '•  Each session costs US\$20 (or the local-currency price the '
-          'store shows you), paid in the app when you request it. Your '
-          'request reaches our care team only once it\'s paid for, and we '
-          'email you a receipt.\n'
+          '•  Each session costs the price the app shows for the country '
+          'you live in, paid in the app when you request it. We take your '
+          'country from your App Store or Google Play account (where that '
+          'isn\'t available, from your SIM card or your phone\'s region '
+          'setting). Once you\'ve paid for a session it stays the same; if '
+          'it\'s wrong, contact us and we\'ll correct it. Payments are '
+          'charged in Kenyan shillings through Paystack, so if your price '
+          'is in another currency, your bank converts it and may charge a '
+          'fee. Your request reaches our care team only once it\'s paid '
+          'for, and we email you a receipt.\n'
           '•  You can cancel in the app at any time before you\'re matched, '
           'and up to 24 hours before a booked session starts; either way '
           'you\'re refunded in full. To move a booked session, contact us '

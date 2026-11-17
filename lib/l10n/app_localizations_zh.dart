@@ -1658,7 +1658,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get faqCostA =>
-      '每次咨询 \$20，预约时在 App 内安全付款——付款后申请才会发给我们的关怀团队，你也会立即收到邮件收据。无需订阅，每次预约一次咨询。';
+      '每次咨询按你所在国家的价格收费，App 会根据你的 App Store 或 Google Play 账户确定国家，你无需自己选择。预约时在 App 内安全付款——付款后申请才会发给我们的关怀团队，你也会立即收到邮件收据。无需订阅，每次预约一次咨询。';
 
   @override
   String get faqMoveQ => '如果我需要取消或改期怎么办？';

@@ -1785,7 +1785,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get faqCostA =>
-      'Chaque séance coûte \$20, payés en toute sécurité dans l’app au moment de réserver — c’est ce qui envoie ta demande à notre équipe de soutien, et tu reçois immédiatement un reçu par e-mail. Sans abonnement : tu réserves une séance à la fois.';
+      'Chaque séance est facturée au tarif du pays où tu vis, que l’app déduit de ton compte App Store ou Google Play : tu n’as rien à choisir. Tu paies en toute sécurité dans l’app au moment de réserver — c’est ce qui envoie ta demande à notre équipe de soutien, et tu reçois immédiatement un reçu par e-mail. Sans abonnement : tu réserves une séance à la fois.';
 
   @override
   String get faqMoveQ => 'Et si je dois annuler ou déplacer ma séance ?';

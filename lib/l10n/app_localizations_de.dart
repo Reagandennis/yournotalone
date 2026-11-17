@@ -1790,7 +1790,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get faqCostA =>
-      'Jede Sitzung kostet \$20, sicher in der App bei der Buchung bezahlt – erst dadurch geht deine Anfrage an unser Care-Team, und du bekommst sofort eine Quittung per E-Mail. Kein Abo; du buchst immer eine Sitzung nach der anderen.';
+      'Jede Sitzung kostet den Preis für das Land, in dem du lebst. Die App entnimmt es deinem App-Store- oder Google-Play-Konto, du musst also nichts auswählen. Du bezahlst sicher in der App bei der Buchung – erst dadurch geht deine Anfrage an unser Care-Team, und du bekommst sofort eine Quittung per E-Mail. Kein Abo; du buchst immer eine Sitzung nach der anderen.';
 
   @override
   String get faqMoveQ =>
