@@ -11,7 +11,8 @@
 --     shillings, so each price also carries the shillings charged for it,
 --     at the sheet's rate of 130.0287 to the dollar, to the nearest 10.
 --     The lower and upper prices are kept for reference. A price an admin
---     has changed is never overwritten by running this again.
+--     has changed is never overwritten by running this again (but a country
+--     whose price was removed gets the sheet's price back).
 --  3. The client's country: the app sends what the phone knows (the App
 --     Store or Google Play account's country, the SIM's on Android, and the
 --     region setting) and therapy_detect_country() picks the first of those
@@ -817,21 +818,26 @@ set search_path = ''
 as $$
 declare
   result jsonb;
+  v_user uuid;
 begin
   if not public.is_admin() then
     raise exception 'Admins only' using errcode = '42501';
   end if;
+  select u.id into v_user from auth.users u where lower(u.email) = lower(trim(p_email));
+  if v_user is null then
+    raise exception 'No account uses that email.' using errcode = 'P0002';
+  end if;
+  -- country_code is null when nothing has been detected or set yet.
   select jsonb_build_object(
     'country_code', c.country_code, 'source', c.source, 'set_by', c.set_by,
     'store_country', c.store_country, 'sim_country', c.sim_country,
     'region_country', c.region_country, 'platform', c.platform,
-    'detected_at', c.detected_at, 'updated_at', c.updated_at,
-    'locked', public.therapy_country_locked(c.user_id)
+    'detected_at', c.detected_at, 'updated_at', c.updated_at
   ) into result
   from public.therapy_client_countries c
-  join auth.users u on u.id = c.user_id
-  where lower(u.email) = lower(trim(p_email));
-  return result;
+  where c.user_id = v_user;
+  return coalesce(result, jsonb_build_object('country_code', null))
+         || jsonb_build_object('locked', public.therapy_country_locked(v_user));
 end;
 $$;
 
@@ -1184,10 +1190,12 @@ begin
     'reviewed_by', d.reviewed_by, 'reviewed_at', d.reviewed_at, 'created_at', d.created_at,
     'country_code', coalesce(d.country_code, case when d.kind = 'licence' then t.country_code end),
     'main_country_code', t.country_code,
-    'current_licence_expires_on', coalesce(
-      (select l.expires_on from public.therapist_licences l
-        where l.therapist_id = d.therapist_id and l.country_code = coalesce(d.country_code, t.country_code)),
-      t.licence_expires_on),
+    -- The licence this one would renew: in the document's country, or
+    -- none when it's their first there.
+    'current_licence_expires_on', case
+      when coalesce(d.country_code, t.country_code) is not distinct from t.country_code then t.licence_expires_on
+      else (select l.expires_on from public.therapist_licences l
+             where l.therapist_id = d.therapist_id and l.country_code = d.country_code) end,
     'current_insurance_expires_on', t.insurance_expires_on
   ) order by d.created_at desc), '[]'::jsonb)
   into result
@@ -1521,6 +1529,102 @@ begin
 end;
 $$;
 
+-- As in 0031, but the expiry the booking rules check moves with the main
+-- country: to that country's licence when there is one, so its date isn't
+-- overwritten with the old country's.
+create or replace function public.admin_set_therapist_country(p_therapist_id uuid, p_country text)
+returns integer
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_code text := public.country_code_of(p_country);
+begin
+  if not public.is_admin() then
+    raise exception 'Admins only' using errcode = '42501';
+  end if;
+  if nullif(trim(coalesce(p_country, '')), '') is not null and v_code is null then
+    raise exception 'Choose a country.' using errcode = '22023';
+  end if;
+  update public.therapists t
+     set country_code = v_code,
+         licence_expires_on = coalesce(
+           (select l.expires_on from public.therapist_licences l
+             where l.therapist_id = t.id and l.country_code = v_code),
+           t.licence_expires_on),
+         updated_at = now()
+   where t.id = p_therapist_id;
+  if not found then
+    raise exception 'That therapist no longer exists.' using errcode = 'P0002';
+  end if;
+  return public.therapist_fill_missing_fees();
+end;
+$$;
+
+-- As in 0031, without the fee table: each therapist's currencies are the
+-- ones they've earned or been paid in, plus their main country's.
+create or replace function public.admin_therapist_balances()
+returns table (
+  therapist_id uuid,
+  full_name text,
+  email text,
+  country_code text,
+  active boolean,
+  agreement_accepted_at timestamptz,
+  currency text,
+  owed_minor bigint,
+  owed_sessions integer,
+  unpriced_sessions integer,
+  paid_minor bigint,
+  last_paid_at timestamptz
+)
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Admins only' using errcode = '42501';
+  end if;
+  return query
+    select t.id, t.full_name, ta.email, t.country_code, t.active,
+           public.therapist_accepted_agreement(ta.email),
+           c.cur,
+           coalesce((select sum(r.therapist_fee_minor) from public.therapy_requests r
+                     where r.therapist_id = t.id and r.status = 'completed'
+                       and r.payout_id is null and r.therapist_fee_currency = c.cur), 0)::bigint,
+           (select count(*) from public.therapy_requests r
+             where r.therapist_id = t.id and r.status = 'completed'
+               and r.payout_id is null and r.therapist_fee_currency = c.cur)::integer,
+           (select count(*) from public.therapy_requests r
+             where r.therapist_id = t.id and r.status = 'completed'
+               and r.therapist_fee_minor is null)::integer,
+           coalesce((select sum(p.amount_minor) from public.therapist_payouts p
+                     where p.therapist_id = t.id and p.currency = c.cur), 0)::bigint,
+           (select max(p.paid_at) from public.therapist_payouts p where p.therapist_id = t.id)
+    from public.therapists t
+    left join public.therapist_accounts ta on ta.therapist_id = t.id
+    cross join lateral (
+      select distinct x.cur from (
+        select r.therapist_fee_currency cur from public.therapy_requests r
+         where r.therapist_id = t.id and r.therapist_fee_currency is not null
+        union select p.currency from public.therapist_payouts p where p.therapist_id = t.id
+        union select (public.therapy_price_for(t.country_code)).currency where t.country_code is not null
+      ) x where x.cur is not null
+      union all
+      -- A therapist with no country and nothing earned still gets a row.
+      select null where t.country_code is null
+        and not exists (
+          select 1 from public.therapy_requests r
+           where r.therapist_id = t.id and r.therapist_fee_currency is not null)
+        and not exists (select 1 from public.therapist_payouts p where p.therapist_id = t.id)
+    ) c
+    order by t.active desc, t.full_name, c.cur;
+end;
+$$;
+
 -- ── 6. What the earnings page shows ──────────────────────────────────
 
 -- As in 0031, plus the share, a row for each licence (the client price
@@ -1696,13 +1800,12 @@ begin
          r.client_summary, r.completed_at,
          r.close_reason, r.client_joined_at, r.therapist_joined_at,
          cr.rating, cr.comment, tr.rating, tr.comment, tr.flags,
-         coalesce(r.pricing_country, cc.country_code),
+         r.pricing_country,
          r.charge_minor, r.charge_currency,
          r.therapist_fee_minor, r.therapist_fee_currency
   from public.therapy_requests r
   left join auth.users u on u.id = r.user_id
   left join public.therapists t on t.id = r.therapist_id
-  left join public.therapy_client_countries cc on cc.user_id = r.user_id
   left join public.therapy_ratings cr
     on cr.request_id = r.id and cr.author_role = 'client'
   left join public.therapy_ratings tr
