@@ -1199,6 +1199,69 @@ begin
 end;
 $$;
 
+-- As in 0033 (what the workspace loads in one go), plus each document's
+-- country, so a licence for another country isn't mistaken for a renewal.
+create or replace function public.therapist_workspace()
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  me uuid := public.current_therapist_id();
+begin
+  if me is null then
+    raise exception 'Therapists only' using errcode = '42501';
+  end if;
+  return jsonb_build_object(
+    'availability', (
+      select jsonb_build_object(
+        'timezone', a.timezone, 'hours', a.hours, 'max_per_day', a.max_per_day,
+        'notice_hours', a.notice_hours, 'taking_new_clients', a.taking_new_clients,
+        'updated_at', a.updated_at)
+      from public.therapist_availability a where a.therapist_id = me),
+    'time_off', coalesce((
+      select jsonb_agg(jsonb_build_object(
+        'id', o.id, 'starts_on', o.starts_on, 'ends_on', o.ends_on, 'note', o.note)
+        order by o.starts_on)
+      from public.therapist_time_off o
+      where o.therapist_id = me and o.ends_on >= current_date - 31), '[]'::jsonb),
+    'payout', (
+      select jsonb_build_object(
+        'method', p.method, 'account_name', p.account_name,
+        'summary', public.therapist_payout_summary(p.method, p.details),
+        'updated_at', p.updated_at)
+      from public.therapist_payout_details p where p.therapist_id = me),
+    'documents', coalesce((
+      select jsonb_agg(jsonb_build_object(
+        'id', d.id, 'kind', d.kind, 'number', d.number, 'issuer', d.issuer,
+        'expires_on', d.expires_on, 'status', d.status, 'review_note', d.review_note,
+        'created_at', d.created_at, 'reviewed_at', d.reviewed_at,
+        'country_code', coalesce(d.country_code, case when d.kind = 'licence'
+          then (select t.country_code from public.therapists t where t.id = me) end))
+        order by d.created_at desc)
+      from (
+        select * from public.therapist_documents x
+        where x.therapist_id = me order by x.created_at desc limit 20
+      ) d), '[]'::jsonb),
+    'insurance_expires_on', (
+      select t.insurance_expires_on from public.therapists t where t.id = me),
+    -- From three ratings up, as clients see it, so no one rating shows.
+    'rating', (
+      select jsonb_build_object('average', round(avg(rt.rating)::numeric, 1), 'count', count(*))
+      from public.therapy_ratings rt
+      join public.therapy_requests r on r.id = rt.request_id
+      where rt.author_role = 'client' and r.therapist_id = me
+      having count(*) >= 3),
+    'state', coalesce((
+      select s.state from public.therapist_site_state s where s.therapist_id = me), '{}'::jsonb),
+    'server_time', now()
+  );
+end;
+$$;
+
+
 -- As in 0033. Accepting a licence records it for its country; for the
 -- therapist's main country (or if they have none yet) it also moves the
 -- expiry date the booking rules check.
@@ -1721,6 +1784,7 @@ revoke execute on function public.therapy_set_country(text) from public, anon;
 revoke execute on function public.therapist_fee_for_country(text) from public, anon;
 revoke execute on function public.therapist_submit_document(text, text, date, text, text, text) from public, anon;
 revoke execute on function public.therapist_list_licences() from public, anon;
+revoke execute on function public.therapist_workspace() from public, anon;
 revoke execute on function public.therapist_earnings() from public, anon;
 revoke execute on function public.admin_set_therapy_price(text, text, integer, integer, text) from public, anon;
 revoke execute on function public.admin_set_client_country(text, text) from public, anon;
@@ -1741,6 +1805,7 @@ grant execute on function public.therapy_set_country(text) to authenticated;
 grant execute on function public.therapist_fee_for_country(text) to authenticated;
 grant execute on function public.therapist_submit_document(text, text, date, text, text, text) to authenticated;
 grant execute on function public.therapist_list_licences() to authenticated;
+grant execute on function public.therapist_workspace() to authenticated;
 grant execute on function public.therapist_earnings() to authenticated;
 grant execute on function public.admin_set_therapy_price(text, text, integer, integer, text) to authenticated;
 grant execute on function public.admin_set_client_country(text, text) to authenticated;
