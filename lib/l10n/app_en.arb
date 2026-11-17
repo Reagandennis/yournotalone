@@ -1307,30 +1307,6 @@
   "@therapyPointOneAtATimeDetail": {
     "description": "Reassurance point detail: refund policy."
   },
-  "therapyOfferTitle": "Sessions are {price}, paid when you book",
-  "@therapyOfferTitle": {
-    "description": "Banner title on the booking form. {price} e.g. $20.",
-    "placeholders": {
-      "price": {
-        "type": "String",
-        "example": "$20"
-      }
-    }
-  },
-  "therapyOfferDetail": "Pay securely by {methods} through Paystack (charged as {charge}) and your request goes straight to our care team. You get a receipt by email. No subscription.",
-  "@therapyOfferDetail": {
-    "description": "Banner detail on the booking form. {methods} is therapyPaymentMethods (e.g. \"M-Pesa or Airtel Money\"); {charge} is the amount in Kenyan shillings, e.g. \"Ksh 2,600\". Paystack is a brand.",
-    "placeholders": {
-      "methods": {
-        "type": "String",
-        "example": "M-Pesa or Airtel Money"
-      },
-      "charge": {
-        "type": "String",
-        "example": "Ksh 2,600"
-      }
-    }
-  },
   "therapyFocusQuestion": "What would you like to focus on?",
   "@therapyFocusQuestion": {
     "description": "Section heading over the topic chips on the booking form."
@@ -1342,25 +1318,6 @@
   "therapyNoteLabel": "Anything your therapist should know? (optional)",
   "@therapyNoteLabel": {
     "description": "Label of the optional note field on the booking form."
-  },
-  "therapyPayAndRequest": "Pay {price} and request a session",
-  "@therapyPayAndRequest": {
-    "description": "Main button on the booking form. {price} e.g. $20.",
-    "placeholders": {
-      "price": {
-        "type": "String",
-        "example": "$20"
-      }
-    }
-  },
-  "therapyBookingFootnote": "We'll match you with a licensed therapist and a time, usually within a day, and email you when your session is booked. {policy}",
-  "@therapyBookingFootnote": {
-    "description": "Small print under the booking button. {policy} is therapyCancellationPolicy.",
-    "placeholders": {
-      "policy": {
-        "type": "String"
-      }
-    }
   },
   "therapyPriceFirstFree": "First session — free",
   "@therapyPriceFirstFree": {
@@ -7952,6 +7909,180 @@
       "price": {
         "type": "String",
         "example": "£45"
+      }
+    }
+  },
+  "therapyRequestCta": "Request a session",
+  "@therapyRequestCta": {
+    "description": "Main button on the therapy screen's price card; opens the steps for asking for a session."
+  },
+  "therapyPricePerSession": "{price} a session",
+  "@therapyPricePerSession": {
+    "description": "Large price on the therapy screen's price card. {price} is a formatted amount, e.g. \"Ksh 2,600\" or \"£40\".",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Ksh 2,600"
+      }
+    }
+  },
+  "therapySessionWhat": "A private 50-minute video session with a licensed therapist.",
+  "@therapySessionWhat": {
+    "description": "Under the session price on the therapy screen and in the request review: what one session is."
+  },
+  "therapyPaysVia": "Pay by {methods} through Paystack. No subscription.",
+  "@therapyPaysVia": {
+    "description": "Small print under the session price. {methods} is how the payment can be made, e.g. \"M-Pesa or Airtel Money\" (therapyPaymentMethods).",
+    "placeholders": {
+      "methods": {
+        "type": "String",
+        "example": "M-Pesa or Airtel Money"
+      }
+    }
+  },
+  "therapyPricesFromStore": "Prices for {country}, from your {store} account",
+  "@therapyPricesFromStore": {
+    "description": "Small line under the session price saying which country the price is for and where that came from. {country} is a country name (not translated), {store} is \"App Store\" or \"Google Play\" (not translated). Followed by a \"Not right?\" button.",
+    "placeholders": {
+      "country": {
+        "type": "String",
+        "example": "Kenya"
+      },
+      "store": {
+        "type": "String",
+        "example": "Google Play"
+      }
+    }
+  },
+  "therapyPricesFromSim": "Prices for {country}, from your SIM card",
+  "@therapyPricesFromSim": {
+    "description": "As therapyPricesFromStore, when the country came from the phone's SIM card.",
+    "placeholders": {
+      "country": {
+        "type": "String",
+        "example": "Kenya"
+      }
+    }
+  },
+  "therapyPricesFromRegion": "Prices for {country}, from your phone's region",
+  "@therapyPricesFromRegion": {
+    "description": "As therapyPricesFromStore, when the country came from the phone's region setting.",
+    "placeholders": {
+      "country": {
+        "type": "String",
+        "example": "Kenya"
+      }
+    }
+  },
+  "therapyPriceCountryWrong": "Not right?",
+  "@therapyPriceCountryWrong": {
+    "description": "Small button after the line saying which country session prices are for; explains how to have it changed."
+  },
+  "therapyCountryHelpTitle": "Your price follows where you live",
+  "@therapyCountryHelpTitle": {
+    "description": "Title of the sheet that explains why session prices are for a particular country."
+  },
+  "therapyCountryHelpBody": "Session prices are set for each country. We take yours from your {store} account, so there's nothing to choose. If you live somewhere else, email us and we'll put it right before you book.",
+  "@therapyCountryHelpBody": {
+    "description": "Body of the sheet about the price country. {store} is \"App Store\" or \"Google Play\" (not translated).",
+    "placeholders": {
+      "store": {
+        "type": "String",
+        "example": "Google Play"
+      }
+    }
+  },
+  "therapyCountryHelpLocked": "Your country was set when you paid for your first session. If you've moved, email us and we'll change it.",
+  "@therapyCountryHelpLocked": {
+    "description": "Body of the sheet about the price country, once they've paid for a session and it can no longer change by itself."
+  },
+  "therapyCountryHelpEmail": "Email us",
+  "@therapyCountryHelpEmail": {
+    "description": "Button on the sheet about the price country; opens an email to the care team."
+  },
+  "therapyFlowTitle": "Request a session",
+  "@therapyFlowTitle": {
+    "description": "Title bar of the steps for asking for a therapy session."
+  },
+  "therapyFlowStep": "Step {step} of {total}",
+  "@therapyFlowStep": {
+    "description": "Progress in the steps for asking for a session, e.g. \"Step 1 of 3\".",
+    "placeholders": {
+      "step": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "therapyFlowTopicHint": "Choose the one that fits best. You can say more in a moment.",
+  "@therapyFlowTopicHint": {
+    "description": "Under the question about what they'd like help with, in the steps for asking for a session."
+  },
+  "therapyFlowWhenHint": "Choose all that suit you. We'll confirm an exact time by email.",
+  "@therapyFlowWhenHint": {
+    "description": "Under the question about when they could meet, in the steps for asking for a session."
+  },
+  "therapyFlowNoteHint": "Only your therapist and our care team see this.",
+  "@therapyFlowNoteHint": {
+    "description": "Helper text under the optional note to the therapist."
+  },
+  "therapyFlowReviewTitle": "Check and pay",
+  "@therapyFlowReviewTitle": {
+    "description": "Heading of the last step before paying for a session: a summary of the request and the price."
+  },
+  "therapyFlowFocus": "Focus",
+  "@therapyFlowFocus": {
+    "description": "Label in the request summary for what they'd like help with."
+  },
+  "therapyFlowTimes": "Times that suit you",
+  "@therapyFlowTimes": {
+    "description": "Label in the request summary for the times they chose."
+  },
+  "therapyFlowAnyTime": "Any time",
+  "@therapyFlowAnyTime": {
+    "description": "In the request summary when no times were chosen."
+  },
+  "therapyFlowNote": "Your note",
+  "@therapyFlowNote": {
+    "description": "Label in the request summary for their note to the therapist."
+  },
+  "therapyFlowEdit": "Change",
+  "@therapyFlowEdit": {
+    "description": "Small button beside each part of the request summary; goes back to that step."
+  },
+  "therapyFlowNextTitle": "What happens next",
+  "@therapyFlowNextTitle": {
+    "description": "Heading in the request review, before the two steps after paying."
+  },
+  "therapyFlowNextMatch": "We match you with a licensed therapist and a time, usually within a day, and email you.",
+  "@therapyFlowNextMatch": {
+    "description": "First thing that happens after paying for a session."
+  },
+  "therapyFlowNextJoin": "At the time, you join a private video call here in the app.",
+  "@therapyFlowNextJoin": {
+    "description": "Second thing that happens after paying for a session."
+  },
+  "therapyFlowPay": "Pay {price}",
+  "@therapyFlowPay": {
+    "description": "Button at the end of the steps for asking for a session; opens the payment page. {price} is a formatted amount.",
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Ksh 2,600"
+      }
+    }
+  },
+  "therapyFlowChargeNote": "Paystack charges this as {charge}. Your bank converts it, and may add a small fee.",
+  "@therapyFlowChargeNote": {
+    "description": "In the request review when the price is in a different currency from the payment. {charge} is the amount actually charged, e.g. \"Ksh 6,870\".",
+    "placeholders": {
+      "charge": {
+        "type": "String",
+        "example": "Ksh 6,870"
       }
     }
   }

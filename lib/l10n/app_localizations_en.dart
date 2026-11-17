@@ -1032,16 +1032,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'No subscription. Cancel up to 24 hours before for a full refund — after that, or if you don\'t join, the session isn\'t refunded.';
 
   @override
-  String therapyOfferTitle(String price) {
-    return 'Sessions are $price, paid when you book';
-  }
-
-  @override
-  String therapyOfferDetail(String methods, String charge) {
-    return 'Pay securely by $methods through Paystack (charged as $charge) and your request goes straight to our care team. You get a receipt by email. No subscription.';
-  }
-
-  @override
   String get therapyFocusQuestion => 'What would you like to focus on?';
 
   @override
@@ -1050,16 +1040,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get therapyNoteLabel =>
       'Anything your therapist should know? (optional)';
-
-  @override
-  String therapyPayAndRequest(String price) {
-    return 'Pay $price and request a session';
-  }
-
-  @override
-  String therapyBookingFootnote(String policy) {
-    return 'We\'ll match you with a licensed therapist and a time, usually within a day, and email you when your session is booked. $policy';
-  }
 
   @override
   String get therapyPriceFirstFree => 'First session — free';
@@ -5912,5 +5892,114 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String therapyPriceUpdated(String price) {
     return 'The session price is $price. Check it before you pay.';
+  }
+
+  @override
+  String get therapyRequestCta => 'Request a session';
+
+  @override
+  String therapyPricePerSession(String price) {
+    return '$price a session';
+  }
+
+  @override
+  String get therapySessionWhat =>
+      'A private 50-minute video session with a licensed therapist.';
+
+  @override
+  String therapyPaysVia(String methods) {
+    return 'Pay by $methods through Paystack. No subscription.';
+  }
+
+  @override
+  String therapyPricesFromStore(String country, String store) {
+    return 'Prices for $country, from your $store account';
+  }
+
+  @override
+  String therapyPricesFromSim(String country) {
+    return 'Prices for $country, from your SIM card';
+  }
+
+  @override
+  String therapyPricesFromRegion(String country) {
+    return 'Prices for $country, from your phone\'s region';
+  }
+
+  @override
+  String get therapyPriceCountryWrong => 'Not right?';
+
+  @override
+  String get therapyCountryHelpTitle => 'Your price follows where you live';
+
+  @override
+  String therapyCountryHelpBody(String store) {
+    return 'Session prices are set for each country. We take yours from your $store account, so there\'s nothing to choose. If you live somewhere else, email us and we\'ll put it right before you book.';
+  }
+
+  @override
+  String get therapyCountryHelpLocked =>
+      'Your country was set when you paid for your first session. If you\'ve moved, email us and we\'ll change it.';
+
+  @override
+  String get therapyCountryHelpEmail => 'Email us';
+
+  @override
+  String get therapyFlowTitle => 'Request a session';
+
+  @override
+  String therapyFlowStep(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get therapyFlowTopicHint =>
+      'Choose the one that fits best. You can say more in a moment.';
+
+  @override
+  String get therapyFlowWhenHint =>
+      'Choose all that suit you. We\'ll confirm an exact time by email.';
+
+  @override
+  String get therapyFlowNoteHint =>
+      'Only your therapist and our care team see this.';
+
+  @override
+  String get therapyFlowReviewTitle => 'Check and pay';
+
+  @override
+  String get therapyFlowFocus => 'Focus';
+
+  @override
+  String get therapyFlowTimes => 'Times that suit you';
+
+  @override
+  String get therapyFlowAnyTime => 'Any time';
+
+  @override
+  String get therapyFlowNote => 'Your note';
+
+  @override
+  String get therapyFlowEdit => 'Change';
+
+  @override
+  String get therapyFlowNextTitle => 'What happens next';
+
+  @override
+  String get therapyFlowNextMatch =>
+      'We match you with a licensed therapist and a time, usually within a day, and email you.';
+
+  @override
+  String get therapyFlowNextJoin =>
+      'At the time, you join a private video call here in the app.';
+
+  @override
+  String therapyFlowPay(String price) {
+    return 'Pay $price';
+  }
+
+  @override
+  String therapyFlowChargeNote(String charge) {
+    return 'Paystack charges this as $charge. Your bank converts it, and may add a small fee.';
   }
 }

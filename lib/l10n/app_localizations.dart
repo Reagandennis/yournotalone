@@ -1821,18 +1821,6 @@ abstract class AppLocalizations {
   /// **'No subscription. Cancel up to 24 hours before for a full refund — after that, or if you don\'t join, the session isn\'t refunded.'**
   String get therapyPointOneAtATimeDetail;
 
-  /// Banner title on the booking form. {price} e.g. $20.
-  ///
-  /// In en, this message translates to:
-  /// **'Sessions are {price}, paid when you book'**
-  String therapyOfferTitle(String price);
-
-  /// Banner detail on the booking form. {methods} is therapyPaymentMethods (e.g. "M-Pesa or Airtel Money"); {charge} is the amount in Kenyan shillings, e.g. "Ksh 2,600". Paystack is a brand.
-  ///
-  /// In en, this message translates to:
-  /// **'Pay securely by {methods} through Paystack (charged as {charge}) and your request goes straight to our care team. You get a receipt by email. No subscription.'**
-  String therapyOfferDetail(String methods, String charge);
-
   /// Section heading over the topic chips on the booking form.
   ///
   /// In en, this message translates to:
@@ -1850,18 +1838,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Anything your therapist should know? (optional)'**
   String get therapyNoteLabel;
-
-  /// Main button on the booking form. {price} e.g. $20.
-  ///
-  /// In en, this message translates to:
-  /// **'Pay {price} and request a session'**
-  String therapyPayAndRequest(String price);
-
-  /// Small print under the booking button. {policy} is therapyCancellationPolicy.
-  ///
-  /// In en, this message translates to:
-  /// **'We\'ll match you with a licensed therapist and a time, usually within a day, and email you when your session is booked. {policy}'**
-  String therapyBookingFootnote(String policy);
 
   /// Price line on the session card for a free first session.
   ///
@@ -9329,6 +9305,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The session price is {price}. Check it before you pay.'**
   String therapyPriceUpdated(String price);
+
+  /// Main button on the therapy screen's price card; opens the steps for asking for a session.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a session'**
+  String get therapyRequestCta;
+
+  /// Large price on the therapy screen's price card. {price} is a formatted amount, e.g. "Ksh 2,600" or "£40".
+  ///
+  /// In en, this message translates to:
+  /// **'{price} a session'**
+  String therapyPricePerSession(String price);
+
+  /// Under the session price on the therapy screen and in the request review: what one session is.
+  ///
+  /// In en, this message translates to:
+  /// **'A private 50-minute video session with a licensed therapist.'**
+  String get therapySessionWhat;
+
+  /// Small print under the session price. {methods} is how the payment can be made, e.g. "M-Pesa or Airtel Money" (therapyPaymentMethods).
+  ///
+  /// In en, this message translates to:
+  /// **'Pay by {methods} through Paystack. No subscription.'**
+  String therapyPaysVia(String methods);
+
+  /// Small line under the session price saying which country the price is for and where that came from. {country} is a country name (not translated), {store} is "App Store" or "Google Play" (not translated). Followed by a "Not right?" button.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices for {country}, from your {store} account'**
+  String therapyPricesFromStore(String country, String store);
+
+  /// As therapyPricesFromStore, when the country came from the phone's SIM card.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices for {country}, from your SIM card'**
+  String therapyPricesFromSim(String country);
+
+  /// As therapyPricesFromStore, when the country came from the phone's region setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices for {country}, from your phone\'s region'**
+  String therapyPricesFromRegion(String country);
+
+  /// Small button after the line saying which country session prices are for; explains how to have it changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Not right?'**
+  String get therapyPriceCountryWrong;
+
+  /// Title of the sheet that explains why session prices are for a particular country.
+  ///
+  /// In en, this message translates to:
+  /// **'Your price follows where you live'**
+  String get therapyCountryHelpTitle;
+
+  /// Body of the sheet about the price country. {store} is "App Store" or "Google Play" (not translated).
+  ///
+  /// In en, this message translates to:
+  /// **'Session prices are set for each country. We take yours from your {store} account, so there\'s nothing to choose. If you live somewhere else, email us and we\'ll put it right before you book.'**
+  String therapyCountryHelpBody(String store);
+
+  /// Body of the sheet about the price country, once they've paid for a session and it can no longer change by itself.
+  ///
+  /// In en, this message translates to:
+  /// **'Your country was set when you paid for your first session. If you\'ve moved, email us and we\'ll change it.'**
+  String get therapyCountryHelpLocked;
+
+  /// Button on the sheet about the price country; opens an email to the care team.
+  ///
+  /// In en, this message translates to:
+  /// **'Email us'**
+  String get therapyCountryHelpEmail;
+
+  /// Title bar of the steps for asking for a therapy session.
+  ///
+  /// In en, this message translates to:
+  /// **'Request a session'**
+  String get therapyFlowTitle;
+
+  /// Progress in the steps for asking for a session, e.g. "Step 1 of 3".
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String therapyFlowStep(int step, int total);
+
+  /// Under the question about what they'd like help with, in the steps for asking for a session.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the one that fits best. You can say more in a moment.'**
+  String get therapyFlowTopicHint;
+
+  /// Under the question about when they could meet, in the steps for asking for a session.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose all that suit you. We\'ll confirm an exact time by email.'**
+  String get therapyFlowWhenHint;
+
+  /// Helper text under the optional note to the therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Only your therapist and our care team see this.'**
+  String get therapyFlowNoteHint;
+
+  /// Heading of the last step before paying for a session: a summary of the request and the price.
+  ///
+  /// In en, this message translates to:
+  /// **'Check and pay'**
+  String get therapyFlowReviewTitle;
+
+  /// Label in the request summary for what they'd like help with.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus'**
+  String get therapyFlowFocus;
+
+  /// Label in the request summary for the times they chose.
+  ///
+  /// In en, this message translates to:
+  /// **'Times that suit you'**
+  String get therapyFlowTimes;
+
+  /// In the request summary when no times were chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Any time'**
+  String get therapyFlowAnyTime;
+
+  /// Label in the request summary for their note to the therapist.
+  ///
+  /// In en, this message translates to:
+  /// **'Your note'**
+  String get therapyFlowNote;
+
+  /// Small button beside each part of the request summary; goes back to that step.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get therapyFlowEdit;
+
+  /// Heading in the request review, before the two steps after paying.
+  ///
+  /// In en, this message translates to:
+  /// **'What happens next'**
+  String get therapyFlowNextTitle;
+
+  /// First thing that happens after paying for a session.
+  ///
+  /// In en, this message translates to:
+  /// **'We match you with a licensed therapist and a time, usually within a day, and email you.'**
+  String get therapyFlowNextMatch;
+
+  /// Second thing that happens after paying for a session.
+  ///
+  /// In en, this message translates to:
+  /// **'At the time, you join a private video call here in the app.'**
+  String get therapyFlowNextJoin;
+
+  /// Button at the end of the steps for asking for a session; opens the payment page. {price} is a formatted amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay {price}'**
+  String therapyFlowPay(String price);
+
+  /// In the request review when the price is in a different currency from the payment. {charge} is the amount actually charged, e.g. "Ksh 6,870".
+  ///
+  /// In en, this message translates to:
+  /// **'Paystack charges this as {charge}. Your bank converts it, and may add a small fee.'**
+  String therapyFlowChargeNote(String charge);
 }
 
 class _AppLocalizationsDelegate

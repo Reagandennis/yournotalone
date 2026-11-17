@@ -1043,16 +1043,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Kein Abo. Sag bis 24 Stunden vorher ab und bekomm den vollen Betrag zurück – danach oder wenn du nicht teilnimmst, wird die Sitzung nicht erstattet.';
 
   @override
-  String therapyOfferTitle(String price) {
-    return 'Eine Sitzung kostet $price, bezahlt bei der Buchung';
-  }
-
-  @override
-  String therapyOfferDetail(String methods, String charge) {
-    return 'Bezahl sicher per $methods über Paystack (abgerechnet als $charge), und deine Anfrage geht direkt an unser Care-Team. Du bekommst eine Quittung per E-Mail. Kein Abo.';
-  }
-
-  @override
   String get therapyFocusQuestion => 'Worauf möchtest du dich konzentrieren?';
 
   @override
@@ -1061,16 +1051,6 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get therapyNoteLabel =>
       'Sollte dein Therapeut etwas wissen? (optional)';
-
-  @override
-  String therapyPayAndRequest(String price) {
-    return '$price zahlen und Sitzung anfragen';
-  }
-
-  @override
-  String therapyBookingFootnote(String policy) {
-    return 'Wir finden eine zugelassene Therapeutin oder einen zugelassenen Therapeuten und einen Termin für dich, meist innerhalb eines Tages, und schreiben dir, sobald deine Sitzung gebucht ist. $policy';
-  }
 
   @override
   String get therapyPriceFirstFree => 'Erste Sitzung – kostenlos';
@@ -5987,5 +5967,115 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String therapyPriceUpdated(String price) {
     return 'Die Sitzung kostet $price. Prüf den Preis, bevor du bezahlst.';
+  }
+
+  @override
+  String get therapyRequestCta => 'Sitzung anfragen';
+
+  @override
+  String therapyPricePerSession(String price) {
+    return '$price pro Sitzung';
+  }
+
+  @override
+  String get therapySessionWhat =>
+      'Eine private 50-minütige Videositzung mit einer zugelassenen Therapeutin oder einem zugelassenen Therapeuten.';
+
+  @override
+  String therapyPaysVia(String methods) {
+    return 'Bezahl per $methods über Paystack. Kein Abo.';
+  }
+
+  @override
+  String therapyPricesFromStore(String country, String store) {
+    return 'Preise: $country, laut deinem $store-Konto';
+  }
+
+  @override
+  String therapyPricesFromSim(String country) {
+    return 'Preise: $country, laut deiner SIM-Karte';
+  }
+
+  @override
+  String therapyPricesFromRegion(String country) {
+    return 'Preise: $country, laut der Region deines Handys';
+  }
+
+  @override
+  String get therapyPriceCountryWrong => 'Stimmt nicht?';
+
+  @override
+  String get therapyCountryHelpTitle =>
+      'Dein Preis richtet sich danach, wo du lebst';
+
+  @override
+  String therapyCountryHelpBody(String store) {
+    return 'Die Preise für Sitzungen gelten je Land. Wir nehmen deins aus deinem $store-Konto, du musst also nichts auswählen. Wenn du woanders lebst, schreib uns eine E-Mail, und wir korrigieren es, bevor du buchst.';
+  }
+
+  @override
+  String get therapyCountryHelpLocked =>
+      'Dein Land wurde festgelegt, als du deine erste Sitzung bezahlt hast. Wenn du umgezogen bist, schreib uns eine E-Mail, und wir ändern es.';
+
+  @override
+  String get therapyCountryHelpEmail => 'Schreib uns';
+
+  @override
+  String get therapyFlowTitle => 'Sitzung anfragen';
+
+  @override
+  String therapyFlowStep(int step, int total) {
+    return 'Schritt $step von $total';
+  }
+
+  @override
+  String get therapyFlowTopicHint =>
+      'Wähl, was am besten passt. Gleich kannst du mehr dazu sagen.';
+
+  @override
+  String get therapyFlowWhenHint =>
+      'Wähl alles, was dir passt. Den genauen Termin bestätigen wir dir per E-Mail.';
+
+  @override
+  String get therapyFlowNoteHint =>
+      'Das sehen nur dein Therapeut und unser Care-Team.';
+
+  @override
+  String get therapyFlowReviewTitle => 'Prüfen und bezahlen';
+
+  @override
+  String get therapyFlowFocus => 'Thema';
+
+  @override
+  String get therapyFlowTimes => 'Zeiten, die dir passen';
+
+  @override
+  String get therapyFlowAnyTime => 'Jederzeit';
+
+  @override
+  String get therapyFlowNote => 'Deine Notiz';
+
+  @override
+  String get therapyFlowEdit => 'Ändern';
+
+  @override
+  String get therapyFlowNextTitle => 'Wie es weitergeht';
+
+  @override
+  String get therapyFlowNextMatch =>
+      'Wir finden für dich eine zugelassene Therapeutin oder einen zugelassenen Therapeuten und einen Termin, meist innerhalb eines Tages, und schreiben dir eine E-Mail.';
+
+  @override
+  String get therapyFlowNextJoin =>
+      'Zur vereinbarten Zeit trittst du hier in der App einem privaten Videoanruf bei.';
+
+  @override
+  String therapyFlowPay(String price) {
+    return '$price bezahlen';
+  }
+
+  @override
+  String therapyFlowChargeNote(String charge) {
+    return 'Paystack berechnet dafür $charge. Deine Bank rechnet es um und berechnet dafür eventuell eine kleine Gebühr.';
   }
 }

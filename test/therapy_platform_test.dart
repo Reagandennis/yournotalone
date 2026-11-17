@@ -195,6 +195,24 @@ Future<void> _settle(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 500));
 }
 
+/// Asks for a session through the three steps, up to tapping Pay.
+Future<void> _askThroughFlow(
+  WidgetTester tester, {
+  String topic = 'Anxiety & stress',
+  String pay = 'Pay \$20',
+}) async {
+  await tester.tap(find.text('Request a session'));
+  await _settle(tester);
+  await tester.tap(find.text(topic));
+  await tester.pump();
+  await tester.tap(find.text('Continue'));
+  await _settle(tester);
+  await tester.tap(find.text('Continue'));
+  await _settle(tester);
+  await tester.tap(find.text(pay));
+  await _settle(tester);
+}
+
 Future<void> _show(WidgetTester tester, Widget screen) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = const Size(600, 3200);
@@ -406,8 +424,8 @@ void main() {
           clock: () => _now,
         ),
       );
-      expect(find.text('Sessions are \$20, paid when you book'), findsOneWidget);
-      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
+      expect(find.text('\$20 a session'), findsOneWidget);
+      expect(find.text('Request a session'), findsOneWidget);
       expect(find.textContaining('up to 24 hours before'), findsWidgets);
       expect(find.textContaining('free'), findsNothing);
     });
@@ -421,16 +439,14 @@ void main() {
         tester,
         TherapyScreen(repository: repo, payments: payments, clock: () => _now),
       );
-      await tester.tap(find.text('Anxiety & stress'));
-      await tester.pump();
-      await tester.tap(find.text('Pay \$20 and request a session'));
-      await _settle(tester);
+      await _askThroughFlow(tester);
 
-      // The draft was saved, offered to the store, then dropped — and the
-      // form is still there with the topic chosen.
+      // The draft was saved, offered to Paystack, then dropped, and the
+      // review is still there to try again.
       expect(payments.paidFor, ['draft-1']);
       expect(repo.cancelled, ['draft-1']);
-      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
+      expect(find.text('Pay \$20'), findsOneWidget);
+      expect(find.text('Anxiety & stress'), findsOneWidget);
       expect(find.text('Almost there'), findsNothing);
     });
 
@@ -444,12 +460,11 @@ void main() {
         tester,
         TherapyScreen(repository: repo, payments: payments, clock: () => _now),
       );
-      await tester.tap(find.text('Anxiety & stress'));
-      await tester.pump();
-      await tester.tap(find.text('Pay \$20 and request a session'));
-      await _settle(tester);
+      await _askThroughFlow(tester);
 
+      // The flow closes and the screen shows the draft, to check on.
       expect(repo.cancelled, isEmpty);
+      expect(find.text('Check and pay'), findsNothing);
       expect(find.text('Almost there'), findsOneWidget);
       expect(find.text('\$20 — pay to send your request'), findsOneWidget);
       expect(_button('Check payment'), findsOneWidget);
@@ -472,16 +487,15 @@ void main() {
           clock: () => _now,
         ),
       );
-      await tester.tap(find.text('Anxiety & stress'));
-      await tester.pump();
-      await tester.tap(find.text('Pay \$20 and request a session'));
-      await _settle(tester);
+      await _askThroughFlow(tester);
       expect(
         find.text('You already have a session on the way. Cancel it first '
             'if you need to change something.'),
-        findsOneWidget,
+        findsWidgets,
       );
-      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
+      // Back on the therapy screen, which shows whatever is on the way.
+      expect(find.text('Check and pay'), findsNothing);
+      expect(find.text('Request a session'), findsOneWidget);
     });
 
     testWidgets('a finished session shows the note and takes a rating',
@@ -778,7 +792,7 @@ void main() {
       expect(find.text('Rate'), findsNothing);
       // Both are over, so booking is open again.
       expect(find.text('Cancelled'), findsNothing);
-      expect(_button('Pay \$20 and request a session'), findsOneWidget);
+      expect(_button('Request a session'), findsOneWidget);
     });
 
     testWidgets('the care dashboard flags a session nobody finished',

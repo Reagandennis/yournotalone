@@ -10,30 +10,15 @@ import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import '../notifications/session_notifications.dart';
-import '../support/countries.dart';
 import '../support/crisis_screen.dart';
 import 'call_screen.dart';
 import 'country_picker.dart';
+import 'country_signals.dart';
+import 'request_flow.dart';
 import 'session_format.dart';
 import 'session_widgets.dart';
 import 'therapy_art.dart';
 import 'therapy_repository.dart';
-
-const _timeSlots = [
-  'Weekday mornings',
-  'Weekday afternoons',
-  'Weekday evenings',
-  'Weekends',
-];
-
-/// A stored time slot as it reads on screen.
-String _slotLabel(AppLocalizations l10n, String slot) => switch (slot) {
-      'Weekday mornings' => l10n.therapySlotWeekdayMornings,
-      'Weekday afternoons' => l10n.therapySlotWeekdayAfternoons,
-      'Weekday evenings' => l10n.therapySlotWeekdayEvenings,
-      'Weekends' => l10n.therapySlotWeekends,
-      _ => slot,
-    };
 
 /// Talk to a real therapist: pay for and request a private session, see
 /// who you've been matched with and when, join the video call, and rate it
@@ -46,7 +31,7 @@ class TherapyScreen extends StatefulWidget {
     this.payments,
     this.notifications,
     this.clock,
-    this.detectCountry,
+    this.readCountrySignals,
   });
 
   /// Injectable so the booking flow can be exercised without a backend.
@@ -57,9 +42,10 @@ class TherapyScreen extends StatefulWidget {
   /// Injectable so tests can put "now" anywhere around a session.
   final DateTime Function()? clock;
 
-  /// The phone's country, for pricing someone who hasn't chosen one
-  /// ([deviceCountry] unless a test says otherwise).
-  final String? Function()? detectCountry;
+  /// What the phone knows about where they live, for their price
+  /// ([readCountrySignals] in country_signals.dart unless a test says
+  /// otherwise).
+  final Future<CountrySignals> Function()? readCountrySignals;
 
   static const routeName = '/therapy';
 
@@ -80,7 +66,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
       widget.payments ?? SessionPayments(repository: _repo);
   late final _notifications =
       widget.notifications ?? NotificationPermission.instance;
-  final _noteController = TextEditingController();
 
   /// Whether the phone will show our notifications. While a session is on
   /// the way and this is false, the card says so.
@@ -90,9 +75,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
   Map<String, TherapistProfile> _therapists = const {};
   Map<String, int> _myRatings = const {};
   bool _failed = false;
-  String? _topic;
-  final _slots = <String>{};
-  bool _submitting = false;
   bool _paying = false;
 
   /// What a session costs this person, by their country; null until the
@@ -100,7 +82,19 @@ class _TherapyScreenState extends State<TherapyScreen> {
   TherapyPriceQuote? _quote;
   bool _changingCountry = false;
 
+  /// The same, for the request flow, which stays open while it changes.
+  final _quoteListenable = ValueNotifier(TherapyPriceQuote.fallback);
+
+  /// Set when a request was just paid for, so notifications are asked for
+  /// once the flow has closed.
+  bool _justPaid = false;
+
   TherapyPriceQuote get _price => _quote ?? TherapyPriceQuote.fallback;
+
+  void _setQuote(TherapyPriceQuote quote) {
+    _quote = quote;
+    _quoteListenable.value = quote;
+  }
 
   /// Sessions whose Paystack payment went through but the server hasn't seen
   /// yet. Their card offers "Check payment" instead of "Pay", so a slow
@@ -128,7 +122,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
   @override
   void dispose() {
     _ticker?.cancel();
-    _noteController.dispose();
+    _quoteListenable.dispose();
     super.dispose();
   }
 
@@ -143,7 +137,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     // Never fails: today's price stands in when it can't be had.
     final quote = loadTherapyPriceQuote(
       _repo,
-      detectCountry: widget.detectCountry ?? deviceCountry,
+      readSignals: widget.readCountrySignals ?? readCountrySignals,
     );
     try {
       final requests = await _repo.fetchRequests();
@@ -161,7 +155,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       final price = await quote;
       if (!mounted) return;
       setState(() {
-        _quote = price;
+        _setQuote(price);
         _requests = requests;
         _therapists = therapists;
         _myRatings = ratings;
@@ -179,32 +173,39 @@ class _TherapyScreenState extends State<TherapyScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
-  /// Saves the request as a draft and goes straight to Paystack. The
-  /// draft stays on screen (with Pay and Check payment) if the payment
-  /// doesn't settle there and then; leaving the checkout discards it
-  /// and leaves the form as it was.
-  Future<void> _submit() async {
-    final topic = _topic;
-    if (topic == null) return;
-    setState(() => _submitting = true);
+  /// Opens the request flow; once a request is paid for, makes sure the
+  /// news about it can arrive.
+  Future<void> _openRequest() async {
+    await Navigator.of(context).push(
+      SessionRequestFlow.route(quote: _quoteListenable, onSubmit: _submitForm),
+    );
+    if (!mounted || !_justPaid) return;
+    _justPaid = false;
+    // Notifications are how they'll hear about the match and the
+    // reminder, so this is the moment to make sure they can arrive.
+    await _ensureNotifications();
+  }
+
+  /// Saves the request as a draft and goes straight to Paystack. True
+  /// closes the flow: the request is on its way, or this screen now shows
+  /// it (a payment still being checked, a different price). Leaving the
+  /// checkout discards the draft and keeps the flow open, as it was.
+  Future<bool> _submitForm(SessionRequestForm form) async {
     try {
       final draft = await _repo.requestSession(
-        topic: topic,
-        availability: [
-          for (final slot in _timeSlots)
-            if (_slots.contains(slot)) slot,
-        ],
-        note: _noteController.text.trim(),
+        topic: form.topic,
+        availability: form.availability,
+        note: form.note,
       );
-      if (!mounted) return;
+      if (!mounted) return false;
       // The database priced it (by their country, 0031). If that isn't
-      // what the form said — the price changed while it was open — show
-      // the request with its own price instead of going straight to the
-      // checkout. The form stays as it was, should they discard it.
+      // what the flow said (the price changed while it was open), show
+      // the request with its own price here instead of going straight to
+      // the checkout.
       if (draft.needsPayment && !_price.matches(draft)) {
         _say(context.l10n.therapyPriceUpdated(draft.priceLabel));
         await _load(quiet: true);
-        return;
+        return true;
       }
       // An account the care team has waived the fee for: the request is
       // already with them, so there's nothing to pay (migration 0023).
@@ -214,45 +215,44 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (!draft.needsPayment && mounted) {
         _say(context.l10n.therapyRequestNoCharge);
       }
-      if (!mounted) return;
+      if (!mounted) return false;
       switch (outcome) {
         case SessionPaymentOutcome.paid:
-          _topic = null;
-          _slots.clear();
-          _noteController.clear();
-          // Notifications are how they'll hear about the match and the
-          // reminder, so this is the moment to make sure they can arrive.
-          await _ensureNotifications();
+          _justPaid = true;
           await _load();
+          return true;
         case SessionPaymentOutcome.cancelled:
         case SessionPaymentOutcome.unavailable:
           // Nothing was paid, so there's nothing to keep.
           await _discardQuietly(draft);
+          return false;
         case SessionPaymentOutcome.pendingVerification:
         case null:
           // Paystack may have taken the money: keep the draft so the
           // payment can be attached to it.
           await _load(quiet: true);
+          return true;
       }
     } catch (e) {
-      if (!mounted) return;
+      if (!mounted) return false;
       if (e is PostgrestException && e.code == '23514') {
-        // A size check: the form caps the note itself, so this is a
-        // stale build or something that isn't the app.
+        // A size check: the flow caps the note itself, so this is a stale
+        // build or something that isn't the app.
         _say(context.l10n.therapyNoteTooLong);
-      } else if (e is PostgrestException &&
+        return false;
+      }
+      if (e is PostgrestException &&
           e.code == 'P0001' &&
           e.message.isNotEmpty) {
-        // The database refused with a reason written for people — a
-        // request already open, or too many in a day.
+        // The database refused with a reason written for people: a
+        // request already open, or too many in a day. If it's an open
+        // request we hadn't seen, this screen shows it.
         _say(e.message);
-        // If it's an open request we hadn't seen, show it instead of the form.
         await _load(quiet: true);
-      } else {
-        _say(errorMessage(e, context.l10n.therapyRequestSendFailed));
+        return true;
       }
-    } finally {
-      if (mounted) setState(() => _submitting = false);
+      _say(errorMessage(e, context.l10n.therapyRequestSendFailed));
+      return false;
     }
   }
 
@@ -265,7 +265,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     setState(() => _changingCountry = true);
     try {
       final quote = await _repo.setPriceCountry(picked);
-      if (mounted) setState(() => _quote = quote);
+      if (mounted) setState(() => _setQuote(quote));
     } catch (e) {
       if (!mounted) return;
       if (e is PostgrestException && e.code == 'P0001' && e.message.isNotEmpty) {
@@ -273,7 +273,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         // plain words. Refreshing takes the Change button away.
         _say(e.message);
         final quote = await _repo.fetchPriceQuote();
-        if (mounted) setState(() => _quote = quote);
+        if (mounted) setState(() => _setQuote(quote));
       } else {
         _say(errorMessage(e, context.l10n.therapyPriceCountryFailed));
       }
@@ -572,36 +572,6 @@ class _TherapyScreenState extends State<TherapyScreen> {
     if (wantsRating == true && mounted) await _rate(request);
   }
 
-  Widget _pill(String label,
-      {required bool selected, required VoidCallback onTap}) {
-    final c = context.brand;
-    return Material(
-      color: selected ? c.tint(Pillars.black, 0.04) : c.card,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(999),
-        side: BorderSide(
-          color: selected ? c.ink : c.border,
-          width: selected ? 1.6 : 1.2,
-        ),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-              color: selected ? c.ink : c.textMuted,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   /// Three steps, so nobody has to guess what happens after they tap.
   Widget _howItWorks() {
     final c = context.brand;
@@ -741,191 +711,52 @@ class _TherapyScreenState extends State<TherapyScreen> {
     );
   }
 
-  Widget _offerBanner({
-    required IconData icon,
-    required Color iconColor,
-    required String title,
-    required String detail,
-  }) {
+  /// The offer, plainly: what a session is, what it costs where they
+  /// live, and one button to ask for one.
+  Widget _requestCard() {
     final c = context.brand;
+    final l10n = context.l10n;
+    final quote = _price;
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
       decoration: BoxDecoration(
-        color: c.tint(Pillars.blue, 0.06),
-        borderRadius: BorderRadius.circular(18),
+        color: c.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: c.border),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: c.chip,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, size: 22, color: iconColor),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: c.ink,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  detail,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: c.textMuted,
-                    height: 1.5,
-                  ),
-                ),
-              ],
+          Text(
+            l10n.therapyPricePerSession(quote.priceLabel),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: c.ink,
+              height: 1.2,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _bookingForm() {
-    final c = context.brand;
-    final l10n = context.l10n;
-    final price = _price.priceLabel;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _offerBanner(
-          icon: Icons.payments_outlined,
-          iconColor: c.blue,
-          title: l10n.therapyOfferTitle(price),
-          detail: l10n.therapyOfferDetail(
-              l10n.therapyPaymentMethods, _price.chargeLabel),
-        ),
-        _priceCountryLine(),
-        const SizedBox(height: 26),
-        SectionHeader(title: l10n.therapyFocusQuestion),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final topic in therapyTopics)
-              _pill(
-                therapyTopicLabel(l10n, topic),
-                selected: _topic == topic,
-                onTap: () => setState(() => _topic = topic),
-              ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        SectionHeader(title: l10n.therapyWhenQuestion),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final slot in _timeSlots)
-              _pill(
-                _slotLabel(l10n, slot),
-                selected: _slots.contains(slot),
-                onTap: () => setState(() {
-                  _slots.contains(slot)
-                      ? _slots.remove(slot)
-                      : _slots.add(slot);
-                }),
-              ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        TextField(
-          controller: _noteController,
-          maxLines: 3,
-          maxLength: 500,
-          decoration: InputDecoration(
-            labelText: l10n.therapyNoteLabel,
-            alignLabelWithHint: true,
-            counterText: '',
+          const SizedBox(height: 4),
+          Text(
+            l10n.therapySessionWhat,
+            style: TextStyle(fontSize: 13.5, color: c.textMuted, height: 1.45),
           ),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _topic == null || _submitting ? null : _submit,
-          child: _submitting
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.4,
-                    color: Colors.white,
-                  ),
-                )
-              : Text(l10n.therapyPayAndRequest(price)),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          l10n.therapyBookingFootnote(l10n.therapyCancellationPolicy),
-          style: TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.5),
-        ),
-      ],
-    );
-  }
-
-  /// "Prices for Kenya · Change" under the price. Nothing when the price
-  /// is the stand-in, or when there's no country and none can be chosen.
-  Widget _priceCountryLine() {
-    final quote = _price;
-    final country = quote.country;
-    if (!quote.fromServer || (country == null && !quote.canChange)) {
-      return const SizedBox.shrink();
-    }
-    final c = context.brand;
-    final l10n = context.l10n;
-    final style = TextStyle(fontSize: 12.5, color: c.textMuted, height: 1.4);
-    return Padding(
-      padding: const EdgeInsets.only(top: 6, left: 4),
-      child: Row(
-        children: [
-          Icon(Icons.public_rounded, size: 15, color: c.textMuted),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(
-              country == null
-                  ? l10n.therapyPricesNoCountry
-                  : l10n.therapyPricesFor(countryName(country)),
-              style: style,
-            ),
+          const SizedBox(height: 6),
+          PriceCountryLine(
+            quote: quote,
+            onChange: _changeCountry,
+            changing: _changingCountry,
           ),
-          if (quote.canChange) ...[
-            Text(' · ', style: style),
-            TextButton(
-              onPressed:
-                  _changingCountry || _submitting ? null : _changeCountry,
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                minimumSize: const Size(0, 32),
-                textStyle: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              child: _changingCountry
-                  ? const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l10n.therapyPriceCountryChange),
-            ),
-          ],
+          const SizedBox(height: 14),
+          ElevatedButton(
+            onPressed: _changingCountry ? null : _openRequest,
+            child: Text(l10n.therapyRequestCta),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            l10n.therapyPaysVia(l10n.therapyPaymentMethods),
+            style: TextStyle(fontSize: 12, color: c.textMuted, height: 1.45),
+          ),
         ],
       ),
     );
@@ -1039,7 +870,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
                 Icons.calendar_month_rounded,
                 [
                   for (final slot in request.availability)
-                    _slotLabel(l10n, slot),
+                    therapySlotLabel(l10n, slot),
                 ].join(' · ')),
           _detailRow(
             request.isFreeSession
@@ -1341,12 +1172,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
             style: TextStyle(fontSize: 14, color: c.textMuted, height: 1.6),
           ),
           const SizedBox(height: 24),
-          if (active == null) ...[
+          if (active != null)
+            _activeCard(active)
+          else ...[
+            _requestCard(),
+            const SizedBox(height: 28),
             _howItWorks(),
-            const SizedBox(height: 24),
-          ],
-          if (active != null) _activeCard(active) else _bookingForm(),
-          if (active == null) ...[
             const SizedBox(height: 24),
             _reassurance(),
           ],

@@ -959,16 +959,6 @@ class AppLocalizationsZh extends AppLocalizations {
       '无需订阅。开始前 24 小时以上取消可全额退款——晚于此时间取消或未参加，不予退款。';
 
   @override
-  String therapyOfferTitle(String price) {
-    return '每次咨询 $price，预约时付款';
-  }
-
-  @override
-  String therapyOfferDetail(String methods, String charge) {
-    return '通过 Paystack 用 $methods 安全付款（实际扣款 $charge），你的申请会直接交给我们的关怀团队。收据会通过邮件发给你。无需订阅。';
-  }
-
-  @override
   String get therapyFocusQuestion => '你想重点聊些什么？';
 
   @override
@@ -976,16 +966,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get therapyNoteLabel => '有什么想让咨询师知道的吗？（选填）';
-
-  @override
-  String therapyPayAndRequest(String price) {
-    return '支付 $price 并申请咨询';
-  }
-
-  @override
-  String therapyBookingFootnote(String policy) {
-    return '我们会为你匹配一位持证咨询师和一个时间，通常在一天之内，预约成功后会发邮件通知你。$policy';
-  }
 
   @override
   String get therapyPriceFirstFree => '首次咨询——免费';
@@ -5611,6 +5591,109 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String therapyPriceUpdated(String price) {
     return '本次咨询的价格是 $price。请在付款前确认。';
+  }
+
+  @override
+  String get therapyRequestCta => '申请咨询';
+
+  @override
+  String therapyPricePerSession(String price) {
+    return '每次 $price';
+  }
+
+  @override
+  String get therapySessionWhat => '与持证咨询师进行一次 50 分钟的私密视频咨询。';
+
+  @override
+  String therapyPaysVia(String methods) {
+    return '通过 Paystack 用 $methods 付款。无需订阅。';
+  }
+
+  @override
+  String therapyPricesFromStore(String country, String store) {
+    return '$country的价格，依据你的 $store 账户';
+  }
+
+  @override
+  String therapyPricesFromSim(String country) {
+    return '$country的价格，依据你的 SIM 卡';
+  }
+
+  @override
+  String therapyPricesFromRegion(String country) {
+    return '$country的价格，依据你手机的地区设置';
+  }
+
+  @override
+  String get therapyPriceCountryWrong => '不对？';
+
+  @override
+  String get therapyCountryHelpTitle => '价格取决于你住在哪里';
+
+  @override
+  String therapyCountryHelpBody(String store) {
+    return '咨询价格按国家设定。我们根据你的 $store 账户确定你所在的国家，所以你不用自己选择。如果你住在别处，请给我们发邮件，我们会在你预约前帮你改好。';
+  }
+
+  @override
+  String get therapyCountryHelpLocked =>
+      '你的国家在你支付第一次咨询时就已确定。如果你搬家了，请给我们发邮件，我们会帮你更改。';
+
+  @override
+  String get therapyCountryHelpEmail => '给我们发邮件';
+
+  @override
+  String get therapyFlowTitle => '申请咨询';
+
+  @override
+  String therapyFlowStep(int step, int total) {
+    return '第 $step 步，共 $total 步';
+  }
+
+  @override
+  String get therapyFlowTopicHint => '选一个最贴近的。稍后你可以再多说一些。';
+
+  @override
+  String get therapyFlowWhenHint => '选出所有你方便的时间。具体时间我们会通过邮件确认。';
+
+  @override
+  String get therapyFlowNoteHint => '只有你的咨询师和我们的关怀团队能看到。';
+
+  @override
+  String get therapyFlowReviewTitle => '确认并付款';
+
+  @override
+  String get therapyFlowFocus => '主题';
+
+  @override
+  String get therapyFlowTimes => '你方便的时间';
+
+  @override
+  String get therapyFlowAnyTime => '任何时间';
+
+  @override
+  String get therapyFlowNote => '你的备注';
+
+  @override
+  String get therapyFlowEdit => '修改';
+
+  @override
+  String get therapyFlowNextTitle => '接下来';
+
+  @override
+  String get therapyFlowNextMatch => '我们会为你匹配一位持证咨询师和一个时间，通常在一天之内，并发邮件告诉你。';
+
+  @override
+  String get therapyFlowNextJoin => '到时间后，你就在 App 里加入私密的视频通话。';
+
+  @override
+  String therapyFlowPay(String price) {
+    return '支付 $price';
+  }
+
+  @override
+  String therapyFlowChargeNote(String charge) {
+    return 'Paystack 将按 $charge 扣款。你的银行会进行换算，可能会收取少量手续费。';
   }
 }
 

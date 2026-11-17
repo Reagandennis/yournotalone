@@ -8,6 +8,7 @@ import 'package:yournotalone/billing/session_payments.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/notifications/session_notifications.dart';
 import 'package:yournotalone/support/countries.dart';
+import 'package:yournotalone/therapy/country_signals.dart';
 import 'package:yournotalone/therapy/therapy_repository.dart';
 import 'package:yournotalone/therapy/therapy_screen.dart';
 
@@ -40,18 +41,31 @@ final _prices = {
   'US': _quoteJson(country: 'US', currency: 'USD', price: 2000, charge: 260000),
 };
 
+/// Apple's three-letter storefront codes this fake knows.
+const _iso3 = {'GBR': 'GB', 'KEN': 'KE', 'USA': 'US'};
+
 /// The pricing side of the database: a country per person, a price per
-/// country, and a country that's fixed once they've paid.
+/// country, and a country that's fixed once they've paid. With [detects]
+/// it has migration 0034 (the phone's signals set the country); without,
+/// only 0031 (a country picked from a list).
 class _PricedTherapy extends TherapyRepository {
   _PricedTherapy({
     this.country,
     this.locked = false,
     this.draftCents,
     this.draftCurrency,
+    this.detects = false,
+    this.source,
   });
 
   String? country;
   bool locked;
+  final bool detects;
+
+  /// Where [country] came from, as 0034 records it.
+  String? source;
+
+  final signalsSeen = <CountrySignals>[];
 
   /// What a saved draft is priced at; by [country] when null.
   final int? draftCents;
@@ -63,11 +77,30 @@ class _PricedTherapy extends TherapyRepository {
   TherapyPriceQuote get _quote => TherapyPriceQuote.fromJson({
     ...(_prices[country] ?? _prices['US']!),
     'country': country,
-    'can_change': !locked,
+    'source': source,
+    'locked': locked,
+    'can_change': !locked && (source == null || source == 'client'),
   });
 
   @override
   Future<TherapyPriceQuote> fetchPriceQuote() async => _quote;
+
+  @override
+  Future<TherapyPriceQuote> detectPriceCountry(CountrySignals signals) async {
+    if (!detects) return TherapyPriceQuote.fallback;
+    signalsSeen.add(signals);
+    String? code(String? c) => c == null ? null : _iso3[c] ?? c;
+    final picked = [
+      ('store', code(signals.store)),
+      ('sim', code(signals.sim)),
+      ('region', code(signals.region)),
+    ].where((p) => p.$2 != null).firstOrNull;
+    if (picked != null && !locked && source != 'admin') {
+      country = picked.$2;
+      source = picked.$1;
+    }
+    return _quote;
+  }
 
   @override
   Future<TherapyPriceQuote> setPriceCountry(String code) async {
@@ -160,12 +193,26 @@ TherapyScreen _screen(
   TherapyRepository repository, {
   SessionPayments? payments,
   String? device = 'GB',
+  String? store,
 }) => TherapyScreen(
   repository: repository,
   payments: payments,
   clock: () => _now,
-  detectCountry: () => device,
+  readCountrySignals: () async =>
+      CountrySignals(store: store, region: device, platform: 'android'),
 );
+
+/// From the therapy screen through the first two steps to the review.
+Future<void> _toReview(WidgetTester tester, {String topic = 'Low mood'}) async {
+  await tester.tap(find.text('Request a session'));
+  await _settle(tester);
+  await tester.tap(find.text(topic));
+  await tester.pump();
+  await tester.tap(find.text('Continue'));
+  await _settle(tester);
+  await tester.tap(find.text('Continue'));
+  await _settle(tester);
+}
 
 void main() {
   setUpAll(() async {
@@ -289,32 +336,119 @@ void main() {
       }
     });
 
-    test('the first time, the phone\'s country is set quietly', () async {
+    Future<CountrySignals> Function() signals({
+      String? store,
+      String? sim,
+      String? region,
+    }) =>
+        () async => CountrySignals(
+          store: store,
+          sim: sim,
+          region: region,
+          platform: 'android',
+        );
+
+    test(
+      'the store account\'s country prices them, sent with the rest',
+      () async {
+        final repo = _PricedTherapy(detects: true);
+        final quote = await loadTherapyPriceQuote(
+          repo,
+          readSignals: signals(store: 'GBR', sim: 'KE', region: 'US'),
+        );
+        expect(quote.country, 'GB');
+        expect(quote.source, 'store');
+        expect(quote.canChange, isFalse);
+        expect(quote.priceLabel, '£45');
+        expect(repo.signalsSeen.single.sim, 'KE');
+        expect(repo.signalsSeen.single.region, 'US');
+        // Nothing is picked from a list.
+        expect(repo.countriesSet, isEmpty);
+      },
+    );
+
+    test('with no store country, the SIM\'s, then the region\'s', () async {
+      final sim = _PricedTherapy(detects: true);
+      expect(
+        (await loadTherapyPriceQuote(
+          sim,
+          readSignals: signals(sim: 'KE', region: 'US'),
+        )).source,
+        'sim',
+      );
+      final region = _PricedTherapy(detects: true);
+      expect(
+        (await loadTherapyPriceQuote(
+          region,
+          readSignals: signals(region: 'US'),
+        )).country,
+        'US',
+      );
+    });
+
+    test('signals that can\'t be read still get a price', () async {
+      final repo = _PricedTherapy(detects: true);
+      final quote = await loadTherapyPriceQuote(
+        repo,
+        readSignals: () async => throw StateError('no RevenueCat'),
+      );
+      expect(repo.signalsSeen.single.isEmpty, isTrue);
+      expect(quote.fromServer, isTrue);
+      expect(quote.priceLabel, '\$20');
+    });
+
+    test('once paid for, or set by the care team, the country stays', () async {
+      final paid = _PricedTherapy(detects: true, country: 'KE', locked: true);
+      expect(
+        (await loadTherapyPriceQuote(
+          paid,
+          readSignals: signals(store: 'GBR'),
+        )).country,
+        'KE',
+      );
+      final care = _PricedTherapy(
+        detects: true,
+        country: 'KE',
+        source: 'admin',
+      );
+      expect(
+        (await loadTherapyPriceQuote(
+          care,
+          readSignals: signals(store: 'GBR'),
+        )).country,
+        'KE',
+      );
+    });
+
+    test('before detection exists, the phone\'s country is set quietly the '
+        'first time', () async {
       final repo = _PricedTherapy();
       final quote = await loadTherapyPriceQuote(
         repo,
-        detectCountry: () => 'KE',
+        readSignals: signals(store: 'KEN', region: 'KE'),
       );
+      // Three-letter store codes are left to 0034.
       expect(repo.countriesSet, ['KE']);
       expect(quote.country, 'KE');
       expect(quote.priceLabel, 'Ksh 2,600');
     });
 
-    test('a country already chosen, or fixed, is left alone', () async {
+    test('before detection exists, a country already chosen, or fixed, is '
+        'left alone', () async {
       final chosen = _PricedTherapy(country: 'GB');
-      await loadTherapyPriceQuote(chosen, detectCountry: () => 'KE');
+      await loadTherapyPriceQuote(chosen, readSignals: signals(region: 'KE'));
       expect(chosen.countriesSet, isEmpty);
 
       final fixed = _PricedTherapy(locked: true);
       final quote = await loadTherapyPriceQuote(
         fixed,
-        detectCountry: () => 'KE',
+        readSignals: signals(region: 'KE'),
       );
       expect(fixed.countriesSet, isEmpty);
       expect(quote.country, isNull);
 
       final unknown = _PricedTherapy();
-      await loadTherapyPriceQuote(unknown, detectCountry: () => null);
+      await loadTherapyPriceQuote(unknown, readSignals: signals());
       expect(unknown.countriesSet, isEmpty);
     });
   });
@@ -341,24 +475,61 @@ void main() {
     });
   });
 
-  group('booking screen', () {
-    testWidgets('shows the price for their country, and what Paystack '
-        'charges', (tester) async {
-      await _show(tester, _screen(_PricedTherapy(country: 'GB')));
-      expect(find.text('Sessions are £45, paid when you book'), findsOneWidget);
-      expect(find.text('Pay £45 and request a session'), findsOneWidget);
-      expect(find.textContaining('charged as Ksh 7,600'), findsOneWidget);
-      expect(find.text('Prices for United Kingdom'), findsOneWidget);
-      expect(find.text('Change'), findsOneWidget);
-    });
-
-    testWidgets('the first visit prices them by the phone\'s country', (
+  group('therapy screen', () {
+    testWidgets('shows the price for their country, and where it came from', (
       tester,
     ) async {
+      final repo = _PricedTherapy(detects: true);
+      await _show(tester, _screen(repo, store: 'GB'));
+      expect(find.text('£45 a session'), findsOneWidget);
+      expect(
+        find.text('Prices for United Kingdom, from your Google Play account'),
+        findsOneWidget,
+      );
+      expect(find.text('Not right?'), findsOneWidget);
+      // Detected, so there's no list to pick from.
+      expect(find.text('Change'), findsNothing);
+      expect(find.text('Request a session'), findsOneWidget);
+    });
+
+    testWidgets('"Not right?" says why, and how to have it changed', (
+      tester,
+    ) async {
+      await _show(tester, _screen(_PricedTherapy(detects: true), store: 'GB'));
+      await tester.tap(find.text('Not right?'));
+      await _settle(tester);
+      expect(find.text('Your price follows where you live'), findsOneWidget);
+      expect(
+        find.textContaining('from your Google Play account, so'),
+        findsOneWidget,
+      );
+      expect(find.text('Email us'), findsOneWidget);
+    });
+
+    testWidgets('once paid for, it says the country is fixed', (tester) async {
+      final repo = _PricedTherapy(
+        detects: true,
+        country: 'KE',
+        locked: true,
+        source: 'store',
+      );
+      await _show(tester, _screen(repo, store: 'GB'));
+      expect(find.text('Prices for Kenya'), findsOneWidget);
+      await tester.tap(find.text('Not right?'));
+      await _settle(tester);
+      expect(
+        find.textContaining('set when you paid for your first session'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('before detection exists, the first visit prices them by '
+        'the phone\'s country', (tester) async {
       final repo = _PricedTherapy();
       await _show(tester, _screen(repo, device: 'GB'));
       expect(repo.countriesSet, ['GB']);
       expect(find.text('Prices for United Kingdom'), findsOneWidget);
+      expect(find.text('Change'), findsOneWidget);
     });
 
     testWidgets('with no country known, says prices depend on it', (
@@ -366,11 +537,13 @@ void main() {
     ) async {
       await _show(tester, _screen(_PricedTherapy(), device: null));
       expect(find.text('Prices depend on where you live'), findsOneWidget);
-      expect(find.text('Pay \$20 and request a session'), findsOneWidget);
+      expect(find.text('\$20 a session'), findsOneWidget);
     });
 
-    testWidgets('changing country changes the price', (tester) async {
-      final repo = _PricedTherapy(country: 'GB');
+    testWidgets('picking a country from the list changes the price', (
+      tester,
+    ) async {
+      final repo = _PricedTherapy(country: 'GB', source: 'client');
       await _show(tester, _screen(repo));
       await tester.tap(find.text('Change'));
       await _settle(tester);
@@ -388,21 +561,13 @@ void main() {
 
       expect(repo.countriesSet, ['KE']);
       expect(find.text('Prices for Kenya'), findsOneWidget);
-      expect(find.text('Pay Ksh 2,600 and request a session'), findsOneWidget);
-    });
-
-    testWidgets('once paid for, the country can\'t be changed here', (
-      tester,
-    ) async {
-      await _show(tester, _screen(_PricedTherapy(country: 'GB', locked: true)));
-      expect(find.text('Prices for United Kingdom'), findsOneWidget);
-      expect(find.text('Change'), findsNothing);
+      expect(find.text('Ksh 2,600 a session'), findsOneWidget);
     });
 
     testWidgets('a refused change shows the database\'s reason', (
       tester,
     ) async {
-      final repo = _PricedTherapy(country: 'GB');
+      final repo = _PricedTherapy(country: 'GB', source: 'client');
       await _show(tester, _screen(repo));
       // They paid for a session elsewhere while this screen was open.
       repo.locked = true;
@@ -429,11 +594,85 @@ void main() {
       expect(find.text('Prices for United Kingdom'), findsOneWidget);
       expect(find.text('Change'), findsNothing);
     });
+  });
 
-    testWidgets('a request priced differently from the form isn\'t sent '
+  group('asking for a session', () {
+    testWidgets('three steps: what, when, then the price to check', (
+      tester,
+    ) async {
+      final repo = _PricedTherapy(detects: true);
+      await _show(tester, _screen(repo, store: 'GB'));
+      await tester.tap(find.text('Request a session'));
+      await _settle(tester);
+
+      expect(find.text('Step 1 of 3'), findsOneWidget);
+      expect(find.text('What would you like to focus on?'), findsOneWidget);
+      // Nothing chosen yet, so there's nowhere to go.
+      final next = find.ancestor(
+        of: find.text('Continue'),
+        matching: find.byType(ElevatedButton),
+      );
+      expect(tester.widget<ElevatedButton>(next).onPressed, isNull);
+      await tester.tap(find.text('Anxiety & stress'));
+      await tester.pump();
+      await tester.tap(find.text('Continue'));
+      await _settle(tester);
+
+      expect(find.text('Step 2 of 3'), findsOneWidget);
+      expect(find.text('When could you meet?'), findsOneWidget);
+      await tester.tap(find.text('Weekday evenings'));
+      await tester.tap(find.text('Weekends'));
+      await tester.enterText(find.byType(TextField), 'Evenings are best.');
+      await tester.tap(find.text('Continue'));
+      await _settle(tester);
+
+      expect(find.text('Step 3 of 3'), findsOneWidget);
+      expect(find.text('Check and pay'), findsOneWidget);
+      expect(find.text('Anxiety & stress'), findsOneWidget);
+      expect(find.text('Weekday evenings, Weekends'), findsOneWidget);
+      expect(find.text('Evenings are best.'), findsOneWidget);
+      expect(find.text('£45'), findsOneWidget);
+      expect(
+        find.text('Prices for United Kingdom, from your Google Play account'),
+        findsOneWidget,
+      );
+      // Charged in shillings, so it says so.
+      expect(
+        find.textContaining('Paystack charges this as Ksh 7,600'),
+        findsOneWidget,
+      );
+      expect(find.text('Pay £45'), findsOneWidget);
+    });
+
+    testWidgets('a price in shillings needs no word about converting', (
+      tester,
+    ) async {
+      await _show(tester, _screen(_PricedTherapy(detects: true), store: 'KEN'));
+      await _toReview(tester);
+      expect(find.text('Ksh 2,600'), findsOneWidget);
+      expect(find.textContaining('Paystack charges this as'), findsNothing);
+      expect(find.text('Any time'), findsOneWidget);
+    });
+
+    testWidgets('back goes back a step, keeping what was chosen', (
+      tester,
+    ) async {
+      await _show(tester, _screen(_PricedTherapy(detects: true), store: 'GB'));
+      await _toReview(tester, topic: 'Grief & loss');
+      // "Change" beside the focus goes back to the first step.
+      await tester.tap(find.text('Change').first);
+      await _settle(tester);
+      expect(find.text('Step 1 of 3'), findsOneWidget);
+      await tester.tap(find.byTooltip('Close'));
+      await _settle(tester);
+      expect(find.text('Request a session'), findsOneWidget);
+      expect(find.text('Step 1 of 3'), findsNothing);
+    });
+
+    testWidgets('a request priced differently from the flow isn\'t sent '
         'straight to payment', (tester) async {
       final repo = _PricedTherapy(
-        country: 'GB',
+        detects: true,
         draftCents: 5000,
         draftCurrency: 'GBP',
       );
@@ -441,35 +680,35 @@ void main() {
         SessionPaymentOutcome.paid,
         repository: repo,
       );
-      await _show(tester, _screen(repo, payments: payments));
-      await tester.tap(find.text('Anxiety & stress'));
-      await tester.pump();
-      await tester.tap(find.text('Pay £45 and request a session'));
+      await _show(tester, _screen(repo, payments: payments, store: 'GB'));
+      await _toReview(tester);
+      await tester.tap(find.text('Pay £45'));
       await _settle(tester);
 
       expect(payments.paidFor, isEmpty);
       expect(
         find.text('The session price is £50. Check it before you pay.'),
-        findsOneWidget,
+        findsWidgets,
       );
+      // Back on the therapy screen, with the request at its own price.
       expect(find.text('£50 — pay to send your request'), findsOneWidget);
-      expect(find.textContaining('charged as Ksh 7,600'), findsOneWidget);
     });
 
     testWidgets('a request priced as shown goes straight to payment', (
       tester,
     ) async {
-      final repo = _PricedTherapy(country: 'GB');
+      final repo = _PricedTherapy(detects: true);
       final payments = _FixedPayments(
         SessionPaymentOutcome.cancelled,
         repository: repo,
       );
-      await _show(tester, _screen(repo, payments: payments));
-      await tester.tap(find.text('Anxiety & stress'));
-      await tester.pump();
-      await tester.tap(find.text('Pay £45 and request a session'));
+      await _show(tester, _screen(repo, payments: payments, store: 'GB'));
+      await _toReview(tester);
+      await tester.tap(find.text('Pay £45'));
       await _settle(tester);
       expect(payments.paidFor, ['draft-1']);
+      // Backed out of the checkout: the review is still there.
+      expect(find.text('Check and pay'), findsOneWidget);
     });
   });
 }

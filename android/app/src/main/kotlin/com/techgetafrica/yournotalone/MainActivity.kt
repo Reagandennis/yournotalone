@@ -1,9 +1,11 @@
 package com.techgetafrica.yournotalone
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.telephony.TelephonyManager
 import com.ryanheise.audioservice.AudioServiceActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -26,6 +28,27 @@ class MainActivity : AudioServiceActivity() {
                     else -> result.notImplemented()
                 }
             }
+        // Which country the SIM card and the mobile network are from, for
+        // session prices when the Play account's country isn't known. Needs
+        // no permission, and nothing else about the phone is read.
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "yournotalone/telephony")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "countries" -> result.success(telephonyCountries())
+                    else -> result.notImplemented()
+                }
+            }
+    }
+
+    private fun telephonyCountries(): Map<String, String?> {
+        fun code(value: String?) = value?.trim()?.uppercase()?.takeIf { it.length == 2 }
+        return try {
+            val telephony = getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+            mapOf("sim" to code(telephony?.simCountryIso), "network" to code(telephony?.networkCountryIso))
+        } catch (e: Exception) {
+            // A tablet without a SIM, or a phone that won't say.
+            mapOf("sim" to null, "network" to null)
+        }
     }
 
     private fun openNotificationSettings() {

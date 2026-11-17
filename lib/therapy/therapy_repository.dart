@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/l10n.dart';
 import '../support/crisis_resources.dart';
+import 'country_signals.dart';
 import 'session_format.dart';
 
 /// What a session costs when the server can't say: before migration 0031
@@ -95,9 +96,10 @@ String formatPrice(int cents, [String currency = 'USD']) {
 }
 
 /// What a session costs the signed-in person, from `therapy_price_quote()`
-/// (migration 0031): the price shown, in their currency, and what Paystack
-/// charges for it. Both depend on the country they've chosen; with none,
-/// the price for everywhere without its own applies.
+/// or `therapy_detect_country()` (migrations 0031 and 0034): the price
+/// shown, in their currency, and what Paystack charges for it. Both depend
+/// on their country; with none, the price for everywhere without its own
+/// applies.
 class TherapyPriceQuote {
   const TherapyPriceQuote({
     required this.country,
@@ -108,13 +110,18 @@ class TherapyPriceQuote {
     required this.chargeMinor,
     this.pricedCountries = const [],
     this.fromServer = true,
+    this.source,
+    this.locked = false,
   });
 
   factory TherapyPriceQuote.fromJson(Map<String, dynamic> json) {
     final country = json['country'];
+    final source = json['source'];
     return TherapyPriceQuote(
       country: country is String && country.isNotEmpty ? country : null,
       canChange: json['can_change'] == true,
+      source: source is String && source.isNotEmpty ? source : null,
+      locked: json['locked'] == true,
       currency: json['currency'] as String? ?? 'USD',
       priceMinor:
           (json['price_minor'] as num?)?.toInt() ?? therapySessionPriceCents,
@@ -145,9 +152,19 @@ class TherapyPriceQuote {
   /// chosen.
   final String? country;
 
-  /// False once they've paid for a session: from then on only the care
-  /// team can change their country.
+  /// Whether they can pick their country from a list here: only before
+  /// one has been detected (0034) or set by the care team, and never once
+  /// they've paid for a session.
   final bool canChange;
+
+  /// Where [country] came from: 'store' (their App Store or Google Play
+  /// account), 'sim', 'region', 'client' (picked from the list) or
+  /// 'admin' (the care team). Null before migration 0034, or with none.
+  final String? source;
+
+  /// True once they've paid for a session: their country stays as it was
+  /// then, and only the care team can change it.
+  final bool locked;
   final String currency;
   final int priceMinor;
   final String chargeCurrency;
@@ -204,13 +221,28 @@ String? deviceCountry() {
 }
 
 /// The price to show, never failing: the server's quote, else
-/// [TherapyPriceQuote.fallback]. The first time — no country chosen yet,
-/// and still free to choose — it quietly sets the phone's country
-/// ([detectCountry]), so the price is the local one from the start.
+/// [TherapyPriceQuote.fallback]. It sends what the phone knows about where
+/// they live ([readSignals]) and the database prices them by it (0034).
+/// Before that migration, it does what 0031 did: the first time, with no
+/// country chosen and still free to choose, it quietly sets the phone's
+/// own, so the price is the local one from the start.
 Future<TherapyPriceQuote> loadTherapyPriceQuote(
   TherapyRepository repository, {
-  String? Function() detectCountry = deviceCountry,
+  Future<CountrySignals> Function() readSignals = readCountrySignals,
 }) async {
+  CountrySignals signals;
+  try {
+    signals = await readSignals().timeout(const Duration(seconds: 8));
+  } catch (_) {
+    signals = const CountrySignals();
+  }
+  try {
+    final detected = await repository.detectPriceCountry(signals);
+    if (detected.fromServer) return detected;
+  } catch (_) {
+    // Fall through to the quote on its own.
+  }
+
   final TherapyPriceQuote quote;
   try {
     quote = await repository.fetchPriceQuote();
@@ -220,12 +252,12 @@ Future<TherapyPriceQuote> loadTherapyPriceQuote(
   if (!quote.fromServer || quote.country != null || !quote.canChange) {
     return quote;
   }
-  final String? detected;
-  try {
-    detected = detectCountry();
-  } catch (_) {
-    return quote;
-  }
+  // 0031 takes two-letter codes only: Apple's three-letter storefront
+  // codes are left to 0034.
+  final detected = [signals.store, signals.sim, signals.region]
+      .whereType<String>()
+      .where((code) => RegExp(r'^[A-Z]{2}$').hasMatch(code))
+      .firstOrNull;
   if (detected == null) return quote;
   try {
     return await repository
@@ -569,6 +601,17 @@ class TherapyRepository {
   Future<TherapyPriceQuote> fetchPriceQuote() async {
     if (_client.auth.currentUser == null) return TherapyPriceQuote.fallback;
     return readPriceQuote(() => _client.rpc('therapy_price_quote'));
+  }
+
+  /// Tells the database what the phone knows about where this person lives
+  /// and returns their quote (`therapy_detect_country()`, 0034). Never
+  /// fails: before that migration, offline or signed out it's
+  /// [TherapyPriceQuote.fallback], which isn't [TherapyPriceQuote.fromServer].
+  Future<TherapyPriceQuote> detectPriceCountry(CountrySignals signals) async {
+    if (_client.auth.currentUser == null) return TherapyPriceQuote.fallback;
+    return readPriceQuote(
+      () => _client.rpc('therapy_detect_country', params: signals.toParams()),
+    );
   }
 
   /// Sets the country this person's sessions are priced for (an ISO code)
