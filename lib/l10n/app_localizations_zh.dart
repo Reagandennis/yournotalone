@@ -4892,6 +4892,21 @@ class AppLocalizationsZh extends AppLocalizations {
   String get soundPlayerFallbackTitle => '身心安适声音';
 
   @override
+  String nowPlayingMeditation(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes 分钟',
+    );
+    return '引导冥想 · $_temp0';
+  }
+
+  @override
+  String nowPlayingSound(String category) {
+    return '身心安适声音 · $category';
+  }
+
+  @override
   String playerSleepTimerStopsIn(String time) {
     return '$time 后停止 · 取消';
   }

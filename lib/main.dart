@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
@@ -22,6 +21,7 @@ import 'billing/purchases_service.dart';
 import 'content/content_catalog.dart';
 import 'discover/saved_store.dart';
 import 'media/download_store.dart';
+import 'media/now_playing.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
 import 'l10n/l10n.dart';
@@ -29,7 +29,6 @@ import 'notifications/local_notifications.dart';
 import 'notifications/session_notifications.dart';
 import 'onboarding/onboarding_ui.dart';
 import 'practice/practice_repository.dart';
-import 'sounds/sound_player.dart';
 import 'splash_screen.dart';
 import 'supabase_config.dart';
 import 'support/crisis_resources.dart';
@@ -105,22 +104,13 @@ Future<void> _start() async {
     url: supabaseUrl,
     publishableKey: supabasePublishableKey,
   );
-  // Enables the media notification and lock-screen controls, so a sleep
-  // sound keeps playing when the screen goes off.
-  //
-  // Never fatal: a hot restart after adding the plugin, or a platform with
-  // no implementation, throws MissingPluginException here — and the app
-  // failing to launch over a media session would be far worse than losing
-  // background playback.
+  // The lock screen and notification player, so a sleep sound or a
+  // meditation keeps going with the screen off and can be paused from
+  // there. Never fatal (see NowPlaying.init): without it, audio still
+  // plays, in the foreground only.
   try {
-    await JustAudioBackground.init(
-      androidNotificationChannelId: 'com.techgetafrica.yournotalone.audio',
-      androidNotificationChannelName: 'Wellbeing sounds',
-      androidNotificationOngoing: true,
-    );
-    backgroundAudioReady = true;
+    await NowPlaying.init();
   } catch (error, stackTrace) {
-    debugPrint('Background audio unavailable, playing in foreground: $error');
     unawaited(Sentry.captureException(error, stackTrace: stackTrace));
   }
   await PurchasesService.instance.init();

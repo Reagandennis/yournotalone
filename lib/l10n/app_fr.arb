@@ -1323,6 +1323,8 @@
   "soundsFilterAll": "Tout",
   "soundsStop": "Arrêter le son",
   "soundPlayerFallbackTitle": "Son de bien-être",
+  "nowPlayingMeditation": "Méditation guidée · {minutes, plural, other{{minutes} min}}",
+  "nowPlayingSound": "Son de bien-être · {category}",
   "playerSleepTimerStopsIn": "Arrêt dans {time} · annuler",
   "playerSleepTimerOption": "{minutes} min",
   "meditationVoiceChip": "Voix",

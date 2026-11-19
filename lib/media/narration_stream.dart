@@ -42,9 +42,8 @@ Future<Uri> narrationUrl(
 
 /// Serves [StreamAudioSource]s over a loopback HTTP port.
 ///
-/// The voice guide plays on audioplayers (just_audio_background allows only
-/// one just_audio player, and that's the ambient loop), which can't take a
-/// just_audio source directly. This hands it a `http://127.0.0.1` link
+/// The voice guide plays on audioplayers, beside the chime and over the
+/// ambient loop, which can't take a just_audio source directly. This hands it a `http://127.0.0.1` link
 /// instead, answering range requests the way just_audio's own proxy does.
 class NarrationProxy {
   NarrationProxy();

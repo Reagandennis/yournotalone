@@ -91,7 +91,12 @@ class _SoundsScreenState extends State<SoundsScreen> {
     );
   }
 
-  Widget _soundCard(Sound sound, {required bool active}) {
+  /// [preparing]: the sound is being fetched before it can play.
+  Widget _soundCard(
+    Sound sound, {
+    required bool active,
+    bool preparing = false,
+  }) {
     final c = context.brand;
     final locked = sound.premium && !isPremiumUser();
     final accent = sound.category.accent;
@@ -178,12 +183,29 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     child: SizedBox(
                       width: 42,
                       height: 42,
-                      child: Icon(
-                        active
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        size: 24,
-                        color: inkButton ? c.onInk : Colors.white,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Still a pause button while it's fetched: a tap
+                          // keeps it from starting when it arrives.
+                          if (preparing)
+                            Positioned.fill(
+                              child: Padding(
+                                padding: const EdgeInsets.all(3),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: inkButton ? c.onInk : Colors.white,
+                                ),
+                              ),
+                            ),
+                          Icon(
+                            active
+                                ? Icons.pause_rounded
+                                : Icons.play_arrow_rounded,
+                            size: 24,
+                            color: inkButton ? c.onInk : Colors.white,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -216,7 +238,11 @@ class _SoundsScreenState extends State<SoundsScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: kWideMaxWidth),
             child: AnimatedBuilder(
-              animation: Listenable.merge([player.nowPlaying, player.paused]),
+              animation: Listenable.merge([
+                player.nowPlaying,
+                player.paused,
+                player.preparing,
+              ]),
               builder: (context, _) => ListView(
                 padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
                 children: [
@@ -263,7 +289,11 @@ class _SoundsScreenState extends State<SoundsScreen> {
                     spacing: 14,
                     children: [
                       for (final sound in visible)
-                        _soundCard(sound, active: player.isActive(sound.asset)),
+                        _soundCard(
+                          sound,
+                          active: player.isActive(sound.asset),
+                          preparing: player.preparing.value == sound.asset,
+                        ),
                     ],
                   ),
                   if (player.nowPlaying.value != null) ...[

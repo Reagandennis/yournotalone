@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -8,11 +9,15 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/content/content_catalog.dart';
+import 'package:yournotalone/media/media_links.dart';
+import 'package:yournotalone/media/media_source.dart';
 import 'package:yournotalone/meditation/meditation_catalog.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
 import 'package:yournotalone/sounds/sound_player.dart';
 import 'package:yournotalone/sounds/sounds_catalog.dart';
 import 'package:yournotalone/sounds/sounds_screen.dart';
+
+import 'audio_fakes.dart';
 
 /// A repository whose writes never come back — a dead connection.
 class _StuckPractice extends PracticeRepository {
@@ -45,11 +50,14 @@ void main() {
   });
 
   setUp(() {
+    freshNowPlaying();
+    resetSoundPlayer();
     SoundPlayer.instance
       ..clock = DateTime.now
       ..practice = PracticeRepository();
     return SoundPlayer.instance.stop();
   });
+  tearDown(resetSoundPlayer);
 
   test('pausing and stopping never wait on the practice write', () async {
     final practice = _StuckPractice();
@@ -161,5 +169,160 @@ void main() {
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
     expect(SoundPlayer.instance.paused.value, isTrue);
+  });
+
+  group('playback', () {
+    const bundled = 'assets/sounds/brown_noise.m4a';
+    const online = 'assets/sounds/rainfall.m4a';
+    late FakeLoop loop;
+    late Completer<File> download;
+
+    setUp(() {
+      loop = FakeLoop();
+      download = Completer<File>();
+      SoundPlayer.instance
+        ..loopEngine = loop
+        ..resolve = ((path) async => path == online
+            ? RemoteAudio(remoteEntry(online))
+            : BundledAudio(path))
+        ..fetch = ((entry) => download.future);
+    });
+
+    test('a sound in the app plays at once', () async {
+      await SoundPlayer.instance.play(bundled);
+      expect(loop.log, ['stop', 'load $bundled', 'play']);
+      expect(SoundPlayer.instance.isActive(bundled), isTrue);
+    });
+
+    test('paused while it downloads, it waits for play', () async {
+      final player = SoundPlayer.instance;
+      final playing = player.play(online);
+      await pumpEventQueue();
+      expect(player.preparing.value, online);
+      expect(shownState.processingState, AudioProcessingState.loading);
+
+      await player.pause();
+      download.complete(downloadedFile('rain.m4a'));
+      await playing;
+
+      expect(loop.log, ['stop', 'load /tmp/rain.m4a']);
+      expect(player.paused.value, isTrue);
+      expect(player.preparing.value, isNull);
+      expect(shownState.playing, isFalse);
+
+      await player.resume();
+      expect(loop.log.last, 'play');
+      expect(shownState.playing, isTrue);
+    });
+
+    test('the newest choice wins over a slow download', () async {
+      final player = SoundPlayer.instance;
+      final first = player.play(online);
+      await pumpEventQueue();
+      await player.play(bundled);
+      download.complete(downloadedFile('rain.m4a'));
+      await first;
+
+      expect(loop.loaded, bundled);
+      expect(loop.log, isNot(contains('load /tmp/rain.m4a')));
+      expect(player.nowPlaying.value, bundled);
+      expect(shownItem!.title, 'Brown noise');
+    });
+
+    test('stopped while it downloads, nothing plays', () async {
+      final player = SoundPlayer.instance;
+      final playing = player.play(online);
+      await pumpEventQueue();
+      await player.stop();
+      download.complete(downloadedFile('rain.m4a'));
+      await playing;
+
+      expect(loop.log, isNot(contains('play')));
+      expect(loop.loaded, isNull);
+      expect(player.nowPlaying.value, isNull);
+      expect(player.preparing.value, isNull);
+      expect(shownState.processingState, AudioProcessingState.idle);
+    });
+
+    test('a failed download clears the sound and says why', () async {
+      final player = SoundPlayer.instance;
+      final playing = player.play(online);
+      await pumpEventQueue();
+      download.completeError(const MediaUnavailable('offline'));
+      await expectLater(playing, throwsA(isA<MediaUnavailable>()));
+      expect(player.nowPlaying.value, isNull);
+      expect(shownState.processingState, AudioProcessingState.idle);
+    });
+
+    test('a load cut short by the next sound is not an error', () async {
+      final player = SoundPlayer.instance;
+      final hold = loop.holdLoad = Completer<void>();
+      final first = player.play(bundled);
+      await pumpEventQueue(); // loading
+      final second = player.play('assets/sounds/white_noise.m4a');
+      await pumpEventQueue();
+      // The first load fails because the second cut it short.
+      loop.failLoad = Exception('Loading interrupted');
+      hold.complete();
+      await first; // doesn't throw
+      await second;
+      expect(player.nowPlaying.value, 'assets/sounds/white_noise.m4a');
+      expect(loop.loaded, 'assets/sounds/white_noise.m4a');
+    });
+
+    test('playback that breaks shows as stopped, not as playing', () async {
+      final player = SoundPlayer.instance;
+      await player.play(bundled);
+      loop.breakPlayback(Exception('damaged file'));
+      await pumpEventQueue();
+      expect(player.nowPlaying.value, isNull);
+      expect(shownState.processingState, AudioProcessingState.idle);
+    });
+
+    testWidgets('the list shows a sound being fetched, and pause holds it', (
+      tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 1400);
+      addTearDown(tester.view.reset);
+      // Deep focus, the free one, is published online only.
+      final deepFocus = soundLibrary.firstWhere((s) => s.title == 'Deep focus');
+      SoundPlayer.instance.resolve = (path) async =>
+          RemoteAudio(remoteEntry(path, title: 'Deep focus'));
+
+      await tester.pumpWidget(wrap(const SoundsScreen()));
+      await tester.pumpAndSettle();
+      final card = find.ancestor(
+        of: find.text('Deep focus'),
+        matching: find.byType(Material),
+      );
+      Finder inCard(Finder f) =>
+          find.descendant(of: card.first, matching: f);
+
+      await tester.tap(inCard(find.byIcon(Icons.play_arrow_rounded)));
+      await tester.pump();
+      expect(inCard(find.byType(CircularProgressIndicator)), findsOneWidget);
+      expect(inCard(find.byIcon(Icons.pause_rounded)), findsOneWidget);
+
+      // Pause before it arrives: it mustn't start by itself.
+      await tester.tap(inCard(find.byIcon(Icons.pause_rounded)));
+      await tester.pump();
+      expect(inCard(find.byIcon(Icons.play_arrow_rounded)), findsOneWidget);
+      await tester.runAsync(() async {
+        download.complete(downloadedFile('deep.m4a'));
+        await pumpEventQueue();
+      });
+      await tester.pump();
+      expect(loop.log, isNot(contains('play')));
+      expect(SoundPlayer.instance.nowPlaying.value, deepFocus.asset);
+      expect(inCard(find.byType(CircularProgressIndicator)), findsNothing);
+      expect(inCard(find.byIcon(Icons.play_arrow_rounded)), findsOneWidget);
+
+      await tester.tap(inCard(find.byIcon(Icons.play_arrow_rounded)));
+      await tester.pump();
+      expect(loop.log.last, 'play');
+      expect(inCard(find.byIcon(Icons.pause_rounded)), findsOneWidget);
+      await SoundPlayer.instance.stop();
+    });
   });
 }

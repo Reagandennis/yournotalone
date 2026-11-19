@@ -5165,6 +5165,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get soundPlayerFallbackTitle => 'Wellbeing sound';
 
   @override
+  String nowPlayingMeditation(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min',
+    );
+    return 'Guided meditation · $_temp0';
+  }
+
+  @override
+  String nowPlayingSound(String category) {
+    return 'Wellbeing sound · $category';
+  }
+
+  @override
   String playerSleepTimerStopsIn(String time) {
     return 'Stops in $time · cancel';
   }

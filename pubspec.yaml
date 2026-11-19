@@ -41,10 +41,14 @@ dependencies:
   supabase_flutter: ^2.16.0
   image_picker: ^1.2.0
   just_audio: ^0.9.46
-  just_audio_background: ^0.0.1-beta.17
-  # Chimes go through a separate engine: just_audio_background allows only
-  # one just_audio player, and that one is the ambient loop.
+  # The lock screen and notification player (lib/media/now_playing.dart):
+  # one media session for whatever is playing, a sound or a meditation.
+  audio_service: ^0.18.18
+  audio_session: ^0.1.25
+  # Chimes and the voice guide: short sounds over the ambient loop.
   audioplayers: ^6.1.0
+  # The meditation clock reads the time through this, so tests can wind it.
+  clock: ^1.1.1
   purchases_flutter: ^10.6.0
   purchases_ui_flutter: ^10.6.0
   flutter_local_notifications: ^22.2.0

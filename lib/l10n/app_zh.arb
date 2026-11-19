@@ -1323,6 +1323,8 @@
   "soundsFilterAll": "全部",
   "soundsStop": "停止播放",
   "soundPlayerFallbackTitle": "身心安适声音",
+  "nowPlayingMeditation": "引导冥想 · {minutes, plural, other{{minutes} 分钟}}",
+  "nowPlayingSound": "身心安适声音 · {category}",
   "playerSleepTimerStopsIn": "{time} 后停止 · 取消",
   "playerSleepTimerOption": "{minutes} 分钟",
   "meditationVoiceChip": "人声",

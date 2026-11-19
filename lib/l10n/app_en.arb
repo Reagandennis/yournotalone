@@ -6898,6 +6898,25 @@
   "@soundPlayerFallbackTitle": {
     "description": "Title on the lock screen / media notification for a sound with no name."
   },
+  "nowPlayingMeditation": "Guided meditation · {minutes, plural, other{{minutes} min}}",
+  "@nowPlayingMeditation": {
+    "description": "Lock screen / media notification, the line under a meditation's name and description: what it is and how long. Short.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "nowPlayingSound": "Wellbeing sound · {category}",
+  "@nowPlayingSound": {
+    "description": "Lock screen / media notification, the line under an ambient sound's name and description: what it is and its category (Focus, Sleep or Calm, in English). Short.",
+    "placeholders": {
+      "category": {
+        "type": "String",
+        "example": "Sleep"
+      }
+    }
+  },
   "playerSleepTimerStopsIn": "Stops in {time} · cancel",
   "@playerSleepTimerStopsIn": {
     "description": "Sound player button while a sleep timer runs: time left as mm:ss; tapping it cancels the timer. Keep short.",

@@ -8076,6 +8076,18 @@ abstract class AppLocalizations {
   /// **'Wellbeing sound'**
   String get soundPlayerFallbackTitle;
 
+  /// Lock screen / media notification, the line under a meditation's name and description: what it is and how long. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Guided meditation · {minutes, plural, other{{minutes} min}}'**
+  String nowPlayingMeditation(int minutes);
+
+  /// Lock screen / media notification, the line under an ambient sound's name and description: what it is and its category (Focus, Sleep or Calm, in English). Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellbeing sound · {category}'**
+  String nowPlayingSound(String category);
+
   /// Sound player button while a sleep timer runs: time left as mm:ss; tapping it cancels the timer. Keep short.
   ///
   /// In en, this message translates to:

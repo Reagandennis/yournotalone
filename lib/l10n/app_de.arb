@@ -1323,6 +1323,8 @@
   "soundsFilterAll": "Alle",
   "soundsStop": "Klang stoppen",
   "soundPlayerFallbackTitle": "Klang zum Wohlfühlen",
+  "nowPlayingMeditation": "Geführte Meditation · {minutes, plural, other{{minutes} Min.}}",
+  "nowPlayingSound": "Klang zum Wohlfühlen · {category}",
   "playerSleepTimerStopsIn": "Endet in {time} · abbrechen",
   "playerSleepTimerOption": "{minutes} Min.",
   "meditationVoiceChip": "Stimme",
