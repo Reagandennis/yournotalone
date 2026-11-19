@@ -110,7 +110,14 @@ class _GroundingScreenState extends State<GroundingScreen> {
         ToolkitStepHeader(
           step: _index + 1,
           of: groundingSteps.length,
-          title: l10n.groundingStepTitle(step.count, step.sense),
+          title: l10n.groundingStepTitle(step.count, switch (step.sense) {
+            'see' => l10n.groundingSenseSee,
+            'feel' => l10n.groundingSenseFeel,
+            'hear' => l10n.groundingSenseHear,
+            'smell' => l10n.groundingSenseSmell,
+            'taste' => l10n.groundingSenseTaste,
+            final other => other,
+          }),
           hint: step.prompt,
         ),
         const SizedBox(height: 12),

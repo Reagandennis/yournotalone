@@ -12,6 +12,7 @@
 library;
 
 import '../l10n/l10n.dart';
+import 'paywall_copy.dart';
 
 /// How the offer is described where no store data is shown.
 ///
@@ -21,7 +22,14 @@ import '../l10n/l10n.dart';
 ///
 /// A clause that ends someone else's sentence ("… — and you can try it
 /// free first."), in the language the app is showing.
-String get introOffer => currentL10n().billingIntroOffer;
+///
+/// Someone who has had the trial (Apple knows; see [introIneligible]) is
+/// told what's true for them instead.
+String get introOffer => introIneligible.isEmpty
+    ? currentL10n().billingIntroOffer
+    : currentL10n().billingNoTrialOffer;
 
 /// Sentence-ending version, capitalised for the start of a line.
-String get introOfferSentence => currentL10n().billingIntroOfferSentence;
+String get introOfferSentence => introIneligible.isEmpty
+    ? currentL10n().billingIntroOfferSentence
+    : currentL10n().billingNoTrialOfferSentence;

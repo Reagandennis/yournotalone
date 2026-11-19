@@ -16,6 +16,7 @@ import 'country_picker.dart';
 import 'country_signals.dart';
 import 'request_flow.dart';
 import 'session_format.dart';
+import 'server_messages.dart';
 import 'session_widgets.dart';
 import 'therapy_art.dart';
 import 'therapy_repository.dart';
@@ -222,8 +223,17 @@ class _TherapyScreenState extends State<TherapyScreen> {
           await _load();
           return true;
         case SessionPaymentOutcome.cancelled:
+          // Leaving the checkout doesn't mean nothing will be paid: an
+          // M-Pesa prompt can still be approved on the phone a minute
+          // later, and Paystack pays the draft its checkout was for. So the
+          // draft stays, to pay or discard from its card (unpaid drafts are
+          // swept after a day), rather than a late payment landing on a
+          // cancelled request with nothing booked.
+          _say(context.l10n.therapyPaymentNotFinished);
+          await _load(quiet: true);
+          return true;
         case SessionPaymentOutcome.unavailable:
-          // Nothing was paid, so there's nothing to keep.
+          // The checkout never opened, so nothing can be paid.
           await _discardQuietly(draft);
           return false;
         case SessionPaymentOutcome.pendingVerification:
@@ -247,7 +257,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         // The database refused with a reason written for people: a
         // request already open, or too many in a day. If it's an open
         // request we hadn't seen, this screen shows it.
-        _say(e.message);
+        _say(serverMessage(context.l10n, e));
         await _load(quiet: true);
         return true;
       }
@@ -271,7 +281,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (e is PostgrestException && e.code == 'P0001' && e.message.isNotEmpty) {
         // Their country is fixed since they paid for a session, said in
         // plain words. Refreshing takes the Change button away.
-        _say(e.message);
+        _say(serverMessage(context.l10n, e));
         final quote = await _repo.fetchPriceQuote();
         if (mounted) setState(() => _setQuote(quote));
       } else {
@@ -342,6 +352,17 @@ class _TherapyScreenState extends State<TherapyScreen> {
     );
     if (confirmed != true) return;
     try {
+      // A payment may have arrived since: an M-Pesa prompt approved after
+      // the checkout closed. Then it's kept, not thrown away.
+      if (request.isAwaitingPayment && request.needsPayment) {
+        final paid = await _payments.isPaid(request).catchError((_) => false);
+        if (paid) {
+          if (!mounted) return;
+          _say(l10n.therapyPaymentFoundRequest);
+          await _load(quiet: true);
+          return;
+        }
+      }
       await _repo.cancelRequest(request.id);
       await _load();
     } catch (e) {
@@ -349,7 +370,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (e is PostgrestException && e.code == 'P0001' && e.message.isNotEmpty) {
         // The session started while this screen was open, so the database
         // said no in plain words.
-        _say(e.message);
+        _say(serverMessage(context.l10n, e));
         await _load(quiet: true);
       } else {
         _say(errorMessage(e, l10n.therapyCancelFailed));

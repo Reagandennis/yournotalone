@@ -157,8 +157,9 @@ class TherapyPriceQuote {
   /// they've paid for a session.
   final bool canChange;
 
-  /// Where [country] came from: 'store' (their App Store or Google Play
-  /// account), 'sim', 'region', 'client' (picked from the list) or
+  /// Where [country] came from: 'sim', 'zone' (the phone's time zone),
+  /// 'store' (their App Store or Google Play account), 'region', 'client'
+  /// (picked from the list) or
   /// 'admin' (the care team). Null before migration 0034, or with none.
   final String? source;
 
@@ -604,14 +605,31 @@ class TherapyRepository {
   }
 
   /// Tells the database what the phone knows about where this person lives
-  /// and returns their quote (`therapy_detect_country()`, 0034). Never
-  /// fails: before that migration, offline or signed out it's
+  /// and returns their quote (`therapy_detect_country()`, 0034/0035). Never
+  /// fails: before 0034, offline or signed out it's
   /// [TherapyPriceQuote.fallback], which isn't [TherapyPriceQuote.fromServer].
   Future<TherapyPriceQuote> detectPriceCountry(CountrySignals signals) async {
     if (_client.auth.currentUser == null) return TherapyPriceQuote.fallback;
-    return readPriceQuote(
-      () => _client.rpc('therapy_detect_country', params: signals.toParams()),
-    );
+    try {
+      final data = await _client
+          .rpc('therapy_detect_country', params: signals.toParams())
+          .timeout(const Duration(seconds: 15));
+      return TherapyPriceQuote.fromJson(Map<String, dynamic>.from(data as Map));
+    } on PostgrestException catch (e) {
+      // A database without 0035 doesn't know the time zone yet: ask again
+      // the way 0034 understands, rather than fall back to no country.
+      if (e.code == 'PGRST202' && signals.zone != null) {
+        return readPriceQuote(
+          () => _client.rpc(
+            'therapy_detect_country',
+            params: signals.toParams(withZone: false),
+          ),
+        );
+      }
+      return readPriceQuote(() => Future.error(e));
+    } catch (e) {
+      return readPriceQuote(() => Future.error(e));
+    }
   }
 
   /// Sets the country this person's sessions are priced for (an ISO code)

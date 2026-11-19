@@ -463,6 +463,7 @@ class PriceCountryLine extends StatelessWidget {
         _storeName(),
       ),
       (final n?, 'sim') when !quote.locked => l10n.therapyPricesFromSim(n),
+      (final n?, 'zone') when !quote.locked => l10n.therapyPricesFromZone(n),
       (final n?, 'region') when !quote.locked => l10n.therapyPricesFromRegion(
         n,
       ),
@@ -515,7 +516,7 @@ String _storeName() =>
     : 'Google Play';
 
 /// Why the price is for this country, and how to have it changed: by
-/// writing to us, since the country comes from their store account (or is
+/// writing to us, since the country comes from where their phone is (or is
 /// fixed by their first payment) rather than a list anyone could pick from.
 Future<void> showCountryHelp(BuildContext context, TherapyPriceQuote quote) {
   return showModalBottomSheet<void>(

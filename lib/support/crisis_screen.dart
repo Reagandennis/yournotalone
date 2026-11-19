@@ -14,7 +14,10 @@ import 'crisis_resources.dart';
 /// sits at the very bottom on purpose — someone in crisis needs a phone
 /// number, not an upsell.
 class CrisisScreen extends StatefulWidget {
-  const CrisisScreen({super.key});
+  const CrisisScreen({super.key, this.offerBooking = true});
+
+  /// False from the sign-in screens: booking a session needs an account.
+  final bool offerBooking;
 
   @override
   State<CrisisScreen> createState() => _CrisisScreenState();
@@ -332,12 +335,15 @@ class _CrisisScreenState extends State<CrisisScreen> {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 10),
-                TextButton(
-                  onPressed: () =>
-                      Navigator.of(context).push(TherapyScreen.route()),
-                  child: Text(l10n.crisisBookSession),
-                ),
+                // Booking needs an account; the numbers above don't.
+                if (widget.offerBooking) ...[
+                  const SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () =>
+                        Navigator.of(context).push(TherapyScreen.route()),
+                    child: Text(l10n.crisisBookSession),
+                  ),
+                ],
               ],
             ),
           ),
@@ -354,7 +360,11 @@ class CrisisFooter extends StatelessWidget {
     super.key,
     this.trailing,
     this.textAlign = TextAlign.center,
+    this.offerBooking = true,
   });
+
+  /// See [CrisisScreen.offerBooking].
+  final bool offerBooking;
 
   /// An optional sentence appended after the crisis line.
   final String? trailing;
@@ -366,7 +376,9 @@ class CrisisFooter extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const CrisisScreen()),
+        MaterialPageRoute(
+          builder: (_) => CrisisScreen(offerBooking: offerBooking),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),

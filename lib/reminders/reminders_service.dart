@@ -183,6 +183,22 @@ class RemindersService {
     );
   }
 
+  /// Takes every daily reminder off the phone without changing what's
+  /// saved: on sign-out and account deletion, so nobody else is reminded of
+  /// someone else's routine (and a deleted account isn't reminded at all).
+  /// Never throws.
+  Future<void> cancelScheduled() async {
+    if (_silent) return;
+    try {
+      await _init();
+      for (final kind in ReminderKind.values) {
+        await _plugin.cancel(id: kind.id);
+      }
+    } catch (e) {
+      debugPrint('Couldn\'t cancel reminders: $e');
+    }
+  }
+
   /// Schedules every enabled reminder again, so ones set up before
   /// reminders carried a payload open the right screen too. Never throws.
   Future<void> refreshScheduled() async {

@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../l10n/l10n.dart';
 import '../media/lapsed_downloads.dart';
+import 'paywall_copy.dart';
 import 'trial_reminder.dart';
 
 /// Must match the entitlement identifier in the RevenueCat dashboard.
@@ -116,10 +117,21 @@ class PurchasesService {
     _onCustomerInfo(result.customerInfo);
   }
 
+  /// The account [_entitled] was last worked out for.
+  String? _identity;
+
   /// Log in/out of RevenueCat whenever the Supabase session changes.
   void _syncIdentityWithAuth() {
+    _identity = Supabase.instance.client.auth.currentUser?.id;
     Supabase.instance.client.auth.onAuthStateChange.listen((state) async {
       final user = state.session?.user;
+      if (user?.id != _identity) {
+        // Someone else, or no one: the last person's premium isn't theirs,
+        // whether or not RevenueCat can be reached to say so. It comes back
+        // with RevenueCat's answer for the new account.
+        _identity = user?.id;
+        _forgetEntitlement();
+      }
       try {
         if (user != null) {
           final result = await Purchases.logIn(user.id);
@@ -131,10 +143,19 @@ class PurchasesService {
       } catch (e) {
         debugPrint('RevenueCat identity sync failed: $e');
       }
-    });
+    }, onError: (Object e) => debugPrint('Auth stream error: $e'));
+  }
+
+  void _forgetEntitlement() {
+    _entitled = false;
+    _expires = null;
+    _apply();
+    // Their trial reminder goes with them.
+    unawaited(TrialReminder.sync(null));
   }
 
   void _onCustomerInfo(CustomerInfo info) {
+    _trustServerTime(info);
     final pro = info.entitlements.active[proEntitlementId];
     _entitled = pro != null;
     _expires = pro?.expirationDate == null
@@ -161,7 +182,12 @@ class PurchasesService {
         _latestSeen = stored;
       }
       _apply();
-      await prefs.setString(_latestSeenKey, _latestSeen!.toIso8601String());
+      // In UTC: a local time without its offset read back after a move west
+      // looked hours ahead, and ended premium early around each renewal.
+      await prefs.setString(
+        _latestSeenKey,
+        _latestSeen!.toUtc().toIso8601String(),
+      );
     } catch (e) {
       debugPrint('Clock check unavailable: $e');
       _apply();
@@ -172,6 +198,34 @@ class PurchasesService {
       } catch (e) {
         debugPrint('RevenueCat customer info unavailable: $e');
       }
+    }
+  }
+
+  /// RevenueCat's answers carry the server's time. When a fresh one agrees
+  /// with the phone's clock, a "latest time seen" left far ahead by a clock
+  /// that was once set wrong is let go — otherwise a subscriber who once
+  /// set their date ahead stays locked out of what they pay for until real
+  /// time catches up. A phone set back can't use this: its clock won't
+  /// agree with the server's.
+  void _trustServerTime(CustomerInfo info) {
+    final server = DateTime.tryParse(info.requestDate);
+    final seen = _latestSeen;
+    if (server == null || seen == null) return;
+    final now = DateTime.now();
+    final fresh = now.difference(server).abs() < const Duration(hours: 1);
+    if (fresh && seen.isAfter(now.add(const Duration(hours: 1)))) {
+      _latestSeen = now;
+      unawaited(_saveLatestSeen());
+    }
+  }
+
+  Future<void> _saveLatestSeen() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      // In UTC, so moving time zones can't shift it.
+      await prefs.setString(_latestSeenKey, _latestSeen!.toUtc().toIso8601String());
+    } catch (e) {
+      debugPrint('Clock check not saved: $e');
     }
   }
 
@@ -204,12 +258,41 @@ class PurchasesService {
     return isPro.value;
   }
 
+  /// On iOS the store lists a free trial even to someone who has had it;
+  /// ask whether this account still can, so the paywall doesn't promise one
+  /// Apple won't give (see [introIneligible]). Google Play only offers a
+  /// trial to those who can have it, so there's nothing to ask there.
+  Future<void> _checkTrialEligibility(Offering offering) async {
+    if (!Platform.isIOS && !Platform.isMacOS) return;
+    try {
+      final ids = [
+        for (final package in offering.availablePackages)
+          package.storeProduct.identifier,
+      ];
+      final answers = await Purchases.checkTrialOrIntroductoryPriceEligibility(
+        ids,
+      ).timeout(const Duration(seconds: 5));
+      introIneligible.clear();
+      answers.forEach((id, answer) {
+        if (answer.status ==
+            IntroEligibilityStatus.introEligibilityStatusIneligible) {
+          introIneligible.add(id);
+        }
+      });
+    } catch (e) {
+      // Unknown: the store's offer is shown as it is.
+      debugPrint('Trial eligibility unavailable: $e');
+    }
+  }
+
   /// The offering to sell from (packages: monthly / yearly),
   /// or null when unavailable.
   Future<Offering?> currentOffering() async {
     if (!_configured) return null;
     try {
-      return (await Purchases.getOfferings()).current;
+      final offering = (await Purchases.getOfferings()).current;
+      if (offering != null) await _checkTrialEligibility(offering);
+      return offering;
     } catch (e) {
       debugPrint('RevenueCat offerings failed: $e');
       return null;

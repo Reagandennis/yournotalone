@@ -41,7 +41,13 @@ class _NotificationsSetupScreenState extends State<NotificationsSetupScreen> {
 
   Future<void> _allow() async {
     setState(() => _loading = true);
-    await _permission.request();
+    try {
+      await _permission.request();
+    } catch (e) {
+      // Asking failed (the plugin didn't start): carry on, rather than leave
+      // the last step of onboarding spinning. Settings can ask again.
+      debugPrint('Notification permission request failed: $e');
+    }
     if (!mounted) return;
     setState(() => _loading = false);
     _done();

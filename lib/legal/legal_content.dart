@@ -14,7 +14,7 @@ const legalEntityAddress = '179 Runda Drive, Nairobi, Kenya';
 const legalContactEmail = 'reaganprezzo@gmail.com';
 const legalGoverningCountry = 'Kenya';
 
-const legalLastUpdated = '17 November 2026';
+const legalLastUpdated = '19 November 2026';
 
 class LegalDoc {
   const LegalDoc({
@@ -73,20 +73,23 @@ final privacyPolicy = LegalDoc(
           'for you, and any rating or comment you give. Your therapist can '
           'also rate the session and flag concerns for our care team — '
           'such as a missed session or a worry about your safety.\n\n'
-          'Your country, for session prices — the country of your App Store '
-          'or Google Play account, your SIM card\'s country (on Android) and '
-          'your phone\'s region setting. The app reads these without asking '
-          'for any permission. We keep them with your account to set the '
-          'price of your therapy sessions, and so our care team can put it '
-          'right if it\'s wrong. They don\'t tell us where you are.\n\n'
+          'Your country, for session prices — your SIM card\'s country (on '
+          'Android), the country of your phone\'s time zone, the country of '
+          'your App Store or Google Play account and your phone\'s region '
+          'setting. The app reads these without asking for any permission, '
+          'and never your location itself. We keep them with your account to '
+          'set the price of your therapy sessions, and so our care team can '
+          'put it right if it\'s wrong.\n\n'
           'Video calls — therapy sessions are live audio and video between '
           'you and your therapist. They are not recorded, and no audio or '
           'video is stored.\n\n'
-          'Purchase data — if you subscribe to Premium or pay for a therapy '
-          'session, our payments provider processes an anonymous app user '
-          'ID, your purchases, and store receipt data. We never see or '
-          'store your card or payment details; payment is handled entirely '
-          'by Apple or Google.\n\n'
+          'Purchase data — a Premium subscription is paid through Apple or '
+          'Google: RevenueCat, our subscriptions provider, processes an '
+          'anonymous app user ID, your purchases and store receipt data. A '
+          'therapy session is paid through Paystack, which takes the M-Pesa, '
+          'mobile-money or card payment itself; we keep the payment\'s '
+          'reference, amount and date as a purchase record. We never see or '
+          'store your card or mobile-money details.\n\n'
           'Technical data — the minimum needed to run a secure service, '
           'such as authentication tokens and server logs, and a random key '
           'for this installation that lets it collect notifications about '
@@ -306,9 +309,10 @@ final termsOfService = LegalDoc(
           'professionals responsible for their own clinical practice.\n\n'
           '•  Each session costs the price the app shows for the country '
           'you live in, paid in the app when you request it. We take your '
-          'country from your App Store or Google Play account (where that '
-          'isn\'t available, from your SIM card or your phone\'s region '
-          'setting). Once you\'ve paid for a session it stays the same; if '
+          'country from where your phone is — its SIM card, else its time '
+          'zone — and otherwise from your App Store or Google Play account or '
+          'your phone\'s region setting. Once you\'ve paid for a session it '
+          'stays the same; if '
           'it\'s wrong, contact us and we\'ll correct it. Payments are '
           'charged in Kenyan shillings through Paystack, so if your price '
           'is in another currency, your bank converts it and may charge a '

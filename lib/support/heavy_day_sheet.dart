@@ -167,6 +167,17 @@ class _HeavyDaySheet extends StatelessWidget {
             ),
             for (final line in lines)
               _callButton(context, name: line.name, number: line.phone!),
+            // Which country these are for: a wrong guess (a phone abroad, a
+            // borrowed SIM) has to be visible to be put right, on the page
+            // the button below opens.
+            if (region.code != internationalRegion.code)
+              Padding(
+                padding: const EdgeInsets.only(top: 2, bottom: 2),
+                child: Text(
+                  l10n.heavyDayNumbersFor(region.label),
+                  style: TextStyle(fontSize: 12, color: c.textMuted),
+                ),
+              ),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(

@@ -129,7 +129,8 @@ class CourseStore extends ValueNotifier<Map<String, CourseProgress>> {
     return best;
   }
 
-  @visibleForTesting
+  /// Someone else signed in: what's loaded was the last person's, so it's
+  /// read again from what's on the phone for them (see LocalData).
   void reset() {
     _loaded = false;
     value = const {};

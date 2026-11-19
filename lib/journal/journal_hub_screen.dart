@@ -217,7 +217,17 @@ class JournalHubScreen extends StatelessWidget {
                 ),
                 for (final group in promptGroups) ...[
                   const SizedBox(height: 14),
-                  SectionHeader(title: group),
+                  SectionHeader(
+                    title: switch (group) {
+                      'Everyday' => l10n.journalGroupEveryday,
+                      'Hard days' => l10n.journalGroupHardDays,
+                      'Looking back' => l10n.journalGroupLookingBack,
+                      'Recovery' => l10n.journalGroupRecovery,
+                      'Before sleep' => l10n.journalGroupBeforeSleep,
+                      // A group named only in the content, as written.
+                      final other => other,
+                    },
+                  ),
                   const SizedBox(height: 12),
                   CardGrid(
                     spacing: 14,

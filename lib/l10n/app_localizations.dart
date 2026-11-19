@@ -513,6 +513,36 @@ abstract class AppLocalizations {
   /// **'Every plan starts with a free trial.'**
   String get billingIntroOfferSentence;
 
+  /// Used instead of billingIntroOffer when this account has already had the free trial (Apple won't give it twice): a clause at the end of other sentences such as "Unlock every session — and {introOffer}." Starts lower-case, no final full stop.
+  ///
+  /// In en, this message translates to:
+  /// **'you can cancel any time'**
+  String get billingNoTrialOffer;
+
+  /// Used instead of billingIntroOfferSentence when this account has already had the free trial.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel any time from your store account.'**
+  String get billingNoTrialOfferSentence;
+
+  /// Dialog asked before moving an existing store subscription to this account.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium is already paid for'**
+  String get paywallAlreadyOwnedTitle;
+
+  /// Asked before moving a store subscription to the signed-in account when buying finds the store account already subscribed. {store} is "App Store" or "Google Play".
+  ///
+  /// In en, this message translates to:
+  /// **'The {store} account on this phone already pays for Premium. Use that subscription for the account you\'re signed in to? If it\'s someone else\'s, it moves here and they lose Premium.'**
+  String paywallAlreadyOwnedBody(String store);
+
+  /// Dialog asked before moving an existing store subscription to this account.
+  ///
+  /// In en, this message translates to:
+  /// **'Use it here'**
+  String get paywallAlreadyOwnedAction;
+
   /// Snackbar when the app store refuses purchases on this device (e.g. parental controls).
   ///
   /// In en, this message translates to:
@@ -957,6 +987,42 @@ abstract class AppLocalizations {
   /// **'Something went wrong. Please try again.'**
   String get authErrorGeneric;
 
+  /// Sign-in/sign-up error message.
+  ///
+  /// In en, this message translates to:
+  /// **'That email and password don\'t match. Check them, or reset your password.'**
+  String get authErrorInvalidCredentials;
+
+  /// Sign-in/sign-up error message.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your email first — tap the link we sent you, then log in.'**
+  String get authErrorEmailNotConfirmed;
+
+  /// Sign-in/sign-up error message.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s already an account with this email. Log in instead — or reset your password if you\'ve forgotten it.'**
+  String get authErrorEmailTaken;
+
+  /// Sign-in/sign-up error message.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many tries in a short time. Wait a minute, then try again.'**
+  String get authErrorTooManyTries;
+
+  /// Sign-in/sign-up error message.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a stronger password: longer, and harder to guess.'**
+  String get authErrorWeakPassword;
+
+  /// Sign-in/sign-up error message.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t connect. Check your internet connection and try again.'**
+  String get authErrorOffline;
+
   /// Form error under an empty email field.
   ///
   /// In en, this message translates to:
@@ -1052,6 +1118,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t sign in with Apple. Please try again, or use your email instead.'**
   String get authAppleFailed;
+
+  /// Message when a sign-in, email-confirmation or password-reset link from an email couldn't be used (expired, already used, or superseded by a newer email).
+  ///
+  /// In en, this message translates to:
+  /// **'That link didn\'t work — it may have expired, or a newer one was sent. Ask for a new one and use the latest email.'**
+  String get authLinkFailed;
 
   /// Log-in screen footer, before the "Create an account" button.
   ///
@@ -1640,6 +1712,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'We couldn\'t open the payment page on this device — please try again later.'**
   String get therapyPaymentUnavailable;
+
+  /// After someone leaves the Paystack checkout without the payment being found: the request stays as an unpaid draft on the screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paid yet. If you approved the payment on your phone, your request goes through on its own — otherwise pay or discard it below.'**
+  String get therapyPaymentNotFinished;
+
+  /// The database refused a new request because one is already open.
+  ///
+  /// In en, this message translates to:
+  /// **'You already have a session on the way. Cancel it first if you need to change something.'**
+  String get therapyServerOpenSession;
+
+  /// The database refused a request: too many in a day.
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s as many requests as we can take in a day. Please try again tomorrow, or reply to our email if it\'s urgent.'**
+  String get therapyServerDailyLimit;
+
+  /// The database refused a request: too many from everyone in the last hour.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re getting a lot of requests right now. Please try again in a little while.'**
+  String get therapyServerBusy;
+
+  /// The database refused a cancellation less than 24 hours before the session.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions can be cancelled in the app up to 24 hours before they start. After that, reply to your booking email — a session that\'s missed or cancelled late isn\'t refunded.'**
+  String get therapyServerLateCancel;
+
+  /// The database refused a cancellation of a session already under way.
+  ///
+  /// In en, this message translates to:
+  /// **'This session has already started, so it can\'t be cancelled from the app. If something went wrong, reply to our email and we\'ll sort it out.'**
+  String get therapyServerStarted;
+
+  /// The database refused a country change: it was fixed by their first paid session.
+  ///
+  /// In en, this message translates to:
+  /// **'Your country is set from your first session. Reply to any of our emails if it has changed.'**
+  String get therapyServerCountryLocked;
+
+  /// The database refused a country change: it comes from the phone's location signals.
+  ///
+  /// In en, this message translates to:
+  /// **'Your country comes from where your phone is. If it\'s wrong, reply to any of our emails.'**
+  String get therapyServerCountryDetected;
 
   /// Snackbar: payment failed.
   ///
@@ -2746,6 +2866,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You don\'t have to carry it on your own. A licensed therapist here will listen — \$20 a session, booked in a minute.'**
   String get heavyDayBody;
+
+  /// Heavy-day sheet, small line under the call buttons saying which country the numbers are for; the button next to it opens the full crisis page, where the country can be changed. Crisis wording: needs careful review by a fluent speaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Numbers for {country}'**
+  String heavyDayNumbersFor(String country);
 
   /// Heading above emergency and helpline call buttons on the heavy-day sheet. Crisis wording: needs careful review by a fluent speaker.
   ///
@@ -4361,7 +4487,37 @@ abstract class AppLocalizations {
   /// **'Found one — last'**
   String get groundingFoundLast;
 
-  /// Step title in the grounding exercise, e.g. "5 things you can see". {sense} is a verb from the exercise content (see, feel, hear, smell, taste), currently in English.
+  /// The verb for this sense, as it fits into groundingStepTitle ("5 things you can …").
+  ///
+  /// In en, this message translates to:
+  /// **'see'**
+  String get groundingSenseSee;
+
+  /// The verb for this sense, as it fits into groundingStepTitle ("5 things you can …").
+  ///
+  /// In en, this message translates to:
+  /// **'feel'**
+  String get groundingSenseFeel;
+
+  /// The verb for this sense, as it fits into groundingStepTitle ("5 things you can …").
+  ///
+  /// In en, this message translates to:
+  /// **'hear'**
+  String get groundingSenseHear;
+
+  /// The verb for this sense, as it fits into groundingStepTitle ("5 things you can …").
+  ///
+  /// In en, this message translates to:
+  /// **'smell'**
+  String get groundingSenseSmell;
+
+  /// The verb for this sense, as it fits into groundingStepTitle ("5 things you can …").
+  ///
+  /// In en, this message translates to:
+  /// **'taste'**
+  String get groundingSenseTaste;
+
+  /// Step title in the grounding exercise, e.g. "5 things you can see". {sense} is one of groundingSenseSee, …Feel, …Hear, …Smell, …Taste, in the same language.
   ///
   /// In en, this message translates to:
   /// **'{count, plural, other{{count} things you can {sense}}}'**
@@ -6019,6 +6175,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Every entry you\'ve written, newest first.'**
   String get journalHubMyJournalDetail;
+
+  /// Section heading in the journal hub, over a group of writing prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyday'**
+  String get journalGroupEveryday;
+
+  /// Section heading in the journal hub, over a group of writing prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard days'**
+  String get journalGroupHardDays;
+
+  /// Section heading in the journal hub, over a group of writing prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking back'**
+  String get journalGroupLookingBack;
+
+  /// Section heading in the journal hub, over a group of writing prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery'**
+  String get journalGroupRecovery;
+
+  /// Section heading in the journal hub, over a group of writing prompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Before sleep'**
+  String get journalGroupBeforeSleep;
 
   /// Card title: start a blank entry. Journal & mood hub screen.
   ///
@@ -8946,6 +9132,12 @@ abstract class AppLocalizations {
   /// **'Deleting your account…'**
   String get settingsDeleting;
 
+  /// Snackbar when account deletion fails before the request could even be recorded (offline): nothing happened, try again.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t reach us, so nothing was deleted or recorded yet. Check your connection and try again.'**
+  String get settingsDeleteNotRecorded;
+
   /// Snackbar when account deletion fails partway.
   ///
   /// In en, this message translates to:
@@ -9354,6 +9546,12 @@ abstract class AppLocalizations {
   /// **'Prices for {country}, from your SIM card'**
   String therapyPricesFromSim(String country);
 
+  /// As therapyPricesFromStore, when the country came from the phone's time zone (which phones set from where they are).
+  ///
+  /// In en, this message translates to:
+  /// **'Prices for {country}, from your phone\'s time zone'**
+  String therapyPricesFromZone(String country);
+
   /// As therapyPricesFromStore, when the country came from the phone's region setting.
   ///
   /// In en, this message translates to:
@@ -9375,7 +9573,7 @@ abstract class AppLocalizations {
   /// Body of the sheet about the price country. {store} is "App Store" or "Google Play" (not translated).
   ///
   /// In en, this message translates to:
-  /// **'Session prices are set for each country. We take yours from your {store} account, so there\'s nothing to choose. If you live somewhere else, email us and we\'ll put it right before you book.'**
+  /// **'Session prices are set for each country. We take yours from where your phone is — its SIM card or its time zone — and otherwise from your {store} account, so there\'s nothing to choose. If you live somewhere else, email us and we\'ll put it right before you book.'**
   String therapyCountryHelpBody(String store);
 
   /// Body of the sheet about the price country, once they've paid for a session and it can no longer change by itself.

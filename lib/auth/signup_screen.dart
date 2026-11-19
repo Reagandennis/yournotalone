@@ -48,11 +48,12 @@ class _SignupScreenState extends State<SignupScreen> {
         Supabase.instance.client.auth.onAuthStateChange.listen((state) {
       if (!mounted || !_awaitingConfirm) return;
       if (state.event == AuthChangeEvent.signedIn && state.session != null) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => postAuthDestination()),
+          (route) => false,
         );
       }
-    });
+    }, onError: (Object e) => debugPrint('Auth stream error: $e'));
   }
 
   /// "By creating an account you agree to our Terms of Service and Privacy
@@ -116,8 +117,20 @@ class _SignupScreenState extends State<SignupScreen> {
       Sentry.metrics.count('auth.sign_up.email', 1);
       if (!mounted) return;
       if (res.session != null) {
-        Navigator.of(context).pushReplacement(
+        // The login screen this was opened from goes too: back from Home
+        // mustn't lead to "Welcome back" while signed in.
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => postAuthDestination()),
+          (route) => false,
+        );
+      } else if (res.user?.identities?.isEmpty ?? false) {
+        // An account with this email already exists (made with Google,
+        // Apple or a password). Supabase doesn't say so, to not reveal who
+        // has an account, and sends no email — so waiting for one would be
+        // waiting forever.
+        showAuthError(
+          context,
+          const AuthException('User already registered', code: 'user_already_exists'),
         );
       } else {
         // Email confirmation is on: the account exists but needs verifying.

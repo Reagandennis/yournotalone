@@ -5,10 +5,13 @@
 //
 // Order matters: storage objects are removed first (they are not covered by
 // the foreign-key cascade), then a Sign in with Apple user's access is
-// revoked with Apple (App Store guideline 5.1.1(v)), then the auth user —
-// which cascades through journal_entries, mood_entries, therapy_requests,
-// recovery_habits, recovery_pledges, craving_logs, deletion_requests and
-// apple_refresh_tokens.
+// revoked with Apple (App Store guideline 5.1.1(v)), then sessions still to
+// come are cancelled (the therapist hears, a paid one goes to the care team
+// for its refund), then the auth user — which cascades through
+// journal_entries, mood_entries, recovery_habits, recovery_pledges,
+// craving_logs, deletion_requests and apple_refresh_tokens. Sessions and
+// Paystack checkouts stay, without the user and their words (0035): what a
+// therapist is owed and the purchase records are kept.
 //
 // Deploy:  supabase functions deploy delete-account
 // Secrets: APPLE_TEAM_ID, APPLE_KEY_ID, APPLE_PRIVATE_KEY — see
@@ -90,7 +93,17 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // 4. The auth user. Everything else cascades from here.
+    // 4. Sessions still to come, while the client's details are there for
+    //    the emails. Before 0035 is applied the function doesn't exist;
+    //    the deletion goes ahead regardless.
+    const { error: cancelError } = await admin.rpc('therapy_cancel_for_deletion', {
+      p_user_id: user.id,
+    });
+    if (cancelError) {
+      console.error('delete-account: sessions not cancelled first', user.id, cancelError);
+    }
+
+    // 5. The auth user. Everything else cascades from here.
     const { error: deleteError } = await admin.auth.admin.deleteUser(user.id);
     if (deleteError) throw deleteError;
 

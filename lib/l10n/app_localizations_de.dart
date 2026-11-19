@@ -243,6 +243,24 @@ class AppLocalizationsDe extends AppLocalizations {
       'Jeder Plan beginnt mit einem kostenlosen Testzeitraum.';
 
   @override
+  String get billingNoTrialOffer => 'du kannst jederzeit kündigen';
+
+  @override
+  String get billingNoTrialOfferSentence =>
+      'Du kannst jederzeit in deinem Store-Konto kündigen.';
+
+  @override
+  String get paywallAlreadyOwnedTitle => 'Premium ist schon bezahlt';
+
+  @override
+  String paywallAlreadyOwnedBody(String store) {
+    return 'Das $store-Konto auf diesem Telefon bezahlt Premium schon. Dieses Abo für das angemeldete Konto verwenden? Gehört es jemand anderem, wechselt es hierher und diese Person verliert Premium.';
+  }
+
+  @override
+  String get paywallAlreadyOwnedAction => 'Hier verwenden';
+
+  @override
   String get billingErrorNotAllowed =>
       'Käufe sind auf diesem Gerät nicht erlaubt.';
 
@@ -542,6 +560,30 @@ class AppLocalizationsDe extends AppLocalizations {
       'Etwas ist schiefgelaufen. Bitte versuch es noch einmal.';
 
   @override
+  String get authErrorInvalidCredentials =>
+      'E-Mail und Passwort passen nicht zusammen. Prüf sie oder setz dein Passwort zurück.';
+
+  @override
+  String get authErrorEmailNotConfirmed =>
+      'Bestätige zuerst deine E-Mail – tipp auf den Link, den wir dir geschickt haben, und melde dich dann an.';
+
+  @override
+  String get authErrorEmailTaken =>
+      'Mit dieser E-Mail gibt es schon ein Konto. Melde dich stattdessen an – oder setz dein Passwort zurück, wenn du es vergessen hast.';
+
+  @override
+  String get authErrorTooManyTries =>
+      'Zu viele Versuche in kurzer Zeit. Warte eine Minute und versuch es dann noch einmal.';
+
+  @override
+  String get authErrorWeakPassword =>
+      'Wähl ein stärkeres Passwort: länger und schwerer zu erraten.';
+
+  @override
+  String get authErrorOffline =>
+      'Keine Verbindung. Prüf deine Internetverbindung und versuch es noch einmal.';
+
+  @override
   String get authEmailRequired => 'Gib deine E-Mail-Adresse ein';
 
   @override
@@ -600,6 +642,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get authAppleFailed =>
       'Anmeldung mit Apple fehlgeschlagen. Bitte versuch es noch einmal oder nutze stattdessen deine E-Mail-Adresse.';
+
+  @override
+  String get authLinkFailed =>
+      'Dieser Link hat nicht funktioniert – vielleicht ist er abgelaufen oder es wurde ein neuerer verschickt. Fordere einen neuen an und nutze die neueste E-Mail.';
 
   @override
   String get authNewHere => 'Neu hier?';
@@ -932,6 +978,38 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get therapyPaymentUnavailable =>
       'Die Zahlungsseite lässt sich auf diesem Gerät nicht öffnen – bitte versuch es später noch einmal.';
+
+  @override
+  String get therapyPaymentNotFinished =>
+      'Noch nicht bezahlt. Wenn du die Zahlung auf deinem Telefon bestätigt hast, geht deine Anfrage von selbst durch — sonst bezahle oder verwirf sie unten.';
+
+  @override
+  String get therapyServerOpenSession =>
+      'Du hast schon eine Sitzung in Arbeit. Sag sie zuerst ab, wenn du etwas ändern musst.';
+
+  @override
+  String get therapyServerDailyLimit =>
+      'Mehr Anfragen können wir an einem Tag nicht annehmen. Versuch es bitte morgen wieder oder antworte auf unsere E-Mail, wenn es dringend ist.';
+
+  @override
+  String get therapyServerBusy =>
+      'Gerade kommen sehr viele Anfragen an. Versuch es bitte gleich noch einmal.';
+
+  @override
+  String get therapyServerLateCancel =>
+      'Sitzungen kannst du in der App bis 24 Stunden vor Beginn absagen. Danach antworte auf deine Buchungs-E-Mail — eine verpasste oder kurzfristig abgesagte Sitzung wird nicht erstattet.';
+
+  @override
+  String get therapyServerStarted =>
+      'Diese Sitzung hat schon begonnen und kann daher nicht in der App abgesagt werden. Wenn etwas schiefgelaufen ist, antworte auf unsere E-Mail, und wir kümmern uns darum.';
+
+  @override
+  String get therapyServerCountryLocked =>
+      'Dein Land steht seit deiner ersten Sitzung fest. Antworte auf eine unserer E-Mails, wenn es sich geändert hat.';
+
+  @override
+  String get therapyServerCountryDetected =>
+      'Dein Land ergibt sich daraus, wo dein Telefon ist. Wenn es falsch ist, antworte auf eine unserer E-Mails.';
 
   @override
   String get therapyPaymentFailed =>
@@ -1682,6 +1760,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get heavyDayBody =>
       'Du musst das nicht allein tragen. Eine zugelassene Therapeutin oder ein zugelassener Therapeut hier hört dir zu – \$20 pro Sitzung, in einer Minute gebucht.';
+
+  @override
+  String heavyDayNumbersFor(String country) {
+    return 'Nummern für: $country';
+  }
 
   @override
   String get heavyDayRightNow => 'Wenn du jetzt sofort jemanden brauchst';
@@ -2682,6 +2765,21 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get groundingFoundLast => 'Gefunden – das letzte';
+
+  @override
+  String get groundingSenseSee => 'sehen';
+
+  @override
+  String get groundingSenseFeel => 'fühlen';
+
+  @override
+  String get groundingSenseHear => 'hören';
+
+  @override
+  String get groundingSenseSmell => 'riechen';
+
+  @override
+  String get groundingSenseTaste => 'schmecken';
 
   @override
   String groundingStepTitle(int count, String sense) {
@@ -3694,6 +3792,21 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get journalHubMyJournalDetail =>
       'Alle deine Einträge, die neuesten zuerst.';
+
+  @override
+  String get journalGroupEveryday => 'Alltag';
+
+  @override
+  String get journalGroupHardDays => 'Schwere Tage';
+
+  @override
+  String get journalGroupLookingBack => 'Zurückblicken';
+
+  @override
+  String get journalGroupRecovery => 'Genesung';
+
+  @override
+  String get journalGroupBeforeSleep => 'Vor dem Schlafen';
 
   @override
   String get journalHubFreeWrite => 'Frei schreiben';
@@ -5758,6 +5871,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsDeleting => 'Dein Konto wird gelöscht …';
 
   @override
+  String get settingsDeleteNotRecorded =>
+      'Wir waren nicht erreichbar, daher wurde noch nichts gelöscht oder gespeichert. Prüf deine Verbindung und versuch es noch einmal.';
+
+  @override
   String get settingsDeleteFailed =>
       'Dein Konto konnte nicht vollständig gelöscht werden. Deine Anfrage ist gespeichert und wir schließen sie ab – oder versuch es noch einmal.';
 
@@ -6012,6 +6129,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String therapyPricesFromZone(String country) {
+    return 'Preise: $country, laut der Zeitzone deines Telefons';
+  }
+
+  @override
   String therapyPricesFromRegion(String country) {
     return 'Preise: $country, laut der Region deines Handys';
   }
@@ -6025,7 +6147,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String therapyCountryHelpBody(String store) {
-    return 'Die Preise für Sitzungen gelten je Land. Wir nehmen deins aus deinem $store-Konto, du musst also nichts auswählen. Wenn du woanders lebst, schreib uns eine E-Mail, und wir korrigieren es, bevor du buchst.';
+    return 'Die Preise für Sitzungen gelten je Land. Wir nehmen deins danach, wo dein Telefon ist — laut SIM-Karte oder Zeitzone — und sonst aus deinem $store-Konto, du musst also nichts auswählen. Wenn du woanders lebst, schreib uns eine E-Mail, und wir korrigieren es, bevor du buchst.';
   }
 
   @override

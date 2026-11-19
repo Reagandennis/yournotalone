@@ -104,14 +104,19 @@ class SavedStore extends ValueNotifier<Set<String>> {
   final String? Function() _userId;
   Map<String, String> _pending = {};
   String? _owner;
-  bool _loaded = false;
   Future<void>? _running;
   bool _again = false;
   DateTime? _lastSync;
 
-  Future<void> load() async {
-    if (_loaded) return;
-    _loaded = true;
+  Future<void>? _loading;
+
+  /// Reads what's saved on the phone, once; every sync waits for it. A sync
+  /// that ran first (the sign-in event comes before Home asks for this)
+  /// used to take the empty list in memory for the truth and write it over
+  /// the saved one, losing hearts tapped offline.
+  Future<void> load() => _loading ??= _load();
+
+  Future<void> _load() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       value = {...?prefs.getStringList(_key)};
@@ -164,6 +169,7 @@ class SavedStore extends ValueNotifier<Set<String>> {
   }
 
   Future<void> _syncOnce() async {
+    await load();
     final userId = _userId();
     if (userId == null) return;
     try {
@@ -246,7 +252,7 @@ class SavedStore extends ValueNotifier<Set<String>> {
 
   @visibleForTesting
   void reset() {
-    _loaded = false;
+    _loading = null;
     _pending = {};
     _owner = null;
     _lastSync = null;

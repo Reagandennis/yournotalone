@@ -223,6 +223,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get billingIntroOfferSentence => '每个方案都从免费试用开始。';
 
   @override
+  String get billingNoTrialOffer => '你可以随时取消';
+
+  @override
+  String get billingNoTrialOfferSentence => '可随时在你的应用商店账户中取消。';
+
+  @override
+  String get paywallAlreadyOwnedTitle => 'Premium 已付费';
+
+  @override
+  String paywallAlreadyOwnedBody(String store) {
+    return '这部手机上的 $store 账户已经在为 Premium 付费。要把这个订阅用于你当前登录的账号吗？如果它属于别人，订阅会转移到这里，对方将失去 Premium。';
+  }
+
+  @override
+  String get paywallAlreadyOwnedAction => '在这里使用';
+
+  @override
   String get billingErrorNotAllowed => '此设备不允许购买。';
 
   @override
@@ -503,6 +520,24 @@ class AppLocalizationsZh extends AppLocalizations {
   String get authErrorGeneric => '出了点问题，请再试一次。';
 
   @override
+  String get authErrorInvalidCredentials => '邮箱和密码不匹配。请检查，或重设密码。';
+
+  @override
+  String get authErrorEmailNotConfirmed => '请先确认你的邮箱——点击我们发给你的链接，然后再登录。';
+
+  @override
+  String get authErrorEmailTaken => '这个邮箱已经有账号了。请直接登录——如果忘了密码，可以重设。';
+
+  @override
+  String get authErrorTooManyTries => '短时间内尝试次数太多。请等一分钟再试。';
+
+  @override
+  String get authErrorWeakPassword => '请设置更安全的密码：更长、更难猜。';
+
+  @override
+  String get authErrorOffline => '无法连接。请检查网络连接后再试。';
+
+  @override
   String get authEmailRequired => '请输入你的邮箱';
 
   @override
@@ -552,6 +587,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get authAppleFailed => '无法通过 Apple 登录。请再试一次，或改用邮箱登录。';
+
+  @override
+  String get authLinkFailed => '这个链接无法使用——可能已过期，或已发送了更新的链接。请重新获取，并使用最新的那封邮件。';
 
   @override
   String get authNewHere => '第一次来？';
@@ -858,6 +896,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get therapyPaymentUnavailable => '无法在此设备上打开付款页面——请稍后再试。';
+
+  @override
+  String get therapyPaymentNotFinished =>
+      '还没有付款。如果你已在手机上确认付款，你的请求会自动提交；否则请在下方付款或放弃。';
+
+  @override
+  String get therapyServerOpenSession => '你已经有一个正在进行的咨询。如需更改，请先取消它。';
+
+  @override
+  String get therapyServerDailyLimit => '这是我们一天能接收的请求上限。请明天再试；如果情况紧急，请回复我们的邮件。';
+
+  @override
+  String get therapyServerBusy => '我们现在收到很多请求。请稍后再试。';
+
+  @override
+  String get therapyServerLateCancel =>
+      '咨询可在开始前 24 小时内通过应用取消。之后请回复你的预约邮件——错过或临时取消的咨询不予退款。';
+
+  @override
+  String get therapyServerStarted => '这次咨询已经开始，无法在应用中取消。如果出了问题，请回复我们的邮件，我们会处理。';
+
+  @override
+  String get therapyServerCountryLocked => '你的国家在第一次咨询时已确定。如有变动，请回复我们的任意一封邮件。';
+
+  @override
+  String get therapyServerCountryDetected =>
+      '你的国家取决于你手机所在的地方。如有错误，请回复我们的任意一封邮件。';
 
   @override
   String get therapyPaymentFailed => '付款没有成功，请再试一次。';
@@ -1553,6 +1618,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get heavyDayBody => '你不必一个人扛着。这里的持证咨询师会认真倾听——每次 \$20，一分钟就能预约。';
+
+  @override
+  String heavyDayNumbersFor(String country) {
+    return '$country的求助电话';
+  }
 
   @override
   String get heavyDayRightNow => '如果你现在就需要有人陪你';
@@ -2503,6 +2573,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get groundingFoundLast => '找到一个——最后一个';
+
+  @override
+  String get groundingSenseSee => '看';
+
+  @override
+  String get groundingSenseFeel => '摸';
+
+  @override
+  String get groundingSenseHear => '听';
+
+  @override
+  String get groundingSenseSmell => '闻';
+
+  @override
+  String get groundingSenseTaste => '尝';
 
   @override
   String groundingStepTitle(int count, String sense) {
@@ -3462,6 +3547,21 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get journalHubMyJournalDetail => '你写过的每一篇，最新的在前。';
+
+  @override
+  String get journalGroupEveryday => '日常';
+
+  @override
+  String get journalGroupHardDays => '难熬的日子';
+
+  @override
+  String get journalGroupLookingBack => '回顾';
+
+  @override
+  String get journalGroupRecovery => '康复';
+
+  @override
+  String get journalGroupBeforeSleep => '睡前';
 
   @override
   String get journalHubFreeWrite => '自由书写';
@@ -5389,6 +5489,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get settingsDeleting => '正在删除你的账号……';
 
   @override
+  String get settingsDeleteNotRecorded =>
+      '无法连接到我们，因此还没有删除或记录任何内容。请检查网络连接后再试一次。';
+
+  @override
   String get settingsDeleteFailed => '账号没能删除完成。你的请求已记录，我们会帮你完成——你也可以再试一次。';
 
   @override
@@ -5635,6 +5739,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String therapyPricesFromZone(String country) {
+    return '$country的价格，依据你手机的时区';
+  }
+
+  @override
   String therapyPricesFromRegion(String country) {
     return '$country的价格，依据你手机的地区设置';
   }
@@ -5647,7 +5756,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String therapyCountryHelpBody(String store) {
-    return '咨询价格按国家设定。我们根据你的 $store 账户确定你所在的国家，所以你不用自己选择。如果你住在别处，请给我们发邮件，我们会在你预约前帮你改好。';
+    return '咨询价格按国家设定。我们根据你手机所在的地方（它的 SIM 卡或时区）确定你的国家，否则根据你的 $store 账户，所以你不用自己选择。如果你住在别处，请给我们发邮件，我们会在你预约前帮你改好。';
   }
 
   @override

@@ -24,7 +24,7 @@ class CareRoles {
 class AdminTherapyRequest {
   const AdminTherapyRequest({
     required this.request,
-    required this.clientId,
+    this.clientId,
     this.clientName,
     this.clientEmail,
     this.therapistName,
@@ -42,7 +42,9 @@ class AdminTherapyRequest {
   factory AdminTherapyRequest.fromRow(Map<String, dynamic> row) =>
       AdminTherapyRequest(
         request: TherapyRequest.fromRow(row),
-        clientId: row['client_id'] as String,
+        // Null once the client has deleted their account: the session
+        // stays, for the therapist's pay and the books (migration 0035).
+        clientId: row['client_id'] as String?,
         clientName: row['client_name'] as String?,
         clientEmail: row['client_email'] as String?,
         therapistName: row['therapist_name'] as String?,
@@ -67,7 +69,7 @@ class AdminTherapyRequest {
       );
 
   final TherapyRequest request;
-  final String clientId;
+  final String? clientId;
   final String? clientName;
   final String? clientEmail;
   final String? therapistName;

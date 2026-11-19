@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
 import 'app_navigation.dart';
+import 'account/local_data.dart';
 import 'appearance.dart';
 import 'auth/auth_gate.dart';
 import 'backgrounds/calm_visuals.dart';
@@ -19,6 +20,7 @@ import 'auth/login_screen.dart';
 import 'auth/new_password_screen.dart';
 import 'billing/purchases_service.dart';
 import 'content/content_catalog.dart';
+import 'courses/course_progress.dart';
 import 'discover/saved_store.dart';
 import 'media/download_store.dart';
 import 'media/now_playing.dart';
@@ -29,6 +31,7 @@ import 'notifications/local_notifications.dart';
 import 'notifications/session_notifications.dart';
 import 'onboarding/onboarding_ui.dart';
 import 'practice/practice_repository.dart';
+import 'reminders/reminders_service.dart';
 import 'splash_screen.dart';
 import 'supabase_config.dart';
 import 'support/crisis_resources.dart';
@@ -115,9 +118,17 @@ Future<void> _start() async {
   }
   await PurchasesService.instance.init();
   await initOnboardingFlags();
+  // Before any screen reads what's on the phone: the signed-in person's own
+  // things, not whoever used it last (see LocalData).
+  await LocalData.instance.init();
+  final signedInAs = Supabase.instance.client.auth.currentUser?.id;
+  if (signedInAs != null) LocalData.instance.signedIn(signedInAs);
   await AppearanceSetting.instance.load();
   await LocaleSetting.instance.load();
   await CrisisCountrySetting.instance.load();
+  // Where the phone is, so the crisis numbers are this country's even when
+  // the phone's language says another (a moment's work, not waited for).
+  unawaited(CrisisCountrySetting.instance.detect());
   // Date names for every language, so a DateFormat never depends on which
   // locale's data the Material delegate happened to load first.
   await initializeDateFormatting();
@@ -166,6 +177,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           // Practice finished offline, or as the app was killed, is written
           // once there's a signed-in user to write it for.
           case AuthChangeEvent.initialSession || AuthChangeEvent.signedIn:
+            final userId = state.session?.user.id;
+            // Someone else on this phone: their own local things, not the
+            // last person's (see LocalData), and their own reminders.
+            if (userId != null && LocalData.instance.signedIn(userId)) {
+              CourseStore.instance.reset();
+              unawaited(
+                RemindersService.instance.cancelScheduled().then(
+                  (_) => RemindersService.instance.refreshScheduled(),
+                ),
+              );
+            }
             unawaited(PracticeRepository().flushPending());
             unawaited(SavedStore.instance.sync());
           // A password-recovery email deep-links back into the app and signs
@@ -182,6 +204,11 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           // can never succeed. Send them somewhere they can actually recover.
           case AuthChangeEvent.signedOut:
             unawaited(SessionNotifications.instance.stop());
+            // Their things are set aside for when they're back, and their
+            // reminders stop: the next person on this phone gets neither.
+            LocalData.instance.signedOut();
+            CourseStore.instance.reset();
+            unawaited(RemindersService.instance.cancelScheduled());
             _toLogin();
           default:
             break;
@@ -195,6 +222,18 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // a sign-out used to log people out on an hourly refresh over bad
         // Wi-Fi. Nothing to do here but note it.
         debugPrint('Auth stream error (session kept): $error');
+        // A sign-in, confirmation or password-reset link that couldn't be
+        // used (expired, used already, or opened after asking for a newer
+        // one) also arrives here. Without a word, the app just opened on the
+        // login screen and nothing happened.
+        if (error is AuthException && error is! AuthRetryableFetchException) {
+          appMessengerKey.currentState?.showSnackBar(
+            SnackBar(
+              content: Text(currentL10n().authLinkFailed),
+              duration: const Duration(seconds: 8),
+            ),
+          );
+        }
       },
     );
   }
@@ -233,6 +272,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ),
       builder: (context, _) => MaterialApp(
         navigatorKey: appNavigatorKey,
+        scaffoldMessengerKey: appMessengerKey,
         // Gives Sentry the app-start transaction and one per named route;
         // the app's routes are unnamed today, so screens show up once they
         // get a RouteSettings name.

@@ -136,7 +136,8 @@ class _CareDashboardScreenState extends State<CareDashboardScreen> {
     final toMatch = [
       for (final item in all)
         if (item.request.isPending) item,
-    ]..sort((a, b) => a.request.createdAt.compareTo(b.request.createdAt));
+    ]..sort((a, b) => (a.request.submittedAt ?? a.request.createdAt)
+        .compareTo(b.request.submittedAt ?? b.request.createdAt));
     final upcoming = [
       for (final item in all)
         if (item.request.isConfirmed) item,
@@ -251,7 +252,9 @@ class _RequestTile extends StatelessWidget {
     var lineColor = c.textMuted;
     final String line;
     if (request.isPending) {
-      final hours = now.difference(request.createdAt).inHours;
+      // Waiting since it was paid for and sent, not since the draft.
+      final hours = now.difference(request.submittedAt ?? request.createdAt)
+          .inHours;
       line = hours < 1
           ? l10n.careAskedJustNow
           : hours < 48

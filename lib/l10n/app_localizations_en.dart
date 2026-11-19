@@ -240,6 +240,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Every plan starts with a free trial.';
 
   @override
+  String get billingNoTrialOffer => 'you can cancel any time';
+
+  @override
+  String get billingNoTrialOfferSentence =>
+      'Cancel any time from your store account.';
+
+  @override
+  String get paywallAlreadyOwnedTitle => 'Premium is already paid for';
+
+  @override
+  String paywallAlreadyOwnedBody(String store) {
+    return 'The $store account on this phone already pays for Premium. Use that subscription for the account you\'re signed in to? If it\'s someone else\'s, it moves here and they lose Premium.';
+  }
+
+  @override
+  String get paywallAlreadyOwnedAction => 'Use it here';
+
+  @override
   String get billingErrorNotAllowed =>
       'Purchases aren\'t allowed on this device.';
 
@@ -537,6 +555,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authErrorGeneric => 'Something went wrong. Please try again.';
 
   @override
+  String get authErrorInvalidCredentials =>
+      'That email and password don\'t match. Check them, or reset your password.';
+
+  @override
+  String get authErrorEmailNotConfirmed =>
+      'Confirm your email first — tap the link we sent you, then log in.';
+
+  @override
+  String get authErrorEmailTaken =>
+      'There\'s already an account with this email. Log in instead — or reset your password if you\'ve forgotten it.';
+
+  @override
+  String get authErrorTooManyTries =>
+      'Too many tries in a short time. Wait a minute, then try again.';
+
+  @override
+  String get authErrorWeakPassword =>
+      'Choose a stronger password: longer, and harder to guess.';
+
+  @override
+  String get authErrorOffline =>
+      'Couldn\'t connect. Check your internet connection and try again.';
+
+  @override
   String get authEmailRequired => 'Enter your email';
 
   @override
@@ -595,6 +637,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authAppleFailed =>
       'Couldn\'t sign in with Apple. Please try again, or use your email instead.';
+
+  @override
+  String get authLinkFailed =>
+      'That link didn\'t work — it may have expired, or a newer one was sent. Ask for a new one and use the latest email.';
 
   @override
   String get authNewHere => 'New here?';
@@ -923,6 +969,38 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get therapyPaymentUnavailable =>
       'We couldn\'t open the payment page on this device — please try again later.';
+
+  @override
+  String get therapyPaymentNotFinished =>
+      'Not paid yet. If you approved the payment on your phone, your request goes through on its own — otherwise pay or discard it below.';
+
+  @override
+  String get therapyServerOpenSession =>
+      'You already have a session on the way. Cancel it first if you need to change something.';
+
+  @override
+  String get therapyServerDailyLimit =>
+      'That\'s as many requests as we can take in a day. Please try again tomorrow, or reply to our email if it\'s urgent.';
+
+  @override
+  String get therapyServerBusy =>
+      'We\'re getting a lot of requests right now. Please try again in a little while.';
+
+  @override
+  String get therapyServerLateCancel =>
+      'Sessions can be cancelled in the app up to 24 hours before they start. After that, reply to your booking email — a session that\'s missed or cancelled late isn\'t refunded.';
+
+  @override
+  String get therapyServerStarted =>
+      'This session has already started, so it can\'t be cancelled from the app. If something went wrong, reply to our email and we\'ll sort it out.';
+
+  @override
+  String get therapyServerCountryLocked =>
+      'Your country is set from your first session. Reply to any of our emails if it has changed.';
+
+  @override
+  String get therapyServerCountryDetected =>
+      'Your country comes from where your phone is. If it\'s wrong, reply to any of our emails.';
 
   @override
   String get therapyPaymentFailed =>
@@ -1664,6 +1742,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get heavyDayBody =>
       'You don\'t have to carry it on your own. A licensed therapist here will listen — \$20 a session, booked in a minute.';
+
+  @override
+  String heavyDayNumbersFor(String country) {
+    return 'Numbers for $country';
+  }
 
   @override
   String get heavyDayRightNow => 'If you need someone right now';
@@ -2654,6 +2737,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get groundingFoundLast => 'Found one — last';
+
+  @override
+  String get groundingSenseSee => 'see';
+
+  @override
+  String get groundingSenseFeel => 'feel';
+
+  @override
+  String get groundingSenseHear => 'hear';
+
+  @override
+  String get groundingSenseSmell => 'smell';
+
+  @override
+  String get groundingSenseTaste => 'taste';
 
   @override
   String groundingStepTitle(int count, String sense) {
@@ -3658,6 +3756,21 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get journalHubMyJournalDetail =>
       'Every entry you\'ve written, newest first.';
+
+  @override
+  String get journalGroupEveryday => 'Everyday';
+
+  @override
+  String get journalGroupHardDays => 'Hard days';
+
+  @override
+  String get journalGroupLookingBack => 'Looking back';
+
+  @override
+  String get journalGroupRecovery => 'Recovery';
+
+  @override
+  String get journalGroupBeforeSleep => 'Before sleep';
 
   @override
   String get journalHubFreeWrite => 'Free write';
@@ -5685,6 +5798,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDeleting => 'Deleting your account…';
 
   @override
+  String get settingsDeleteNotRecorded =>
+      'Couldn\'t reach us, so nothing was deleted or recorded yet. Check your connection and try again.';
+
+  @override
   String get settingsDeleteFailed =>
       'Couldn\'t finish deleting your account. Your request is on file and we\'ll complete it — or try again.';
 
@@ -5937,6 +6054,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String therapyPricesFromZone(String country) {
+    return 'Prices for $country, from your phone\'s time zone';
+  }
+
+  @override
   String therapyPricesFromRegion(String country) {
     return 'Prices for $country, from your phone\'s region';
   }
@@ -5949,7 +6071,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String therapyCountryHelpBody(String store) {
-    return 'Session prices are set for each country. We take yours from your $store account, so there\'s nothing to choose. If you live somewhere else, email us and we\'ll put it right before you book.';
+    return 'Session prices are set for each country. We take yours from where your phone is — its SIM card or its time zone — and otherwise from your $store account, so there\'s nothing to choose. If you live somewhere else, email us and we\'ll put it right before you book.';
   }
 
   @override

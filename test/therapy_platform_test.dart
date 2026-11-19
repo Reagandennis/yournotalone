@@ -118,10 +118,21 @@ class _RefusingTherapy extends _FakeTherapy {
 
 /// The store side, scripted: every payment ends the same way.
 class _FixedPayments extends SessionPayments {
-  _FixedPayments(this.outcome, {required super.repository});
+  _FixedPayments(this.outcome, {required super.repository, this.paidLate = false});
 
   final SessionPaymentOutcome outcome;
   final paidFor = <String>[];
+
+  /// A payment that arrives after the checkout closed: an M-Pesa prompt
+  /// approved a minute later.
+  final bool paidLate;
+  final checked = <String>[];
+
+  @override
+  Future<bool> isPaid(TherapyRequest request) async {
+    checked.add(request.id);
+    return paidLate;
+  }
 
   @override
   Future<SessionPaymentOutcome> pay(
@@ -430,8 +441,8 @@ void main() {
       expect(find.textContaining('free'), findsNothing);
     });
 
-    testWidgets('paying sends the request; backing out discards the draft',
-        (tester) async {
+    testWidgets('backing out of the checkout keeps the draft, since an '
+        'M-Pesa prompt can still be approved', (tester) async {
       final repo = _FakeTherapy([]);
       final payments =
           _FixedPayments(SessionPaymentOutcome.cancelled, repository: repo);
@@ -441,13 +452,49 @@ void main() {
       );
       await _askThroughFlow(tester);
 
-      // The draft was saved, offered to Paystack, then dropped, and the
-      // review is still there to try again.
+      // Offered to Paystack, not paid yet — but kept, so a payment approved
+      // on the phone a minute later lands on it rather than on nothing.
       expect(payments.paidFor, ['draft-1']);
-      expect(repo.cancelled, ['draft-1']);
-      expect(find.text('Pay \$20'), findsOneWidget);
-      expect(find.text('Anxiety & stress'), findsOneWidget);
-      expect(find.text('Almost there'), findsNothing);
+      expect(repo.cancelled, isEmpty);
+      expect(find.textContaining('Not paid yet'), findsOneWidget);
+      expect(find.text('Check and pay'), findsNothing);
+      expect(find.text('Almost there'), findsOneWidget);
+      expect(find.text('Discard'), findsOneWidget);
+    });
+
+    testWidgets('discarding a draft looks for a late payment first',
+        (tester) async {
+      for (final paidLate in [true, false]) {
+        final repo = _FakeTherapy([]);
+        final payments = _FixedPayments(
+          SessionPaymentOutcome.cancelled,
+          repository: repo,
+          paidLate: paidLate,
+        );
+        await _show(
+          tester,
+          TherapyScreen(
+            repository: repo,
+            payments: payments,
+            clock: () => _now,
+          ),
+        );
+        await _askThroughFlow(tester);
+        await tester.pump(const Duration(seconds: 5)); // the snackbar goes
+
+        await tester.tap(find.text('Discard'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.widgetWithText(TextButton, 'Discard').last);
+        await tester.pumpAndSettle();
+
+        expect(payments.checked, ['draft-1']);
+        // Paid in the meantime: kept. Not paid: thrown away.
+        expect(repo.cancelled, paidLate ? isEmpty : ['draft-1']);
+        if (paidLate) {
+          expect(find.textContaining('Payment found'), findsOneWidget);
+        }
+        await tester.pumpWidget(const SizedBox());
+      }
     });
 
     testWidgets('a payment the store took but the server hasn\'t seen keeps '

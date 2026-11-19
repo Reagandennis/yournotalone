@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -488,8 +489,10 @@ void sessionNotificationsCallback() {
     DartPluginRegistrant.ensureInitialized();
     try {
       // A fresh isolate: the notifications are written in the language
-      // picked in Settings, if any.
+      // picked in Settings, if any, with that language's day and month
+      // names (loaded in the app's own isolate at start-up, not here).
       await LocaleSetting.instance.load();
+      await initializeDateFormatting();
       final active = await SessionNotifications.instance.sync();
       if (!active) await Workmanager().cancelByUniqueName(sessionCheckTask);
     } catch (e) {

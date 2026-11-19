@@ -284,6 +284,32 @@
   "@billingIntroOfferSentence": {
     "description": "Stand-alone sentence about the free trial, shown on the paywall when store prices are unavailable. Never names a trial length."
   },
+  "billingNoTrialOffer": "you can cancel any time",
+  "@billingNoTrialOffer": {
+    "description": "Used instead of billingIntroOffer when this account has already had the free trial (Apple won't give it twice): a clause at the end of other sentences such as \"Unlock every session \u2014 and {introOffer}.\" Starts lower-case, no final full stop."
+  },
+  "billingNoTrialOfferSentence": "Cancel any time from your store account.",
+  "@billingNoTrialOfferSentence": {
+    "description": "Used instead of billingIntroOfferSentence when this account has already had the free trial."
+  },
+  "paywallAlreadyOwnedTitle": "Premium is already paid for",
+  "@paywallAlreadyOwnedTitle": {
+    "description": "Dialog asked before moving an existing store subscription to this account."
+  },
+  "paywallAlreadyOwnedBody": "The {store} account on this phone already pays for Premium. Use that subscription for the account you're signed in to? If it's someone else's, it moves here and they lose Premium.",
+  "@paywallAlreadyOwnedBody": {
+    "description": "Asked before moving a store subscription to the signed-in account when buying finds the store account already subscribed. {store} is \"App Store\" or \"Google Play\".",
+    "placeholders": {
+      "store": {
+        "type": "String",
+        "example": "Google Play"
+      }
+    }
+  },
+  "paywallAlreadyOwnedAction": "Use it here",
+  "@paywallAlreadyOwnedAction": {
+    "description": "Dialog asked before moving an existing store subscription to this account."
+  },
   "billingErrorNotAllowed": "Purchases aren't allowed on this device.",
   "@billingErrorNotAllowed": {
     "description": "Snackbar when the app store refuses purchases on this device (e.g. parental controls)."
@@ -665,6 +691,30 @@
   "@authErrorGeneric": {
     "description": "Snackbar when signing in, signing up or resetting a password fails for an unexpected reason."
   },
+  "authErrorInvalidCredentials": "That email and password don't match. Check them, or reset your password.",
+  "@authErrorInvalidCredentials": {
+    "description": "Sign-in/sign-up error message."
+  },
+  "authErrorEmailNotConfirmed": "Confirm your email first — tap the link we sent you, then log in.",
+  "@authErrorEmailNotConfirmed": {
+    "description": "Sign-in/sign-up error message."
+  },
+  "authErrorEmailTaken": "There's already an account with this email. Log in instead — or reset your password if you've forgotten it.",
+  "@authErrorEmailTaken": {
+    "description": "Sign-in/sign-up error message."
+  },
+  "authErrorTooManyTries": "Too many tries in a short time. Wait a minute, then try again.",
+  "@authErrorTooManyTries": {
+    "description": "Sign-in/sign-up error message."
+  },
+  "authErrorWeakPassword": "Choose a stronger password: longer, and harder to guess.",
+  "@authErrorWeakPassword": {
+    "description": "Sign-in/sign-up error message."
+  },
+  "authErrorOffline": "Couldn't connect. Check your internet connection and try again.",
+  "@authErrorOffline": {
+    "description": "Sign-in/sign-up error message."
+  },
   "authEmailRequired": "Enter your email",
   "@authEmailRequired": {
     "description": "Form error under an empty email field."
@@ -733,6 +783,10 @@
   "authAppleFailed": "Couldn't sign in with Apple. Please try again, or use your email instead.",
   "@authAppleFailed": {
     "description": "Snackbar: Apple sign-in failed. A technical detail in brackets may follow."
+  },
+  "authLinkFailed": "That link didn't work — it may have expired, or a newer one was sent. Ask for a new one and use the latest email.",
+  "@authLinkFailed": {
+    "description": "Message when a sign-in, email-confirmation or password-reset link from an email couldn't be used (expired, already used, or superseded by a newer email)."
   },
   "authNewHere": "New here?",
   "@authNewHere": {
@@ -1159,6 +1213,38 @@
   "therapyPaymentUnavailable": "We couldn't open the payment page on this device — please try again later.",
   "@therapyPaymentUnavailable": {
     "description": "Snackbar: the payment page could not open on this phone."
+  },
+  "therapyPaymentNotFinished": "Not paid yet. If you approved the payment on your phone, your request goes through on its own — otherwise pay or discard it below.",
+  "@therapyPaymentNotFinished": {
+    "description": "After someone leaves the Paystack checkout without the payment being found: the request stays as an unpaid draft on the screen."
+  },
+  "therapyServerOpenSession": "You already have a session on the way. Cancel it first if you need to change something.",
+  "@therapyServerOpenSession": {
+    "description": "The database refused a new request because one is already open."
+  },
+  "therapyServerDailyLimit": "That's as many requests as we can take in a day. Please try again tomorrow, or reply to our email if it's urgent.",
+  "@therapyServerDailyLimit": {
+    "description": "The database refused a request: too many in a day."
+  },
+  "therapyServerBusy": "We're getting a lot of requests right now. Please try again in a little while.",
+  "@therapyServerBusy": {
+    "description": "The database refused a request: too many from everyone in the last hour."
+  },
+  "therapyServerLateCancel": "Sessions can be cancelled in the app up to 24 hours before they start. After that, reply to your booking email — a session that's missed or cancelled late isn't refunded.",
+  "@therapyServerLateCancel": {
+    "description": "The database refused a cancellation less than 24 hours before the session."
+  },
+  "therapyServerStarted": "This session has already started, so it can't be cancelled from the app. If something went wrong, reply to our email and we'll sort it out.",
+  "@therapyServerStarted": {
+    "description": "The database refused a cancellation of a session already under way."
+  },
+  "therapyServerCountryLocked": "Your country is set from your first session. Reply to any of our emails if it has changed.",
+  "@therapyServerCountryLocked": {
+    "description": "The database refused a country change: it was fixed by their first paid session."
+  },
+  "therapyServerCountryDetected": "Your country comes from where your phone is. If it's wrong, reply to any of our emails.",
+  "@therapyServerCountryDetected": {
+    "description": "The database refused a country change: it comes from the phone's location signals."
   },
   "therapyPaymentFailed": "The payment didn't go through. Please try again.",
   "@therapyPaymentFailed": {
@@ -2252,6 +2338,16 @@
   "heavyDayBody": "You don't have to carry it on your own. A licensed therapist here will listen — $20 a session, booked in a minute.",
   "@heavyDayBody": {
     "description": "Body of the heavy-day sheet, offering a therapy session. Keep the price \"$20\" as is. Crisis wording: needs careful review by a fluent speaker."
+  },
+  "heavyDayNumbersFor": "Numbers for {country}",
+  "@heavyDayNumbersFor": {
+    "description": "Heavy-day sheet, small line under the call buttons saying which country the numbers are for; the button next to it opens the full crisis page, where the country can be changed. Crisis wording: needs careful review by a fluent speaker.",
+    "placeholders": {
+      "country": {
+        "type": "String",
+        "example": "Kenya"
+      }
+    }
   },
   "heavyDayRightNow": "If you need someone right now",
   "@heavyDayRightNow": {
@@ -3603,9 +3699,29 @@
   "@groundingFoundLast": {
     "description": "Same button as groundingFoundOne, when only one thing is left to find in this step."
   },
+  "groundingSenseSee": "see",
+  "@groundingSenseSee": {
+    "description": "The verb for this sense, as it fits into groundingStepTitle (\"5 things you can …\")."
+  },
+  "groundingSenseFeel": "feel",
+  "@groundingSenseFeel": {
+    "description": "The verb for this sense, as it fits into groundingStepTitle (\"5 things you can …\")."
+  },
+  "groundingSenseHear": "hear",
+  "@groundingSenseHear": {
+    "description": "The verb for this sense, as it fits into groundingStepTitle (\"5 things you can …\")."
+  },
+  "groundingSenseSmell": "smell",
+  "@groundingSenseSmell": {
+    "description": "The verb for this sense, as it fits into groundingStepTitle (\"5 things you can …\")."
+  },
+  "groundingSenseTaste": "taste",
+  "@groundingSenseTaste": {
+    "description": "The verb for this sense, as it fits into groundingStepTitle (\"5 things you can …\")."
+  },
   "groundingStepTitle": "{count, plural, other{{count} things you can {sense}}}",
   "@groundingStepTitle": {
-    "description": "Step title in the grounding exercise, e.g. \"5 things you can see\". {sense} is a verb from the exercise content (see, feel, hear, smell, taste), currently in English.",
+    "description": "Step title in the grounding exercise, e.g. \"5 things you can see\". {sense} is one of groundingSenseSee, …Feel, …Hear, …Smell, …Taste, in the same language.",
     "placeholders": {
       "count": {
         "type": "int",
@@ -5030,6 +5146,26 @@
   "journalHubMyJournalDetail": "Every entry you've written, newest first.",
   "@journalHubMyJournalDetail": {
     "description": "Card detail for My journal. One line. Journal & mood hub screen."
+  },
+  "journalGroupEveryday": "Everyday",
+  "@journalGroupEveryday": {
+    "description": "Section heading in the journal hub, over a group of writing prompts."
+  },
+  "journalGroupHardDays": "Hard days",
+  "@journalGroupHardDays": {
+    "description": "Section heading in the journal hub, over a group of writing prompts."
+  },
+  "journalGroupLookingBack": "Looking back",
+  "@journalGroupLookingBack": {
+    "description": "Section heading in the journal hub, over a group of writing prompts."
+  },
+  "journalGroupRecovery": "Recovery",
+  "@journalGroupRecovery": {
+    "description": "Section heading in the journal hub, over a group of writing prompts."
+  },
+  "journalGroupBeforeSleep": "Before sleep",
+  "@journalGroupBeforeSleep": {
+    "description": "Section heading in the journal hub, over a group of writing prompts."
   },
   "journalHubFreeWrite": "Free write",
   "@journalHubFreeWrite": {
@@ -7615,6 +7751,10 @@
   "@settingsDeleting": {
     "description": "Progress dialog while the account is being deleted."
   },
+  "settingsDeleteNotRecorded": "Couldn't reach us, so nothing was deleted or recorded yet. Check your connection and try again.",
+  "@settingsDeleteNotRecorded": {
+    "description": "Snackbar when account deletion fails before the request could even be recorded (offline): nothing happened, try again."
+  },
   "settingsDeleteFailed": "Couldn't finish deleting your account. Your request is on file and we'll complete it — or try again.",
   "@settingsDeleteFailed": {
     "description": "Snackbar when account deletion fails partway."
@@ -7983,6 +8123,16 @@
       }
     }
   },
+  "therapyPricesFromZone": "Prices for {country}, from your phone's time zone",
+  "@therapyPricesFromZone": {
+    "description": "As therapyPricesFromStore, when the country came from the phone's time zone (which phones set from where they are).",
+    "placeholders": {
+      "country": {
+        "type": "String",
+        "example": "Kenya"
+      }
+    }
+  },
   "therapyPricesFromRegion": "Prices for {country}, from your phone's region",
   "@therapyPricesFromRegion": {
     "description": "As therapyPricesFromStore, when the country came from the phone's region setting.",
@@ -8001,7 +8151,7 @@
   "@therapyCountryHelpTitle": {
     "description": "Title of the sheet that explains why session prices are for a particular country."
   },
-  "therapyCountryHelpBody": "Session prices are set for each country. We take yours from your {store} account, so there's nothing to choose. If you live somewhere else, email us and we'll put it right before you book.",
+  "therapyCountryHelpBody": "Session prices are set for each country. We take yours from where your phone is — its SIM card or its time zone — and otherwise from your {store} account, so there's nothing to choose. If you live somewhere else, email us and we'll put it right before you book.",
   "@therapyCountryHelpBody": {
     "description": "Body of the sheet about the price country. {store} is \"App Store\" or \"Google Play\" (not translated).",
     "placeholders": {

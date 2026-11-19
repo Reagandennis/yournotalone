@@ -131,6 +131,12 @@ class SessionPayments {
     return false;
   }
 
+  /// Whether a payment has reached [request] (attaching it if one has).
+  /// For a last look before a draft is thrown away: an M-Pesa prompt can be
+  /// approved minutes after the checkout page closed. Throws when it can't
+  /// tell (offline).
+  Future<bool> isPaid(TherapyRequest request) => _confirm(request);
+
   /// True once the server has attached a payment to [request]; false when
   /// it has none to attach. Anything else (offline, not configured) throws,
   /// since opening a checkout would be pointless until it's sorted.

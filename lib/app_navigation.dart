@@ -1,9 +1,13 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 /// The app's root navigator, for opening a screen from outside the widget
 /// tree — a tapped notification, a password-recovery link, an expired
 /// session.
 final appNavigatorKey = GlobalKey<NavigatorState>();
+
+/// The root ScaffoldMessenger, for a message from outside the widget tree
+/// (a sign-in link that didn't work).
+final appMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 /// Which named routes the root navigator has open, so something opening a
 /// screen from outside the tree can tell whether it's already there.

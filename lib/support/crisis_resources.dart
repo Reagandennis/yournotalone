@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/l10n.dart';
 import 'helplines.dart';
+import 'phone_country.dart';
 
 /// One way to reach a human right now.
 class CrisisLine {
@@ -89,17 +90,17 @@ const internationalRegion = CrisisRegion(
 /// Kept deliberately short: a long list is the wrong thing to hand someone
 /// in crisis. Each region gets its emergency number, one or two lines that
 /// answer, and a text option wherever one exists.
+///
+/// Only numbers content/HELPLINES.md has confirmed against their source:
+/// these show in release builds with no "unchecked" warning. Niskize (KE)
+/// and the 10306 line (GR) came off on 19 Nov 2026 because the review
+/// couldn't confirm them; put them back once it has.
 const crisisRegions = [
   CrisisRegion('KE', 'Kenya', '999', [
     CrisisLine(
       name: 'Befrienders Kenya',
       detail: 'Emotional support, Nairobi. Daily.',
       phone: '+254 722 178 177',
-    ),
-    CrisisLine(
-      name: 'Niskize',
-      detail: 'Counselling line, 24 hours.',
-      phone: '+254 718 227 440',
     ),
     CrisisLine(
       name: 'Kenya Red Cross',
@@ -112,11 +113,6 @@ const crisisRegions = [
       name: 'Suicide Help Line',
       detail: 'Klimaka. 24 hours, in Greek.',
       phone: '1018',
-    ),
-    CrisisLine(
-      name: 'Psychological Support Line',
-      detail: 'Ministry of Health. 24 hours.',
-      phone: '10306',
     ),
     CrisisLine(
       name: 'Child & Adolescent Line',
@@ -181,13 +177,19 @@ CrisisRegion crisisRegionFor(String? country, {bool? drafts}) {
 }
 
 /// The country to show helplines for: the one picked on the crisis screen
-/// if any, else the first of the phone's [locales] with a region here.
+/// if any, else where the phone is (its SIM, else its time zone), else the
+/// first of the phone's [locales] with a region here.
+///
+/// Where the phone is comes before its language: a Kenyan phone set to
+/// "English (United States)" must open on Kenya's numbers, not 911.
 String? crisisCountry([Iterable<Locale>? locales, bool? drafts]) {
   final chosen = CrisisCountrySetting.instance.value;
   if (chosen != null) return chosen;
   final codes = {
     for (final r in availableCrisisRegions(drafts: drafts)) r.code,
   };
+  final here = CrisisCountrySetting.instance.detected;
+  if (here != null && codes.contains(here)) return here;
   for (final locale in locales ?? PlatformDispatcher.instance.locales) {
     if (codes.contains(locale.countryCode)) return locale.countryCode;
   }
@@ -219,6 +221,27 @@ class CrisisCountrySetting extends ValueNotifier<String?> {
       debugPrint('Crisis country unavailable: $e');
     }
   }
+
+  /// Where the phone is (its SIM's country, else its time zone's), once
+  /// [detect] has run; used when nothing was chosen. Not saved: it's read
+  /// again at every start, so it follows the phone.
+  String? detected;
+
+  /// Works out [detected]. Never fails; takes a moment at start-up.
+  Future<void> detect() async {
+    try {
+      final here = await simCountry() ?? await timeZoneCountry();
+      if (here == detected) return;
+      detected = here;
+      // The choice hasn't changed, but what an unchosen screen shows has.
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Where the phone is, unavailable: $e');
+    }
+  }
+
+  @visibleForTesting
+  set debugDetected(String? code) => detected = code;
 
   /// Saves [code], or null for the phone's region.
   Future<void> choose(String? code) async {

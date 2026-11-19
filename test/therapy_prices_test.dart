@@ -707,8 +707,11 @@ void main() {
       await tester.tap(find.text('Pay £45'));
       await _settle(tester);
       expect(payments.paidFor, ['draft-1']);
-      // Backed out of the checkout: the review is still there.
-      expect(find.text('Check and pay'), findsOneWidget);
+      // Backed out of the checkout: the draft stays on the therapy screen,
+      // at its price, to pay or discard (an M-Pesa prompt can still be
+      // approved after the page closes).
+      expect(find.text('Check and pay'), findsNothing);
+      expect(find.text('£45 — pay to send your request'), findsOneWidget);
     });
   });
 }

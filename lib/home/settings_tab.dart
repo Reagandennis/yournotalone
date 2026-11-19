@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../billing/pricing_copy.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../account/account_repository.dart';
+import '../account/local_data.dart';
 import '../appearance.dart';
 import '../auth/auth_redirect.dart';
 import '../auth/auth_ui.dart';
@@ -32,6 +35,7 @@ import '../media/downloads_screen.dart';
 import '../onboarding/paywall_screen.dart';
 import '../profile/edit_profile_screen.dart';
 import '../reminders/reminders_screen.dart';
+import '../reminders/reminders_service.dart';
 import '../support/crisis_screen.dart';
 import '../support/faq_screen.dart';
 import 'home_ui.dart';
@@ -202,16 +206,28 @@ class _SettingsTabState extends State<SettingsTab> {
       ),
     );
 
+    final userId = Supabase.instance.client.auth.currentUser?.id;
     try {
       await AccountRepository().deleteAccount();
-    } on Object catch (_) {
+    } on Object catch (e) {
       if (!context.mounted) return;
       Navigator.of(context).pop(); // the progress dialog
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.settingsDeleteFailed)),
+        SnackBar(
+          content: Text(
+            e is DeletionNotRecorded
+                ? context.l10n.settingsDeleteNotRecorded
+                : context.l10n.settingsDeleteFailed,
+          ),
+        ),
       );
       return;
     }
+
+    // Nothing of theirs stays on the phone either: what they wrote in the
+    // tools, their reminders, their trial reminder.
+    if (userId != null) LocalData.instance.forget(userId);
+    unawaited(RemindersService.instance.cancelScheduled());
 
     // The account is gone. Signing out now talks to a user that no longer
     // exists, so a failure here is expected and must not be reported as a

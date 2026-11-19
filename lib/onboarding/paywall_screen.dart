@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -255,10 +256,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
         );
       }
     } catch (e) {
-      if (isAlreadyOwnedError(e)) {
+      if (isAlreadyOwnedError(e) && mounted && await _confirmMoveHere()) {
         // The store account already subscribes — typically a subscriber
         // on a new device whose entitlement hadn't loaded yet. Attach the
-        // subscription to this account rather than report a failure.
+        // subscription to this account rather than report a failure. Asked
+        // first: on a shared phone the store account may pay for someone
+        // else, and restoring moves their subscription here.
         try {
           if (await PurchasesService.instance.restore() && mounted) {
             await _finish('premium');
@@ -277,6 +280,32 @@ class _PaywallScreenState extends State<PaywallScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  Future<bool> _confirmMoveHere() async {
+    final l10n = context.l10n;
+    final store = defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.macOS
+        ? 'App Store'
+        : 'Google Play';
+    final yes = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.paywallAlreadyOwnedTitle),
+        content: Text(l10n.paywallAlreadyOwnedBody(store)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.commonNotNow),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.paywallAlreadyOwnedAction),
+          ),
+        ],
+      ),
+    );
+    return yes ?? false;
   }
 
   Future<void> _restore() async {

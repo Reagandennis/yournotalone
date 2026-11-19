@@ -146,13 +146,23 @@ class _CallScreenState extends State<CallScreen>
         ..on<TrackUnmutedEvent>((_) => _refresh())
         ..on<LocalTrackPublishedEvent>((_) => _refresh())
         ..on<RoomDisconnectedEvent>((_) {
+          // The call is over: the screen can sleep again and the "in a
+          // session" notification goes, even before they leave this page.
+          _clock?.cancel();
+          unawaited(_keepAlive.stop());
           if (mounted && !_leaving) setState(() => _phase = _Phase.ended);
         });
       _room = room;
       _listener = listener;
       _endsAt = credentials.endsAt;
 
+      // Left (or restarted) while this was connecting: [_teardown] has
+      // already let this room go, so nothing more may start for it — above
+      // all not the keep-awake service, which nothing would stop.
+      bool gone() => !mounted || _leaving || !identical(_room, room);
+
       await room.connect(credentials.url, credentials.token);
+      if (gone()) return;
 
       // A blocked camera shouldn't cost them the session: carry on with
       // whatever works and say what doesn't.
@@ -174,9 +184,14 @@ class _CallScreenState extends State<CallScreen>
         cameraMissing = true;
       }
 
+      if (gone()) return;
       // After the microphone and camera are on: Android 14 only lets the
       // service claim the types whose permissions are already granted.
       await _keepAlive.start(counterpartName: widget.counterpartName);
+      if (gone()) {
+        await _keepAlive.stop();
+        return;
+      }
 
       _clock?.cancel();
       _clock = Timer.periodic(const Duration(seconds: 30), (_) => _refresh());
@@ -227,7 +242,7 @@ class _CallScreenState extends State<CallScreen>
     final next = !_micOn;
     try {
       await _room?.localParticipant?.setMicrophoneEnabled(next);
-      setState(() => _micOn = next);
+      if (mounted) setState(() => _micOn = next);
     } catch (e) {
       debugPrint('Microphone toggle failed: $e');
     }
@@ -237,7 +252,7 @@ class _CallScreenState extends State<CallScreen>
     final next = !_cameraOn;
     try {
       await _room?.localParticipant?.setCameraEnabled(next);
-      setState(() => _cameraOn = next);
+      if (mounted) setState(() => _cameraOn = next);
     } catch (e) {
       debugPrint('Camera toggle failed: $e');
     }
@@ -251,7 +266,7 @@ class _CallScreenState extends State<CallScreen>
         : CameraPosition.front;
     try {
       await track.setCameraPosition(next);
-      setState(() => _cameraPosition = next);
+      if (mounted) setState(() => _cameraPosition = next);
     } catch (e) {
       debugPrint('Camera flip failed: $e');
     }

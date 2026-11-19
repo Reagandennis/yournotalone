@@ -23,7 +23,12 @@ abstract final class LocalNotifications {
 
   static Future<void> ensureInitialized() {
     if (silent) return Future.value();
-    return _ready ??= _initialize();
+    // A failed start isn't kept as the answer for the rest of the session:
+    // the next call tries again.
+    return _ready ??= _initialize().catchError((Object e) {
+      _ready = null;
+      throw e;
+    });
   }
 
   static Future<void> _initialize() async {

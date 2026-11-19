@@ -39,8 +39,19 @@ PackageType preferredPlan(String checkin) => switch (checkin) {
       _ => PackageType.annual,
     };
 
-/// Days in a package's free trial, or null when it has none.
+/// Products this account can't have the free trial of again, from
+/// [PurchasesService.currentOffering]. Apple lists a product's introductory
+/// offer whether or not the person has used it, and charges at once if
+/// they have; promising them a trial would be untrue.
+final introIneligible = <String>{};
+
+bool _trialOnOffer(Package package) =>
+    !introIneligible.contains(package.storeProduct.identifier);
+
+/// Days in a package's free trial, or null when it has none (or this
+/// account has had it).
 int? trialDays(Package package) {
+  if (!_trialOnOffer(package)) return null;
   final intro = package.storeProduct.introductoryPrice;
   if (intro == null || intro.price > 0) return null;
   final unit = switch (intro.periodUnit) {
@@ -56,6 +67,7 @@ int? trialDays(Package package) {
 /// "3 days" / "1 week" / "1 month" for a package's free trial.
 String? trialLabel(Package package, [AppLocalizations? l10n]) {
   l10n ??= currentL10n();
+  if (!_trialOnOffer(package)) return null;
   final intro = package.storeProduct.introductoryPrice;
   if (intro == null || intro.price > 0) return null;
   final n = intro.periodNumberOfUnits;

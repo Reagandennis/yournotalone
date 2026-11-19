@@ -20,18 +20,35 @@ class AccountRepository {
     return user;
   }
 
-  /// Files the request and carries out the deletion. Throws if the account
-  /// could not be deleted now — the request stays on file either way.
+  /// Files the request and carries out the deletion. Throws
+  /// [DeletionNotRecorded] when even the request couldn't be filed (so
+  /// nothing will happen unless they try again), anything else when it was
+  /// filed but the deletion didn't finish (the request stays on file).
   Future<void> deleteAccount() async {
     final user = _user;
-    await _client.from('deletion_requests').insert({
-      'user_id': user.id,
-      'user_email': user.email,
-    });
+    try {
+      await _client.from('deletion_requests').insert({
+        'user_id': user.id,
+        'user_email': user.email,
+      });
+    } catch (e) {
+      throw DeletionNotRecorded(e);
+    }
 
     final response = await _client.functions.invoke('delete-account');
     if (response.status != 200) {
       throw StateError('Deletion did not complete (${response.status})');
     }
   }
+}
+
+/// The deletion request couldn't be filed (typically offline): nothing is
+/// on file, so telling them it is would be untrue.
+class DeletionNotRecorded implements Exception {
+  const DeletionNotRecorded(this.cause);
+
+  final Object cause;
+
+  @override
+  String toString() => 'DeletionNotRecorded($cause)';
 }

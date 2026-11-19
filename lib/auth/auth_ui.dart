@@ -1,9 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
 import '../brand_layout.dart';
 import '../l10n/l10n.dart';
+import '../support/crisis_screen.dart';
 
 /// Layout shared by all auth screens: the pillars mark up top, a heading
 /// underlined by the [PillarStripe], a muted subtitle, then the form.
@@ -86,6 +91,10 @@ class AuthScaffold extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 ...children,
+                // Crisis numbers need no account: someone signed out, or
+                // who hasn't made one yet, can still reach them.
+                const SizedBox(height: 20),
+                const CrisisFooter(offerBooking: false),
               ],
             ),
           ),
@@ -253,12 +262,46 @@ class AuthDivider extends StatelessWidget {
 
 /// Shows an auth failure as a snackbar, in plain words.
 void showAuthError(BuildContext context, Object error) {
-  final message = error is AuthException
-      ? error.message
-      : context.l10n.authErrorGeneric;
   ScaffoldMessenger.of(context)
     ..hideCurrentSnackBar()
-    ..showSnackBar(SnackBar(content: Text(message)));
+    ..showSnackBar(SnackBar(content: Text(authErrorMessage(context.l10n, error))));
+}
+
+/// What to tell someone when signing in or up fails, in their language.
+/// The server's own messages are English and sometimes technical ("Failed
+/// host lookup: …" when offline), so the common ones are said in our words;
+/// an unusual one is still shown as the server put it.
+String authErrorMessage(AppLocalizations l10n, Object error) {
+  if (error is AuthRetryableFetchException ||
+      error is SocketException ||
+      error is http.ClientException ||
+      error is TimeoutException) {
+    return l10n.authErrorOffline;
+  }
+  if (error is! AuthException) return l10n.authErrorGeneric;
+  final code = error.code ?? '';
+  final message = error.message.toLowerCase();
+  if (code == 'invalid_credentials' ||
+      message.contains('invalid login credentials')) {
+    return l10n.authErrorInvalidCredentials;
+  }
+  if (code == 'email_not_confirmed' || message.contains('not confirmed')) {
+    return l10n.authErrorEmailNotConfirmed;
+  }
+  if (code == 'user_already_exists' ||
+      code == 'email_exists' ||
+      message.contains('already registered')) {
+    return l10n.authErrorEmailTaken;
+  }
+  if (code.startsWith('over_') || error.statusCode == '429') {
+    return l10n.authErrorTooManyTries;
+  }
+  if (error is AuthWeakPasswordException || code == 'weak_password') {
+    return l10n.authErrorWeakPassword;
+  }
+  final status = int.tryParse(error.statusCode ?? '');
+  if (status != null && status >= 500) return l10n.authErrorGeneric;
+  return error.message;
 }
 
 final _emailRe = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$');

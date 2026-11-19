@@ -101,6 +101,18 @@ class PracticeSummary {
   final PracticeSession? last;
 
   bool get isEmpty => sessions == 0;
+
+  /// The same, with all-time [sessions] and [totalMinutes].
+  PracticeSummary withTotals({
+    required int sessions,
+    required double totalMinutes,
+  }) => PracticeSummary(
+    sessions: sessions,
+    totalMinutes: totalMinutes,
+    minutesThisWeek: minutesThisWeek,
+    dayStreak: dayStreak,
+    last: last,
+  );
 }
 
 /// Practice history, backed by the `practice_sessions` table.
@@ -116,11 +128,13 @@ class PracticeRepository {
     Future<List<Map<String, dynamic>>> Function(String userId, DateTime since)?
         fetchRows,
     String? Function()? currentUserId,
+    Future<(int, double)?> Function()? fetchTotals,
   })  : _client = client ?? Supabase.instance.client,
         _pending = pending ?? PendingPracticeStore(),
         _insert = insert,
         _fetchRows = fetchRows,
-        _currentUserId = currentUserId;
+        _currentUserId = currentUserId,
+        _fetchTotals = fetchTotals;
 
   final SupabaseClient _client;
   final PendingPracticeStore _pending;
@@ -130,6 +144,7 @@ class PracticeRepository {
   final Future<List<Map<String, dynamic>>> Function(
       String userId, DateTime since)? _fetchRows;
   final String? Function()? _currentUserId;
+  final Future<(int, double)?> Function()? _fetchTotals;
 
   /// A dead connection mustn't hold a request open indefinitely.
   static const _writeTimeout = Duration(seconds: 20);
@@ -255,8 +270,47 @@ class PracticeRepository {
     return sessions;
   }
 
-  Future<PracticeSummary> fetchSummary({int days = 120}) async =>
-      summarise(await fetchRecent(days: days));
+  /// The summary of the last [days] (enough for any streak the summary
+  /// counts), with the account's all-time totals: "N sessions in all" used
+  /// to count only what the last four months fetched.
+  Future<PracticeSummary> fetchSummary({int days = 400}) async {
+    final recent = await fetchRecent(days: days);
+    final summary = summarise(recent);
+    final totals = await _allTimeTotals();
+    if (totals == null) return summary;
+    // The server's count, plus what's still waiting on this phone.
+    final userId = _userId;
+    final waiting = [
+      for (final s in await _pending.all())
+        if (s.userId == userId) s,
+    ];
+    return summary.withTotals(
+      sessions: totals.$1 + waiting.length,
+      totalMinutes:
+          totals.$2 + waiting.fold(0.0, (sum, s) => sum + s.minutes),
+    );
+  }
+
+  /// Sessions and minutes the server has for this account
+  /// (`practice_totals()`, migration 0035); null before that migration,
+  /// offline, or in tests that fake the rows but not this.
+  Future<(int, double)?> _allTimeTotals() async {
+    if (_fetchTotals != null) return _fetchTotals();
+    if (_fetchRows != null || _userId == null) return null;
+    try {
+      final data = await _client
+          .rpc('practice_totals')
+          .timeout(const Duration(seconds: 15));
+      final map = Map<String, dynamic>.from(data as Map);
+      return (
+        (map['sessions'] as num).toInt(),
+        (map['minutes'] as num).toDouble(),
+      );
+    } catch (e) {
+      debugPrint('Practice totals unavailable: $e');
+      return null;
+    }
+  }
 
   static String _uuidV4() {
     final bytes = List<int>.generate(16, (_) => _random.nextInt(256));
