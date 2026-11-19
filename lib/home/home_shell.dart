@@ -11,6 +11,7 @@ import '../discover/content_index.dart';
 import '../discover/saved_store.dart';
 import '../journal/journal_hub_screen.dart';
 import '../l10n/l10n.dart';
+import '../therapy/therapy_repository.dart';
 import '../media/lapsed_downloads.dart';
 import '../notifications/local_notifications.dart';
 import '../notifications/notification_permission.dart';
@@ -95,7 +96,12 @@ void openReminderTarget(NavigatorState navigator, String kindName) {
 /// The signed-in shell: navigation between Home, Explore, and Settings —
 /// a bottom bar on phones, a side rail where there's room.
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.therapyPrice});
+
+  /// Hands Home a price instead of asking the server: for pictures of the
+  /// app (test/preview_site_phones.dart).
+  @visibleForTesting
+  final Future<TherapyPriceQuote> Function()? therapyPrice;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
@@ -189,7 +195,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       key: _tabsKey,
       index: _index,
       children: [
-        HomeTab(reselected: _homeShown),
+        HomeTab(reselected: _homeShown, therapyPrice: widget.therapyPrice),
         const ExploreTab(),
         const SettingsTab(),
       ],

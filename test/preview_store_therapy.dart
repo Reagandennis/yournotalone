@@ -21,7 +21,7 @@ import 'package:yournotalone/therapy/therapy_screen.dart';
 class _Kenya extends TherapyRepository {
   static final _quote = TherapyPriceQuote.fromJson(const {
     'country': 'KE',
-    'source': 'store',
+    'source': 'zone',
     'locked': false,
     'can_change': false,
     'currency': 'KES',
