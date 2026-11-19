@@ -65,7 +65,13 @@ Steps:
    1. media the bucket doesn't have yet (checked with HEAD first);
    2. `catalog/v{N}-{hash}.json`;
    3. last, `catalog/latest.json` =
-      `{"version": N, "path": "catalog/v{N}-{hash}.json", "minApp": "1.1.0"}`.
+      `{"version": N, "path": "catalog/v{N}-{hash}.json", "minApp": "1.1.0", "builtAt": "…"}`.
+
+   The snapshot and `latest.json` carry `builtAt`, the time of the publish
+   (`npm run build` stamps the bundled copy with its build time, and keeps
+   the old stamp when the content hasn't changed). The app compares it, not
+   the version, to choose between the catalogue it bundles and one it
+   downloaded: the bundled copy is version 0 whatever it holds.
 
    Media and the versioned snapshot get
    `Cache-Control: public, max-age=31536000, immutable`. `latest.json` gets

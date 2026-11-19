@@ -14,13 +14,25 @@ Map<String, dynamic> _bundledJson() =>
     jsonDecode(File(bundledCatalogAsset).readAsStringSync())
         as Map<String, dynamic>;
 
-/// The bundled snapshot republished as [version].
+/// When the bundled copy was built, moved by [days].
+String _bundledBuiltAt([int days = 0]) =>
+    DateTime.parse(_bundledJson()['builtAt'] as String)
+        .add(Duration(days: days))
+        .toUtc()
+        .toIso8601String();
+
+/// The bundled snapshot republished as [version], made at [builtAt] (a
+/// week after the bundled copy, unless said), or with no stamp at all,
+/// like a catalogue from before stamps, when [unstamped].
 Map<String, dynamic> _published(
   int version, {
   String hash = 'feedc0de12345678',
+  String? builtAt,
+  bool unstamped = false,
 }) => _bundledJson()
   ..['version'] = version
   ..['hash'] = hash
+  ..['builtAt'] = unstamped ? null : builtAt ?? _bundledBuiltAt(7)
   ..['media'] = {
     'sound:Rainfall': {
       'audio': {
@@ -39,12 +51,16 @@ class _Server {
     this.minApp = '1.1.0',
     String? pathHash,
     this.down = false,
-  }) : pathHash = pathHash ?? 'feedc0de12345678';
+    String? builtAt,
+    bool unstamped = false,
+  }) : pathHash = pathHash ?? 'feedc0de12345678',
+       builtAt = unstamped ? null : builtAt ?? _bundledBuiltAt(7);
 
   final int version;
   final String minApp;
   final String pathHash;
   final bool down;
+  final String? builtAt;
   final requests = <String>[];
 
   late final client = MockClient((req) async {
@@ -56,13 +72,18 @@ class _Server {
           'version': version,
           'path': 'catalog/v$version-$pathHash.json',
           'minApp': minApp,
+          'builtAt': ?builtAt,
         }),
         200,
       );
     }
     if (req.url.path == '/catalog/v$version-$pathHash.json') {
       return http.Response.bytes(
-        utf8.encode(jsonEncode(_published(version))),
+        utf8.encode(
+          jsonEncode(
+            _published(version, builtAt: builtAt, unstamped: builtAt == null),
+          ),
+        ),
         200,
       );
     }
@@ -100,7 +121,7 @@ void main() {
   );
 
   test('skips a catalogue that is not newer', () async {
-    final server = _Server(version: 0);
+    final server = _Server(version: 0, builtAt: _bundledBuiltAt());
     final catalog = await started(server);
     expect(await catalog.refresh(), isFalse);
     expect(server.requests, ['/catalog/latest.json']);
@@ -131,6 +152,74 @@ void main() {
     final catalog = await started(_Server());
     expect(catalog.version, 0);
     expect(catalog.items, isNotEmpty);
+  });
+
+  group('after an app update', () {
+    /// A catalogue the app downloaded before (see [_published]).
+    void downloaded(int version, {String? builtAt, bool unstamped = false}) =>
+        SharedPreferences.setMockInitialValues({
+          'catalog.snapshot': jsonEncode(
+            _published(version, builtAt: builtAt, unstamped: unstamped),
+          ),
+        });
+
+    test('the bundled catalogue is stamped with when it was built', () {
+      expect(bundled.builtAt, isNotNull);
+      expect(bundled.version, 0);
+    });
+
+    test('a catalogue downloaded before the bundled one was built loses '
+        'to it, and is let go', () async {
+      downloaded(3, builtAt: _bundledBuiltAt(-14));
+      final catalog = await started(_Server(down: true));
+      expect(catalog.version, 0, reason: 'the newer content the app ships');
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('catalog.snapshot'), isNull);
+    });
+
+    test('one published after the bundled one was built wins', () async {
+      downloaded(5);
+      expect((await started(_Server(down: true))).version, 5);
+    });
+
+    test('one from before catalogues were stamped loses', () async {
+      downloaded(4, unstamped: true);
+      expect((await started(_Server(down: true))).version, 0);
+    });
+
+    test('a published catalogue older than the bundled one is not fetched',
+        () async {
+      final server = _Server(builtAt: _bundledBuiltAt(-14));
+      final catalog = await started(server);
+      expect(await catalog.refresh(), isFalse);
+      expect(server.requests, ['/catalog/latest.json']);
+    });
+
+    test('an unstamped latest.json is older than a stamped catalogue',
+        () async {
+      final server = _Server(unstamped: true);
+      final catalog = await started(server);
+      expect(await catalog.refresh(), isFalse);
+      expect(server.requests, ['/catalog/latest.json']);
+    });
+  });
+
+  test('catalogues are ordered by when they were made, then by version', () {
+    CatalogSnapshot made(int version, String? at) => CatalogSnapshot.fromJson(
+      _published(version, builtAt: at, unstamped: at == null),
+    )!;
+    final nov4 = made(0, '2026-11-04T19:32:27.000Z');
+    final unstamped = made(4, null);
+    bool newer(CatalogSnapshot a, CatalogSnapshot b) =>
+        catalogNewer(version: a.version, builtAt: a.builtAt, than: b);
+
+    expect(newer(made(1, '2026-11-11T10:00:00.000Z'), nov4), isTrue);
+    expect(newer(made(9, '2026-11-01T00:00:00.000Z'), nov4), isFalse);
+    expect(newer(nov4, nov4), isFalse, reason: 'the same is not newer');
+    expect(newer(unstamped, nov4), isFalse);
+    expect(newer(nov4, unstamped), isTrue);
+    expect(newer(made(5, null), unstamped), isTrue);
+    expect(newer(made(3, null), unstamped), isFalse);
   });
 
   test('reads the media map of a published catalogue', () {

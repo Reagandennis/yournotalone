@@ -476,7 +476,8 @@ class ContentCatalog {
     unawaited(refresh());
   }
 
-  /// Uses [bundled], or the downloaded snapshot if that's newer.
+  /// Uses [bundled], or the downloaded snapshot if that's newer (see
+  /// [catalogNewer]).
   @visibleForTesting
   Future<void> loadFrom(CatalogSnapshot bundled) async {
     var best = bundled;
@@ -487,7 +488,18 @@ class ContentCatalog {
         final cached = CatalogSnapshot.fromJson(
           jsonDecode(raw) as Map<String, dynamic>,
         );
-        if (cached != null && cached.version > bundled.version) best = cached;
+        if (cached != null &&
+            catalogNewer(
+              version: cached.version,
+              builtAt: cached.builtAt,
+              than: bundled,
+            )) {
+          best = cached;
+        } else if (cached != null) {
+          // An app update brought newer content than this download, which
+          // can't win again: don't read it at every launch.
+          await prefs.remove(_cacheKey);
+        }
       }
     } catch (e) {
       debugPrint('Downloaded catalogue unreadable, using the bundled one: $e');
@@ -511,7 +523,14 @@ class ContentCatalog {
       final version = pointer['version'] as int;
       final path = pointer['path'] as String;
       final minApp = pointer['minApp'] as String? ?? '0.0.0';
-      if (version <= (_snapshot?.version ?? -1)) return false;
+      final builtAt = switch (pointer['builtAt']) {
+        final String at => DateTime.tryParse(at),
+        _ => null,
+      };
+      if (_snapshot case final s?
+          when !catalogNewer(version: version, builtAt: builtAt, than: s)) {
+        return false;
+      }
       // The same catalogue we already have (the bundled copy is built from
       // what was published): nothing to fetch.
       if (_snapshot case final s? when path.endsWith('-${s.hash}.json')) {

@@ -43,10 +43,16 @@ export type MediaMap = Record<string, { audio?: MediaRef; narration?: MediaRef }
 /// What goes in a snapshot; `check()`'s result will do.
 export type Content = { items: Item[]; courses: Course[]; backgrounds: Background[] };
 
+/// `builtAt` is when the snapshot was made (an ISO time): the publish, or
+/// the build for the copy the app bundles. The app compares it, not the
+/// version, to pick the newer of the bundled and the downloaded catalogue,
+/// since the bundled copy is version 0 whatever it holds. It isn't in the
+/// hash: the same content made twice is the same catalogue.
 export function snapshot(
   { items, courses, backgrounds }: Content,
   version: number,
   media?: MediaMap,
+  builtAt?: string,
 ) {
   const body = {
     items: items
@@ -69,7 +75,8 @@ export function snapshot(
   // output are exactly what they were before media existed.
   const hashed = media === undefined ? body : { ...body, media };
   const hash = createHash('sha256').update(JSON.stringify(hashed)).digest('hex').slice(0, 16);
-  return media === undefined
-    ? { format: snapshotFormat, version, hash, ...body }
-    : { format: snapshotFormat, version, hash, ...body, media };
+  const head = builtAt === undefined
+    ? { format: snapshotFormat, version, hash }
+    : { format: snapshotFormat, version, hash, builtAt };
+  return media === undefined ? { ...head, ...body } : { ...head, ...body, media };
 }

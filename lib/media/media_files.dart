@@ -35,9 +35,18 @@ class MediaFiles {
   Future<File> downloadFor(String sha256) async =>
       File('${(await downloadsDir).path}/$sha256.m4a');
 
-  /// Where [sha256]'s download is written until it's checked.
-  Future<File> partFor(String sha256) async =>
-      File('${(await downloadsDir).path}/$sha256.m4a.part');
+  /// Where [sha256]'s download is written until it's checked. [now] is
+  /// for a second transfer of the same file, started to play it at once
+  /// while the first waits for Wi-Fi, so the two never write one file.
+  Future<File> partFor(String sha256, {bool now = false}) async => File(
+    '${(await downloadsDir).path}/$sha256.m4a${now ? '.now' : ''}.part',
+  );
+
+  /// The sha256 a file in [downloadsDir] is named after (a download, or one
+  /// being written); null for a name this class doesn't give.
+  static String? shaNamed(String fileName) => _named.firstMatch(fileName)?[1];
+
+  static final _named = RegExp(r'^([0-9a-f]{64})\.m4a(?:\.now)?(?:\.part)?$');
 
   /// Where streamed narration for [sha256] is cached.
   Future<File> streamCacheFor(String sha256) async =>

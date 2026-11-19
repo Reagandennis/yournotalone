@@ -100,7 +100,17 @@ test('the media map has one entry per item with media, in the agreed shape', asy
   // Meditations without narration have no entry.
   assert.equal('meditation:Loving kindness' in snap.media, false);
   // The rest of the snapshot is what build writes, plus media.
-  assert.deepEqual(Object.keys(snap), ['format', 'version', 'hash', 'items', 'courses', 'backgrounds', 'media']);
+  assert.deepEqual(Object.keys(snap), ['format', 'version', 'hash', 'builtAt', 'items', 'courses', 'backgrounds', 'media']);
+});
+
+test('the snapshot and latest.json say when they were made, outside the hash', async () => {
+  const early = await plan({ ...opts(null), now: () => new Date('2026-11-04T19:29:01Z') });
+  const late = await plan({ ...opts(null), now: () => new Date('2026-11-19T08:00:00Z') });
+  assert.equal(dec(early.snapshot.body).builtAt, '2026-11-04T19:29:01.000Z');
+  assert.equal(dec(early.latest.body).builtAt, '2026-11-04T19:29:01.000Z');
+  assert.equal(dec(late.snapshot.body).builtAt, '2026-11-19T08:00:00.000Z');
+  // The same content made later is the same catalogue.
+  assert.equal(early.hash, late.hash);
 });
 
 test('version starts at 1 and counts up from the current latest', async () => {
@@ -110,11 +120,16 @@ test('version starts at 1 and counts up from the current latest', async () => {
 
   const store = new MemoryStore();
   await store.put(staging.bucket, staging.prefix + latestKey, enc(JSON.stringify({ version: 7, path: 'catalog/v7-0123456789abcdef.json', minApp: '1.1.0' })), { contentType: '', cacheControl: '' });
-  const p = await plan(opts(store));
+  const p = await plan({ ...opts(store), now: () => new Date('2026-11-19T08:00:00Z') });
   assert.equal(p.version, 8);
   assert.equal(p.previous, 7);
   assert.match(p.snapshot.key, new RegExp(`^staging/catalog/v8-${p.hash}\\.json$`));
-  assert.deepEqual(dec(p.latest.body), { version: 8, path: `catalog/v8-${p.hash}.json`, minApp: '1.1.0' });
+  assert.deepEqual(dec(p.latest.body), {
+    version: 8,
+    path: `catalog/v8-${p.hash}.json`,
+    minApp: '1.1.0',
+    builtAt: '2026-11-19T08:00:00.000Z',
+  });
   assert.equal(dec(p.snapshot.body).version, 8);
 });
 

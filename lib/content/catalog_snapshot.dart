@@ -286,6 +286,7 @@ class CatalogSnapshot {
     required this.hash,
     required this.items,
     required this.courses,
+    this.builtAt,
     this.backgrounds = const [],
     this.media = const {},
   });
@@ -296,6 +297,12 @@ class CatalogSnapshot {
     return CatalogSnapshot(
       version: json['version'] as int,
       hash: json['hash'] as String,
+      // Added without a format bump, like backgrounds: older builds ignore
+      // it, and a snapshot from before it has none.
+      builtAt: switch (json['builtAt']) {
+        final String at => DateTime.tryParse(at),
+        _ => null,
+      },
       items: [
         for (final i in json['items'] as List)
           CatalogItem.fromJson(i as Map<String, dynamic>),
@@ -353,6 +360,12 @@ class CatalogSnapshot {
   final int version;
   final String hash;
 
+  /// When the snapshot was made: the publish for a published catalogue,
+  /// the build for the bundled copy. Null in snapshots from before the
+  /// field existed. See [catalogNewer] for why it, not [version], decides
+  /// which catalogue is newer.
+  final DateTime? builtAt;
+
   /// Published items, in list order.
   final List<CatalogItem> items;
   final List<CatalogCourse> courses;
@@ -363,4 +376,28 @@ class CatalogSnapshot {
   /// Published audio by item id, then role (`audio`, `narration`). Empty
   /// in the bundled copy, whose audio ships inside the app.
   final Map<String, Map<String, MediaRef>> media;
+}
+
+/// Whether a catalogue made at [builtAt] as [version] is newer than [than].
+///
+/// The version can't decide on its own: it counts publishes to one server,
+/// and the bundled copy is version 0 whatever it holds. Compared by
+/// version, any downloaded catalogue beat the bundled one, so after an app
+/// update a catalogue downloaded months ago hid the newer content the
+/// update shipped. So every catalogue says when it was made, and the later
+/// one wins. That holds across an app update, and between production and
+/// staging, whose version numbers have nothing to do with each other.
+///
+/// Catalogues made before the stamp existed don't have one. They were all
+/// published before any stamped one was made, so they count as older. Only
+/// between two of those does the version still decide, as it did before.
+bool catalogNewer({
+  required int version,
+  required DateTime? builtAt,
+  required CatalogSnapshot than,
+}) {
+  final current = than.builtAt;
+  if (current != null) return builtAt != null && builtAt.isAfter(current);
+  if (builtAt != null) return true;
+  return version > than.version;
 }

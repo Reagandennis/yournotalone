@@ -18,7 +18,12 @@ import 'package:yournotalone/media/media_files.dart';
 import 'package:yournotalone/media/media_links.dart';
 import 'package:yournotalone/media/media_transfer.dart';
 
-MediaEntry _entry(String id, List<int> bytes, {String role = 'audio'}) {
+MediaEntry _entry(
+  String id,
+  List<int> bytes, {
+  String role = 'audio',
+  bool premium = false,
+}) {
   final sha = sha256.convert(bytes).toString();
   return MediaEntry(
     itemId: id,
@@ -29,7 +34,7 @@ MediaEntry _entry(String id, List<int> bytes, {String role = 'audio'}) {
       key: 'media/$sha.m4a',
       sha256: sha,
       bytes: bytes.length,
-      premium: false,
+      premium: premium,
     ),
   );
 }
@@ -46,6 +51,11 @@ class _Transfer implements MediaTransfer {
   final cancelled = <String>[];
   Completer<void>? hold;
 
+  /// While set and not complete, a Wi-Fi only transfer waits, the way the
+  /// system holds one off Wi-Fi, until it's cancelled.
+  Completer<void>? wifi;
+  final _wake = <String, Completer<void>>{};
+
   @override
   Future<bool> fetch({
     required String id,
@@ -60,6 +70,10 @@ class _Transfer implements MediaTransfer {
     if (bytes == null) return false;
     onProgress?.call(0.5);
     if (hold case final h?) await h.future;
+    if (wifi case final w? when wifiOnly) {
+      final wake = _wake[id] = Completer<void>();
+      await Future.any([w.future, wake.future]);
+    }
     if (cancelled.contains(id)) return false;
     await file.writeAsBytes(bytes);
     onProgress?.call(1);
@@ -67,7 +81,19 @@ class _Transfer implements MediaTransfer {
   }
 
   @override
-  Future<void> cancel(String id) async => cancelled.add(id);
+  Future<void> cancel(String id) async {
+    cancelled.add(id);
+    if (_wake[id] case final w? when !w.isCompleted) w.complete();
+  }
+}
+
+/// Links straight to the "server", premium or not.
+class _FreeLinks extends MediaLinks {
+  _FreeLinks() : super(apiUrl: '', baseUrl: 'https://cdn.test/');
+
+  @override
+  Future<Uri> urlFor(MediaEntry entry, MediaPurpose purpose) async =>
+      Uri.parse('https://cdn.test/').resolve(entry.ref.key);
 }
 
 class _Network implements NetworkStatus {
@@ -117,14 +143,31 @@ void main() {
 
   tearDown(() => root.deleteSync(recursive: true));
 
-  /// A fresh store, as after the app starts.
-  DownloadStore phone() => DownloadStore.forTest(
+  /// A fresh store, as after the app starts, reading [items] (the
+  /// catalogue above unless given) for an account with or without
+  /// [premium].
+  DownloadStore phone({
+    Map<String, List<MediaEntry>>? items,
+    bool premium = false,
+  }) => DownloadStore.forTest(
     transfer: transfer,
     links: MediaLinks(apiUrl: '', baseUrl: 'https://cdn.test/'),
     files: files,
     network: network,
-    entriesFor: (id) => catalog[id] ?? const [],
+    entriesFor: (id) => (items ?? catalog)[id] ?? const [],
+    isPremium: () => premium,
   );
+
+  File fileOf(MediaEntry e) =>
+      File('${root.path}/support/media/${e.ref.sha256}.m4a');
+
+  /// Waits for [until], failing rather than hanging if it never comes.
+  Future<void> soon(bool Function() until) async {
+    for (var i = 0; i < 200 && !until(); i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+    }
+    expect(until(), isTrue);
+  }
 
   test('the Wi-Fi rule', () {
     const wifi = [ConnectivityResult.wifi];
@@ -316,6 +359,174 @@ void main() {
     // The second play uses the copy.
     await store.fetchNow(rain);
     expect(transfer.fetched, hasLength(1));
+  });
+
+  group('a catalogue update that gives an item new audio', () {
+    final newRainBytes = utf8.encode('rain on a tin roof, re-recorded');
+    final newRain = _entry('sound:Rainfall', newRainBytes);
+    final updated = {
+      ...catalog,
+      rain.itemId: [newRain],
+    };
+
+    setUp(() => transfer.server['/${newRain.ref.key}'] = newRainBytes);
+
+    Future<void> downloadedBefore() async {
+      final before = phone();
+      await before.load();
+      await before.download(rain.itemId);
+      await before.idle();
+      expect(fileOf(rain).existsSync(), isTrue);
+      before.dispose();
+    }
+
+    test('fetches it again and deletes the old file', () async {
+      await downloadedBefore();
+      final store = phone(items: updated);
+      await store.load();
+      await store.idle();
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+      expect(fileOf(newRain).readAsBytesSync(), newRainBytes);
+      expect(fileOf(rain).existsSync(), isFalse);
+      expect(store.totalBytes, newRainBytes.length);
+      expect(await files.downloaded(newRain.ref), isNotNull);
+    });
+
+    test('off Wi-Fi it waits like any download, not "Downloaded"', () async {
+      await downloadedBefore();
+      network.set([ConnectivityResult.mobile]);
+      final store = phone(items: updated);
+      await store.load();
+      await store.idle();
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.queued);
+      expect(store.waiting.value, isTrue);
+      expect(fileOf(rain).existsSync(), isFalse);
+      expect(store.totalBytes, 0);
+    });
+
+    test('premium audio is not fetched again without Premium', () async {
+      final stormBytes = utf8.encode('thunder');
+      final storm = _entry('sound:Distant storm', stormBytes, premium: true);
+      final newStorm = _entry(
+        'sound:Distant storm',
+        utf8.encode('thunder, louder'),
+        premium: true,
+      );
+      transfer.server['/${storm.ref.key}'] = stormBytes;
+      DownloadStore account(MediaEntry e, {required bool premium}) =>
+          DownloadStore.forTest(
+            transfer: transfer,
+            // Signing is beside the point here.
+            links: _FreeLinks(),
+            files: files,
+            network: network,
+            entriesFor: (id) => id == e.itemId ? [e] : const [],
+            isPremium: () => premium,
+          );
+
+      final before = account(storm, premium: true);
+      await before.load();
+      await before.download(storm.itemId);
+      await before.idle();
+      expect(before.stateOf(storm.itemId).status, DownloadStatus.done);
+      before.dispose();
+      final fetches = transfer.fetched.length;
+
+      final lapsed = account(newStorm, premium: false);
+      await lapsed.load();
+      await lapsed.idle();
+      expect(lapsed.stateOf(storm.itemId).status, DownloadStatus.none);
+      expect(fileOf(storm).existsSync(), isFalse);
+      expect(transfer.fetched, hasLength(fetches));
+    });
+
+    test('playing it fetches the new audio and lets the old go', () async {
+      // The catalogue changes under a store that has already loaded.
+      var items = catalog;
+      final store = DownloadStore.forTest(
+        transfer: transfer,
+        links: MediaLinks(apiUrl: '', baseUrl: 'https://cdn.test/'),
+        files: files,
+        network: network,
+        entriesFor: (id) => items[id] ?? const [],
+      );
+      await store.load();
+      await store.download(rain.itemId);
+      await store.idle();
+      items = updated;
+      await store.fetchNow(newRain);
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+      expect(fileOf(rain).existsSync(), isFalse);
+      expect(store.totalBytes, newRainBytes.length);
+    });
+  });
+
+  test('files no download uses are deleted, so the total is the disk', () async {
+    final orphan = fileOf(_entry('sound:Gone', utf8.encode('old')));
+    orphan
+      ..parent.createSync(recursive: true)
+      ..writeAsBytesSync(utf8.encode('old'));
+    final half = File('${orphan.path}.part')..writeAsBytesSync([1]);
+    final stranger = File('${orphan.parent.path}/notes.txt')
+      ..writeAsStringSync('not ours');
+    final first = phone();
+    await first.load();
+    await first.download(rain.itemId);
+    await first.idle();
+    first.dispose();
+    // Left by a transfer that was stopped when another took over.
+    final stopped = File('${fileOf(rain).path}.part')..writeAsBytesSync([2]);
+
+    final store = phone();
+    await store.load();
+    expect(orphan.existsSync(), isFalse);
+    expect(half.existsSync(), isFalse);
+    expect(stopped.existsSync(), isFalse);
+    expect(fileOf(rain).existsSync(), isTrue);
+    expect(stranger.existsSync(), isTrue, reason: 'not a name we give');
+    expect(store.totalBytes, rainBytes.length);
+  });
+
+  group('Wi-Fi only never holds up playing', () {
+    /// A queued download the system is holding until there's Wi-Fi.
+    Future<DownloadStore> held() async {
+      transfer.wifi = Completer();
+      final store = phone();
+      await store.load();
+      await store.download(rain.itemId);
+      await soon(() => transfer.fetched.isNotEmpty);
+      network.set([ConnectivityResult.mobile]);
+      await pumpEventQueue();
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.downloading);
+      return store;
+    }
+
+    test('playing now starts again on any connection', () async {
+      final store = await held();
+      final file = await store
+          .fetchNow(rain)
+          .timeout(const Duration(seconds: 5));
+      expect(file.readAsBytesSync(), rainBytes);
+      expect(transfer.wifiOnlyAsked, [true, false]);
+      expect(transfer.cancelled, contains('media-${rain.ref.sha256}'));
+      // The queue had been waiting on the held one: it carries on too.
+      await store.idle().timeout(const Duration(seconds: 5));
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+    });
+
+    test('turning Wi-Fi only off lets a held download go', () async {
+      final store = await held();
+      await store.setWifiOnly(false);
+      await store.idle().timeout(const Duration(seconds: 5));
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+      expect(transfer.wifiOnlyAsked, [true, false]);
+      expect(fileOf(rain).readAsBytesSync(), rainBytes);
+      expect(
+        Directory('${root.path}/support/media').listSync().map((f) => f.path),
+        [fileOf(rain).path],
+        reason: 'no part file left behind',
+      );
+    });
   });
 
   testWidgets('the storage screen lists downloads and deletes them', (

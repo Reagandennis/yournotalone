@@ -1278,7 +1278,7 @@ class _HomeTabState extends State<HomeTab> {
     final goals = userGoals();
     final fromWorker = itemsForRecommendations(
       _suggested,
-      exclude: {today.id},
+      exclude: {?today?.id},
     );
     final forNow =
         fromWorker ??
@@ -1287,7 +1287,7 @@ class _HomeTabState extends State<HomeTab> {
           count: 5,
           now: now,
           premium: premium,
-          exclude: {today.id},
+          exclude: {?today?.id},
           goals: goals,
           kindBoost: _kindBoost,
         );
@@ -1349,7 +1349,7 @@ class _HomeTabState extends State<HomeTab> {
         ];
         final todayBlock = <Widget>[
           const SizedBox(height: 20),
-          _todayCard(today),
+          if (today != null) _todayCard(today),
           if (course != null) ...[
             const SizedBox(height: 12),
             CourseCard(course: course, suggested: active == null),

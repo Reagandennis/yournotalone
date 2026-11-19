@@ -1,11 +1,15 @@
 // npm run build: check content/, then write the snapshot the app bundles
-// (assets/catalog/bundled.json). Version 0 marks the bundled copy; a
-// published catalogue always has a higher one.
+// (assets/catalog/bundled.json). Version 0 marks the bundled copy. It is
+// stamped with when it was built (`builtAt`), which is how the app tells
+// whether a catalogue it downloaded earlier is newer or older than the one
+// an app update ships; the version can't, as it's 0 whatever the copy holds.
+// Rebuilding unchanged content keeps the old stamp, so the file only
+// changes when the catalogue does.
 //
 // It carries the same media map a publish writes, so audio that isn't
 // bundled in the app can be fetched from the first launch, before any
 // catalogue has been downloaded. Keys are the same in every environment.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { envs, minApp } from './config.ts';
 import { check, load, repoRoot } from './content.ts';
@@ -34,7 +38,13 @@ const p = await plan({
     }),
 });
 const { media } = JSON.parse(new TextDecoder().decode(p.snapshot.body));
-const snap = snapshot(checked, 0, media);
+const before = existsSync(out) ? JSON.parse(readFileSync(out, 'utf8')) : null;
+const fresh = snapshot(checked, 0, media);
+const builtAt =
+  before?.hash === fresh.hash && typeof before.builtAt === 'string'
+    ? before.builtAt
+    : new Date().toISOString();
+const snap = snapshot(checked, 0, media, builtAt);
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, JSON.stringify(snap) + '\n');
 console.log(

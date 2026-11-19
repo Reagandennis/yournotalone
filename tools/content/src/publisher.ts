@@ -92,6 +92,8 @@ export type PlanOptions = {
   /// null for a dry run: no reads, so nothing is checked against the bucket.
   store: Store | null;
   prepare: PrepareMedia;
+  /// When this publish happens; the clock unless a test fixes it.
+  now?: () => Date;
 };
 
 export async function plan(o: PlanOptions): Promise<Plan> {
@@ -134,8 +136,11 @@ export async function plan(o: PlanOptions): Promise<Plan> {
   const previous = latest === undefined ? undefined : (latest?.version ?? null);
   const version = (latest?.version ?? 0) + 1;
 
-  // 3. The snapshot, with the media map.
-  const snap = snapshot(o, version, media);
+  // 3. The snapshot, with the media map, stamped with when it was made.
+  // latest.json carries the stamp too, so the app can skip a catalogue
+  // older than the one it has without fetching it.
+  const builtAt = (o.now?.() ?? new Date()).toISOString();
+  const snap = snapshot(o, version, media, builtAt);
   const snapKey = `catalog/v${version}-${snap.hash}.json`;
   const unchanged = latest?.hash === snap.hash;
 
@@ -162,7 +167,7 @@ export async function plan(o: PlanOptions): Promise<Plan> {
     latest: {
       bucket: env.bucket,
       key: env.prefix + latestKey,
-      body: json({ version, path: snapKey, minApp: o.minApp }),
+      body: json({ version, path: snapKey, minApp: o.minApp, builtAt }),
       contentType: 'application/json',
       cacheControl: latestCacheControl,
       label: `pointer to v${version}`,

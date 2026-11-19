@@ -1,14 +1,21 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
+import 'package:yournotalone/content/catalog_snapshot.dart';
+import 'package:yournotalone/content/content_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
 import 'package:yournotalone/discover/content_tags.dart';
 import 'package:yournotalone/discover/usage_store.dart';
+import 'package:yournotalone/home/home_shell.dart';
 import 'package:yournotalone/home/home_tab.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
+import 'package:yournotalone/reminders/reminders_service.dart';
 import 'package:yournotalone/therapy/therapy_repository.dart';
 
 class _NoPractice extends PracticeRepository {
@@ -27,6 +34,36 @@ TherapyRequest _request(String status, {DateTime? at}) => TherapyRequest(
       createdAt: DateTime(2026, 10, 1),
       paymentStatus: 'paid',
     );
+
+/// Uses the bundled catalogue minus the items [drop] picks, until the test
+/// ends.
+void _useCatalogWithout(bool Function(CatalogItem item) drop) {
+  final full = CatalogSnapshot.fromJson(
+    jsonDecode(File(bundledCatalogAsset).readAsStringSync())
+        as Map<String, dynamic>,
+  )!;
+  ContentCatalog.instance.use(
+    CatalogSnapshot(
+      version: full.version,
+      hash: full.hash,
+      builtAt: full.builtAt,
+      items: [
+        for (final i in full.items)
+          if (!drop(i)) i,
+      ],
+      courses: full.courses,
+      backgrounds: full.backgrounds,
+      media: full.media,
+    ),
+  );
+  addTearDown(() {
+    if (catalogSnapshotEnabled) {
+      ContentCatalog.instance.use(full);
+    } else {
+      ContentCatalog.instance.reset();
+    }
+  });
+}
 
 void main() {
   setUpAll(() async {
@@ -130,8 +167,33 @@ void main() {
           now: DateTime(2026, 10, 1 + d),
           premium: false,
         );
-        expect(pick.premium, isFalse);
+        expect(pick!.premium, isFalse);
       }
+    });
+
+    test('no daily pick from a catalogue without prompts or reads', () {
+      _useCatalogWithout(
+        (i) => i.kind == ContentKind.prompt || i.kind == ContentKind.lesson,
+      );
+      expect(dailyPick(now: DateTime(2026, 10, 1), premium: true), isNull);
+    });
+
+    testWidgets('the wind-down reminder does nothing when the plan is gone', (
+      tester,
+    ) async {
+      _useCatalogWithout((i) => i.id == 'tool:Wind-down plan');
+      final key = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: buildAppTheme(),
+          navigatorKey: key,
+          home: const Scaffold(body: Text('home')),
+        ),
+      );
+      openReminderTarget(key.currentState!, ReminderKind.windDown.name);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('home'), findsOneWidget);
     });
   });
 
@@ -193,7 +255,19 @@ void main() {
       await tester.pumpWidget(home());
       await tester.pumpAndSettle();
       final pick = dailyPick(now: DateTime.now(), premium: false);
-      expect(find.text(pick.title), findsWidgets);
+      expect(find.text(pick!.title), findsWidgets);
+    });
+
+    testWidgets('builds without today\'s card when there is nothing to pick', (
+      tester,
+    ) async {
+      _useCatalogWithout(
+        (i) => i.kind == ContentKind.prompt || i.kind == ContentKind.lesson,
+      );
+      await tester.pumpWidget(home());
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Low'), findsOneWidget, reason: 'the rest of Home');
     });
 
     testWidgets('the banner shows a booked session', (tester) async {

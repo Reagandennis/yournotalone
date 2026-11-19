@@ -82,9 +82,12 @@ void openReminderTarget(NavigatorState navigator, String kindName) {
         MaterialPageRoute(builder: (_) => const JournalHubScreen()),
       );
     case ReminderKind.windDown:
-      final plan = contentIndex.firstWhere(
-        (i) => i.id == 'tool:Wind-down plan',
-      );
+      // A catalogue without the plan (renamed, withdrawn) leaves the tap on
+      // Home rather than throwing.
+      final plan = contentIndex
+          .where((i) => i.id == 'tool:Wind-down plan')
+          .firstOrNull;
+      if (plan == null) return;
       openContent(navigator.context, plan, source: 'reminder:windDown');
   }
 }

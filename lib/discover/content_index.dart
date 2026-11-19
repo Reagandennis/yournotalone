@@ -596,8 +596,10 @@ Map<ContentKind, double> kindBoostFrom(Map<PracticeKind, double> help) => {
 };
 
 /// Today's prompt or short read: the same all day, different tomorrow.
-/// Free users rotate through what they can open.
-ContentItem dailyPick({required DateTime now, required bool premium}) {
+/// Free users rotate through what they can open. Null when the catalogue
+/// has none they can open, so Home leaves the card out instead of
+/// failing to build.
+ContentItem? dailyPick({required DateTime now, required bool premium}) {
   final pool = [
     for (final item in contentIndex)
       if ((item.kind == ContentKind.prompt ||
@@ -605,6 +607,7 @@ ContentItem dailyPick({required DateTime now, required bool premium}) {
           (premium || !item.premium))
         item,
   ];
+  if (pool.isEmpty) return null;
   return pool[dayNumber(now) % pool.length];
 }
 

@@ -45,31 +45,84 @@ Future<Uri> narrationUrl(
 /// The voice guide plays on audioplayers, beside the chime and over the
 /// ambient loop, which can't take a just_audio source directly. This hands it a `http://127.0.0.1` link
 /// instead, answering range requests the way just_audio's own proxy does.
+///
+/// The server can die under it: iOS may take back the listening socket of
+/// an app that's been suspended, and then nothing answers on that port.
+/// So each [serve] checks the server still answers, and starts a new one if
+/// it doesn't (or if the last one stopped or its start failed). Sources
+/// are kept apart from the server, so a new one serves them all.
 class NarrationProxy {
   NarrationProxy();
 
   static final instance = NarrationProxy();
 
-  Future<HttpServer>? _server;
+  /// The server answering now, once started.
+  HttpServer? _live;
+
+  /// A start under way, shared by every [serve] waiting on it.
+  Future<HttpServer>? _starting;
   final _sources = <String, StreamAudioSource>{};
 
   /// A local link that plays [source], named [name].
   Future<Uri> serve(String name, StreamAudioSource source) async {
-    final server = await (_server ??= _start());
     _sources[name] = source;
+    final server = await _running();
     return Uri.http(
       '${InternetAddress.loopbackIPv4.address}:${server.port}',
       '/$name.m4a',
     );
   }
 
+  /// The server, after checking it still takes connections; a new one if
+  /// there's none or it has died.
+  Future<HttpServer> _running() async {
+    if (_live case final server?) {
+      if (await _answers(server)) return server;
+      debugPrint('Narration proxy stopped answering; starting a new one.');
+      _retire(server);
+    }
+    // A failed bind clears this, so the next serve tries again.
+    return _starting ??= _start().whenComplete(() => _starting = null);
+  }
+
   Future<HttpServer> _start() async {
     final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen(
       (request) => unawaited(_handle(request)),
-      onError: (Object e) => debugPrint('Narration proxy error: $e'),
+      // An error on the server itself (not one request) means its socket
+      // has gone bad, and the stream ending means it's closed: either way
+      // the next serve needs a new one.
+      onError: (Object e) {
+        debugPrint('Narration proxy error: $e');
+        _retire(server);
+      },
+      onDone: () => _retire(server),
     );
+    _live = server;
     return server;
+  }
+
+  /// Whether [server] still accepts a connection on its port.
+  Future<bool> _answers(HttpServer server) async {
+    try {
+      final socket = await Socket.connect(
+        InternetAddress.loopbackIPv4,
+        server.port,
+        timeout: const Duration(seconds: 1),
+      );
+      socket.destroy();
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Stops using [server], if it's still the live one. Answers already
+  /// under way finish.
+  void _retire(HttpServer server) {
+    if (!identical(_live, server)) return;
+    _live = null;
+    unawaited(server.close().catchError((Object _) {}));
   }
 
   Future<void> _handle(HttpRequest request) async {
@@ -125,11 +178,15 @@ class NarrationProxy {
 
   @visibleForTesting
   Future<void> close() async {
-    final server = await _server;
-    _server = null;
+    final server = _live ?? await _starting;
+    _live = null;
     _sources.clear();
     await server?.close(force: true);
   }
+
+  /// The server answering now, so a test can kill it the way iOS does.
+  @visibleForTesting
+  HttpServer? get server => _live;
 }
 
 /// A `Range: bytes=a-b` header as (start, end exclusive); null if absent

@@ -382,6 +382,44 @@ void main() {
       expect(missing.statusCode, 404);
       await missing.drain<void>();
     });
+
+    group('starts a new server when iOS takes the old one back', () {
+      final voice = List.generate(100, (i) => i);
+      final chime = [7, 8, 9];
+
+      Future<List<int>> fetch(HttpClient client, Uri url) async {
+        final res = await (await client.getUrl(url)).close();
+        expect(res.statusCode, 200);
+        return res.expand((b) => b).toList();
+      }
+
+      for (final (how, settle) in [
+        ('after the server has shut down', true),
+        ('before it has noticed', false),
+      ]) {
+        test(how, () async {
+          final proxy = NarrationProxy();
+          addTearDown(proxy.close);
+          final client = HttpClient();
+          addTearDown(() => client.close(force: true));
+          final before = await proxy.serve('voice', _Bytes(voice));
+          final dead = proxy.server!;
+
+          final closing = dead.close(force: true);
+          if (settle) await closing;
+          final after = await proxy.serve('chime', _Bytes(chime));
+          await closing;
+
+          expect(proxy.server, isNot(same(dead)));
+          expect(await fetch(client, after), chime);
+          // What was served before is served by the new server too.
+          expect(
+            await fetch(client, before.replace(port: after.port)),
+            voice,
+          );
+        });
+      }
+    });
   });
 
   group('catalogue', () {
