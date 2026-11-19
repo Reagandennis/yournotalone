@@ -1934,7 +1934,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get faqDeleteA =>
-      'Settings → Delete account removes your profile, journal, moods, recovery data, and therapy sessions permanently. You can also email us from your registered address and we\'ll do it for you. Deletion can\'t be undone.';
+      'Settings → Delete account permanently removes your profile, journal, moods, recovery data, and what you wrote for your therapy sessions; sessions still to come are cancelled. A record of past sessions and payments is kept without your name, for accounting and so your therapist is paid. You can also email us from your registered address and we\'ll do it for you. Deletion can\'t be undone.';
 
   @override
   String get faqSectionAccount => 'Your account';
@@ -5925,7 +5925,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDeleteBody =>
-      'This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, therapy requests and photo. It happens straight away and it can\'t be undone.';
+      'This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, photo, and what you wrote in therapy requests; sessions still to come are cancelled. A record of past sessions and payments stays, without your name. It happens straight away and it can\'t be undone.';
 
   @override
   String get settingsKeepAccount => 'Keep my account';

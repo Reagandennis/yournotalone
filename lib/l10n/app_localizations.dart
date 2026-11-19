@@ -3158,7 +3158,7 @@ abstract class AppLocalizations {
   /// FAQ answer, shown when the question is opened. Help text: warm, plain, second person.
   ///
   /// In en, this message translates to:
-  /// **'Settings → Delete account removes your profile, journal, moods, recovery data, and therapy sessions permanently. You can also email us from your registered address and we\'ll do it for you. Deletion can\'t be undone.'**
+  /// **'Settings → Delete account permanently removes your profile, journal, moods, recovery data, and what you wrote for your therapy sessions; sessions still to come are cancelled. A record of past sessions and payments is kept without your name, for accounting and so your therapist is paid. You can also email us from your registered address and we\'ll do it for you. Deletion can\'t be undone.'**
   String get faqDeleteA;
 
   /// FAQ section heading (shown in capitals).
@@ -9375,7 +9375,7 @@ abstract class AppLocalizations {
   /// Delete-account dialog body: plain and complete about what is deleted.
   ///
   /// In en, this message translates to:
-  /// **'This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, therapy requests and photo. It happens straight away and it can\'t be undone.'**
+  /// **'This removes your profile, journal entries, mood check-ins, recovery streaks, craving logs, photo, and what you wrote in therapy requests; sessions still to come are cancelled. A record of past sessions and payments stays, without your name. It happens straight away and it can\'t be undone.'**
   String get settingsDeleteBody;
 
   /// Dialog button: cancel deleting the account.

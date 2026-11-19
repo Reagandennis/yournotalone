@@ -1945,7 +1945,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get faqDeleteA =>
-      'Ajustes → Eliminar cuenta borra de forma permanente tu perfil, tu diario, tus registros de ánimo, tus datos de recuperación y tus sesiones de terapia. También puedes escribirnos desde tu dirección registrada y lo haremos por ti. La eliminación no se puede deshacer.';
+      'Ajustes → Eliminar cuenta borra de forma permanente tu perfil, tu diario, tus registros de ánimo, tus datos de recuperación y lo que escribiste para tus sesiones; las sesiones futuras se cancelan. Se guarda un registro de las sesiones pasadas y los pagos sin tu nombre, por contabilidad y para que se pague a tu terapeuta. También puedes escribirnos desde tu dirección registrada y lo haremos por ti. La eliminación no se puede deshacer.';
 
   @override
   String get faqSectionAccount => 'Tu cuenta';
@@ -5996,7 +5996,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsDeleteBody =>
-      'Esto elimina tu perfil, tus entradas del diario, tus registros de ánimo, tus contadores de recuperación, tus registros de antojos, tus solicitudes de terapia y tu foto. Ocurre al instante y no se puede deshacer.';
+      'Esto elimina tu perfil, tus entradas del diario, tus registros de ánimo, tus contadores de recuperación, tus registros de antojos, tu foto y lo que escribiste en tus solicitudes de terapia; las sesiones futuras se cancelan. Queda un registro de las sesiones pasadas y los pagos, sin tu nombre. Ocurre al instante y no se puede deshacer.';
 
   @override
   String get settingsKeepAccount => 'Conservar mi cuenta';

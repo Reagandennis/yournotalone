@@ -1948,7 +1948,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get faqDeleteA =>
-      'Réglages → Supprimer le compte efface définitivement ton profil, ton journal, tes humeurs, tes données de rétablissement et tes séances de thérapie. Tu peux aussi nous écrire depuis ton adresse e-mail d’inscription et on s’en chargera. La suppression est irréversible.';
+      'Réglages → Supprimer le compte efface définitivement ton profil, ton journal, tes humeurs, tes données de rétablissement et ce que tu as écrit pour tes séances ; les séances à venir sont annulées. Une trace des séances passées et des paiements est gardée sans ton nom, pour la comptabilité et pour que ton thérapeute soit payé. Tu peux aussi nous écrire depuis ton adresse e-mail d’inscription et on s’en chargera. La suppression est irréversible.';
 
   @override
   String get faqSectionAccount => 'Ton compte';
@@ -6017,7 +6017,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsDeleteBody =>
-      'Cela supprime ton profil, tes entrées de journal, tes check-ins d\'humeur, tes compteurs de rétablissement, ton suivi des envies, tes demandes de thérapie et ta photo. C\'est immédiat et irréversible.';
+      'Cela supprime ton profil, tes entrées de journal, tes check-ins d\'humeur, tes compteurs de rétablissement, ton suivi des envies, ta photo et ce que tu as écrit dans tes demandes de thérapie ; les séances à venir sont annulées. Une trace des séances passées et des paiements reste, sans ton nom. C\'est immédiat et irréversible.';
 
   @override
   String get settingsKeepAccount => 'Garder mon compte';

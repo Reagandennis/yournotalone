@@ -1953,7 +1953,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get faqDeleteA =>
-      'Einstellungen → Konto löschen entfernt dein Profil, dein Tagebuch, deine Stimmungen, deine Genesungsdaten und deine Therapiesitzungen dauerhaft. Du kannst uns auch von deiner registrierten Adresse aus eine E-Mail schreiben, dann erledigen wir das für dich. Das Löschen kann nicht rückgängig gemacht werden.';
+      'Einstellungen → Konto löschen entfernt dein Profil, dein Tagebuch, deine Stimmungen, deine Genesungsdaten und das, was du für deine Therapiesitzungen geschrieben hast, dauerhaft; kommende Sitzungen werden abgesagt. Ein Nachweis vergangener Sitzungen und Zahlungen bleibt ohne deinen Namen erhalten, für die Buchhaltung und damit deine Therapeutin oder dein Therapeut bezahlt wird. Du kannst uns auch von deiner registrierten Adresse aus eine E-Mail schreiben, dann erledigen wir das für dich. Das Löschen kann nicht rückgängig gemacht werden.';
 
   @override
   String get faqSectionAccount => 'Dein Konto';
@@ -5999,7 +5999,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsDeleteBody =>
-      'Dabei werden dein Profil, deine Tagebucheinträge, Stimmungs-Check-ins, Genesungs-Serien, Verlangens-Einträge, Therapieanfragen und dein Foto entfernt. Das passiert sofort und kann nicht rückgängig gemacht werden.';
+      'Dabei werden dein Profil, deine Tagebucheinträge, Stimmungs-Check-ins, Genesungs-Serien, Verlangens-Einträge, dein Foto und das, was du in Therapieanfragen geschrieben hast, entfernt; kommende Sitzungen werden abgesagt. Ein Nachweis vergangener Sitzungen und Zahlungen bleibt ohne deinen Namen. Das passiert sofort und kann nicht rückgängig gemacht werden.';
 
   @override
   String get settingsKeepAccount => 'Konto behalten';

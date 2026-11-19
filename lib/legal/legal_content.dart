@@ -178,12 +178,16 @@ final privacyPolicy = LegalDoc(
       'Your account data and everything you record stay until you delete '
           'them or delete your account. When you delete your account, your '
           'profile, photo, journal entries, moods, practice history, recovery '
-          'data, and therapy sessions, notes and ratings are permanently '
-          'removed from our systems, with '
-          'residual copies purged from backups within 30 days.\n\n'
-          'Purchase records are kept as long as tax and accounting law '
-          'requires. Server logs are kept briefly for security and then '
-          'deleted.',
+          'data, ratings, and what you wrote for your therapy sessions are '
+          'permanently removed from our systems, with residual copies purged '
+          'from backups within 30 days. Sessions still to come are '
+          'cancelled.\n\n'
+          'A record of each therapy session you had or paid for — its date, '
+          'price, therapist and outcome, without your name, email or anything '
+          'you wrote — is kept as a purchase record, as long as tax and '
+          'accounting law requires, and so your therapist is paid for the '
+          'sessions they gave. Server logs are kept briefly for security and '
+          'then deleted.',
     ),
     LegalSection(
       'Your rights',

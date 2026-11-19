@@ -1805,7 +1805,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get faqDeleteA =>
-      '“设置 → 删除账号”会永久删除你的个人资料、日记、心情记录、康复数据和咨询记录。你也可以用注册邮箱给我们发邮件，我们会帮你删除。删除后无法恢复。';
+      '“设置 → 删除账号”会永久删除你的个人资料、日记、心情记录、康复数据，以及你为咨询写下的内容；尚未进行的咨询会被取消。过往咨询和付款的记录会去掉你的姓名后保留，用于记账并确保你的咨询师获得报酬。你也可以用注册邮箱给我们发邮件，我们会帮你删除。删除后无法恢复。';
 
   @override
   String get faqSectionAccount => '你的账号';
@@ -5611,7 +5611,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsDeleteBody =>
-      '这将删除你的个人资料、日记、心情打卡、康复连续天数、渴求记录、咨询申请和照片。删除会立即生效，且无法恢复。';
+      '这将删除你的个人资料、日记、心情打卡、康复连续天数、渴求记录、照片，以及你在咨询申请中写下的内容；尚未进行的咨询会被取消。过往咨询和付款的记录会去掉你的姓名后保留。删除会立即生效，且无法恢复。';
 
   @override
   String get settingsKeepAccount => '保留我的账号';
