@@ -254,7 +254,7 @@ void main() {
       final repo = PracticeRepository(
         currentUserId: () => 'u1',
         pending: pending,
-        fetchRows: (_, __) async => [
+        fetchRows: (_, _) async => [
           {
             'kind': 'meditation',
             'slug': 'calm',
@@ -276,7 +276,7 @@ void main() {
       final repo = PracticeRepository(
         currentUserId: () => 'u1',
         pending: PendingPracticeStore(),
-        fetchRows: (_, __) async => [
+        fetchRows: (_, _) async => [
           {
             'kind': 'meditation',
             'slug': 'calm',
