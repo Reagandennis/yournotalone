@@ -49,6 +49,13 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
     super.dispose();
   }
 
+  /// Anything written or listed so far, so leaving can ask first.
+  bool get _hasWritten =>
+      _problem.text.trim().isNotEmpty ||
+      _option.text.trim().isNotEmpty ||
+      _options.isNotEmpty ||
+      _firstStep.text.trim().isNotEmpty;
+
   bool get _canContinue => switch (_step) {
     1 => _problem.text.trim().isNotEmpty,
     2 => _options.length >= 2,
@@ -271,6 +278,7 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
     return ToolkitScaffold(
       accent: cbtAccent,
       title: l10n.problemSolvingTitle,
+      hasUnsavedWork: _hasWritten,
       bottom: Row(
         children: [
           if (_step > 1)
@@ -281,7 +289,8 @@ class _ProblemSolvingScreenState extends State<ProblemSolvingScreen> {
           const Spacer(),
           if (last)
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              // Asks first when the plan hasn't been saved, as back does.
+              onPressed: () => Navigator.of(context).maybePop(),
               child: Text(l10n.commonDone),
             ),
           const SizedBox(width: 8),

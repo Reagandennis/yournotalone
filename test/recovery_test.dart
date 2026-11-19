@@ -1,11 +1,51 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/billing/purchases_service.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/recovery/recovery_repository.dart';
 import 'package:yournotalone/recovery/recovery_screen.dart';
+
+/// Recovery data in memory. Every save waits on a completer in [saves],
+/// so a test decides when it finishes and whether the network failed.
+class _FakeRecoveryRepo extends RecoveryRepository {
+  final saves = <Completer<void>>[];
+  final cravings = <(int, String, String?)>[];
+  final habits = <String>[];
+
+  Future<void> _nextSave() {
+    final save = Completer<void>();
+    saves.add(save);
+    return save.future;
+  }
+
+  @override
+  Future<List<RecoveryHabit>> fetchHabits() async => const [];
+
+  @override
+  Future<List<CravingLog>> fetchRecentCravings({int limit = 15}) async =>
+      const [];
+
+  @override
+  Future<void> logCraving({
+    required int intensity,
+    required String trigger,
+    String? note,
+  }) async {
+    await _nextSave();
+    cravings.add((intensity, trigger, note));
+  }
+
+  @override
+  Future<void> addHabit(String name, DateTime dayOne) async {
+    await _nextSave();
+    habits.add(name);
+  }
+}
 
 void main() {
   setUpAll(() async {
@@ -115,5 +155,85 @@ void main() {
     );
     expect(fresh.daysIn, 1);
     expect(fresh.nextMilestone, (3, '3 days'));
+  });
+
+  group('sheets wait for the save', () {
+    setUp(() => PurchasesService.instance.isPro.value = true);
+    tearDown(() => PurchasesService.instance.isPro.value = false);
+
+    Finder inSheet(Finder finder) =>
+        find.descendant(of: find.byType(BottomSheet), matching: finder);
+
+    testWidgets('a craving log stays open with what was entered when the '
+        'save fails, and closes once it goes through', (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 1600);
+      addTearDown(tester.view.reset);
+      final repo = _FakeRecoveryRepo();
+      await tester.pumpWidget(wrap(RecoveryScreen(repository: repo)));
+      await tester.pumpAndSettle();
+
+      await tester.tap(await scrollTo(tester, find.text('+ Log')));
+      await tester.pumpAndSettle();
+      await tester.tap(inSheet(find.text('5')));
+      await tester.tap(inSheet(find.text('Boredom')));
+      await tester.enterText(inSheet(find.byType(TextField)), 'After the call');
+      await tester.tap(inSheet(find.text('Save')));
+      await tester.pump();
+
+      // Saving: the sheet is still up, its button busy.
+      expect(find.text('Log a craving'), findsOneWidget);
+      expect(inSheet(find.byType(CircularProgressIndicator)), findsOneWidget);
+
+      repo.saves.last.completeError(Exception('offline'));
+      await tester.pumpAndSettle();
+      expect(find.text('Log a craving'), findsOneWidget);
+      expect(
+        find.textContaining('What you entered is still here'),
+        findsOneWidget,
+      );
+      expect(find.text('After the call'), findsOneWidget);
+      expect(repo.cravings, isEmpty);
+
+      // Trying again goes through, and only then does the sheet close.
+      await tester.tap(inSheet(find.text('Save')));
+      await tester.pump();
+      repo.saves.last.complete();
+      await tester.pumpAndSettle();
+      expect(find.text('Log a craving'), findsNothing);
+      expect(repo.cravings.single, (5, 'Boredom', 'After the call'));
+      expect(find.text('Logged. You rode it out — that counts.'),
+          findsOneWidget);
+    });
+
+    testWidgets('a new commitment survives a failed save', (tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(400, 1600);
+      addTearDown(tester.view.reset);
+      final repo = _FakeRecoveryRepo();
+      await tester.pumpWidget(wrap(RecoveryScreen(repository: repo)));
+      await tester.pumpAndSettle();
+
+      await tester.tap(await scrollTo(tester, find.text('+ Add')));
+      await tester.pumpAndSettle();
+      await tester.enterText(inSheet(find.byType(TextField)), 'Smoking');
+      await tester.tap(inSheet(find.text('Start counting')));
+      await tester.pump();
+      repo.saves.last.completeError(Exception('offline'));
+      await tester.pumpAndSettle();
+      expect(find.text('What are you leaving behind?'), findsOneWidget);
+      expect(inSheet(find.text('Smoking')), findsOneWidget);
+      expect(
+        find.textContaining('What you entered is still here'),
+        findsOneWidget,
+      );
+
+      await tester.tap(inSheet(find.text('Start counting')));
+      await tester.pump();
+      repo.saves.last.complete();
+      await tester.pumpAndSettle();
+      expect(find.text('What are you leaving behind?'), findsNothing);
+      expect(repo.habits, ['Smoking']);
+    });
   });
 }

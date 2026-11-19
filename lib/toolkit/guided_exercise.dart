@@ -6,6 +6,7 @@ import '../brand.dart';
 import '../l10n/l10n.dart';
 import '../meditation/meditation_catalog.dart';
 import '../sounds/sound_player.dart';
+import '../unsaved_work.dart';
 import 'toolkit_art.dart';
 import 'toolkit_content.dart';
 import 'toolkit_ui.dart';
@@ -106,6 +107,25 @@ class _GuidedExerciseScreenState extends State<GuidedExerciseScreen> {
   List<GuidedStep> get _steps => widget.exercise.steps;
   bool get _finished => _index >= _steps.length;
 
+  /// Whether anything has been written yet. Kept up to date as people
+  /// type, so back knows to ask before it throws the writing away.
+  bool _wrote = false;
+
+  @override
+  void initState() {
+    super.initState();
+    for (final step in _answers) {
+      for (final c in step) {
+        c.addListener(_onTyping);
+      }
+    }
+  }
+
+  void _onTyping() {
+    final wrote = _summary.isNotEmpty;
+    if (wrote != _wrote) setState(() => _wrote = wrote);
+  }
+
   @override
   void dispose() {
     for (final step in _answers) {
@@ -130,14 +150,18 @@ class _GuidedExerciseScreenState extends State<GuidedExerciseScreen> {
         ].join('\n'),
   ].join('\n\n');
 
-  void _restart() => setState(() {
-    _index = 0;
+  Future<void> _restart() async {
+    // Going again wipes the page, so it asks first when there's writing
+    // on it that hasn't gone to the journal.
+    if (_wrote && !await confirmDiscardUnsaved(context)) return;
+    if (!mounted) return;
     for (final step in _answers) {
       for (final c in step) {
         c.clear();
       }
     }
-  });
+    setState(() => _index = 0);
+  }
 
   Future<void> _save() async {
     setState(() => _saving = true);
@@ -161,6 +185,7 @@ class _GuidedExerciseScreenState extends State<GuidedExerciseScreen> {
     return ToolkitScaffold(
       accent: exercise.accent,
       title: exercise.title,
+      hasUnsavedWork: _wrote,
       bottom: Row(
         children: [
           if (_index > 0) ...[
@@ -221,6 +246,8 @@ class _GuidedExerciseScreenState extends State<GuidedExerciseScreen> {
     return ToolkitScaffold(
       accent: accent,
       title: widget.exercise.title,
+      // Still unsaved on the last page until it goes to the journal.
+      hasUnsavedWork: _wrote,
       children: [
         const SizedBox(height: 24),
         Center(

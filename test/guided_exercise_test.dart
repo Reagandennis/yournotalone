@@ -170,9 +170,80 @@ void main() {
     // Something was written, so it can go in the journal.
     expect(find.text('Save to journal'), findsOneWidget);
 
+    // Going again would wipe what was written, so it asks first.
     await tester.tap(find.text('Go again'));
     await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+    await tester.tap(find.text('Keep writing'));
+    await tester.pumpAndSettle();
+    expect(find.text('Nicely done'), findsOneWidget);
+
+    await tester.tap(find.text('Go again'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
     expect(find.text('Step 1 of 2'), findsOneWidget);
+  });
+
+  testWidgets('leaving with something written asks before losing it', (
+    tester,
+  ) async {
+    const exercise = GuidedExercise(
+      id: 'tool-three-good-things',
+      title: 'Three good things',
+      blurb: 'Notice what went well.',
+      minutes: 3,
+      icon: Icons.spa_rounded,
+      accent: sleepAccent,
+      steps: [
+        GuidedStep(
+          title: 'Name three things',
+          text: 'Good things from today.',
+          input: GuidedInput.list,
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const GuidedExerciseScreen(exercise: exercise),
+                ),
+              ),
+              child: const Text('Open'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    // Nothing written yet: back simply leaves.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsOneWidget);
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).first, 'A walk');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+    await tester.tap(find.text('Keep writing'));
+    await tester.pumpAndSettle();
+    expect(find.text('A walk'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsOneWidget);
   });
 }
 

@@ -225,6 +225,30 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get commonDelete;
 
+  /// Button: throw away writing or a draft that has not been saved. Shown in red.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get commonDiscard;
+
+  /// Dialog title when someone tries to leave a screen (back button, back swipe or Done) where they have written something that is not saved yet: a thought record, a journal entry, a guided exercise.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave without saving?'**
+  String get unsavedLeaveTitle;
+
+  /// Dialog body under unsavedLeaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What you\'ve written here isn\'t saved yet. If you leave now, it will be lost.'**
+  String get unsavedLeaveBody;
+
+  /// Button in the unsavedLeaveTitle dialog: stay on the screen with what was written. The other button is commonDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep writing'**
+  String get unsavedKeepWriting;
+
   /// First onboarding screen heading, greeting the person by first name.
   ///
   /// In en, this message translates to:
@@ -6146,6 +6170,24 @@ abstract class AppLocalizations {
   /// **'Save entry'**
   String get journalEditorSave;
 
+  /// Dialog title when the journal editor opens and there is an unsaved draft of this entry kept on the phone (the app closed, or saving failed, before it was saved).
+  ///
+  /// In en, this message translates to:
+  /// **'Pick up where you left off?'**
+  String get journalDraftTitle;
+
+  /// Dialog body under journalDraftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You were writing here earlier and it wasn\'t saved. Your draft is still on this phone.'**
+  String get journalDraftBody;
+
+  /// Button in the journalDraftTitle dialog: put the draft back in the editor. The other button is commonDiscard, which throws the draft away.
+  ///
+  /// In en, this message translates to:
+  /// **'Carry on writing'**
+  String get journalDraftCarryOn;
+
   /// Screen title. Journal & mood hub screen.
   ///
   /// In en, this message translates to:
@@ -6865,6 +6907,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t save — check your connection.'**
   String get recoverySaveFailed;
+
+  /// Shown inside the craving log or new commitment sheet when saving fails. The sheet stays open with everything still filled in.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save — check your connection. What you entered is still here, so you can try again.'**
+  String get recoverySaveFailedKept;
 
   /// Snackbar when deleting a recovery commitment fails.
   ///

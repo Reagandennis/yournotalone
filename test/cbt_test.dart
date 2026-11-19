@@ -31,6 +31,21 @@ class _FakeJournal extends JournalRepository {
 
 Widget _wrap(Widget screen) => MaterialApp(theme: buildAppTheme(), home: screen);
 
+/// A page with an Open button that pushes [screen], so leaving it shows.
+Widget _host(Widget screen) => MaterialApp(
+      theme: buildAppTheme(),
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => screen),
+            ),
+            child: const Text('Open'),
+          ),
+        ),
+      ),
+    );
+
 Finder _button(String label) => find.ancestor(
       of: find.text(label),
       matching: find.byWidgetPredicate((w) => w is ButtonStyleButton),
@@ -202,6 +217,96 @@ void main() {
     expect(journal.saved.single.$1, 'Thought record');
     expect(journal.saved.single.$2, contains('Mind reading'));
     expect(journal.saved.single.$2, contains('She\'s busy at work this week'));
+  });
+
+  testWidgets('leaving a thought record with something written asks first',
+      (tester) async {
+    await tester.pumpWidget(_host(ThoughtRecordScreen(journal: _FakeJournal())));
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    // Nothing written yet: back simply leaves.
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsOneWidget);
+
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'No reply all evening');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+
+    await tester.tap(find.text('Keep writing'));
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsNothing);
+    expect(find.text('No reply all evening'), findsOneWidget);
+
+    // Android's back button asks too, and Discard leaves.
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsOneWidget);
+  });
+
+  testWidgets('Done on a thought record\'s last step asks before discarding',
+      (tester) async {
+    final journal = _FakeJournal();
+    await tester.pumpWidget(_host(ThoughtRecordScreen(journal: journal)));
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+
+    Future<void> next() async {
+      await tester.tap(_button('Continue'));
+      await tester.pumpAndSettle();
+    }
+
+    await tester.enterText(find.byType(TextField), 'No reply all evening');
+    await tester.pump();
+    await next();
+    await tester.enterText(find.byType(TextField), 'She\'s had enough of me');
+    await tester.pump();
+    await next();
+    await tester.tap(find.text('Anxious'));
+    await tester.pump();
+    await next();
+    await next();
+    await next();
+    await tester.enterText(find.byType(TextField), 'She\'s busy this week');
+    await tester.pump();
+    await next();
+    expect(find.text('How strong is the feeling now?'), findsOneWidget);
+
+    await tester.tap(_button('Done'));
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+    await tester.tap(find.text('Keep writing'));
+    await tester.pumpAndSettle();
+    expect(find.text('How strong is the feeling now?'), findsOneWidget);
+
+    await tester.tap(_button('Done'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsOneWidget);
+    expect(journal.saved, isEmpty);
+  });
+
+  testWidgets('leaving a half-made plan asks first', (tester) async {
+    await tester.pumpWidget(_host(ProblemSolvingScreen(journal: _FakeJournal())));
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Rent is going up');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+    await tester.tap(find.text('Keep writing'));
+    await tester.pumpAndSettle();
+    expect(find.text('Rent is going up'), findsOneWidget);
   });
 
   testWidgets('the planner keeps today\'s three and ticks them off',

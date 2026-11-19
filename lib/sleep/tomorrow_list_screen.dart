@@ -49,6 +49,7 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
         _letGo.text = m['letGo'] as String? ?? '';
         _good.text = m['good'] as String? ?? '';
       }
+      _savedSnapshot = _snapshot;
       if (mounted) setState(() => _loaded = true);
     });
   }
@@ -66,16 +67,22 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
       _letGo.text.trim().isNotEmpty ||
       _good.text.trim().isNotEmpty;
 
+  /// The page as it's kept on the phone.
+  String get _snapshot => jsonEncode({
+    'top': [for (final c in _top) c.text.trim()],
+    'letGo': _letGo.text.trim(),
+    'good': _good.text.trim(),
+  });
+
+  /// What was loaded or last kept: leaving asks first once the page has
+  /// changed since, because nothing is kept until one of the buttons.
+  String? _savedSnapshot;
+
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      _key,
-      jsonEncode({
-        'top': [for (final c in _top) c.text.trim()],
-        'letGo': _letGo.text.trim(),
-        'good': _good.text.trim(),
-      }),
-    );
+    final snapshot = _snapshot;
+    await prefs.setString(_key, snapshot);
+    _savedSnapshot = snapshot;
   }
 
   String _summary(AppLocalizations l10n) {
@@ -139,6 +146,7 @@ class _TomorrowListScreenState extends State<TomorrowListScreen> {
     return ToolkitScaffold(
       accent: sleepAccent,
       title: l10n.tomorrowListTitle,
+      hasUnsavedWork: _snapshot != _savedSnapshot,
       bottom: Row(
         children: [
           TextButton(

@@ -70,6 +70,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonDelete => 'Supprimer';
 
   @override
+  String get commonDiscard => 'Abandonner';
+
+  @override
+  String get unsavedLeaveTitle => 'Quitter sans enregistrer ?';
+
+  @override
+  String get unsavedLeaveBody =>
+      'Ce que tu as écrit ici n\'est pas encore enregistré. Si tu pars maintenant, ce sera perdu.';
+
+  @override
+  String get unsavedKeepWriting => 'Continuer d\'écrire';
+
+  @override
   String onboardingWelcomeTitle(String name) {
     return 'Bienvenue, $name';
   }
@@ -3778,6 +3791,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get journalEditorSave => 'Enregistrer l\'entrée';
 
   @override
+  String get journalDraftTitle => 'Reprendre ton brouillon ?';
+
+  @override
+  String get journalDraftBody =>
+      'Tu avais commencé à écrire ici sans enregistrer. Ton brouillon est toujours sur ce téléphone.';
+
+  @override
+  String get journalDraftCarryOn => 'Reprendre le brouillon';
+
+  @override
   String get journalHubTitle => 'Journal et humeur';
 
   @override
@@ -4365,6 +4388,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get recoverySaveFailed =>
       'Impossible d\'enregistrer — vérifie ta connexion.';
+
+  @override
+  String get recoverySaveFailedKept =>
+      'Impossible d\'enregistrer — vérifie ta connexion. Ce que tu as saisi est toujours là, tu peux réessayer.';
 
   @override
   String get recoveryDeleteFailed =>

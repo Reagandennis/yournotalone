@@ -70,6 +70,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonDelete => 'Löschen';
 
   @override
+  String get commonDiscard => 'Verwerfen';
+
+  @override
+  String get unsavedLeaveTitle => 'Ohne Speichern verlassen?';
+
+  @override
+  String get unsavedLeaveBody =>
+      'Was du hier geschrieben hast, ist noch nicht gespeichert. Wenn du jetzt gehst, geht es verloren.';
+
+  @override
+  String get unsavedKeepWriting => 'Weiterschreiben';
+
+  @override
   String onboardingWelcomeTitle(String name) {
     return 'Willkommen, $name';
   }
@@ -3777,6 +3790,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get journalEditorSave => 'Eintrag speichern';
 
   @override
+  String get journalDraftTitle => 'Weitermachen, wo du aufgehört hast?';
+
+  @override
+  String get journalDraftBody =>
+      'Du hast hier vorhin geschrieben, aber nicht gespeichert. Dein Entwurf ist noch auf diesem Handy.';
+
+  @override
+  String get journalDraftCarryOn => 'Entwurf weiterschreiben';
+
+  @override
   String get journalHubTitle => 'Tagebuch & Stimmung';
 
   @override
@@ -4358,6 +4381,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get recoverySaveFailed =>
       'Speichern fehlgeschlagen – prüf deine Verbindung.';
+
+  @override
+  String get recoverySaveFailedKept =>
+      'Speichern fehlgeschlagen – prüf deine Verbindung. Deine Eingaben sind noch da, du kannst es noch mal versuchen.';
 
   @override
   String get recoveryDeleteFailed =>

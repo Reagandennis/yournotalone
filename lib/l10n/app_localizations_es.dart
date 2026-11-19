@@ -70,6 +70,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonDelete => 'Eliminar';
 
   @override
+  String get commonDiscard => 'Descartar';
+
+  @override
+  String get unsavedLeaveTitle => '¿Salir sin guardar?';
+
+  @override
+  String get unsavedLeaveBody =>
+      'Lo que escribiste aquí aún no se ha guardado. Si sales ahora, se perderá.';
+
+  @override
+  String get unsavedKeepWriting => 'Seguir escribiendo';
+
+  @override
   String onboardingWelcomeTitle(String name) {
     return 'Te damos la bienvenida, $name';
   }
@@ -3771,6 +3784,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get journalEditorSave => 'Guardar entrada';
 
   @override
+  String get journalDraftTitle => '¿Retomar donde lo dejaste?';
+
+  @override
+  String get journalDraftBody =>
+      'Antes estabas escribiendo aquí y no se guardó. Tu borrador sigue en este teléfono.';
+
+  @override
+  String get journalDraftCarryOn => 'Retomar el borrador';
+
+  @override
   String get journalHubTitle => 'Diario y estado de ánimo';
 
   @override
@@ -4352,6 +4375,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recoverySaveFailed => 'No se pudo guardar. Revisa tu conexión.';
+
+  @override
+  String get recoverySaveFailedKept =>
+      'No se pudo guardar. Revisa tu conexión. Lo que escribiste sigue aquí, así que puedes intentarlo de nuevo.';
 
   @override
   String get recoveryDeleteFailed => 'No se pudo eliminar. Revisa tu conexión.';

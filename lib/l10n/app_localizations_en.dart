@@ -70,6 +70,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDelete => 'Delete';
 
   @override
+  String get commonDiscard => 'Discard';
+
+  @override
+  String get unsavedLeaveTitle => 'Leave without saving?';
+
+  @override
+  String get unsavedLeaveBody =>
+      'What you\'ve written here isn\'t saved yet. If you leave now, it will be lost.';
+
+  @override
+  String get unsavedKeepWriting => 'Keep writing';
+
+  @override
   String onboardingWelcomeTitle(String name) {
     return 'Welcome, $name';
   }
@@ -3741,6 +3754,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get journalEditorSave => 'Save entry';
 
   @override
+  String get journalDraftTitle => 'Pick up where you left off?';
+
+  @override
+  String get journalDraftBody =>
+      'You were writing here earlier and it wasn\'t saved. Your draft is still on this phone.';
+
+  @override
+  String get journalDraftCarryOn => 'Carry on writing';
+
+  @override
   String get journalHubTitle => 'Journal & mood';
 
   @override
@@ -4306,6 +4329,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recoverySaveFailed => 'Couldn\'t save — check your connection.';
+
+  @override
+  String get recoverySaveFailedKept =>
+      'Couldn\'t save — check your connection. What you entered is still here, so you can try again.';
 
   @override
   String get recoveryDeleteFailed =>

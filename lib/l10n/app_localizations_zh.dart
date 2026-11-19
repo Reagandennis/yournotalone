@@ -69,6 +69,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get commonDelete => '删除';
 
   @override
+  String get commonDiscard => '放弃';
+
+  @override
+  String get unsavedLeaveTitle => '不保存就离开吗？';
+
+  @override
+  String get unsavedLeaveBody => '你在这里写的内容还没有保存。现在离开的话，这些内容会丢失。';
+
+  @override
+  String get unsavedKeepWriting => '继续写';
+
+  @override
   String onboardingWelcomeTitle(String name) {
     return '欢迎你，$name';
   }
@@ -3534,6 +3546,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get journalEditorSave => '保存日记';
 
   @override
+  String get journalDraftTitle => '从上次停下的地方继续吗？';
+
+  @override
+  String get journalDraftBody => '你之前在这里写的内容没有保存。草稿还在这部手机上。';
+
+  @override
+  String get journalDraftCarryOn => '继续写草稿';
+
+  @override
   String get journalHubTitle => '日记与心情';
 
   @override
@@ -4080,6 +4101,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get recoverySaveFailed => '没能保存——请检查网络连接。';
+
+  @override
+  String get recoverySaveFailedKept => '没能保存——请检查网络连接。你填写的内容还在，可以再试一次。';
 
   @override
   String get recoveryDeleteFailed => '没能删除——请检查网络连接。';

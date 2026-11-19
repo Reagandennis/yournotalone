@@ -48,14 +48,17 @@ const _triggerKinds = recoveryTriggerKinds;
 /// Recovery hub: SOS urge surfing, commitments with streaks & pledges,
 /// and the craving trigger tracker.
 class RecoveryScreen extends StatefulWidget {
-  const RecoveryScreen({super.key});
+  const RecoveryScreen({super.key, this.repository});
+
+  /// Injectable so saving can be exercised without a backend.
+  final RecoveryRepository? repository;
 
   @override
   State<RecoveryScreen> createState() => _RecoveryScreenState();
 }
 
 class _RecoveryScreenState extends State<RecoveryScreen> {
-  final _repo = RecoveryRepository();
+  late final _repo = widget.repository ?? RecoveryRepository();
   List<RecoveryHabit>? _habits;
   List<CravingLog>? _cravings;
   bool _error = false;
@@ -119,6 +122,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     final l10n = context.l10n;
     final controller = TextEditingController();
     var dayOne = DateTime.now();
+    var saving = false;
+    String? error;
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -194,30 +199,52 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                 ],
               ),
               const SizedBox(height: 22),
-              ElevatedButton(
+              if (error case final message?) ...[
+                _SheetError(message),
+                const SizedBox(height: 12),
+              ],
+              // The sheet waits for the save and only closes once it's in:
+              // it used to close first, so a failed save lost the name.
+              AuthSubmitButton(
+                label: l10n.recoveryStartCounting,
+                loading: saving,
                 onPressed: () async {
                   final name = controller.text.trim();
                   if (name.isEmpty) return;
-                  Navigator.of(sheetContext).pop();
+                  setSheetState(() {
+                    saving = true;
+                    error = null;
+                  });
                   try {
                     await _repo.addHabit(name, dayOne);
-                    _load();
                   } catch (e) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-            content: Text(errorMessage(e, context.l10n.recoverySaveFailed)),
-                        ),
-                      );
+                    if (sheetContext.mounted) {
+                      setSheetState(() {
+                        saving = false;
+                        error = errorMessage(e, l10n.recoverySaveFailedKept);
+                      });
+                    } else {
+                      _showSaveFailed(e);
                     }
+                    return;
                   }
+                  if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                  if (mounted) _load();
                 },
-                child: Text(l10n.recoveryStartCounting),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  /// For a save that fails after its sheet was swiped away, when there's
+  /// no sheet left to say so in.
+  void _showSaveFailed(Object e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(errorMessage(e, context.l10n.recoverySaveFailed))),
     );
   }
 
@@ -451,6 +478,8 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     var intensity = 3;
     String trigger = _triggerKinds.first;
     final note = TextEditingController();
+    var saving = false;
+    String? error;
     final c = context.brand;
     final l10n = context.l10n;
     await showModalBottomSheet<void>(
@@ -552,34 +581,47 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
+                if (error case final message?) ...[
+                  _SheetError(message),
+                  const SizedBox(height: 12),
+                ],
+                // Waits for the save and closes only once it's in, so a
+                // lost connection leaves the log on screen to try again.
+                // It used to close first and lose it to a snackbar.
+                AuthSubmitButton(
+                  label: l10n.commonSave,
+                  loading: saving,
                   onPressed: () async {
-                    Navigator.of(sheetContext).pop();
+                    setSheetState(() {
+                      saving = true;
+                      error = null;
+                    });
                     try {
                       await _repo.logCraving(
                         intensity: intensity,
                         trigger: trigger,
                         note: note.text.trim(),
                       );
-                      _load();
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(context.l10n.recoveryCravingLogged),
-                          ),
-                        );
-                      }
                     } catch (e) {
-                      if (mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-            content: Text(errorMessage(e, context.l10n.recoverySaveFailed)),
-                          ),
-                        );
+                      if (sheetContext.mounted) {
+                        setSheetState(() {
+                          saving = false;
+                          error = errorMessage(e, l10n.recoverySaveFailedKept);
+                        });
+                      } else {
+                        _showSaveFailed(e);
                       }
+                      return;
                     }
+                    if (sheetContext.mounted) Navigator.of(sheetContext).pop();
+                    if (!mounted) return;
+                    _load();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(context.l10n.recoveryCravingLogged),
+                      ),
+                    );
                   },
-                  child: Text(l10n.commonSave),
                 ),
               ],
             ),
@@ -1058,6 +1100,32 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Why a sheet's save didn't go through, shown above its button while
+/// everything entered stays in place.
+class _SheetError extends StatelessWidget {
+  const _SheetError(this.message);
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.brand;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.error_outline_rounded, size: 18, color: c.red),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            message,
+            style: TextStyle(fontSize: 13, color: c.red, height: 1.4),
+          ),
+        ),
+      ],
     );
   }
 }

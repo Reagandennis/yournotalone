@@ -217,6 +217,53 @@ void main() {
     expect(journal.saved.single.$2, contains('Letting go tonight: The email'));
   });
 
+  testWidgets('leaving tonight\'s page with unkept changes asks first',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final night = DateTime(2026, 10, 2, 22);
+    await tester.pumpWidget(MaterialApp(
+      theme: buildAppTheme(),
+      home: Builder(
+        builder: (context) => Scaffold(
+          body: TextButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) =>
+                    TomorrowListScreen(journal: _FakeJournal(), clock: () => night),
+              ),
+            ),
+            child: const Text('Open'),
+          ),
+        ),
+      ),
+    ));
+    Future<void> open() async {
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+    }
+
+    await open();
+    await tester.enterText(find.widgetWithText(TextField, 'Thing 1'), 'Call the bank');
+    await tester.pump();
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsOneWidget);
+    await tester.tap(find.text('Keep writing'));
+    await tester.pumpAndSettle();
+
+    // Once kept on the phone it closes without asking, and opens again as
+    // it was left — with nothing new to ask about.
+    await tester.tap(_button('Done for tonight'));
+    await tester.pumpAndSettle();
+    expect(find.text('Open'), findsOneWidget);
+    await open();
+    expect(find.text('Call the bank'), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Leave without saving?'), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+  });
+
   testWidgets('awake at 3am walks through the 20-minute rule', (tester) async {
     await tester.pumpWidget(_wrap(const AwakeScreen(breakLength: Duration(seconds: 3))));
     await tester.pumpAndSettle();

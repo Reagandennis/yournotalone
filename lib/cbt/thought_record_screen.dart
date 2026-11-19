@@ -67,6 +67,14 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
     super.dispose();
   }
 
+  /// Anything typed or picked so far. The sliders don't count: they start
+  /// at a value, so moving one alone isn't worth asking about.
+  bool get _hasWritten =>
+      [_situation, _thought, _forEvidence, _against, _balanced]
+          .any((c) => c.text.trim().isNotEmpty) ||
+      _feelingSet.isNotEmpty ||
+      _traps.isNotEmpty;
+
   bool get _canContinue => switch (_step) {
     1 => _situation.text.trim().isNotEmpty,
     2 => _thought.text.trim().isNotEmpty,
@@ -371,6 +379,8 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
     return ToolkitScaffold(
       accent: cbtAccent,
       title: l10n.thoughtRecordTitle,
+      // Saving pops the screen itself; until then, leaving asks first.
+      hasUnsavedWork: _hasWritten,
       bottom: Row(
         children: [
           if (_step > 1)
@@ -381,7 +391,9 @@ class _ThoughtRecordScreenState extends State<ThoughtRecordScreen> {
           const Spacer(),
           if (last)
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              // maybePop, so "Done" next to "Save to journal" asks before
+              // throwing all seven steps away, the same as back does.
+              onPressed: () => Navigator.of(context).maybePop(),
               child: Text(l10n.commonDone),
             ),
           const SizedBox(width: 8),

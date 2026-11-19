@@ -6,6 +6,7 @@ import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
 import '../l10n/l10n.dart';
+import '../unsaved_work.dart';
 import 'toolkit_art.dart';
 
 /// The accent colour of whichever toolkit is on screen — the CBT card's
@@ -57,6 +58,7 @@ class ToolkitScaffold extends StatelessWidget {
     this.bottom,
     this.padding = const EdgeInsets.fromLTRB(20, 20, 20, 32),
     this.maxWidth = kReadableMaxWidth,
+    this.hasUnsavedWork = false,
   });
 
   final String title;
@@ -75,40 +77,48 @@ class ToolkitScaffold extends StatelessWidget {
   /// wider for a hub that lays its cards out in columns.
   final double maxWidth;
 
+  /// True while the person has written something here that isn't saved:
+  /// leaving then asks before it's thrown away. Exercises used to lose
+  /// every step to one back swipe.
+  final bool hasUnsavedWork;
+
   @override
   Widget build(BuildContext context) {
     final onAccent = onAccentFor(accent);
-    return ToolkitTheme(
-      accent: accent,
-      onAccent: onAccent,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: accent,
-          foregroundColor: onAccent,
-          titleTextStyle: TextStyle(
-            fontFamily: 'Poppins',
-            fontFamilyFallback: appFontFallback,
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: onAccent,
+    return UnsavedWorkGuard(
+      hasUnsavedWork: hasUnsavedWork,
+      child: ToolkitTheme(
+        accent: accent,
+        onAccent: onAccent,
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: accent,
+            foregroundColor: onAccent,
+            titleTextStyle: TextStyle(
+              fontFamily: 'Poppins',
+              fontFamilyFallback: appFontFallback,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: onAccent,
+            ),
+            title: Text(title),
+            actions: actions,
           ),
-          title: Text(title),
-          actions: actions,
-        ),
-        body: SafeArea(
-          child: ReadableWidth(
-            maxWidth: maxWidth,
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView(padding: padding, children: children),
-                ),
-                if (bottom != null)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-                    child: bottom,
+          body: SafeArea(
+            child: ReadableWidth(
+              maxWidth: maxWidth,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(padding: padding, children: children),
                   ),
-              ],
+                  if (bottom != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+                      child: bottom,
+                    ),
+                ],
+              ),
             ),
           ),
         ),

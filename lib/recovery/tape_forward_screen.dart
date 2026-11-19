@@ -6,6 +6,7 @@ import '../brand_layout.dart';
 import '../home/home_ui.dart';
 import '../journal/journal_repository.dart';
 import '../l10n/l10n.dart';
+import '../unsaved_work.dart';
 
 class _Step {
   const _Step(this.when, this.question, this.hint, this.icon, this.accent);
@@ -190,59 +191,64 @@ class _TapeForwardScreenState extends State<TapeForwardScreen> {
   Widget build(BuildContext context) {
     final c = context.brand;
     final l10n = context.l10n;
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
-              children: [
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: BackChip(),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  l10n.tapeForwardTitle,
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.w600,
-                    color: c.ink,
-                    height: 1.2,
+    // Saving pops the screen itself; until then, the back chip or a back
+    // swipe asks before the film written so far is thrown away.
+    return UnsavedWorkGuard(
+      hasUnsavedWork: _hasAnything,
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: kReadableMaxWidth),
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: BackChip(),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const PillarStripe(),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.tapeForwardIntro,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: c.textMuted,
-                    height: 1.55,
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.tapeForwardTitle,
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w600,
+                      color: c.ink,
+                      height: 1.2,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                for (var i = 0; i < _stepCount; i++) _stepCard(i),
-                const SizedBox(height: 4),
-                ElevatedButton(
-                  onPressed: _hasAnything && !_saving ? _save : null,
-                  child: Text(
-                    _saving ? l10n.tapeForwardSaving : l10n.tapeForwardKeep,
+                  const SizedBox(height: 12),
+                  const PillarStripe(),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.tapeForwardIntro,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: c.textMuted,
+                      height: 1.55,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  l10n.tapeForwardFooter,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: c.textMuted,
-                    height: 1.45,
+                  const SizedBox(height: 24),
+                  for (var i = 0; i < _stepCount; i++) _stepCard(i),
+                  const SizedBox(height: 4),
+                  ElevatedButton(
+                    onPressed: _hasAnything && !_saving ? _save : null,
+                    child: Text(
+                      _saving ? l10n.tapeForwardSaving : l10n.tapeForwardKeep,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Text(
+                    l10n.tapeForwardFooter,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: c.textMuted,
+                      height: 1.45,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
