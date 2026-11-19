@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
+import '../calendar_days.dart';
 import '../l10n/l10n.dart';
 import '../practice/feeling_store.dart';
 import '../practice/practice_repository.dart';
@@ -138,16 +139,15 @@ List<Insight> moodInsights({
     }
   }
 
-  // The last two weeks against the two before.
+  // The last two weeks against the two before, in calendar days.
+  int ago(MoodEntry e) => calendarDaysBetween(e.date, today);
   final recent = [
     for (final e in moods)
-      if (today.difference(DateUtils.dateOnly(e.date)).inDays < 14) _score(e),
+      if (ago(e) < 14) _score(e),
   ];
   final before = [
     for (final e in moods)
-      if (today.difference(DateUtils.dateOnly(e.date)).inDays >= 14 &&
-          today.difference(DateUtils.dateOnly(e.date)).inDays < 28)
-        _score(e),
+      if (ago(e) >= 14 && ago(e) < 28) _score(e),
   ];
   if (recent.length >= 4 && before.length >= 4) {
     final diff = _mean(recent) - _mean(before);

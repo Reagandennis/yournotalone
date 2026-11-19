@@ -229,4 +229,80 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Nothing logged'), findsOneWidget);
   });
+
+  test('the pattern is a trigger and a time that came together', () {
+    final today = DateTime.now();
+    DateTime at(int daysAgo, int hour) =>
+        DateTime(today.year, today.month, today.day - daysAgo, hour);
+    // Stress is the top trigger and the evening the top time, but stress
+    // never came in the evening.
+    final logs = [
+      craving('Stress', 4, at(1, 9)),
+      craving('Stress', 4, at(2, 14)),
+      craving('Stress', 4, at(3, 3)),
+      craving('Boredom', 2, at(4, 20)),
+      craving('Boredom', 2, at(5, 21)),
+      craving('Loneliness', 3, at(6, 22)),
+    ];
+    expect(cravingPattern(logs), ('Boredom', 'evening'));
+
+    // One of each isn't a pattern.
+    expect(
+      cravingPattern([
+        craving('Stress', 4, at(1, 9)),
+        craving('Boredom', 2, at(2, 20)),
+      ]),
+      isNull,
+    );
+    expect(cravingPattern(const []), isNull);
+
+    // A tie goes to the pair logged most recently.
+    expect(
+      cravingPattern([
+        craving('Stress', 4, at(5, 9)),
+        craving('Stress', 4, at(6, 10)),
+        craving('Habit', 2, at(1, 15)),
+        craving('Habit', 2, at(7, 16)),
+      ]),
+      ('Habit', 'afternoon'),
+    );
+  });
+
+  testWidgets('insights name only a pattern that happened', (tester) async {
+    final today = DateTime.now();
+    DateTime at(int daysAgo, int hour) =>
+        DateTime(today.year, today.month, today.day - daysAgo, hour);
+    final repo = _FakeRecoveryRepo(cravings: [
+      craving('Stress', 4, at(1, 9)),
+      craving('Stress', 5, at(2, 14)),
+      craving('Stress', 3, at(3, 3)),
+      craving('Boredom', 2, at(4, 20)),
+      craving('Boredom', 2, at(5, 21)),
+      craving('Loneliness', 3, at(6, 22)),
+    ]);
+    await tester.pumpWidget(wrap(TriggerInsightsScreen(repository: repo)));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('Boredom in the evening is your pattern'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Stress in the evening'), findsNothing);
+
+    // Nothing repeats: no pattern to name, but the counts still show.
+    await tester.pumpWidget(
+      wrap(
+        TriggerInsightsScreen(
+          key: UniqueKey(),
+          repository: _FakeRecoveryRepo(cravings: [
+            craving('Stress', 4, at(1, 9)),
+            craving('Boredom', 2, at(2, 20)),
+          ]),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('is your pattern'), findsNothing);
+    expect(find.text('Stress'), findsOneWidget);
+  });
 }

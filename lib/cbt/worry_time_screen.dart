@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -7,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../brand.dart';
 import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
+import '../toolkit/wall_clock_countdown.dart';
 import 'cbt_content.dart';
 
 /// A worry that's been parked until the worry window, and what became of it.
@@ -60,11 +60,10 @@ class WorryTimeScreen extends StatefulWidget {
   State<WorryTimeScreen> createState() => _WorryTimeScreenState();
 }
 
-class _WorryTimeScreenState extends State<WorryTimeScreen> {
+class _WorryTimeScreenState extends State<WorryTimeScreen>
+    with WallClockCountdown<WorryTimeScreen> {
   List<ParkedWorry>? _worries;
   final _input = TextEditingController();
-  Timer? _timer;
-  Duration? _left;
 
   @override
   void initState() {
@@ -76,12 +75,13 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
 
   @override
   void dispose() {
-    _timer?.cancel();
     _input.dispose();
     super.dispose();
   }
 
-  bool get _inWindow => _left != null;
+  /// The window is timed by the wall clock, so it closes on time even
+  /// with the phone locked in between.
+  bool get _inWindow => countdown != null;
 
   void _park() {
     final text = _input.text.trim();
@@ -98,23 +98,13 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
       );
   }
 
-  void _startWindow() {
-    setState(() => _left = widget.windowLength);
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final next = _left! - const Duration(seconds: 1);
-      if (next <= Duration.zero) {
-        _endWindow(timeUp: true);
-      } else {
-        setState(() => _left = next);
-      }
-    });
-  }
+  void _startWindow() => startCountdown(
+        widget.windowLength,
+        onDone: ({required late}) => _endWindow(timeUp: true),
+      );
 
   void _endWindow({bool timeUp = false}) {
-    _timer?.cancel();
-    _timer = null;
-    setState(() => _left = null);
+    setState(stopCountdown);
     if (timeUp) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -299,7 +289,7 @@ class _WorryTimeScreenState extends State<WorryTimeScreen> {
             child: Row(
               children: [
                 Text(
-                  _clock(_left!),
+                  _clock(Duration(seconds: secondsLeft)),
                   style: TextStyle(
                     fontSize: 34,
                     fontWeight: FontWeight.w600,

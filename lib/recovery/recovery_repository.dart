@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
+import 'package:clock/clock.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../calendar_days.dart';
 import '../l10n/l10n.dart';
 
 /// Milestones celebrated along a streak, in days.
@@ -68,13 +70,11 @@ class RecoveryHabit {
   final int bestStreakDays;
   final bool pledgedToday;
 
-  /// "Day 1" on the start date itself.
-  int get daysIn {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final start = DateTime(dayOne.year, dayOne.month, dayOne.day);
-    return math.max(1, today.difference(start).inDays + 1);
-  }
+  /// "Day 1" on the start date itself. Counted in calendar days, so the
+  /// night the clocks go forward doesn't take one away; it's also what the
+  /// best streak keeps when the count starts over.
+  int get daysIn =>
+      math.max(1, calendarDaysBetween(dayOne, clock.now()) + 1);
 
   /// The next milestone ahead, or null when past them all.
   (int, String)? get nextMilestone => nextMilestoneIn(currentL10n());

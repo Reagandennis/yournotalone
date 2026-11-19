@@ -7,6 +7,37 @@ import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'recovery_repository.dart';
 
+/// The trigger and part of the day that most often land together, as
+/// `(trigger, part of day)`, or null while no pair has come up more than
+/// once: one craving isn't a pattern. A tie goes to the pair logged most
+/// recently.
+///
+/// Taken as a pair, not as the top trigger and the top time apart: those
+/// two can come from different cravings, and joined into one sentence they
+/// describe something that never happened.
+(String, String)? cravingPattern(List<CravingLog> logs) {
+  final counts = <(String, String), int>{};
+  final latest = <(String, String), DateTime>{};
+  for (final log in logs) {
+    final pair = (log.trigger, log.partOfDay);
+    counts[pair] = (counts[pair] ?? 0) + 1;
+    final seen = latest[pair];
+    if (seen == null || log.createdAt.isAfter(seen)) {
+      latest[pair] = log.createdAt;
+    }
+  }
+  (String, String)? best;
+  for (final MapEntry(key: pair, value: count) in counts.entries) {
+    if (count < 2) continue;
+    if (best == null ||
+        count > counts[best]! ||
+        (count == counts[best]! && latest[pair]!.isAfter(latest[best]!))) {
+      best = pair;
+    }
+  }
+  return best;
+}
+
 /// What the craving log adds up to: which triggers keep coming back,
 /// when in the day they land, and how hard they've been hitting.
 class TriggerInsightsScreen extends StatefulWidget {
@@ -174,6 +205,7 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
 
     final triggers = _ranked(logs, (log) => log.trigger);
     final times = _ranked(logs, (log) => log.partOfDay);
+    final pattern = cravingPattern(logs);
     final timeCounts = {for (final e in times) e.key: e.value};
     final average =
         logs.map((l) => l.intensity).reduce((a, b) => a + b) / logs.length;
@@ -208,33 +240,35 @@ class _TriggerInsightsScreenState extends State<TriggerInsightsScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: c.tint(Pillars.yellow, 0.12),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            children: [
-              Icon(Icons.insights_rounded, size: 18, color: c.ink),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  l10n.triggerInsightsPattern(
-                    recoveryTriggerLabel(l10n, triggers.first.key),
-                    times.first.key,
-                  ),
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: c.ink,
-                    height: 1.45,
+        if (pattern case (final trigger, final partOfDay)) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: c.tint(Pillars.yellow, 0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.insights_rounded, size: 18, color: c.ink),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.triggerInsightsPattern(
+                      recoveryTriggerLabel(l10n, trigger),
+                      partOfDay,
+                    ),
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      color: c.ink,
+                      height: 1.45,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
         const SizedBox(height: 26),
         SectionHeader(title: l10n.triggerInsightsWhatSetsThemOff),
         const SizedBox(height: 12),

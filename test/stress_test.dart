@@ -133,6 +133,42 @@ void main() {
     expect((await loadStressCheckins()).single.score, 11);
   });
 
+  for (final scale in [1.0, 1.5]) {
+    testWidgets('the trend fits the highest scores at text size $scale',
+        (tester) async {
+      await saveStressCheckins([
+        for (var day = 1; day <= 8; day++)
+          StressCheckin('2026-09-${day.toString().padLeft(2, '0')}', 21 - day),
+      ]);
+      await tester.pumpWidget(MaterialApp(
+        theme: buildAppTheme(),
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
+          child: child!,
+        ),
+        home: StressCheckinScreen(clock: () => DateTime(2026, 9, 30)),
+      ));
+      await tester.pumpAndSettle();
+
+      // A RenderFlex overflow would have been reported by now.
+      expect(tester.takeException(), isNull);
+      expect(find.text('20'), findsOneWidget);
+      double barHeight(int score) => tester
+          .getSize(find
+              .descendant(
+                of: find.ancestor(
+                    of: find.text('$score'), matching: find.byType(Column))
+                    .first,
+                matching: find.byType(Container),
+              )
+              .last)
+          .height;
+      // Still taller for a higher score.
+      expect(barHeight(20), greaterThan(barHeight(13)));
+    });
+  }
+
   testWidgets('stressors are sorted into circles with a next step', (tester) async {
     await tester.pumpWidget(_wrap(const ControlCircleScreen()));
     await tester.pumpAndSettle();

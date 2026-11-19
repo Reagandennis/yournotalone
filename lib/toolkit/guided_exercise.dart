@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
@@ -10,6 +8,7 @@ import '../unsaved_work.dart';
 import 'toolkit_art.dart';
 import 'toolkit_content.dart';
 import 'toolkit_ui.dart';
+import 'wall_clock_countdown.dart';
 
 /// What a guided step asks for besides reading it.
 enum GuidedInput { none, note, list }
@@ -309,39 +308,29 @@ class _StepTimer extends StatefulWidget {
   State<_StepTimer> createState() => _StepTimerState();
 }
 
-class _StepTimerState extends State<_StepTimer> {
-  late int _left = widget.seconds;
-  Timer? _ticker;
+class _StepTimerState extends State<_StepTimer>
+    with WallClockCountdown<_StepTimer> {
+  bool get _running => countdown?.running ?? false;
 
-  bool get _running => _ticker != null;
-
-  @override
-  void dispose() {
-    _ticker?.cancel();
-    super.dispose();
-  }
+  /// Kept by the wall clock, so it still ends on time with the phone
+  /// locked; the full length until it's started.
+  int get _left => countdown == null ? widget.seconds : secondsLeft;
 
   void _toggle() {
-    if (_running) {
-      _ticker!.cancel();
-      setState(() => _ticker = null);
-      return;
+    final timer = countdown;
+    if (timer != null && timer.running) {
+      timer.pause();
+    } else if (timer != null && !timer.done) {
+      timer.start();
+    } else {
+      startCountdown(
+        Duration(seconds: widget.seconds),
+        // No chime for an end that went by with the app away.
+        onDone: ({required late}) {
+          if (!late) SoundPlayer.instance.playOnce(chimeAsset);
+        },
+      );
     }
-    if (_left == 0) _left = widget.seconds;
-    setState(() {
-      _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
-        if (!mounted) return;
-        setState(() => _left--);
-        if (_left <= 0) {
-          _ticker?.cancel();
-          setState(() {
-            _ticker = null;
-            _left = 0;
-          });
-          SoundPlayer.instance.playOnce(chimeAsset);
-        }
-      });
-    });
   }
 
   @override

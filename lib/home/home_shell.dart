@@ -104,6 +104,10 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   int _index = 0;
 
+  /// Ticks each time the Home tab is picked, from another tab or tapped
+  /// again, so Home can catch up on what changed meanwhile.
+  final _homeShown = ValueNotifier(0);
+
   @override
   void initState() {
     super.initState();
@@ -136,13 +140,14 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     final index = homeTabRequest.value;
     if (index == null || !mounted) return;
     homeTabRequest.value = null;
-    setState(() => _index = index);
+    _select(index);
   }
 
   @override
   void dispose() {
     homeTabRequest.removeListener(_onTabRequest);
     WidgetsBinding.instance.removeObserver(this);
+    _homeShown.dispose();
     super.dispose();
   }
 
@@ -173,14 +178,21 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     ),
   ];
 
-  void _select(int i) => setState(() => _index = i);
+  void _select(int i) {
+    setState(() => _index = i);
+    if (i == 0) _homeShown.value++;
+  }
 
   @override
   Widget build(BuildContext context) {
     final tabs = IndexedStack(
       key: _tabsKey,
       index: _index,
-      children: const [HomeTab(), ExploreTab(), SettingsTab()],
+      children: [
+        HomeTab(reselected: _homeShown),
+        const ExploreTab(),
+        const SettingsTab(),
+      ],
     );
     final barColor = Theme.of(context).navigationBarTheme.backgroundColor;
     final border = BorderSide(color: context.brand.border, width: 1);

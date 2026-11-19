@@ -1,13 +1,56 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:yournotalone/app_navigation.dart';
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/home/home_shell.dart';
 import 'package:yournotalone/home/home_tab.dart';
 import 'package:yournotalone/home/mood_face.dart';
+import 'package:yournotalone/home/mood_repository.dart';
 import 'package:yournotalone/home/settings_tab.dart';
+import 'package:yournotalone/practice/practice_repository.dart';
+import 'package:yournotalone/therapy/therapy_repository.dart';
+
+class _NoPractice extends PracticeRepository {
+  @override
+  Future<List<PracticeSession>> fetchRecent({int days = 120}) async =>
+      const [];
+}
+
+/// Today's saved check-in, as the server would answer.
+class _Moods extends MoodRepository {
+  int? today;
+  bool offline = false;
+
+  @override
+  Future<int?> fetchTodayMoodIndex() async {
+    if (offline) throw Exception('offline');
+    return today;
+  }
+
+  @override
+  Future<List<MoodEntry>> fetchHistory({int days = 90}) async => const [];
+}
+
+/// The app sent to the background and brought back.
+void _awayAndBack(WidgetTester tester) {
+  for (final state in const [
+    AppLifecycleState.inactive,
+    AppLifecycleState.hidden,
+    AppLifecycleState.paused,
+    AppLifecycleState.hidden,
+    AppLifecycleState.inactive,
+    AppLifecycleState.resumed,
+  ]) {
+    tester.binding.handleAppLifecycleStateChanged(state);
+  }
+  // Supabase starts its sign-in refresh timer on the way back; nothing
+  // here is signed in, and the test can't end with it running.
+  Supabase.instance.client.auth.stopAutoRefresh();
+}
 
 void main() {
   setUpAll(() async {
@@ -98,5 +141,144 @@ void main() {
     await tester.pumpAndSettle();
     expect(face('Awful').dimmed, isFalse);
     expect(face('Great').dimmed, isTrue);
+  });
+
+  group('Home catches up', () {
+    late int fetches;
+    late _Moods moods;
+    late ValueNotifier<int> shown;
+
+    setUp(() {
+      fetches = 0;
+      moods = _Moods();
+      shown = ValueNotifier(0);
+    });
+
+    Widget home() => MaterialApp(
+          theme: buildAppTheme(),
+          navigatorObservers: [appRouteObserver],
+          home: Scaffold(
+            body: HomeTab(
+              practice: _NoPractice(),
+              mood: moods,
+              therapyRequests: () async {
+                fetches++;
+                return const <TherapyRequest>[];
+              },
+              reselected: shown,
+            ),
+          ),
+        );
+
+    MoodFace face(WidgetTester tester, String label) =>
+        tester.widget<MoodFace>(
+          find
+              .descendant(
+                of: find.byType(HomeTab),
+                matching: find.byWidgetPredicate(
+                  (w) => w is MoodFace && w.level.label == label,
+                ),
+              )
+              .first,
+        );
+
+    testWidgets('when a page opened on it is closed', (tester) async {
+      await tester.pumpWidget(home());
+      await tester.pumpAndSettle();
+      expect(fetches, 1);
+
+      final navigator = Navigator.of(tester.element(find.byType(HomeTab)));
+      navigator.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('A practice')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(fetches, 1);
+      navigator.pop();
+      await tester.pumpAndSettle();
+      expect(fetches, 2);
+
+      // Every time, however soon.
+      navigator.push(
+        MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Text('A course')),
+        ),
+      );
+      await tester.pumpAndSettle();
+      navigator.pop();
+      await tester.pumpAndSettle();
+      expect(fetches, 3);
+
+      // A sheet isn't a page.
+      showModalBottomSheet<void>(
+        context: tester.element(find.byType(HomeTab)),
+        builder: (_) => const Text('A sheet'),
+      );
+      await tester.pumpAndSettle();
+      navigator.pop();
+      await tester.pumpAndSettle();
+      expect(fetches, 3);
+    });
+
+    testWidgets('back in the app or on the tab, unless that was moments ago',
+        (tester) async {
+      final pumped = clock;
+      var later = Duration.zero;
+      await withClock(Clock(() => pumped.now().add(later)), () async {
+        await tester.pumpWidget(home());
+        await tester.pumpAndSettle();
+        expect(fetches, 1);
+
+        later += const Duration(seconds: 10);
+        _awayAndBack(tester);
+        await tester.pumpAndSettle();
+        expect(fetches, 1);
+
+        later += const Duration(minutes: 5);
+        _awayAndBack(tester);
+        await tester.pumpAndSettle();
+        expect(fetches, 2);
+
+        shown.value++;
+        await tester.pumpAndSettle();
+        expect(fetches, 2);
+
+        later += const Duration(minutes: 1);
+        shown.value++;
+        await tester.pumpAndSettle();
+        expect(fetches, 3);
+      });
+    });
+
+    testWidgets('and yesterday\'s check-in isn\'t lit today', (tester) async {
+      var now = DateTime(2026, 11, 19, 21);
+      moods.today = 3;
+      await withClock(Clock(() => now), () async {
+        await tester.pumpWidget(home());
+        await tester.pumpAndSettle();
+        expect(face(tester, 'Good').dimmed, isFalse);
+        expect(face(tester, 'Great').dimmed, isTrue);
+
+        // The next morning, and the server can't be reached: the check-in
+        // goes dark anyway.
+        now = DateTime(2026, 11, 20, 7);
+        moods.offline = true;
+        _awayAndBack(tester);
+        await tester.pumpAndSettle();
+        expect(face(tester, 'Good').dimmed, isFalse);
+        expect(face(tester, 'Great').dimmed, isFalse);
+
+        // Today's own, once it's there.
+        moods
+          ..offline = false
+          ..today = 1;
+        now = now.add(const Duration(minutes: 1));
+        _awayAndBack(tester);
+        await tester.pumpAndSettle();
+        expect(face(tester, 'Low').dimmed, isFalse);
+        expect(face(tester, 'Good').dimmed, isTrue);
+      });
+    });
   });
 }

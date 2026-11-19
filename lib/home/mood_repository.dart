@@ -1,6 +1,8 @@
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../calendar_days.dart';
+
 /// One saved check-in: which day, and how it went.
 class MoodEntry {
   const MoodEntry({required this.date, required this.index});
@@ -53,7 +55,7 @@ class MoodRepository {
   Future<List<MoodEntry>> fetchHistory({int days = 90}) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) return const [];
-    final since = DateTime.now().subtract(Duration(days: days - 1));
+    final since = addCalendarDays(DateTime.now(), -(days - 1));
     final rows = await _client
         .from('mood_entries')
         .select('mood_score, entry_date')

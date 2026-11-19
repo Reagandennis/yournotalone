@@ -13,6 +13,11 @@ final appMessengerKey = GlobalKey<ScaffoldMessengerState>();
 /// screen from outside the tree can tell whether it's already there.
 final appRoutes = AppRouteTracker();
 
+/// Tells a screen when a page opened on top of it is closed again, so it
+/// can show what changed there: Home, after a practice or a booking.
+/// Pages only; a sheet or a dialog closing doesn't count.
+final appRouteObserver = RouteObserver<PageRoute<dynamic>>();
+
 class AppRouteTracker extends NavigatorObserver {
   final _stack = <Route<dynamic>>[];
 

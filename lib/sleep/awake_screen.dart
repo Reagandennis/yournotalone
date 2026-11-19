@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
@@ -7,6 +5,7 @@ import '../l10n/l10n.dart';
 import '../sounds/sounds_screen.dart';
 import '../toolkit/toolkit_links.dart';
 import '../toolkit/toolkit_ui.dart';
+import '../toolkit/wall_clock_countdown.dart';
 import 'sleep_content.dart';
 
 /// The 20-minute rule, walked through in the middle of the night: notice
@@ -24,32 +23,23 @@ class AwakeScreen extends StatefulWidget {
   State<AwakeScreen> createState() => _AwakeScreenState();
 }
 
-class _AwakeScreenState extends State<AwakeScreen> {
+class _AwakeScreenState extends State<AwakeScreen>
+    with WallClockCountdown<AwakeScreen> {
   int _step = 1;
-  Timer? _timer;
-  Duration? _left;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  /// What's left of the break, by the wall clock: the phone is likely
+  /// locked for most of it. Null when no break is running.
+  Duration? get _left =>
+      countdown == null ? null : Duration(seconds: secondsLeft);
 
-  void _startBreak() {
-    setState(() => _left = widget.breakLength);
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final next = _left! - const Duration(seconds: 1);
-      if (next <= Duration.zero) {
-        _timer?.cancel();
-        setState(() {
-          _left = null;
-          _step = 3;
-        });
-      } else {
-        setState(() => _left = next);
-      }
-    });
+  void _startBreak() => startCountdown(
+    widget.breakLength,
+    onDone: ({required late}) => _endBreak(),
+  );
+
+  void _endBreak() {
+    stopCountdown();
+    setState(() => _step = 3);
   }
 
   String _clock(Duration d) =>
@@ -192,13 +182,7 @@ class _AwakeScreenState extends State<AwakeScreen> {
                 child: Text(l10n.awakeStartBreakButton),
               )
             : OutlinedButton(
-                onPressed: () {
-                  _timer?.cancel();
-                  setState(() {
-                    _left = null;
-                    _step = 3;
-                  });
-                },
+                onPressed: _endBreak,
                 child: Text(l10n.awakeSleepyButton),
               ),
       _ => ElevatedButton(

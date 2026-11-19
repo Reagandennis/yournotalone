@@ -1,10 +1,11 @@
-import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
+import '../toolkit/wall_clock_countdown.dart';
 import 'stress_content.dart';
 
 /// One part of a sigh: how long it lasts, what to do, and how big the
@@ -43,70 +44,47 @@ class SighScreen extends StatefulWidget {
   State<SighScreen> createState() => _SighScreenState();
 }
 
-class _SighScreenState extends State<SighScreen> {
-  Timer? _timer;
-  bool _running = false;
-  int _round = 0;
-  int _phase = 0;
-  int _left = 0;
+class _SighScreenState extends State<SighScreen>
+    with WallClockCountdown<SighScreen> {
   bool _done = false;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  static final _roundSeconds = sighPhases.fold(0, (sum, p) => sum + p.seconds);
+
+  bool get _running => countdown?.running ?? false;
+
+  int get _totalSeconds => _roundSeconds * widget.rounds;
+
+  /// Where the rounds are — round from 1, phase, and seconds left in it —
+  /// worked out from the time gone rather than counted tick by tick, so
+  /// they're in the right place after the phone has been locked. The last
+  /// second holds until the clock's next check calls the end.
+  (int, int, int) get _position {
+    final gone = math.min(secondsGone, _totalSeconds - 1);
+    var into = gone % _roundSeconds;
+    for (final (i, phase) in sighPhases.indexed) {
+      if (into < phase.seconds) {
+        return (gone ~/ _roundSeconds + 1, i, phase.seconds - into);
+      }
+      into -= phase.seconds;
+    }
+    return (widget.rounds, sighPhases.length - 1, 0);
   }
 
   void _start() {
-    setState(() {
-      _running = true;
-      _done = false;
-      _round = 1;
-      _phase = 0;
-      _left = sighPhases[0].seconds;
-    });
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+    setState(() => _done = false);
+    startCountdown(
+      Duration(seconds: _totalSeconds),
+      onDone: ({required late}) => setState(() => _done = true),
+    );
   }
 
-  void _tick() {
-    if (!mounted) return;
-    if (_left > 1) {
-      setState(() => _left--);
-      return;
-    }
-    // Phase over: next phase, next round, or finished.
-    if (_phase < sighPhases.length - 1) {
-      setState(() {
-        _phase++;
-        _left = sighPhases[_phase].seconds;
-      });
-    } else if (_round < widget.rounds) {
-      setState(() {
-        _round++;
-        _phase = 0;
-        _left = sighPhases[0].seconds;
-      });
-    } else {
-      _timer?.cancel();
-      setState(() {
-        _running = false;
-        _done = true;
-      });
-    }
-  }
-
-  void _stop() {
-    _timer?.cancel();
-    setState(() {
-      _running = false;
-      _round = 0;
-    });
-  }
+  void _stop() => setState(stopCountdown);
 
   @override
   Widget build(BuildContext context) {
     final c = context.brand;
-    final phase = sighPhases[_phase];
+    final (round, phaseIndex, left) = _position;
+    final phase = sighPhases[phaseIndex];
     final scale = _running ? phase.scale : 0.6;
     // The label runs past the inner circle as it shrinks, so in the dark it
     // stays light and the circle is a deep amber rather than bright yellow.
@@ -126,7 +104,7 @@ class _SighScreenState extends State<SighScreen> {
           title: _done
               ? l10n.sighDoneTitle
               : _running
-              ? l10n.sighRoundOf(_round, widget.rounds)
+              ? l10n.sighRoundOf(round, widget.rounds)
               : l10n.sighIntroTitle,
           subtitle: _done ? l10n.sighDoneBody : l10n.sighIntroBody,
         ),
@@ -175,7 +153,7 @@ class _SighScreenState extends State<SighScreen> {
                     ),
                     if (_running)
                       Text(
-                        '$_left',
+                        '$left',
                         style: TextStyle(
                           fontSize: 30,
                           fontWeight: FontWeight.w600,

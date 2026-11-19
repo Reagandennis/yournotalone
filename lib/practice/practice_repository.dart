@@ -8,6 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
+import '../calendar_days.dart';
 import '../l10n/l10n.dart';
 import 'pending_practice.dart';
 
@@ -330,7 +331,9 @@ class PracticeRepository {
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final weekStart = today.subtract(const Duration(days: 6));
+    // Midnight six calendar days back; 6 x 24 hours misses or adds an
+    // hour of the week when the clocks change inside it.
+    final weekStart = addCalendarDays(today, -6);
 
     var total = 0.0;
     var week = 0.0;

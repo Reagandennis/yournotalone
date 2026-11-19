@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
+import '../app_navigation.dart';
 import '../billing/nudges.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../calendar_days.dart';
 import '../courses/course_catalog.dart';
 import '../courses/course_progress.dart';
 import '../courses/course_screen.dart';
@@ -106,13 +109,18 @@ class HomeTab extends StatefulWidget {
   const HomeTab({
     super.key,
     this.practice,
+    this.mood,
     this.therapyRequests,
     this.therapyPrice,
     this.recommendations,
+    this.reselected,
   });
 
   /// Injectable so the practice strip can be driven with known sessions.
   final PracticeRepository? practice;
+
+  /// Injectable so the check-in can be driven with known moods.
+  final MoodRepository? mood;
 
   /// Injectable so the session banner can be tested without a backend.
   final Future<List<TherapyRequest>> Function()? therapyRequests;
@@ -123,14 +131,30 @@ class HomeTab extends StatefulWidget {
   /// Injectable so the suggestions can come from a fake Worker.
   final RecommendationsClient? recommendations;
 
+  /// Fires when the Home tab is picked in the shell, coming back from
+  /// another tab or tapped again, so what's shown can catch up.
+  final Listenable? reselected;
+
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
-  final _moodRepo = MoodRepository();
+class _HomeTabState extends State<HomeTab> with RouteAware {
+  late final _moodRepo = widget.mood ?? MoodRepository();
   late final _practiceRepo = widget.practice ?? PracticeRepository();
+
+  /// Today's check-in, picked here or loaded, and the day it was for.
   int? _mood;
+  DateTime? _moodDay;
+
+  /// [_mood], as long as it's still the day it was for: a check-in from
+  /// before midnight isn't today's.
+  int? get _todaysMood {
+    final day = _moodDay;
+    if (day == null || !DateUtils.isSameDay(day, clock.now())) return null;
+    return _mood;
+  }
+
   PracticeSummary? _practice;
   late final _rhythmRepo = RhythmRepository(practice: _practiceRepo);
 
@@ -158,20 +182,116 @@ class _HomeTabState extends State<HomeTab> {
   List<Recommendation>? _suggested;
   List<_QuickItem> _quick = _quickItems;
 
+  /// When Home last fetched what it shows. Home stays alive under the
+  /// screens opened from it and behind the other tabs, so it fetches again
+  /// when it's back in view; this keeps that from happening over and over.
+  DateTime? _loadedAt;
+
+  /// How long a load counts as fresh when coming back to Home.
+  static const _fresh = Duration(seconds: 30);
+
+  late final AppLifecycleListener _lifecycle;
+  ModalRoute<dynamic>? _route;
+
   @override
   void initState() {
     super.initState();
+    _lifecycle = AppLifecycleListener(onResume: _refresh);
+    widget.reselected?.addListener(_refresh);
+    _load();
+    (widget.therapyPrice ??
+            () async => loadTherapyPriceQuote(TherapyRepository()))()
+        .then((quote) {
+          if (mounted) setState(() => _therapyPrice = quote);
+        })
+        .catchError((_) {
+          if (mounted) {
+            setState(() => _therapyPrice = TherapyPriceQuote.fallback);
+          }
+        });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != _route) {
+      appRouteObserver.unsubscribe(this);
+      _route = route;
+      if (route is PageRoute) appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  @override
+  void didUpdateWidget(HomeTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.reselected != widget.reselected) {
+      oldWidget.reselected?.removeListener(_refresh);
+      widget.reselected?.addListener(_refresh);
+    }
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    widget.reselected?.removeListener(_refresh);
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  /// Back from a screen opened on top of Home, where a practice may have
+  /// been finished or a session booked: always worth a fresh look.
+  @override
+  void didPopNext() => _load();
+
+  /// Back from the background, or the Home tab picked: fetched again
+  /// unless that was moments ago, and always on a new day, so yesterday's
+  /// check-in doesn't stay lit.
+  void _refresh() {
+    final last = _loadedAt;
+    final now = clock.now();
+    if (last != null &&
+        DateUtils.isSameDay(last, now) &&
+        now.difference(last) < _fresh) {
+      return;
+    }
+    _load();
+  }
+
+  /// Everything on Home that can change while it's out of view. Each part
+  /// fails on its own and keeps what it showed before.
+  void _load() {
+    final asked = clock.now();
+    _loadedAt = asked;
+    // A check-in from before midnight goes dark at once, not when the
+    // server has answered.
+    if (_moodDay != null && _todaysMood == null) {
+      setState(() {
+        _mood = null;
+        _moodDay = null;
+      });
+    }
     // Re-light today's mood if one was already saved.
     _moodRepo
         .fetchTodayMoodIndex()
         .then((index) {
-          if (mounted && index != null) setState(() => _mood = index);
+          if (mounted && index != null) {
+            setState(() {
+              _mood = index;
+              _moodDay = asked;
+            });
+          }
         })
         .catchError((_) {});
     _moodRepo
         .fetchHistory(days: 7)
         .then((entries) {
-          if (mounted) setState(() => _week = entries);
+          if (!mounted) return;
+          setState(() {
+            _week = entries;
+            // A pick still on its way to the server stays in the strip.
+            if (_todaysMood case final mood?) _week = _withToday(mood);
+          });
         })
         .catchError((_) {
           // The strip just stays hidden.
@@ -197,16 +317,6 @@ class _HomeTabState extends State<HomeTab> {
         })
         .catchError((_) {
           // No session to show; the plain banner stays.
-        });
-    (widget.therapyPrice ??
-            () async => loadTherapyPriceQuote(TherapyRepository()))()
-        .then((quote) {
-          if (mounted) setState(() => _therapyPrice = quote);
-        })
-        .catchError((_) {
-          if (mounted) {
-            setState(() => _therapyPrice = TherapyPriceQuote.fallback);
-          }
         });
     unawaited(_orderQuickAccess());
     unawaited(_loadSuggestions());
@@ -315,9 +425,10 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Future<void> _selectMood(int index) async {
-    final firstTime = _mood == null;
+    final firstTime = _todaysMood == null;
     setState(() {
       _mood = index;
+      _moodDay = clock.now();
       _week = _withToday(index);
       // A check-in counts: today's sun lights as it's made.
       _rhythm = _rhythm?.withToday();
@@ -360,7 +471,7 @@ class _HomeTabState extends State<HomeTab> {
   List<MoodEntry>? _withToday(int index) {
     final week = _week;
     if (week == null) return null;
-    final now = DateTime.now();
+    final now = clock.now();
     final today = DateTime(now.year, now.month, now.day);
     return [
       MoodEntry(date: today, index: index),
@@ -568,7 +679,7 @@ class _HomeTabState extends State<HomeTab> {
     final c = context.brand;
     final week = _week;
     if (week == null || week.isEmpty) return const SizedBox.shrink();
-    final now = DateTime.now();
+    final now = clock.now();
     final today = DateTime(now.year, now.month, now.day);
     final letters = context.l10n.rhythmWeekdayLetters.split(' ');
     return InkWell(
@@ -670,7 +781,7 @@ class _HomeTabState extends State<HomeTab> {
     // per-face budget and cap it at the size the design wants.
     final width = MediaQuery.sizeOf(context).width;
     final faceSize = ((width - 56 - 36) / 5).clamp(30.0, 48.0);
-    final mood = _mood;
+    final mood = _todaysMood;
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
       decoration: BoxDecoration(
@@ -1167,9 +1278,7 @@ class _HomeTabState extends State<HomeTab> {
 
   /// "Today, 17:00", "Tomorrow, 9:30", else "Thu 30 Oct, 17:00".
   static String _when(DateTime at, DateTime now) {
-    final today = DateTime(now.year, now.month, now.day);
-    final day = DateTime(at.year, at.month, at.day);
-    return switch (day.difference(today).inDays) {
+    return switch (calendarDaysBetween(now, at)) {
       0 => currentL10n().homeToday(formatTime(at)),
       1 => currentL10n().homeTomorrow(formatTime(at)),
       _ => formatDateTime(at),

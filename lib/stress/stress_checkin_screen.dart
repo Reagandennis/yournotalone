@@ -183,17 +183,32 @@ class _StressCheckinScreenState extends State<StressCheckinScreen> {
                             ),
                           ),
                           const SizedBox(height: 3),
-                          Container(
-                            height: 6 + checkin.score * 2.2,
-                            decoration: BoxDecoration(
-                              color: c.art(
-                                checkin.score > 13
-                                    ? Pillars.red
-                                    : checkin.score > 6
-                                    ? stressAccent
-                                    : const Color(0xFF3E9B5B),
-                              ),
-                              borderRadius: BorderRadius.circular(4),
+                          // The bar gets what the score label leaves of
+                          // the row. A full-height 20 with the label above
+                          // it is taller than the row, more so with larger
+                          // text, so the bars shrink to fit, all by the
+                          // same amount, and still compare.
+                          Flexible(
+                            child: LayoutBuilder(
+                              builder: (context, box) {
+                                const tallest = 6 + 20 * 2.2;
+                                final fit = box.maxHeight < tallest
+                                    ? box.maxHeight / tallest
+                                    : 1.0;
+                                return Container(
+                                  height: (6 + checkin.score * 2.2) * fit,
+                                  decoration: BoxDecoration(
+                                    color: c.art(
+                                      checkin.score > 13
+                                          ? Pillars.red
+                                          : checkin.score > 6
+                                          ? stressAccent
+                                          : const Color(0xFF3E9B5B),
+                                    ),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                         ],

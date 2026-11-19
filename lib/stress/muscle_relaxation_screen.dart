@@ -1,10 +1,11 @@
-import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import '../brand.dart';
 import '../l10n/l10n.dart';
 import '../toolkit/toolkit_ui.dart';
+import '../toolkit/wall_clock_countdown.dart';
 import 'stress_content.dart';
 
 /// Progressive muscle relaxation: tense each group hard for a few
@@ -24,60 +25,38 @@ class MuscleRelaxationScreen extends StatefulWidget {
   State<MuscleRelaxationScreen> createState() => _MuscleRelaxationScreenState();
 }
 
-class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen> {
-  Timer? _timer;
-  int _index = -1; // -1: not started
-  bool _tensing = true;
-  int _left = 0;
+class _MuscleRelaxationScreenState extends State<MuscleRelaxationScreen>
+    with WallClockCountdown<MuscleRelaxationScreen> {
   bool _done = false;
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  int get _groupSeconds => widget.tenseSeconds + widget.releaseSeconds;
+
+  /// Into the whole run, by the wall clock rather than by counting ticks,
+  /// so the groups are where they should be after the phone was locked.
+  /// The last second holds until the clock's next check calls the end.
+  int get _gone =>
+      math.min(secondsGone, _groupSeconds * muscleGroups.length - 1);
+
+  /// The group being worked, or -1 when not started.
+  int get _index =>
+      (countdown?.running ?? false) ? _gone ~/ _groupSeconds : -1;
+
+  bool get _tensing => _gone % _groupSeconds < widget.tenseSeconds;
+
+  /// Seconds left of tensing or of letting go.
+  int get _left => _tensing
+      ? widget.tenseSeconds - _gone % _groupSeconds
+      : _groupSeconds - _gone % _groupSeconds;
 
   void _start() {
-    setState(() {
-      _done = false;
-      _index = 0;
-      _tensing = true;
-      _left = widget.tenseSeconds;
-    });
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+    setState(() => _done = false);
+    startCountdown(
+      Duration(seconds: _groupSeconds * muscleGroups.length),
+      onDone: ({required late}) => setState(() => _done = true),
+    );
   }
 
-  void _tick() {
-    if (!mounted) return;
-    if (_left > 1) {
-      setState(() => _left--);
-      return;
-    }
-    if (_tensing) {
-      setState(() {
-        _tensing = false;
-        _left = widget.releaseSeconds;
-      });
-    } else if (_index < muscleGroups.length - 1) {
-      setState(() {
-        _index++;
-        _tensing = true;
-        _left = widget.tenseSeconds;
-      });
-    } else {
-      _timer?.cancel();
-      setState(() {
-        _done = true;
-        _index = -1;
-      });
-    }
-  }
-
-  void _stop() {
-    _timer?.cancel();
-    setState(() => _index = -1);
-  }
+  void _stop() => setState(stopCountdown);
 
   @override
   Widget build(BuildContext context) {

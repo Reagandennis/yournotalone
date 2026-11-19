@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../calendar_days.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'feeling_store.dart';
@@ -59,9 +60,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   String _dateLabel(DateTime d) {
     final l10n = context.l10n;
     final now = DateTime.now();
-    final days = DateTime(now.year, now.month, now.day)
-        .difference(DateTime(d.year, d.month, d.day))
-        .inDays;
+    final days = calendarDaysBetween(d, now);
     if (days == 0) return l10n.practiceToday;
     if (days == 1) return l10n.practiceYesterday;
     final pattern = d.year == now.year

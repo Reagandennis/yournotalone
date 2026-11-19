@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../calendar_days.dart';
 import '../l10n/l10n.dart';
 import 'home_ui.dart';
 import 'mood_repository.dart';
@@ -68,9 +69,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
 
   String _dateLabel(DateTime d) {
     final now = DateTime.now();
-    final days = DateTime(now.year, now.month, now.day)
-        .difference(DateTime(d.year, d.month, d.day))
-        .inDays;
+    final days = calendarDaysBetween(d, now);
     final l10n = context.l10n;
     if (days == 0) return l10n.moodHistoryToday;
     if (days == 1) return l10n.moodHistoryYesterday;
@@ -247,8 +246,8 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _dateLabel(DateTime.now()
-                  .subtract(const Duration(days: _stripDays - 1))),
+              _dateLabel(
+                  addCalendarDays(DateTime.now(), -(_stripDays - 1))),
               style: TextStyle(fontSize: 11, color: c.textMuted),
             ),
             Text(

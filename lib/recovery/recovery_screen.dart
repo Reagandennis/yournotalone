@@ -5,6 +5,7 @@ import '../auth/auth_ui.dart';
 import '../billing/purchases_service.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../calendar_days.dart';
 import '../content/content_catalog.dart';
 import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
@@ -172,7 +173,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
                     (l10n.recoveryToday, DateTime.now()),
                     (
                       l10n.recoveryYesterday,
-                      DateTime.now().subtract(const Duration(days: 1))
+                      addCalendarDays(DateTime.now(), -1)
                     ),
                   ])
                     ChoiceChip(

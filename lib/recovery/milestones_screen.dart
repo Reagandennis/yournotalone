@@ -1,9 +1,11 @@
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../calendar_days.dart';
 import '../l10n/l10n.dart';
 import 'recovery_repository.dart';
 
@@ -45,8 +47,10 @@ class _MilestonesScreenState extends State<MilestonesScreen> {
 
   String _reachedOn(RecoveryHabit habit, int days) {
     final l10n = context.l10n;
-    final day = habit.dayOne.add(Duration(days: days - 1));
-    final pattern = day.year == DateTime.now().year
+    // By the calendar: adding 24-hour days lands on the evening before
+    // once the clocks have gone back.
+    final day = addCalendarDays(habit.dayOne, days - 1);
+    final pattern = day.year == clock.now().year
         ? l10n.recoveryDatePattern
         : l10n.recoveryDatePatternWithYear;
     return DateFormat(pattern, l10n.localeName).format(day);
