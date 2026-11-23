@@ -4,19 +4,23 @@ status: published
 order: 210
 premium: false
 icon: graphic_eq_rounded
-accent: yellow
+accent: blue
 tags:
   needs:
+    - sleep
     - anxious
     - panic
     - low
     - stressed
     - focus
+    - reflect
+    - good
   dayParts:
     - morning
     - afternoon
     - evening
     - night
+  calmingSafe: true
 text:
   en:
     title: Deep focus
@@ -45,7 +49,7 @@ text:
 body:
   type: sound
   category: focus
-  audio: Sounds/sound-deep-focus-mw2ih3bw.wav
+  audio: Sounds/sound-deep-focus-mwsx0lld.mp3
   loop: true
   waveFreq: 2.5
   waveSpeed: 1

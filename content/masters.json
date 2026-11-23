@@ -72,6 +72,12 @@
     "sha256": "43754bd77a834bcb5b9bc79b46fc3dd43286482f7ec0d8c9ef627b2b33c5e7a0"
   },
   {
+    "name": "sound-deep-focus-mwsx0lld.mp3",
+    "key": "private/masters/sound-deep-focus-mwsx0lld.mp3",
+    "bytes": 12359053,
+    "sha256": "ecc9465cdcb7e7f7f5ffb36c01d4acc77536a8bf6c44bda2249123433f744928"
+  },
+  {
     "name": "stream.wav",
     "key": "private/masters/stream.wav",
     "bytes": 34560044,
