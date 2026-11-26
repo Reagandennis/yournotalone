@@ -90,7 +90,9 @@ class PurchasesService {
         ..appUserID = Supabase.instance.client.auth.currentUser?.id;
       await Purchases.configure(configuration);
       _configured = true;
-      Purchases.addCustomerInfoUpdateListener(_onCustomerInfo);
+      Purchases.addCustomerInfoUpdateListener(
+        (info) => unawaited(_onCustomerInfoForAccount(info)),
+      );
       // Attach the identity listener before anything that needs the network:
       // with no cached customer info and no connection, getCustomerInfo
       // throws, and a listener attached after it would never be attached.
@@ -100,7 +102,7 @@ class PurchasesService {
       return;
     }
     try {
-      _onCustomerInfo(await Purchases.getCustomerInfo());
+      await _onCustomerInfoForAccount(await Purchases.getCustomerInfo());
     } catch (e) {
       // Offline with nothing cached; the update listener fills this in
       // once RevenueCat is reachable.
@@ -154,6 +156,27 @@ class PurchasesService {
     unawaited(TrialReminder.sync(null));
   }
 
+  /// Applies [info] only while RevenueCat's customer is the signed-in
+  /// account (or an anonymous one, signed out). When the switch to a new
+  /// account failed (offline at sign-in on a shared phone), RevenueCat is
+  /// still the last person's customer, and their Premium must not carry
+  /// over to whoever is signed in now.
+  Future<void> _onCustomerInfoForAccount(CustomerInfo info) async {
+    final String appUserId;
+    try {
+      appUserId = await Purchases.appUserID;
+    } catch (e) {
+      debugPrint('RevenueCat customer unknown: $e');
+      return;
+    }
+    final account = Supabase.instance.client.auth.currentUser?.id;
+    if (!customerMatchesAccount(appUserId: appUserId, accountId: account)) {
+      debugPrint('RevenueCat answer for another account, ignored');
+      return;
+    }
+    _onCustomerInfo(info);
+  }
+
   void _onCustomerInfo(CustomerInfo info) {
     _trustServerTime(info);
     final pro = info.entitlements.active[proEntitlementId];
@@ -194,7 +217,7 @@ class PurchasesService {
     }
     if (refresh && _configured) {
       try {
-        _onCustomerInfo(await Purchases.getCustomerInfo());
+        await _onCustomerInfoForAccount(await Purchases.getCustomerInfo());
       } catch (e) {
         debugPrint('RevenueCat customer info unavailable: $e');
       }
@@ -251,7 +274,7 @@ class PurchasesService {
     try {
       final userId = Supabase.instance.client.auth.currentUser?.id;
       if (userId != null) await ensureIdentity(userId);
-      _onCustomerInfo(await Purchases.getCustomerInfo());
+      await _onCustomerInfoForAccount(await Purchases.getCustomerInfo());
     } catch (e) {
       debugPrint('RevenueCat entitlement refresh failed: $e');
     }
@@ -310,7 +333,7 @@ class PurchasesService {
   /// Re-syncs previous purchases (required by App Store rules).
   Future<bool> restore() async {
     final info = await Purchases.restorePurchases();
-    _onCustomerInfo(info);
+    await _onCustomerInfoForAccount(info);
     return isPro.value;
   }
 
@@ -353,4 +376,16 @@ String? purchaseErrorMessage(Object error, [AppLocalizations? l10n]) {
     };
   }
   return l10n.billingErrorGeneric;
+}
+
+/// Whether RevenueCat's current customer [appUserId] is the signed-in
+/// Supabase account [accountId]: the same id, or, with nobody signed in, an
+/// anonymous RevenueCat customer.
+@visibleForTesting
+bool customerMatchesAccount({
+  required String? appUserId,
+  required String? accountId,
+}) {
+  if (accountId != null) return appUserId == accountId;
+  return appUserId == null || appUserId.startsWith(r'$RCAnonymousID');
 }

@@ -177,11 +177,15 @@ CrisisRegion crisisRegionFor(String? country, {bool? drafts}) {
 }
 
 /// The country to show helplines for: the one picked on the crisis screen
-/// if any, else where the phone is (its SIM, else its time zone), else the
-/// first of the phone's [locales] with a region here.
+/// if any, else where the phone is (its mobile network, else its SIM, else
+/// its time zone), else the first of the phone's [locales] with a region
+/// here.
 ///
 /// Where the phone is comes before its language: a Kenyan phone set to
-/// "English (United States)" must open on Kenya's numbers, not 911.
+/// "English (United States)" must open on Kenya's numbers, not 911. And when
+/// the phone is somewhere this build has no numbers for, the answer is null
+/// (the international list), never the language's country: a phone in
+/// Nigeria set to "English (United States)" must not be offered 911 and 988.
 String? crisisCountry([Iterable<Locale>? locales, bool? drafts]) {
   final chosen = CrisisCountrySetting.instance.value;
   if (chosen != null) return chosen;
@@ -189,7 +193,7 @@ String? crisisCountry([Iterable<Locale>? locales, bool? drafts]) {
     for (final r in availableCrisisRegions(drafts: drafts)) r.code,
   };
   final here = CrisisCountrySetting.instance.detected;
-  if (here != null && codes.contains(here)) return here;
+  if (here != null) return codes.contains(here) ? here : null;
   for (final locale in locales ?? PlatformDispatcher.instance.locales) {
     if (codes.contains(locale.countryCode)) return locale.countryCode;
   }
@@ -222,15 +226,19 @@ class CrisisCountrySetting extends ValueNotifier<String?> {
     }
   }
 
-  /// Where the phone is (its SIM's country, else its time zone's), once
-  /// [detect] has run; used when nothing was chosen. Not saved: it's read
-  /// again at every start, so it follows the phone.
+  /// Where the phone is (its mobile network's country, else its SIM's, else
+  /// its time zone's), once [detect] has run; used when nothing was chosen.
+  /// Not saved: it's read again at every start, so it follows the phone.
+  /// Listeners hear when it changes, so an open crisis screen follows a
+  /// detection that lands late.
   String? detected;
 
   /// Works out [detected]. Never fails; takes a moment at start-up.
   Future<void> detect() async {
     try {
-      final here = await simCountry() ?? await timeZoneCountry();
+      // The network first: someone roaming needs the numbers of where they
+      // are, not of where their SIM was bought.
+      final here = await networkCountry() ?? await timeZoneCountry();
       if (here == detected) return;
       detected = here;
       // The choice hasn't changed, but what an unchosen screen shows has.
@@ -241,7 +249,11 @@ class CrisisCountrySetting extends ValueNotifier<String?> {
   }
 
   @visibleForTesting
-  set debugDetected(String? code) => detected = code;
+  set debugDetected(String? code) {
+    if (code == detected) return;
+    detected = code;
+    notifyListeners();
+  }
 
   /// Saves [code], or null for the phone's region.
   Future<void> choose(String? code) async {

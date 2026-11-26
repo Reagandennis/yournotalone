@@ -9731,6 +9731,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paystack charges this as {charge}. Your bank converts it, and may add a small fee.'**
   String therapyFlowChargeNote(String charge);
+
+  /// Shown when someone taps Pay but the payment server says their last checkout for this therapy session may still be paid (e.g. an M-Pesa prompt not yet approved). They must not pay twice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last payment is still being processed. Don\'t pay again — tap \"Check payment\" in a minute or two.'**
+  String get sessionErrorPaymentInProgress;
+
+  /// Heading of the payment box on a therapy session card in the minutes after the payment page was opened and closed: the payment may still arrive (e.g. an M-Pesa prompt approved late).
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for your payment'**
+  String get therapyPaymentCheckingTitle;
+
+  /// Under therapyPaymentCheckingTitle. Explains a payment approved on the phone can take a few minutes, and that they shouldn't pay twice. {methods} is therapyPaymentMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'If you approved the payment on your phone ({methods}), it can take a few minutes to reach us. Don\'t pay again — tap \"Check payment\" to look for it.'**
+  String therapyPaymentCheckingDetail(String methods);
+
+  /// Dialog body under therapyDiscardTitle when the payment page for this therapy request was opened in the last few minutes: we check for the payment before discarding.
+  ///
+  /// In en, this message translates to:
+  /// **'You opened the payment page a few minutes ago. We\'ll check whether that payment went through first — if it did, your request is kept and sent.'**
+  String get therapyDiscardPendingBody;
+
+  /// Snackbar: discarding a therapy request was stopped because we couldn't check whether a recent payment for it went through (e.g. offline).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check for your payment, so the request is kept. Try again in a moment.'**
+  String get therapyDiscardCheckFailed;
+
+  /// Dialog body: cancelling a booked therapy session that wasn't charged (the fee was waived or not required). Must not mention a refund.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let your therapist know. Nothing was charged for this session, so there\'s nothing to refund. You can book again whenever you\'re ready.'**
+  String get therapyCancelSessionBodyNoCharge;
+
+  /// Dialog body: cancelling an unmatched therapy request that wasn't charged (the fee was waived or not required). Must not mention a refund.
+  ///
+  /// In en, this message translates to:
+  /// **'We haven\'t matched you yet. Nothing was charged for this request, so there\'s nothing to refund. You can book again whenever you\'re ready.'**
+  String get therapyCancelRequestBodyNoCharge;
+
+  /// Shown to a therapist who taps Join when the care team has paused their therapist profile, so they can't join sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Your therapist profile is paused, so you can\'t join sessions right now. Please contact the care team.'**
+  String get sessionErrorTherapistInactive;
 }
 
 class _AppLocalizationsDelegate

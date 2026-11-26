@@ -97,10 +97,36 @@ class _TherapyScreenState extends State<TherapyScreen> {
     _quoteListenable.value = quote;
   }
 
-  /// Sessions whose Paystack payment went through but the server hasn't seen
-  /// yet. Their card offers "Check payment" instead of "Pay", so a slow
-  /// RevenueCat record can't be paid for twice.
-  final _awaitingVerification = <String>{};
+  /// Sessions whose Paystack checkout was opened in the last few minutes
+  /// (kept by [SessionPayments.pending], so it survives a restart), by when.
+  /// Their card offers "Check payment" instead of "Pay": an M-Pesa prompt
+  /// approved after the page closed still pays, and paying again would
+  /// charge twice. Cleared once a check finds nothing, or the window ends.
+  Map<String, DateTime> _awaitingVerification = {};
+
+  bool _isAwaiting(String requestId) {
+    final at = _awaitingVerification[requestId];
+    return at != null && _payments.pending.isFresh(at);
+  }
+
+  /// Treats [requestId] as paid for but unconfirmed, here and on disk.
+  Future<void> _markAwaiting(String requestId) async {
+    await _payments.pending.mark(requestId);
+    if (!mounted) return;
+    setState(() => _awaitingVerification = {
+      ..._awaitingVerification,
+      requestId: _payments.pending.now(),
+    });
+  }
+
+  Future<void> _clearAwaiting(String requestId) async {
+    await _payments.pending.clear(requestId);
+    if (!mounted) return;
+    setState(() => _awaitingVerification = {
+      for (final e in _awaitingVerification.entries)
+        if (e.key != requestId) e.key: e.value,
+    });
+  }
 
   /// Moves the Join button along as the start time comes and goes.
   Timer? _ticker;
@@ -114,7 +140,10 @@ class _TherapyScreenState extends State<TherapyScreen> {
     // Schedules the reminder for a booked session straight away.
     SessionNotifications.instance.start();
     _ticker = Timer.periodic(const Duration(seconds: 30), (_) {
-      if (mounted && (_requests?.any((r) => r.isConfirmed) ?? false)) {
+      // Also lets "Pay" come back once a checkout's window has passed.
+      if (mounted &&
+          ((_requests?.any((r) => r.isConfirmed) ?? false) ||
+              _awaitingVerification.isNotEmpty)) {
         setState(() {});
       }
     });
@@ -153,10 +182,15 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ? await _repo.fetchMyRatings()
           : const <String, int>{};
       final notificationsOn = await _notifications.isEnabled();
+      final awaiting = await _payments.pending.openedAmong([
+        for (final r in requests)
+          if (r.needsPayment) r.id,
+      ]);
       final price = await quote;
       if (!mounted) return;
       setState(() {
         _setQuote(price);
+        _awaitingVerification = awaiting;
         _requests = requests;
         _therapists = therapists;
         _myRatings = ratings;
@@ -229,6 +263,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
           // draft stays, to pay or discard from its card (unpaid drafts are
           // swept after a day), rather than a late payment landing on a
           // cancelled request with nothing booked.
+          // (_pay has noted the checkout, so its card offers "Check
+          // payment" first.)
           _say(context.l10n.therapyPaymentNotFinished);
           await _load(quiet: true);
           return true;
@@ -315,21 +351,30 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Future<void> _cancel(TherapyRequest request) async {
     final l10n = context.l10n;
+    // A checkout opened in the last few minutes may still be paid.
+    final checkoutOpen = _isAwaiting(request.id);
+    // Only money actually taken is refunded: a waived or free session, or
+    // one still unpaid, has nothing to give back.
+    final charged = request.paymentStatus == 'paid';
     final (title, body, action) = request.isAwaitingPayment
         ? (
             l10n.therapyDiscardTitle,
-            l10n.therapyDiscardBody,
+            checkoutOpen ? l10n.therapyDiscardPendingBody : l10n.therapyDiscardBody,
             l10n.therapyDiscardAction,
           )
         : request.isConfirmed
             ? (
                 l10n.therapyCancelSessionTitle,
-                l10n.therapyCancelSessionBody(request.priceLabel),
+                charged
+                    ? l10n.therapyCancelSessionBody(request.priceLabel)
+                    : l10n.therapyCancelSessionBodyNoCharge,
                 l10n.therapyCancelSessionAction,
               )
             : (
                 l10n.therapyCancelRequestTitle,
-                l10n.therapyCancelRequestBody(request.priceLabel),
+                charged
+                    ? l10n.therapyCancelRequestBody(request.priceLabel)
+                    : l10n.therapyCancelRequestBodyNoCharge,
                 l10n.therapyCancelRequestAction,
               );
     final confirmed = await showDialog<bool>(
@@ -355,8 +400,25 @@ class _TherapyScreenState extends State<TherapyScreen> {
       // A payment may have arrived since: an M-Pesa prompt approved after
       // the checkout closed. Then it's kept, not thrown away.
       if (request.isAwaitingPayment && request.needsPayment) {
-        final paid = await _payments.isPaid(request).catchError((_) => false);
+        final bool paid;
+        try {
+          paid = await _payments.isPaid(request);
+        } catch (_) {
+          // Can't tell. Within a checkout's window a payment may be on its
+          // way, so the draft stays rather than a payment landing on a
+          // discarded request; otherwise there's nothing to lose.
+          if (checkoutOpen) {
+            if (mounted) _say(l10n.therapyDiscardCheckFailed);
+            return;
+          }
+          await _repo.cancelRequest(request.id);
+          await _payments.pending.clear(request.id);
+          unawaited(SessionNotifications.instance.start());
+          await _load();
+          return;
+        }
         if (paid) {
+          unawaited(SessionNotifications.instance.start());
           if (!mounted) return;
           _say(l10n.therapyPaymentFoundRequest);
           await _load(quiet: true);
@@ -364,6 +426,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
         }
       }
       await _repo.cancelRequest(request.id);
+      await _payments.pending.clear(request.id);
+      // The phone's reminder for it goes, and the news is collected.
+      unawaited(SessionNotifications.instance.start());
       await _load();
     } catch (e) {
       if (!mounted) return;
@@ -395,19 +460,36 @@ class _TherapyScreenState extends State<TherapyScreen> {
           _say(request.isAwaitingPayment
               ? context.l10n.therapyPaymentReceivedRequest
               : context.l10n.therapyPaymentReceived);
+          // A booked session's reminder goes on the phone straight away.
+          unawaited(SessionNotifications.instance.start());
           if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.pendingVerification:
-          _awaitingVerification.add(request.id);
+          await _markAwaiting(request.id);
+          if (!mounted) return outcome;
           _say(context.l10n.therapyPaymentPending);
           if (!fromForm) await _load(quiet: true);
         case SessionPaymentOutcome.unavailable:
           _say(context.l10n.therapyPaymentUnavailable);
         case SessionPaymentOutcome.cancelled:
-          break;
+          // Closing the page isn't proof nothing was paid: an M-Pesa prompt
+          // can be approved minutes later. "Check payment" stands in for
+          // "Pay" for a while, so it isn't paid for twice. (The form says
+          // so itself.)
+          await _markAwaiting(request.id);
+          if (!mounted) return outcome;
+          if (!fromForm) _say(context.l10n.therapyPaymentPending);
       }
       return outcome;
     } catch (e) {
       if (!mounted) return null;
+      if (e is SessionAccessException && e.code == 'payment_in_progress') {
+        // The server won't open a second checkout while the last one may
+        // still be paid: wait for that one.
+        await _markAwaiting(request.id);
+        if (!mounted) return null;
+        _say(e.message);
+        return null;
+      }
       final message = e is SessionAccessException
           ? e.message
           : errorMessage(e, context.l10n.therapyPaymentFailed);
@@ -433,8 +515,9 @@ class _TherapyScreenState extends State<TherapyScreen> {
     setState(() => _paying = true);
     try {
       await _repo.confirmPayment(request.id);
+      await _clearAwaiting(request.id);
+      unawaited(SessionNotifications.instance.start());
       if (!mounted) return;
-      _awaitingVerification.remove(request.id);
       _say(request.isAwaitingPayment
           ? context.l10n.therapyPaymentFoundRequest
           : context.l10n.therapyPaymentFound);
@@ -442,7 +525,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
     } on SessionAccessException catch (e) {
       // The server has looked and there's nothing to attach, so paying is
       // back on the table.
-      if (e.code == 'no_payment_found') _awaitingVerification.remove(request.id);
+      if (e.code == 'no_payment_found') await _clearAwaiting(request.id);
       if (mounted) _say(e.message);
     } catch (e) {
       if (mounted) {
@@ -937,7 +1020,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
 
   Widget _paymentBox(TherapyRequest request) {
     final c = context.brand;
-    final awaiting = _awaitingVerification.contains(request.id);
+    final awaiting = _isAwaiting(request.id);
     final l10n = context.l10n;
     final methods = l10n.therapyPaymentMethods;
     final spinner = const SizedBox(
@@ -957,7 +1040,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
         children: [
           Text(
             awaiting
-                ? l10n.therapyPaymentVerifying
+                ? l10n.therapyPaymentCheckingTitle
                 : request.isAwaitingPayment
                     ? l10n.therapyPayToSend(request.priceLabel)
                     : l10n.therapyPayToConfirm(request.priceLabel),
@@ -970,7 +1053,7 @@ class _TherapyScreenState extends State<TherapyScreen> {
           const SizedBox(height: 4),
           Text(
             awaiting
-                ? l10n.therapyPaymentVerifyingDetail
+                ? l10n.therapyPaymentCheckingDetail(methods)
                 : request.isAwaitingPayment
                     ? l10n.therapyPayDetailRequest(methods,
                         request.chargeLabel, l10n.therapyCancellationPolicy)

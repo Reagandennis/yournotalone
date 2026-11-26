@@ -6166,4 +6166,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String therapyFlowChargeNote(String charge) {
     return 'Paystack charges this as $charge. Your bank converts it, and may add a small fee.';
   }
+
+  @override
+  String get sessionErrorPaymentInProgress =>
+      'Your last payment is still being processed. Don\'t pay again — tap \"Check payment\" in a minute or two.';
+
+  @override
+  String get therapyPaymentCheckingTitle => 'Checking for your payment';
+
+  @override
+  String therapyPaymentCheckingDetail(String methods) {
+    return 'If you approved the payment on your phone ($methods), it can take a few minutes to reach us. Don\'t pay again — tap \"Check payment\" to look for it.';
+  }
+
+  @override
+  String get therapyDiscardPendingBody =>
+      'You opened the payment page a few minutes ago. We\'ll check whether that payment went through first — if it did, your request is kept and sent.';
+
+  @override
+  String get therapyDiscardCheckFailed =>
+      'Couldn\'t check for your payment, so the request is kept. Try again in a moment.';
+
+  @override
+  String get therapyCancelSessionBodyNoCharge =>
+      'We\'ll let your therapist know. Nothing was charged for this session, so there\'s nothing to refund. You can book again whenever you\'re ready.';
+
+  @override
+  String get therapyCancelRequestBodyNoCharge =>
+      'We haven\'t matched you yet. Nothing was charged for this request, so there\'s nothing to refund. You can book again whenever you\'re ready.';
+
+  @override
+  String get sessionErrorTherapistInactive =>
+      'Your therapist profile is paused, so you can\'t join sessions right now. Please contact the care team.';
 }

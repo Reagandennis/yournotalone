@@ -222,6 +222,21 @@ bool isStaleSessionNotification(
   return (schedule: schedule, cancel: cancel, remembered: remembered);
 }
 
+/// Of the reminders [stored] (session id → start key), those to keep taking
+/// as scheduled: the ones still among the phone's [pending] notification
+/// ids, and the ones whose time has come (fired already, so no longer
+/// pending, and not to be shown twice).
+Map<String, String> keepStillScheduled(
+  Map<String, String> stored,
+  Set<int> pending,
+  DateTime now,
+) => {
+  for (final entry in stored.entries)
+    if (pending.contains(reminderNotificationId(entry.key)) ||
+        !DateTime.parse(entry.value).subtract(sessionReminderLead).isAfter(now))
+      entry.key: entry.value,
+};
+
 /// Phone notifications for therapy sessions, without a push service.
 ///
 /// Each install registers a random key with the server. With that key alone
@@ -406,7 +421,11 @@ class SessionNotifications {
       for (final session in result['upcoming'] as List? ?? const [])
         Map<String, dynamic>.from(session as Map),
     ];
-    final plan = planSessionReminders(upcoming, await _scheduled(), now);
+    final plan = planSessionReminders(
+      upcoming,
+      await _stillScheduled(await _scheduled(), now),
+      now,
+    );
     for (final id in plan.cancel) {
       await _plugin.cancel(id: reminderNotificationId(id));
     }
@@ -427,34 +446,71 @@ class SessionNotifications {
     }
     await _prefs.setString(_scheduledPref, jsonEncode(plan.remembered));
 
-    // News since the last check.
+    // News since the last check. Each item is passed over once tried,
+    // shown or not: one that can't be read or shown is skipped, rather than
+    // failing the check and coming back every 15 minutes with everything
+    // after it held up behind it.
     var last = after;
     for (final raw in result['notifications'] as List? ?? const []) {
-      final notification = Map<String, dynamic>.from(raw as Map);
-      last = max(last, (notification['id'] as num).toInt());
-      final kind = notification['kind'] as String;
-      final data = Map<String, dynamic>.from(notification['data'] as Map);
-      final sessionId = data['request_id'] as String;
-      if (isStaleSessionNotification(kind, data, now)) continue;
-      // The phone already has its own reminder for this session and time.
-      if (kind == 'session_reminder' &&
-          data['scheduled_at'] != null &&
-          plan.remembered[sessionId] == sessionStartKey(data['scheduled_at'])) {
-        continue;
+      try {
+        final id = ((raw as Map)['id'] as num?)?.toInt();
+        if (id != null && id > last) last = id;
+        await _showNews(Map<String, dynamic>.from(raw), plan.remembered, now);
+      } catch (e) {
+        debugPrint('Skipped a session notification: $e');
       }
-      final text = describeSessionNotification(kind, data, now);
-      await _plugin.show(
-        id: kind == 'session_reminder'
-            ? reminderNotificationId(sessionId)
-            : sessionNotificationId(sessionId),
-        title: text.title,
-        body: text.body,
-        notificationDetails: _details(),
-        payload: data['role'] as String?,
-      );
+      await _prefs.setInt(_afterPref, last);
     }
     await _prefs.setInt(_afterPref, last);
     return result['active'] == true;
+  }
+
+  Future<void> _showNews(
+    Map<String, dynamic> notification,
+    Map<String, String> remembered,
+    DateTime now,
+  ) async {
+    final kind = notification['kind'] as String;
+    final data = Map<String, dynamic>.from(notification['data'] as Map);
+    final sessionId = data['request_id'] as String;
+    if (isStaleSessionNotification(kind, data, now)) return;
+    // The phone already has its own reminder for this session and time.
+    if (kind == 'session_reminder' &&
+        data['scheduled_at'] != null &&
+        remembered[sessionId] == sessionStartKey(data['scheduled_at'])) {
+      return;
+    }
+    final text = describeSessionNotification(kind, data, now);
+    await _plugin.show(
+      id: kind == 'session_reminder'
+          ? reminderNotificationId(sessionId)
+          : sessionNotificationId(sessionId),
+      title: text.title,
+      body: text.body,
+      notificationDetails: _details(),
+      payload: data['role'] as String?,
+    );
+  }
+
+  /// The reminders in [stored] the phone still has, so one the system
+  /// dropped (an update, a reboot on some phones, "clear all", the app
+  /// force-stopped) is scheduled again rather than taken as done.
+  Future<Map<String, String>> _stillScheduled(
+    Map<String, String> stored,
+    DateTime now,
+  ) async {
+    if (stored.isEmpty) return stored;
+    final Set<int> pending;
+    try {
+      pending = {
+        for (final request in await _plugin.pendingNotificationRequests())
+          request.id,
+      };
+    } catch (e) {
+      debugPrint('Pending notifications unavailable: $e');
+      return stored;
+    }
+    return keepStillScheduled(stored, pending, now);
   }
 
   /// `device_session_sync` over plain HTTP: the key is the credential.

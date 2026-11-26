@@ -27,19 +27,42 @@ String? _code(Object? value) {
 
 const _telephony = MethodChannel('yournotalone/telephony');
 
-/// The SIM's country (where the number is from), else the network's. See
-/// MainActivity.kt. Null off Android.
-Future<String?> simCountry() async {
-  if (kIsWeb || _silent || !Platform.isAndroid) return null;
+/// What [simCountry] and [networkCountry] read in tests: the SIM's and the
+/// network's country, as MainActivity.kt answers them.
+@visibleForTesting
+({String? sim, String? network})? debugTelephony;
+
+Future<({String? sim, String? network})> _telephonyCountries() async {
+  if (_silent) {
+    final fake = debugTelephony;
+    return (sim: _code(fake?.sim), network: _code(fake?.network));
+  }
+  if (kIsWeb || !Platform.isAndroid) return (sim: null, network: null);
   try {
     final found = await _telephony
         .invokeMapMethod<String, Object?>('countries')
         .timeout(const Duration(seconds: 2));
-    return _code(found?['sim']) ?? _code(found?['network']);
+    return (sim: _code(found?['sim']), network: _code(found?['network']));
   } catch (e) {
     debugPrint('SIM country unavailable: $e');
-    return null;
+    return (sim: null, network: null);
   }
+}
+
+/// The SIM's country (where the number is from), else the network's. See
+/// MainActivity.kt. Null off Android. For session prices: where someone
+/// lives, which a trip abroad doesn't change.
+Future<String?> simCountry() async {
+  final found = await _telephonyCountries();
+  return found.sim ?? found.network;
+}
+
+/// The mobile network's country (where the phone is right now), else the
+/// SIM's. Null off Android. For the crisis screen: someone roaming needs
+/// the emergency number of the country they're in.
+Future<String?> networkCountry() async {
+  final found = await _telephonyCountries();
+  return found.network ?? found.sim;
 }
 
 /// The country of the phone's time zone, which phones set from where they
