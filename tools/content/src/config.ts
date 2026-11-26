@@ -21,11 +21,23 @@ export type EnvConfig = {
   bucket: string;
   /// Put in front of every key: '' for production, 'staging/' for staging.
   prefix: string;
+  /// Where the custom domain serves this environment's keys.
+  publicBase: string;
 };
 
 export const envs: Record<EnvName, EnvConfig> = {
-  production: { name: 'production', bucket: 'yournotalone', prefix: '' },
-  staging: { name: 'staging', bucket: 'yournotalone', prefix: 'staging/' },
+  production: {
+    name: 'production',
+    bucket: 'yournotalone',
+    prefix: '',
+    publicBase: 'https://database.techgetafrica.com',
+  },
+  staging: {
+    name: 'staging',
+    bucket: 'yournotalone',
+    prefix: 'staging/',
+    publicBase: 'https://database.techgetafrica.com/staging',
+  },
 };
 
 /// Where premium media goes, relative to the environment's prefix.

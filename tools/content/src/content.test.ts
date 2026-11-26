@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { check, load } from './content.ts';
+import { check, load, mediaFile, mediaPathProblem } from './content.ts';
+import { inRepoOrMasters } from './testing.ts';
 import { snapshot } from './snapshot.ts';
 
 const base = load();
@@ -25,11 +26,12 @@ function withItem(path: string, edit: (item: any) => void) {
     edit(copy);
     return [p, copy];
   });
-  return check({ ...base, items });
+  return check({ ...base, items }, inRepoOrMasters);
 }
 
 test('the repo content is valid', () => {
-  assert.deepEqual(check(base).errors, []);
+  // Recordings listed in content/masters.json count as there (they're in R2).
+  assert.deepEqual(check(base, inRepoOrMasters).errors, []);
 });
 
 test('rejects tags outside the vocabulary', () => {
@@ -161,7 +163,7 @@ function withBackground(path: string, edit: (bg: any) => void) {
     edit(copy);
     return [p, copy];
   });
-  return check({ ...base, backgrounds });
+  return check({ ...base, backgrounds }, inRepoOrMasters);
 }
 
 test('rejects an engine the app cannot draw', () => {
@@ -190,7 +192,7 @@ test('a published item cannot prefer a draft background', () => {
   const items = base.items.map(([p, data]): [string, unknown] =>
     p === box[0] ? [p, { ...(data as object), background: 'dusk-waves' }] : [p, data],
   );
-  const { errors } = check({ ...base, items, backgrounds });
+  const { errors } = check({ ...base, items, backgrounds }, inRepoOrMasters);
   assert.match(errors.join('\n'), /background "dusk-waves" is draft/);
 });
 
@@ -216,4 +218,42 @@ test('the snapshot carries published backgrounds and item preferences', () => {
   // still leaves it out.
   assert.match(drafted.errors.join('\n'), /ocean-breath\.yaml: background "dusk-waves" is draft/);
   assert.equal(snapshot(drafted, 0).backgrounds.some((b) => b.id === 'dusk-waves'), false);
+});
+
+test('audio paths stay inside the repo, under assets/ or Sounds/', () => {
+  const rain = base.items.find(([p]) => p.endsWith('rainfall.yaml'))!;
+  for (const bad of [
+    '../../../etc/passwd',
+    '/etc/passwd',
+    'assets/../../secrets.wav',
+    'assets/./sounds/rainfall.m4a',
+    'tools/content/package.json',
+    'Sounds/sub/take.wav',
+    'Sounds\\take.wav',
+    'C:/take.wav',
+  ]) {
+    const { errors } = withItem(rain[0], (i) => (i.body.audio = bad));
+    assert.match(errors.join('\n'), /body\.audio .* (must|can't)/, bad);
+    assert.equal(errors.some((e) => e.includes("doesn't exist")), false, `${bad}: not looked up`);
+    assert.throws(() => mediaFile(bad), /audio path/);
+  }
+  const { errors } = withItem(bodyScan[0], (i) => (i.body.narration = '../narration.wav'));
+  assert.match(errors.join('\n'), /body\.narration "\.\.\/narration\.wav" can't contain '\.\.'/);
+
+  // What the content uses is fine.
+  assert.equal(mediaPathProblem('assets/sounds/rainfall.m4a'), null);
+  assert.equal(mediaPathProblem('Sounds/brown noise.wav'), null);
+  assert.match(mediaFile('Sounds/brown noise.wav'), /\/Sounds\/brown noise\.wav$/);
+});
+
+test('a recording that is only in R2 says how to fetch it', () => {
+  const rain = base.items.find(([p]) => p.endsWith('rainfall.yaml'))!;
+  const items = base.items.map(([p, d]): [string, unknown] => {
+    if (p !== rain[0]) return [p, d];
+    const c: any = structuredClone(d);
+    c.body.audio = 'Sounds/brown noise.wav';
+    return [p, c];
+  });
+  const { errors } = check({ ...base, items }, () => false);
+  assert.match(errors.join('\n'), /Sounds\/brown noise\.wav doesn't exist here; it's in content\/masters\.json/);
 });

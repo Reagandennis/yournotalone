@@ -6,9 +6,12 @@ import { promisify } from 'node:util';
 import { credentialsFromEnv, envs } from './config.ts';
 import { type Item, check, load } from './content.ts';
 import { execute, latestKey, mediaSources, type PlanOptions, plan, uploads } from './publisher.ts';
+import { bundledFrom } from './bundle.ts';
+import { snapshot } from './snapshot.ts';
 import { MemoryStore, objectUrl, r2Store } from './store.ts';
+import { inRepoOrMasters, mastersNotHere } from './testing.ts';
 
-const base = check(load());
+const base = check(load(), inRepoOrMasters);
 const staging = envs.staging;
 const hex = (b: Uint8Array) => createHash('sha256').update(b).digest('hex');
 const enc = (s: string) => new TextEncoder().encode(s);
@@ -159,8 +162,10 @@ test('skips media the bucket already has', async () => {
   const p = await plan(opts(store));
   assert.equal(p.media.find((m) => m.key === rain.key)!.exists, true);
   assert.ok(p.media.filter((m) => m.key !== rain.key).every((m) => m.exists === false));
-  // Every media object was checked with HEAD before anything was written.
-  assert.equal(store.calls.filter((c) => c.op === 'head').length, p.media.length);
+  // Every media object was checked with HEAD before anything was written
+  // (plus the public twin of each premium file, which must not exist).
+  const mediaKeys = new Set(p.media.map((m) => m.key));
+  assert.equal(store.calls.filter((c) => c.op === 'head' && mediaKeys.has(c.key)).length, p.media.length);
   await execute(p, store);
   assert.equal(store.puts().some((c) => c.key === rain.key), false);
   assert.equal(store.puts().length, p.media.length - 1 + 2);
@@ -176,7 +181,11 @@ test('uploads nothing when the catalogue hash is unchanged', async () => {
   assert.deepEqual(uploads(again), []);
   await execute(again, store);
   assert.deepEqual(store.puts(), []);
-  assert.equal(store.calls.filter((c) => c.op === 'head').length, 0);
+  assert.deepEqual(store.deletes(), []);
+  // Only the check for public copies of premium media, which runs every time.
+  const heads = store.calls.filter((c) => c.op === 'head');
+  assert.ok(heads.length > 0);
+  assert.ok(heads.every((c) => /^staging\/media\/[0-9a-f]{64}\.m4a$/.test(c.key)));
 
   // Changing one item's text does publish v2.
   const edited = fixture().map((i) => (i.id === 'sound:Rainfall' ? { ...i, order: 251 } : i));
@@ -221,7 +230,15 @@ const cli = (args: string[]) => {
   });
 };
 
-test('the CLI dry run works without credentials; a real run refuses', async () => {
+// The CLI checks the real files and transcodes them, so it needs every
+// recording the content points at in Sounds/ (`npm run masters -- download
+// --used`). Without them (a clean checkout, the tools CI job) it's skipped.
+const notHere = mastersNotHere(load());
+const cliSkip = notHere.length
+  ? `needs ${notHere.join(', ')} in Sounds/ (in R2 only; npm run masters -- download --used)`
+  : false;
+
+test('the CLI dry run works without credentials; a real run refuses', { skip: cliSkip }, async () => {
   const { stdout } = await cli(['--env', 'staging', '--dry-run']);
   assert.match(stdout, /Publish to staging \(dry run\): v1/);
   assert.match(stdout, /catalog\/latest\.json/);
@@ -258,4 +275,134 @@ test('the R2 store signs path-style S3 requests', async () => {
   assert.equal(seen[1].headers.get('content-type'), 'application/json');
   assert.match(seen[1].headers.get('authorization')!, /^AWS4-HMAC-SHA256 Credential=a\/\d{8}\/auto\/s3\//);
   assert.equal(objectUrl('https://e', 'b', 'catalog/v1 x.json'), 'https://e/b/catalog/v1%20x.json');
+});
+
+/// The fixture's Rainfall, which starts free.
+const sound = (items: Item[]) => items.find((i) => i.id === 'sound:Rainfall')!;
+
+test('audio that was free and turns premium loses its public copy', async () => {
+  const store = new MemoryStore();
+  const items = fixture();
+  assert.equal(sound(items).premium, false);
+  const v1 = await plan(opts(store, items));
+  await execute(v1, store);
+  const ref1 = dec(v1.snapshot.body).media['sound:Rainfall'].audio;
+  const publicKey = `yournotalone/staging/media/${ref1.sha256}.m4a`;
+  assert.equal(ref1.access, 'public');
+  assert.ok(store.objects.has(publicKey));
+  assert.deepEqual(v1.deletes, []);
+
+  sound(items).premium = true;
+  store.calls = [];
+  const v2 = await plan(opts(store, items));
+  const ref2 = dec(v2.snapshot.body).media['sound:Rainfall'].audio;
+  assert.equal(ref2.access, 'premium');
+  assert.equal(ref2.sha256, ref1.sha256);
+  assert.deepEqual(v2.deletes.map((d) => d.key), [`staging/media/${ref1.sha256}.m4a`]);
+  const log: string[] = [];
+  await execute(v2, store, (l) => log.push(l));
+  assert.equal(store.objects.has(publicKey), false, 'public copy deleted');
+  assert.ok(store.objects.has(`yournotalone/staging/private/media/${ref1.sha256}.m4a`));
+  // Deleted only after latest.json points at the premium copy, and logged.
+  assert.equal(store.calls.findIndex((c) => c.op === 'delete') > store.calls.findIndex((c) => c.key.endsWith(latestKey)), true);
+  assert.ok(log.some((l) => /delete .*public copy of premium sound:Rainfall audio/.test(l)));
+  // Nothing premium was ever put under the public prefix.
+  assert.equal(store.puts().some((c) => c.key === `staging/media/${ref1.sha256}.m4a`), false);
+
+  // Idempotent: the next publish is unchanged and finds nothing to delete.
+  const v3 = await plan(opts(store, items));
+  assert.equal(v3.unchanged, true);
+  assert.deepEqual(v3.deletes, []);
+});
+
+test('a public copy left by an earlier publish is deleted even when nothing changed', async () => {
+  const store = new MemoryStore();
+  const items = fixture();
+  sound(items).premium = true;
+  const v1 = await plan(opts(store, items));
+  await execute(v1, store);
+  // As an older publisher left it: the same file also under media/.
+  const ref = dec(v1.snapshot.body).media['sound:Rainfall'].audio;
+  await store.put('yournotalone', `staging/media/${ref.sha256}.m4a`, enc('leak'), { contentType: 'audio/mp4', cacheControl: '' });
+
+  const again = await plan(opts(store, items));
+  assert.equal(again.unchanged, true);
+  assert.equal(again.deletes.length, 1);
+  store.calls = [];
+  await execute(again, store);
+  assert.deepEqual(store.puts(), []);
+  assert.deepEqual(store.deletes().map((c) => c.key), [`staging/media/${ref.sha256}.m4a`]);
+});
+
+test('refuses to publish the same audio as both free and premium', async () => {
+  const items = fixture();
+  const storm = items.find((i) => i.id === 'sound:Distant storm')!;
+  assert.equal(storm.premium, true);
+  if (storm.body.type === 'sound' && sound(items).body.type === 'sound') {
+    storm.body.audio = (sound(items).body as { audio: string }).audio;
+  }
+  await assert.rejects(plan(opts(null, items)), /free for sound:Rainfall audio and premium for sound:Distant storm audio/);
+});
+
+test('raising minApp or the snapshot format alone publishes a new version', async () => {
+  const store = new MemoryStore();
+  await execute(await plan(opts(store)), store);
+  assert.equal((await plan(opts(store))).unchanged, true);
+
+  const raised = await plan({ ...opts(store), minApp: '9.9.9' });
+  assert.equal(raised.unchanged, false);
+  assert.equal(raised.version, 2);
+  assert.equal(dec(raised.latest.body).minApp, '9.9.9');
+  await execute(raised, store);
+  assert.equal((await plan({ ...opts(store), minApp: '9.9.9' })).unchanged, true);
+
+  const format = await plan({ ...opts(store), minApp: '9.9.9', format: 2 });
+  assert.equal(format.unchanged, false);
+  assert.equal(dec(format.snapshot.body).format, 2);
+});
+
+test('media is uploaded with its sha256 as metadata', async () => {
+  const store = new MemoryStore();
+  const p = await plan(opts(store));
+  await execute(p, store);
+  for (const m of p.media) assert.equal(store.objects.get(`${m.bucket}/${m.key}`)!.metadata?.sha256, hex(m.body));
+});
+
+test('the R2 store reads metadata, sends it, and deletes', async () => {
+  const seen: Request[] = [];
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const req = new Request(input, init);
+    seen.push(req);
+    if (req.method === 'HEAD') return new Response(null, { status: 200, headers: { 'x-amz-meta-sha256': 'abc' } });
+    return new Response(null, { status: req.method === 'DELETE' ? 204 : 200 });
+  }) as typeof fetch;
+  try {
+    const store = r2Store('https://acct.r2.cloudflarestorage.com', { accessKeyId: 'a', secretAccessKey: 'b' });
+    assert.deepEqual(await store.stat('bkt', 'private/masters/brown noise.wav'), { metadata: { sha256: 'abc' } });
+    await store.put('bkt', 'k', enc('x'), { contentType: 'audio/wav', cacheControl: 'no-store', metadata: { sha256: 'def' } });
+    await store.delete('bkt', 'media/x.m4a');
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+  assert.equal(seen[0].url, 'https://acct.r2.cloudflarestorage.com/bkt/private/masters/brown%20noise.wav');
+  assert.equal(seen[1].headers.get('x-amz-meta-sha256'), 'def');
+  assert.match(seen[1].headers.get('authorization')!, /x-amz-meta-sha256/);
+  assert.equal(seen[2].method, 'DELETE');
+  assert.equal(seen[2].url, 'https://acct.r2.cloudflarestorage.com/bkt/media/x.m4a');
+});
+
+test('the bundled copy is the published snapshot as version 0', async () => {
+  const p = await plan({ ...opts(null), env: envs.production, now: () => new Date('2026-11-19T08:00:00Z') });
+  const published = dec(p.snapshot.body);
+  const bundled = bundledFrom(published, p.snapshot.key);
+  // Exactly what `npm run build` would write from the same media and time.
+  const built = snapshot({ ...base, items: fixture() }, 0, published.media, published.builtAt);
+  assert.equal(JSON.stringify(bundled), JSON.stringify(built));
+  assert.equal(bundled.hash, p.hash);
+
+  const tampered = structuredClone(published);
+  tampered.media['sound:Rainfall'].audio.access = 'premium';
+  assert.throws(() => bundledFrom(tampered, p.snapshot.key), /doesn't match its hash/);
+  assert.throws(() => bundledFrom(published, 'catalog/latest.json'), /isn't a catalogue snapshot path/);
 });

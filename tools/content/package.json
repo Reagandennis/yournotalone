@@ -9,6 +9,7 @@
   "scripts": {
     "check": "node src/check.ts",
     "build": "node src/build.ts",
+    "bundle": "node src/bundle.ts",
     "publish": "node src/publish.ts",
     "masters": "node src/masters.ts",
     "translate": "node src/translate.ts",

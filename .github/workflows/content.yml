@@ -3,8 +3,16 @@
 #   push to main touching content/  -> draft missing translations, check,
 #                                      publish to staging
 #   "Run workflow" / admin page     -> publish main to staging or production;
-#                                      production also rebuilds the
-#                                      catalogue the app bundles
+#                                      production also rewrites the
+#                                      catalogue the app bundles from what
+#                                      production now serves
+#
+# Only main is ever published or pushed: a run started on another branch
+# skips the publish job and fails the not-main job instead. Each run uses the GitHub environment of its
+# target ("staging" or "production"), so required reviewers can be set on
+# production (Settings → Environments → production).
+#
+# Tests (tools/content, edge) run on every pull request in tools.yml.
 #
 # The admin page (the yournotalone-admin repository) commits item files to
 # main, so a save there lands here.
@@ -12,7 +20,10 @@
 # token, which doesn't start another run.
 #
 # Repository secrets (Settings → Secrets and variables → Actions):
-#   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY  bucket-scoped Object Read & Write
+#   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY  bucket-scoped Object Read & Write;
+#                                           given only to the steps that use
+#                                           R2 (fetching recordings,
+#                                           publishing, bundling)
 #   ANTHROPIC_API_KEY                       optional; drafts translations
 
 name: Content
@@ -42,16 +53,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # "Run workflow" on any other branch: say why nothing happens, and fail.
+  # (The publish job below doesn't even start, so it never reaches the
+  # environment's secrets or reviewers.)
+  not-main:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Only main is published
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          echo "::error::Content is published only from main, not $REF. Merge first, then run the workflow on main."
+          exit 1
+
   publish:
+    if: github.ref == 'refs/heads/main'
     # The spare Azure server (yournotalone-ops repository), as the
     # unprivileged gha-runner user. ffmpeg is installed there, and the
     # workspace and converted audio persist between runs.
     runs-on: [self-hosted, linux, yournotalone-content]
     timeout-minutes: 45
+    # Reviewers / branch rules for production go on this environment.
+    environment: ${{ (inputs.env || 'staging') == 'production' && 'production' || 'staging' }}
     env:
       TARGET: ${{ inputs.env || 'staging' }}
-      R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-      R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
     defaults:
       run:
         working-directory: tools/content
@@ -80,10 +106,12 @@ jobs:
           key: content-media-${{ hashFiles('content/masters.json') }}
           restore-keys: content-media-
 
+      # Names come from the parsed YAML (spaces and all), never the shell.
       - name: Fetch the recordings items point at
-        run: |
-          names=$(grep -rhoE 'Sounds/[A-Za-z0-9._-]+' ../../content/items | sed 's#^Sounds/##' | sort -u)
-          if [ -n "$names" ]; then npm run masters -- download $names; else echo "No item uses a recording from Sounds/."; fi
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: npm run masters -- download --used
 
       # A translation failure shouldn't hold back the English publish.
       - name: Draft missing translations
@@ -114,13 +142,21 @@ jobs:
           git push origin HEAD:main
 
       - name: Publish to ${{ env.TARGET }}
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: npm run publish -- --env "$TARGET"
 
       # The app ships with a copy of the catalogue for its first launch and
-      # for offline use; keep it the same as what production serves.
-      - name: Rebuild the bundled catalogue
+      # for offline use. It's copied from the snapshot production now
+      # serves (read from the bucket), so its media keys are the files that
+      # were actually uploaded.
+      - name: Copy the published catalogue for the app to bundle
         if: env.TARGET == 'production'
-        run: npm run build
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: npm run bundle -- --env production
 
       - name: Commit the bundled catalogue
         if: env.TARGET == 'production'

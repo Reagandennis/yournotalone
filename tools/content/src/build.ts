@@ -9,10 +9,15 @@
 // It carries the same media map a publish writes, so audio that isn't
 // bundled in the app can be fetched from the first launch, before any
 // catalogue has been downloaded. Keys are the same in every environment.
+//
+// Those keys are the sha256 of this machine's encodes. Another machine's
+// ffmpeg can encode differently, so a copy built here can name files that
+// were never uploaded. Don't commit one: the content workflow writes the
+// committed copy with `npm run bundle`, from what production serves.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { envs, minApp } from './config.ts';
-import { check, load, repoRoot } from './content.ts';
+import { check, load, mediaFile, repoRoot } from './content.ts';
 import { plan } from './publisher.ts';
 import { snapshot } from './snapshot.ts';
 import { prepareFile } from './transcode.ts';
@@ -32,7 +37,7 @@ const p = await plan({
   minApp,
   store: null,
   prepare: (src) =>
-    prepareFile(join(repoRoot, src.path), src.role, {
+    prepareFile(mediaFile(src.path), src.role, {
       cacheDir,
       warn: (m) => console.warn(`warning: ${m}`),
     }),
@@ -51,4 +56,8 @@ console.log(
   `Wrote assets/catalog/bundled.json: ${snap.items.length} items, ` +
     `${snap.courses.length} courses, ${snap.backgrounds.length} backgrounds, ` +
     `${Object.keys(media).length} with media, hash ${snap.hash}.`,
+);
+console.warn(
+  'Media keys come from this machine\'s encodes, so this copy is for local testing; ' +
+    "don't commit it. CI writes the committed copy with `npm run bundle` after a production publish.",
 );

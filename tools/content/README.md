@@ -10,7 +10,8 @@ with no build step.
 ```
 npm install
 npm run check                                  # validate content/
-npm run build                                  # write assets/catalog/bundled.json
+npm run build                                  # local bundled.json, for testing only
+npm run bundle                                 # bundled.json from what production serves
 npm run publish -- --env staging --dry-run     # see what a publish would do
 npm run translate -- <id|--all> --to fr,de,es,zh-Hans [--dry-run]
 npm test
@@ -39,7 +40,9 @@ Steps:
 1. Checks `content/` the same way `npm run check` does, and stops on any
    error.
 2. Prepares the audio of every published item: `body.audio` for sounds and
-   `body.narration` for meditations.
+   `body.narration` for meditations. Each is a repo-relative path under
+   `assets/` or directly in `Sounds/`, with no `..` and nothing absolute;
+   `npm run check` rejects anything else.
    - WAV, AIFF and FLAC masters go through ffmpeg: a two-pass `loudnorm`,
      then AAC-LC.
      - Narration (voice): -16 LUFS, true peak -1.5 dB, mono, 64 kbps.
@@ -56,6 +59,18 @@ Steps:
    the public bucket with `"access": "public"`. Premium items go to the
    private bucket with `"access": "premium"`, and the Worker signs URLs for
    those.
+   - Because the key is the content hash, a file that was free once is the
+     same file as its premium copy, and the catalogue prints its sha256. So
+     every real publish (changed or not) HEADs `media/<sha256>.m4a` for each
+     premium file and deletes that public copy if it's there, after
+     `latest.json` is written; each delete is logged. Running it again finds
+     nothing to delete.
+   - If the same bytes are free for one item and premium for another, the
+     publish stops with an error and uploads nothing.
+   - The catalogue keeps each premium ref's `key` and `sha256`: the Worker
+     signs `key` and the app checks downloads against `sha256` and files
+     them by it. `private/` is blocked on the custom domain, so the key alone
+     gives nothing away.
 4. Builds the snapshot, the same one `npm run build` makes, plus a `media`
    map:
    `{"<item id>": {"audio"?: MediaRef, "narration"?: MediaRef}}`, where
@@ -78,9 +93,11 @@ Steps:
    `public, max-age=60`. Because `latest.json` goes last, a reader is never
    pointed at a file that isn't there yet.
 
-If the catalogue hash matches the current `latest.json`, it says so and
-uploads nothing. The hash covers the items, courses and media refs, so
-re-encoding or replacing an audio file also counts as a change.
+If the catalogue hash and `minApp` match the current `latest.json`, it says
+so and uploads nothing (it still deletes public copies of premium media). The
+hash covers the snapshot format, the items, courses and media refs, so
+re-encoding or replacing an audio file, or raising `snapshotFormat`, also
+counts as a change; raising `minApp` alone publishes a new version too.
 
 `--dry-run` prints the plan: each object, its size and bucket, whether it
 would be uploaded, and the new version. It also writes the would-be files to
@@ -91,8 +108,14 @@ assumes there is no current `latest.json`, so it always plans v1.
 `minApp` is set in `src/config.ts`. Raise it when the app needs new code to
 read the catalogue.
 
-Publishing doesn't touch `assets/catalog/bundled.json`. Run `npm run build`
-for that before an app build.
+Publishing doesn't touch `assets/catalog/bundled.json`. After a production
+publish the content workflow runs `npm run bundle`, which copies the
+snapshot production now serves (read from the bucket with the R2 token, or
+from the custom domain without one), checks its hash and writes it as
+version 0. Its media keys are therefore the files that were uploaded.
+`npm run build` still writes a copy from this machine's encodes, for local
+testing only: a different ffmpeg can give different bytes, so different
+keys that were never uploaded. Don't commit that copy.
 
 ### Credentials
 
@@ -130,9 +153,12 @@ signed with `aws4fetch`.
    `R2_ACCESS_KEY_ID=… R2_SECRET_ACCESS_KEY=… npm run publish -- --env staging`.
 4. Check a staging build of the app. It reads `latest.json` from the staging
    bucket, and premium audio plays through the staging Worker.
-5. Publish the same commit to production with `--env production`.
-6. Run `npm run build` and commit `assets/catalog/bundled.json`, so the next
-   app release bundles the same catalogue.
+5. Publish the same commit to production with `--env production` (in CI:
+   "Run workflow" on main with `production`; only main can be published).
+6. The workflow then runs `npm run bundle` and commits
+   `assets/catalog/bundled.json`, so the next app release bundles the same
+   catalogue. By hand, run `npm run bundle` (not `npm run build`) after the
+   production publish and commit the result.
 
 Versions count separately in each environment, so staging v5 and production
 v3 can hold the same catalogue. Compare them by the hash.
@@ -150,7 +176,18 @@ sha256 in `content/masters.json`.
 ```sh
 npm run masters -- check      # does Sounds/ match the list? (no network)
 npm run masters -- download   # put Sounds/ back on a new machine (read token is enough)
-npm run masters -- upload     # after adding a recording (read & write token)
+npm run masters -- download --used   # only the recordings content/items points at
+npm run masters -- upload     # after adding or re-recording one (read & write token)
 ```
+
+`upload` stores each file's sha256 as object metadata (`x-amz-meta-sha256`)
+and uploads a file again when R2's copy has a different sha256, or none
+(uploaded before the metadata existed). It merges what it finds into
+`content/masters.json`: files in `Sounds/` replace their entries, and
+entries for files that aren't on this machine are kept.
+
+`npm test` doesn't need `Sounds/`: content tests count a recording listed in
+`content/masters.json` as present, and the CLI dry-run test skips itself
+when a recording the content uses isn't here.
 
 Git history still has the old copies; it wasn't rewritten.

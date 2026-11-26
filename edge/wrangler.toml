@@ -6,10 +6,13 @@
 #   REVENUECAT_PROJECT_ID, SUPABASE_SERVICE_ROLE_KEY (the cron),
 #   SENTRY_DSN (optional).
 #
-# The top-level block is what `wrangler dev` and the tests use. Deploy only
-# with --env staging or --env production.
+# The top-level block is what `wrangler dev` and the tests use. It carries
+# staging's vars, so it is named `yournotalone-api-dev`: a bare
+# `wrangler deploy` (no --env) makes a separate dev Worker instead of
+# overwriting production. Deploy only with --env staging or --env
+# production (npm run deploy:staging / deploy:production).
 
-name = "yournotalone-api"
+name = "yournotalone-api-dev"
 main = "src/index.ts"
 compatibility_date = "2026-11-01"
 # @sentry/cloudflare needs AsyncLocalStorage, which comes with nodejs_compat.

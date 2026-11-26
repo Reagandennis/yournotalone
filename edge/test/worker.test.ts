@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resetAuthState } from '../src/auth';
 import { resetCatalogState } from '../src/catalog';
-import { resetPremiumState } from '../src/premium';
+import { NOT_PREMIUM_TTL_SECONDS, PREMIUM_TTL_SECONDS, resetPremiumState } from '../src/premium';
 import {
   activeCustomer, call, CDN, inactiveCustomer, json, LATEST, mockFetch, rcCalls, REFS,
   setupKeys, sign, token, type MockState,
@@ -215,6 +215,100 @@ describe('POST /v1/media/sign', () => {
     };
     expect((await sign(await token({ sub }), { items: [BODY_SCAN], purpose: 'stream' })).status).toBe(200);
     expect(rcCalls(m)).toHaveLength(1);
+  });
+
+  describe('premium cache lifetimes', () => {
+    const body = { items: [BODY_SCAN], purpose: 'stream' };
+    let clock: number;
+    beforeEach(() => {
+      clock = Date.now();
+      vi.spyOn(Date, 'now').mockImplementation(() => clock);
+    });
+
+    it('keeps a "not premium" answer for about 30 s only', async () => {
+      const sub = crypto.randomUUID();
+      m.revenueCat = () => inactiveCustomer();
+      expect((await sign(await token({ sub }), body)).status).toBe(403);
+      expect((await sign(await token({ sub }), body)).status).toBe(403);
+      expect(rcCalls(m)).toHaveLength(1);
+
+      // They buy; within ~30 s the Worker asks again, from either cache layer.
+      m.revenueCat = () => activeCustomer();
+      clock += (NOT_PREMIUM_TTL_SECONDS + 1) * 1000;
+      expect((await sign(await token({ sub }), body)).status).toBe(200);
+      expect(rcCalls(m)).toHaveLength(2);
+
+      // The same once the in-isolate copy is gone (caches.default only).
+      const other = crypto.randomUUID();
+      m.revenueCat = () => inactiveCustomer();
+      expect((await sign(await token({ sub: other }), body)).status).toBe(403);
+      resetPremiumState();
+      clock += (NOT_PREMIUM_TTL_SECONDS + 1) * 1000;
+      m.revenueCat = () => activeCustomer();
+      expect((await sign(await token({ sub: other }), body)).status).toBe(200);
+      expect(rcCalls(m)).toHaveLength(4);
+    });
+
+    it('never keeps a "premium" answer past the entitlement\'s expires_at', async () => {
+      const sub = crypto.randomUUID();
+      m.revenueCat = () => activeCustomer('entl_pro_test', clock + 60_000);
+      expect((await sign(await token({ sub }), body)).status).toBe(200);
+      clock += 30_000;
+      expect((await sign(await token({ sub }), body)).status).toBe(200);
+      expect(rcCalls(m)).toHaveLength(1);
+
+      // Past expires_at (well inside 5 minutes): asked again, and refused.
+      clock += 31_000;
+      m.revenueCat = () => inactiveCustomer();
+      expect((await sign(await token({ sub }), body)).status).toBe(403);
+      expect(rcCalls(m)).toHaveLength(2);
+
+      // Same with only caches.default to go on.
+      const other = crypto.randomUUID();
+      m.revenueCat = () => activeCustomer('entl_pro_test', clock + 60_000);
+      expect((await sign(await token({ sub: other }), body)).status).toBe(200);
+      resetPremiumState();
+      clock += 61_000;
+      m.revenueCat = () => inactiveCustomer();
+      expect((await sign(await token({ sub: other }), body)).status).toBe(403);
+      expect(rcCalls(m)).toHaveLength(4);
+    });
+
+    it('a copy restored from caches.default keeps its original expiry', async () => {
+      const sub = crypto.randomUUID();
+      m.revenueCat = () => activeCustomer();
+      expect((await sign(await token({ sub }), body)).status).toBe(200);
+
+      clock += 4 * 60_000;
+      resetPremiumState();
+      expect((await sign(await token({ sub }), body)).status).toBe(200);
+      expect(rcCalls(m)).toHaveLength(1); // from caches.default
+
+      // 5 minutes after RevenueCat answered, not 5 after the restore.
+      clock += (PREMIUM_TTL_SECONDS - 4 * 60 + 1) * 1000;
+      m.revenueCat = () => inactiveCustomer();
+      expect((await sign(await token({ sub }), body)).status).toBe(403);
+      expect(rcCalls(m)).toHaveLength(2);
+    });
+
+    it('keys caches.default by RevenueCat project and environment too', async () => {
+      const sub = crypto.randomUUID();
+      m.revenueCat = () => activeCustomer();
+      expect((await sign(await token({ sub }), body)).status).toBe(200);
+      resetPremiumState();
+
+      m.revenueCat = (url) => {
+        expect(url.pathname).toBe(`/v2/projects/proj_other/customers/${sub}`);
+        return inactiveCustomer();
+      };
+      expect((await sign(await token({ sub }), body, { REVENUECAT_PROJECT_ID: 'proj_other' })).status).toBe(403);
+      expect(rcCalls(m)).toHaveLength(2);
+
+      resetPremiumState();
+      m.revenueCat = () => inactiveCustomer();
+      expect((await sign(await token({ sub }), body, { KEY_PREFIX: '', PUBLIC_BASE_URL: CDN + '/' })).status).toBe(403);
+      expect(rcCalls(m)).toHaveLength(3);
+    });
   });
 
   it('resolves the entitlement lookup key when PRO_ENTITLEMENT_ID is not set', async () => {

@@ -16,7 +16,7 @@ Hono, verifies Supabase JWTs with `jose` and presigns R2 URLs with `aws4fetch`.
 src/index.ts     entry: fetch + scheduled, Sentry wrapper only when SENTRY_DSN is set
 src/app.ts       Hono router, CORS, JSON 404/500
 src/auth.ts      Bearer JWT -> JWKS verify (iss, aud, exp, sub), per-user rate limit
-src/premium.ts   comp flag -> RevenueCat v2, 5-min boolean cache, fails closed
+src/premium.ts   comp flag -> RevenueCat v2, cached (yes: ≤5 min and never past expires_at; no: 30 s), fails closed
 src/catalog.ts   latest.json -> snapshot, in memory, refreshed at most every 60 s
 src/sign.ts      POST /v1/media/sign
 src/recommend/score.ts       scoring v1: pure, deterministic, no I/O (fixtures in test/fixtures/)
@@ -118,7 +118,11 @@ If you reuse the key the Supabase functions already use, check that it has these
    without a popularity prior.
 7. **Deploy staging:** `npx wrangler deploy --env staging`. That gives you
    `https://yournotalone-api-staging.<subdomain>.workers.dev`. Production is
-   `npx wrangler deploy --env production` (`yournotalone-api.<subdomain>.workers.dev`).
+   `npx wrangler deploy --env production` (`yournotalone-api.<subdomain>.workers.dev`), or
+   `npm run deploy:staging` / `npm run deploy:production`. Always pass `--env`: the top-level
+   config (what `wrangler dev` and the tests use) has staging's vars and is named
+   `yournotalone-api-dev`, so a bare `npx wrangler deploy` creates or updates that separate dev
+   Worker (with no secrets) and never touches production.
 
 ## curl
 
@@ -210,7 +214,10 @@ Errors are always JSON, `{"error": "<code>"}`:
     `latest.json` changes.
 - **Bundle:** about 140 KiB gzipped (mostly Sentry), against the 3 MiB free limit.
 - **Cache API:**
-  - The premium boolean is kept for 5 minutes in `caches.default` and in a small in-isolate map.
+  - The premium answer is kept in `caches.default` and in a small in-isolate map: "premium" for
+    at most 5 minutes and never past the entitlement's `expires_at`, "not premium" for 30 seconds
+    (so a purchase shows up quickly). A copy read back from `caches.default` keeps its original
+    expiry. The key is sha256 of the RevenueCat project, the environment and the user id.
   - Cloudflare's docs only promise that the Cache API works on custom domains. On
     `*.workers.dev` it may not store anything, which would make the in-isolate map the only
     cache. RevenueCat's customer endpoint allows 480 requests a minute.
@@ -227,9 +234,9 @@ Errors are always JSON, `{"error": "<code>"}`:
 - **Recommendations:**
   - Scoring 250 items against 300 sessions and 300 feelings takes about 0.2 ms of CPU (Node,
     warm). Waiting on Supabase doesn't count towards the 10 ms CPU limit.
-  - Each call makes up to 5 subrequests: 3 Supabase reads, RevenueCat (cached 5 min) and
+  - Each call makes up to 5 subrequests: 3 Supabase reads, RevenueCat (cached up to 5 min) and
     `stats/popularity.json` (cached in memory for an hour). The free plan allows 50.
   - The cron is one RPC call and one R2 write (Class A) a day.
 - **Not used:** KV, D1, Durable Objects, Queues. Nothing user-specific is stored on Cloudflare
-  except the 5-minute premium boolean, keyed by sha256(user id). Recommendation answers are sent
+  except the short-lived premium answer, keyed by sha256(RevenueCat project, environment, user id). Recommendation answers are sent
   with `Cache-Control: private, no-store`.
