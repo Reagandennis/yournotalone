@@ -6269,4 +6269,32 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get sessionErrorTherapistInactive =>
       'Tu perfil de terapeuta está en pausa, así que ahora no puedes unirte a sesiones. Ponte en contacto con el equipo de atención.';
+
+  @override
+  String get journalDraftStaleBody =>
+      'Esta entrada se modificó después de escribir este borrador, quizá en otro dispositivo. Si sigues con el borrador, reemplazará la versión más reciente al guardar.';
+
+  @override
+  String get journalEntryGoneTitle => 'Esta entrada se eliminó';
+
+  @override
+  String get journalEntryGoneBody =>
+      'Puede que se haya eliminado en otro dispositivo. Lo que escribiste sigue aquí. ¿Guardarlo como una entrada nueva?';
+
+  @override
+  String get journalEntrySaveAsNew => 'Guardar como entrada nueva';
+
+  @override
+  String get journalEntryConflictTitle =>
+      'Esta entrada cambió en otro dispositivo';
+
+  @override
+  String get journalEntryConflictBody =>
+      'Reemplaza esa versión por la tuya, o conserva las dos guardando la tuya como entrada nueva.';
+
+  @override
+  String get journalEntryReplace => 'Reemplazar';
+
+  @override
+  String get journalEntryKeepBoth => 'Conservar las dos';
 }

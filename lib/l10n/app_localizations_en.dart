@@ -6198,4 +6198,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get sessionErrorTherapistInactive =>
       'Your therapist profile is paused, so you can\'t join sessions right now. Please contact the care team.';
+
+  @override
+  String get journalDraftStaleBody =>
+      'This entry was changed after this draft was written — on another device, perhaps. Carrying on with the draft will replace the newer version when you save.';
+
+  @override
+  String get journalEntryGoneTitle => 'This entry was deleted';
+
+  @override
+  String get journalEntryGoneBody =>
+      'It may have been deleted on another device. Your writing is still here — save it as a new entry?';
+
+  @override
+  String get journalEntrySaveAsNew => 'Save as a new entry';
+
+  @override
+  String get journalEntryConflictTitle =>
+      'This entry changed on another device';
+
+  @override
+  String get journalEntryConflictBody =>
+      'Replace that version with yours, or keep both by saving yours as a new entry.';
+
+  @override
+  String get journalEntryReplace => 'Replace';
+
+  @override
+  String get journalEntryKeepBoth => 'Keep both';
 }

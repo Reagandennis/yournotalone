@@ -5873,6 +5873,31 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get sessionErrorTherapistInactive => '你的治疗师资料已暂停，所以现在无法加入咨询。请联系关怀团队。';
+
+  @override
+  String get journalDraftStaleBody =>
+      '这篇日记在这份草稿写好后被修改过——也许是在另一台设备上。继续使用草稿，保存时会替换较新的版本。';
+
+  @override
+  String get journalEntryGoneTitle => '这篇日记已被删除';
+
+  @override
+  String get journalEntryGoneBody => '它可能已在另一台设备上被删除。你写的内容还在——要保存为新日记吗？';
+
+  @override
+  String get journalEntrySaveAsNew => '保存为新日记';
+
+  @override
+  String get journalEntryConflictTitle => '这篇日记已在另一台设备上更改';
+
+  @override
+  String get journalEntryConflictBody => '用你的版本替换那个版本，或者把你的版本保存为新日记，两个都保留。';
+
+  @override
+  String get journalEntryReplace => '替换';
+
+  @override
+  String get journalEntryKeepBoth => '都保留';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

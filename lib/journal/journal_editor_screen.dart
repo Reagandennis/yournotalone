@@ -160,9 +160,8 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.journalDraftTitle),
-        // TODO(l10n): journalDraftStaleBody once it exists — see report.
         content: Text(stale
-            ? context.l10n.journalDraftBody
+            ? context.l10n.journalDraftStaleBody
             : context.l10n.journalDraftBody),
         actions: [
           TextButton(
@@ -271,15 +270,13 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     }
   }
 
-  // TODO(l10n): the two dialogs below reuse existing strings until
-  // journalEntryGone* / journalEntryConflict* exist — see report.
-
   Future<void> _offerSaveAsNew() async {
     if (!mounted) return;
     final saveAsNew = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(context.l10n.journalEditorSaveFailed),
+        title: Text(context.l10n.journalEntryGoneTitle),
+        content: Text(context.l10n.journalEntryGoneBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -287,7 +284,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(context.l10n.journalEditorSave),
+            child: Text(context.l10n.journalEntrySaveAsNew),
           ),
         ],
       ),
@@ -302,7 +299,8 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     final choice = await showDialog<_ConflictChoice>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(context.l10n.journalEditorSaveFailed),
+        title: Text(context.l10n.journalEntryConflictTitle),
+        content: Text(context.l10n.journalEntryConflictBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
@@ -311,12 +309,12 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
           TextButton(
             onPressed: () =>
                 Navigator.of(context).pop(_ConflictChoice.keepBoth),
-            child: Text(context.l10n.journalEditorSave),
+            child: Text(context.l10n.journalEntryKeepBoth),
           ),
           TextButton(
             onPressed: () =>
                 Navigator.of(context).pop(_ConflictChoice.replace),
-            child: Text(context.l10n.commonSave),
+            child: Text(context.l10n.journalEntryReplace),
           ),
         ],
       ),

@@ -275,9 +275,10 @@ void main() {
       // Not reported as saved: still here, with a way to keep it.
       expect(find.text('After'), findsOneWidget);
       expect(find.byType(AlertDialog), findsOneWidget);
+      expect(find.text('This entry was deleted'), findsOneWidget);
       await tester.tap(find.descendant(
         of: find.byType(AlertDialog),
-        matching: find.text('Save entry'),
+        matching: find.text('Save as a new entry'),
       ));
       await tester.pumpAndSettle();
       expect(journal.created.single.$2, 'After');
@@ -304,10 +305,11 @@ void main() {
       expect(journal.updates, isEmpty);
       expect(find.byType(AlertDialog), findsOneWidget);
 
-      // "Save": mine replaces the newer version, knowingly.
+      expect(find.text('This entry changed on another device'), findsOneWidget);
+      // "Replace": mine replaces the newer version, knowingly.
       await tester.tap(find.descendant(
         of: find.byType(AlertDialog),
-        matching: find.text('Save'),
+        matching: find.text('Replace'),
       ));
       await tester.pumpAndSettle();
       expect(journal.updates.single, ('Mine', newer.baseVersion));
@@ -334,6 +336,8 @@ void main() {
       await tester.pumpWidget(editing(_FakeJournal(), opened: saved));
       await open(tester);
       expect(find.text(draftOffer), findsOneWidget);
+      expect(find.textContaining('changed after this draft was written'),
+          findsOneWidget);
 
       // Dismissed with back: nothing restored.
       await tester.binding.handlePopRoute();

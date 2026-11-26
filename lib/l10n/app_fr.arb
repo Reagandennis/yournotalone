@@ -1606,5 +1606,13 @@
   "therapyDiscardCheckFailed": "Impossible de vérifier ton paiement, donc la demande est gardée. Réessaie dans un instant.",
   "therapyCancelSessionBodyNoCharge": "On prévient ton thérapeute. Rien n’a été débité pour cette séance, donc il n’y a rien à rembourser. Tu peux réserver à nouveau quand tu veux.",
   "therapyCancelRequestBodyNoCharge": "On ne t’a pas encore trouvé de thérapeute. Rien n’a été débité pour cette demande, donc il n’y a rien à rembourser. Tu peux réserver à nouveau quand tu veux.",
-  "sessionErrorTherapistInactive": "Ton profil de thérapeute est en pause, tu ne peux donc pas rejoindre de séance pour l’instant. Contacte l’équipe de soutien."
+  "sessionErrorTherapistInactive": "Ton profil de thérapeute est en pause, tu ne peux donc pas rejoindre de séance pour l’instant. Contacte l’équipe de soutien.",
+  "journalDraftStaleBody": "Cette entrée a été modifiée après l’écriture de ce brouillon — sur un autre appareil, peut-être. Si tu continues avec le brouillon, il remplacera la version plus récente quand tu enregistreras.",
+  "journalEntryGoneTitle": "Cette entrée a été supprimée",
+  "journalEntryGoneBody": "Elle a peut-être été supprimée sur un autre appareil. Ce que tu as écrit est toujours là — l’enregistrer comme nouvelle entrée ?",
+  "journalEntrySaveAsNew": "Enregistrer comme nouvelle entrée",
+  "journalEntryConflictTitle": "Cette entrée a changé sur un autre appareil",
+  "journalEntryConflictBody": "Remplace cette version par la tienne, ou garde les deux en enregistrant la tienne comme nouvelle entrée.",
+  "journalEntryReplace": "Remplacer",
+  "journalEntryKeepBoth": "Garder les deux"
 }

@@ -1606,5 +1606,13 @@
   "therapyDiscardCheckFailed": "Wir konnten deine Zahlung nicht prüfen, deshalb bleibt die Anfrage bestehen. Versuch es gleich noch einmal.",
   "therapyCancelSessionBodyNoCharge": "Wir sagen deiner Therapeutin oder deinem Therapeuten Bescheid. Für diese Sitzung wurde nichts berechnet, also gibt es nichts zu erstatten. Du kannst jederzeit neu buchen.",
   "therapyCancelRequestBodyNoCharge": "Wir haben noch niemanden für dich gefunden. Für diese Anfrage wurde nichts berechnet, also gibt es nichts zu erstatten. Du kannst jederzeit neu buchen.",
-  "sessionErrorTherapistInactive": "Dein Therapeutenprofil ist pausiert, deshalb kannst du gerade keinen Sitzungen beitreten. Bitte wende dich an das Care-Team."
+  "sessionErrorTherapistInactive": "Dein Therapeutenprofil ist pausiert, deshalb kannst du gerade keinen Sitzungen beitreten. Bitte wende dich an das Care-Team.",
+  "journalDraftStaleBody": "Dieser Eintrag wurde geändert, nachdem dieser Entwurf geschrieben wurde – vielleicht auf einem anderen Gerät. Wenn du mit dem Entwurf weitermachst, ersetzt er beim Speichern die neuere Version.",
+  "journalEntryGoneTitle": "Dieser Eintrag wurde gelöscht",
+  "journalEntryGoneBody": "Vielleicht wurde er auf einem anderen Gerät gelöscht. Dein Text ist noch da – als neuen Eintrag speichern?",
+  "journalEntrySaveAsNew": "Als neuen Eintrag speichern",
+  "journalEntryConflictTitle": "Dieser Eintrag wurde auf einem anderen Gerät geändert",
+  "journalEntryConflictBody": "Ersetze diese Version durch deine oder behalte beide, indem du deine als neuen Eintrag speicherst.",
+  "journalEntryReplace": "Ersetzen",
+  "journalEntryKeepBoth": "Beide behalten"
 }

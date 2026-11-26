@@ -9779,6 +9779,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your therapist profile is paused, so you can\'t join sessions right now. Please contact the care team.'**
   String get sessionErrorTherapistInactive;
+
+  /// Body of the dialog offering to carry on with an unsaved journal draft, when the saved entry was changed (e.g. on another device) after the draft was written.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry was changed after this draft was written — on another device, perhaps. Carrying on with the draft will replace the newer version when you save.'**
+  String get journalDraftStaleBody;
+
+  /// Dialog title when saving a journal entry that has been deleted (e.g. on another device).
+  ///
+  /// In en, this message translates to:
+  /// **'This entry was deleted'**
+  String get journalEntryGoneTitle;
+
+  /// Body under journalEntryGoneTitle: offers to save what they wrote as a new journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'It may have been deleted on another device. Your writing is still here — save it as a new entry?'**
+  String get journalEntryGoneBody;
+
+  /// Button under journalEntryGoneBody: save the text as a new journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as a new entry'**
+  String get journalEntrySaveAsNew;
+
+  /// Dialog title when saving a journal entry that was changed on another device since editing began.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry changed on another device'**
+  String get journalEntryConflictTitle;
+
+  /// Body under journalEntryConflictTitle, explaining the two buttons journalEntryReplace and journalEntryKeepBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace that version with yours, or keep both by saving yours as a new entry.'**
+  String get journalEntryConflictBody;
+
+  /// Button in the journal conflict dialog: overwrite the other version with this one.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get journalEntryReplace;
+
+  /// Button in the journal conflict dialog: save this version as a new entry, keeping the other.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep both'**
+  String get journalEntryKeepBoth;
 }
 
 class _AppLocalizationsDelegate

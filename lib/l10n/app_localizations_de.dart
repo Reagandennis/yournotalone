@@ -6274,4 +6274,32 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get sessionErrorTherapistInactive =>
       'Dein Therapeutenprofil ist pausiert, deshalb kannst du gerade keinen Sitzungen beitreten. Bitte wende dich an das Care-Team.';
+
+  @override
+  String get journalDraftStaleBody =>
+      'Dieser Eintrag wurde geändert, nachdem dieser Entwurf geschrieben wurde – vielleicht auf einem anderen Gerät. Wenn du mit dem Entwurf weitermachst, ersetzt er beim Speichern die neuere Version.';
+
+  @override
+  String get journalEntryGoneTitle => 'Dieser Eintrag wurde gelöscht';
+
+  @override
+  String get journalEntryGoneBody =>
+      'Vielleicht wurde er auf einem anderen Gerät gelöscht. Dein Text ist noch da – als neuen Eintrag speichern?';
+
+  @override
+  String get journalEntrySaveAsNew => 'Als neuen Eintrag speichern';
+
+  @override
+  String get journalEntryConflictTitle =>
+      'Dieser Eintrag wurde auf einem anderen Gerät geändert';
+
+  @override
+  String get journalEntryConflictBody =>
+      'Ersetze diese Version durch deine oder behalte beide, indem du deine als neuen Eintrag speicherst.';
+
+  @override
+  String get journalEntryReplace => 'Ersetzen';
+
+  @override
+  String get journalEntryKeepBoth => 'Beide behalten';
 }

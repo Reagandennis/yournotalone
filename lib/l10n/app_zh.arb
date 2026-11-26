@@ -1606,5 +1606,13 @@
   "therapyDiscardCheckFailed": "无法查看你的付款，所以申请已保留。请稍后再试。",
   "therapyCancelSessionBodyNoCharge": "我们会通知你的治疗师。这次咨询没有收费，所以无需退款。你随时可以重新预约。",
   "therapyCancelRequestBodyNoCharge": "我们还没有为你匹配治疗师。这次申请没有收费，所以无需退款。你随时可以重新预约。",
-  "sessionErrorTherapistInactive": "你的治疗师资料已暂停，所以现在无法加入咨询。请联系关怀团队。"
+  "sessionErrorTherapistInactive": "你的治疗师资料已暂停，所以现在无法加入咨询。请联系关怀团队。",
+  "journalDraftStaleBody": "这篇日记在这份草稿写好后被修改过——也许是在另一台设备上。继续使用草稿，保存时会替换较新的版本。",
+  "journalEntryGoneTitle": "这篇日记已被删除",
+  "journalEntryGoneBody": "它可能已在另一台设备上被删除。你写的内容还在——要保存为新日记吗？",
+  "journalEntrySaveAsNew": "保存为新日记",
+  "journalEntryConflictTitle": "这篇日记已在另一台设备上更改",
+  "journalEntryConflictBody": "用你的版本替换那个版本，或者把你的版本保存为新日记，两个都保留。",
+  "journalEntryReplace": "替换",
+  "journalEntryKeepBoth": "都保留"
 }

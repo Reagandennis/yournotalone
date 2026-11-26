@@ -23,6 +23,7 @@ import 'content/content_catalog.dart';
 import 'courses/course_progress.dart';
 import 'discover/saved_store.dart';
 import 'media/download_store.dart';
+import 'media/media_links.dart';
 import 'media/now_playing.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
@@ -200,6 +201,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             // Their things are set aside for when they're back, and their
             // reminders stop: the next person on this phone gets neither.
             LocalData.instance.signedOut();
+            // Signed media links were the last person's to use.
+            MediaLinks.instance.clear();
             CourseStore.instance.reset();
             unawaited(RemindersService.instance.cancelScheduled());
             _toLogin();
@@ -237,6 +240,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void _signedIn(String? userId) {
     if (userId != null && LocalData.instance.signedIn(userId)) {
       CourseStore.instance.reset();
+      MediaLinks.instance.clear();
       unawaited(
         RemindersService.instance.cancelScheduled().then(
           (_) => RemindersService.instance.refreshScheduled(),
