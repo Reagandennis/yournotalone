@@ -122,6 +122,19 @@ class CatalogItem {
     this.background,
   });
 
+  /// [CatalogItem.fromJson], or null for an item of a kind this build
+  /// doesn't know — a kind added after it was released. The rest of the
+  /// catalogue still loads; one such item used to reject all of it, so an
+  /// older app got no updates at all.
+  static CatalogItem? tryFromJson(Map<String, dynamic> json) {
+    if (ContentKind.values.asNameMap()[json['kind']] == null) {
+      debugPrint('Catalogue: skipping ${json['id']} of unknown kind '
+          '${json['kind']}');
+      return null;
+    }
+    return CatalogItem.fromJson(json);
+  }
+
   factory CatalogItem.fromJson(Map<String, dynamic> json) {
     final tags = json['tags'] as Map<String, dynamic>;
     final needs = Need.values.asNameMap();
@@ -220,6 +233,17 @@ class CatalogCourse {
     required this.text,
   });
 
+  /// [CatalogCourse.fromJson], or null for a course for a need this build
+  /// doesn't know (see [CatalogItem.tryFromJson]).
+  static CatalogCourse? tryFromJson(Map<String, dynamic> json) {
+    if (Need.values.asNameMap()[json['need']] == null) {
+      debugPrint('Catalogue: skipping course ${json['id']} for unknown need '
+          '${json['need']}');
+      return null;
+    }
+    return CatalogCourse.fromJson(json);
+  }
+
   factory CatalogCourse.fromJson(Map<String, dynamic> json) => CatalogCourse(
     id: json['id'] as String,
     order: json['order'] as int,
@@ -305,11 +329,11 @@ class CatalogSnapshot {
       },
       items: [
         for (final i in json['items'] as List)
-          CatalogItem.fromJson(i as Map<String, dynamic>),
+          ?CatalogItem.tryFromJson(i as Map<String, dynamic>),
       ],
       courses: [
         for (final c in json['courses'] as List)
-          CatalogCourse.fromJson(c as Map<String, dynamic>),
+          ?CatalogCourse.tryFromJson(c as Map<String, dynamic>),
       ],
       // Added without a format bump: older builds skip the field, and this
       // one skips any background it can't draw.

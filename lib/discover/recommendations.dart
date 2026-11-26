@@ -23,6 +23,7 @@ import '../courses/course_progress.dart';
 import '../l10n/l10n.dart';
 import '../media/media_links.dart';
 import 'content_index.dart';
+import 'content_tags.dart';
 import 'usage_store.dart';
 
 /// The Worker's base URL, shared with media signing. Empty means off.
@@ -258,22 +259,37 @@ class RecommendationsClient {
 
   /// The Worker's list for [request], a recent cached one, or null when
   /// Home should use its own order. Never throws.
+  ///
+  /// After an awful or low check-in ([RecommendationRequest.distressed])
+  /// deep work is taken out here whatever the Worker sent, as Home's own
+  /// suggestion does: the safety rule mustn't depend on the server (an
+  /// older Worker, or an answer cached from before the check-in).
   Future<List<Recommendation>?> fetch(RecommendationRequest request) async {
     if (!enabled) return null;
     final cached = await _readCache(request);
     if (cached != null && request.now.difference(cached.$1) < maxAge) {
-      return cached.$2;
+      return _safe(request, cached.$2);
     }
     final fresh = await _call(request);
     if (fresh != null) {
       await _writeCache(request, fresh);
-      return fresh;
+      return _safe(request, fresh);
     }
     if (cached != null && request.now.difference(cached.$1) < staleFor) {
-      return cached.$2;
+      return _safe(request, cached.$2);
     }
     return null;
   }
+
+  static List<Recommendation> _safe(
+    RecommendationRequest request,
+    List<Recommendation> picks,
+  ) => request.distressed
+      ? [
+          for (final p in picks)
+            if (!deepContent.contains(p.id)) p,
+        ]
+      : picks;
 
   Future<List<Recommendation>?> _call(RecommendationRequest request) async {
     final token = await _token().catchError((_) => null);

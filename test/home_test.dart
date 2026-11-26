@@ -33,6 +33,17 @@ class _Moods extends MoodRepository {
 
   @override
   Future<List<MoodEntry>> fetchHistory({int days = 90}) async => const [];
+
+  /// Saves fail while this is set.
+  bool saveFails = false;
+  final saved = <int>[];
+
+  @override
+  Future<void> saveMood(int index) async {
+    if (saveFails) throw Exception('offline');
+    saved.add(index);
+    today = index;
+  }
 }
 
 /// The app sent to the background and brought back.
@@ -111,7 +122,12 @@ void main() {
 
   testWidgets('mood check-in lights up the selected face', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(theme: buildAppTheme(), home: const HomeShell()),
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(
+          body: HomeTab(practice: _NoPractice(), mood: _Moods()),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -141,6 +157,43 @@ void main() {
     await tester.pumpAndSettle();
     expect(face('Awful').dimmed, isFalse);
     expect(face('Great').dimmed, isTrue);
+  });
+
+  testWidgets('a check-in that fails to save does not stay lit as saved', (
+    tester,
+  ) async {
+    final moods = _Moods()..saveFails = true;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(body: HomeTab(practice: _NoPractice(), mood: moods)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    MoodFace face(String label) => tester.widget<MoodFace>(
+          find
+              .descendant(
+                of: find.byType(HomeTab),
+                matching: find.byWidgetPredicate(
+                  (w) => w is MoodFace && w.level.label == label,
+                ),
+              )
+              .first,
+        );
+
+    await tester.tap(find.text('Great'));
+    await tester.pumpAndSettle();
+    expect(find.text('Couldn\'t save your mood — check your connection.'),
+        findsOneWidget);
+    // Back to nothing picked: every face in full colour.
+    expect(face('Great').dimmed, isFalse);
+    expect(face('Awful').dimmed, isFalse);
+
+    moods.saveFails = false;
+    await tester.tap(find.text('Great'));
+    await tester.pumpAndSettle();
+    expect(moods.saved, [4]);
+    expect(face('Awful').dimmed, isTrue);
   });
 
   group('Home catches up', () {

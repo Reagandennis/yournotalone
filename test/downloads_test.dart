@@ -149,6 +149,8 @@ void main() {
   DownloadStore phone({
     Map<String, List<MediaEntry>>? items,
     bool premium = false,
+    String? Function()? user,
+    Stream<Object?>? userChanges,
   }) => DownloadStore.forTest(
     transfer: transfer,
     links: MediaLinks(apiUrl: '', baseUrl: 'https://cdn.test/'),
@@ -156,6 +158,8 @@ void main() {
     network: network,
     entriesFor: (id) => (items ?? catalog)[id] ?? const [],
     isPremium: () => premium,
+    userId: user,
+    userChanges: userChanges,
   );
 
   File fileOf(MediaEntry e) =>
@@ -584,6 +588,133 @@ void main() {
     }
     await tester.pump();
     expect(find.text(DownloadStrings.empty), findsOneWidget);
+  });
+
+  group('on a shared phone', () {
+    late String? signedIn;
+    late StreamController<Object?> auth;
+
+    setUp(() {
+      signedIn = 'amina';
+      auth = StreamController<Object?>.broadcast();
+    });
+    tearDown(() => auth.close());
+
+    DownloadStore shared() =>
+        phone(user: () => signedIn, userChanges: auth.stream);
+
+    Future<void> signIn(String? user) async {
+      signedIn = user;
+      auth.add(null);
+      await pumpEventQueue();
+    }
+
+    test('the next person does not see the last one\'s downloads', () async {
+      final store = shared();
+      await store.load();
+      await store.download(rain.itemId);
+      await store.idle();
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+
+      await signIn(null);
+      expect(store.value, isEmpty);
+      await signIn('bo');
+      expect(store.value, isEmpty);
+      expect(store.downloaded, isEmpty);
+      expect(store.totalBytes, 0);
+
+      // Bo downloading the same item shares the file, with nothing fetched.
+      final fetches = transfer.fetched.length;
+      await store.download(rain.itemId);
+      await store.idle();
+      expect(transfer.fetched.length, fetches);
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+
+      // Bo deleting it leaves Amina's copy.
+      await store.remove(rain.itemId);
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.none);
+      expect(await files.downloaded(rain.ref), isNotNull);
+      await signIn('amina');
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+    });
+
+    test('downloads from before go to whoever signs in first', () async {
+      signedIn = null;
+      final before = shared();
+      await before.load();
+      await before.download(rain.itemId);
+      await before.idle();
+      await before.reset();
+
+      signedIn = 'amina';
+      final store = shared();
+      await store.load();
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+      await signIn('bo');
+      expect(store.value, isEmpty);
+    });
+
+    test('a deleted account\'s downloads go; someone else\'s stay', () async {
+      final store = shared();
+      await store.load();
+      await store.downloadAll([rain.itemId, scan.itemId]);
+      await store.idle();
+      await signIn('bo');
+      await store.download(scan.itemId);
+      await store.idle();
+
+      await store.forgetUser('amina');
+      expect(await files.downloaded(rain.ref), isNull);
+      expect(await files.downloaded(scan.ref), isNotNull, reason: 'Bo\'s');
+      await signIn('amina');
+      expect(store.value, isEmpty);
+    });
+  });
+
+  test('removing a download that is playing deletes it once let go',
+      () async {
+    final store = phone();
+    await store.load();
+    await store.download(rain.itemId);
+    await store.idle();
+
+    store.hold(rain.ref.sha256);
+    await store.remove(rain.itemId);
+    expect(store.stateOf(rain.itemId).status, DownloadStatus.none);
+    expect(await files.downloaded(rain.ref), isNotNull, reason: 'playing');
+    await store.release(rain.ref.sha256);
+    expect(await files.downloaded(rain.ref), isNull);
+  });
+
+  test('a loop removed while it is fetched to play is not kept', () async {
+    network.set([ConnectivityResult.mobile]);
+    final store = phone();
+    await store.load();
+    transfer.hold = Completer();
+    final playing = store
+        .fetchNow(rain)
+        .then<File?>((f) => f, onError: (Object _) => null);
+    await pumpEventQueue();
+    await store.remove(rain.itemId);
+    transfer.hold!.complete();
+    await playing;
+    await store.idle();
+    expect(store.stateOf(rain.itemId).status, DownloadStatus.none);
+    expect(store.downloaded, isEmpty);
+  });
+
+  test('remove all stops transfers before emptying the folder', () async {
+    final store = phone();
+    await store.load();
+    transfer.hold = Completer();
+    await store.downloadAll([rain.itemId, scan.itemId]);
+    await pumpEventQueue();
+    await store.removeAll();
+    transfer.hold!.complete();
+    await store.idle();
+    expect(transfer.cancelled, contains('media-${rain.ref.sha256}'));
+    expect(store.value, isEmpty);
+    expect(await files.downloaded(rain.ref), isNull);
   });
 
   test('sizes read the way people say them', () {

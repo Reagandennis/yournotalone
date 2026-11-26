@@ -14,6 +14,7 @@ import 'package:yournotalone/discover/content_tags.dart';
 import 'package:yournotalone/discover/usage_store.dart';
 import 'package:yournotalone/home/home_shell.dart';
 import 'package:yournotalone/home/home_tab.dart';
+import 'package:yournotalone/home/mood_repository.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
 import 'package:yournotalone/reminders/reminders_service.dart';
 import 'package:yournotalone/therapy/therapy_repository.dart';
@@ -236,7 +237,11 @@ void main() {
         MaterialApp(
           theme: buildAppTheme(),
           home: Scaffold(
-            body: HomeTab(practice: _NoPractice(), therapyRequests: therapy),
+            body: HomeTab(
+              practice: _NoPractice(),
+              mood: _SavingMoods(),
+              therapyRequests: therapy,
+            ),
           ),
         );
 
@@ -317,4 +322,16 @@ void main() {
       expect(sounds.dx < meditate.dx || sounds.dy < meditate.dy, isTrue);
     });
   });
+}
+
+/// Check-ins that save, with nothing saved before.
+class _SavingMoods extends MoodRepository {
+  @override
+  Future<int?> fetchTodayMoodIndex() async => null;
+
+  @override
+  Future<List<MoodEntry>> fetchHistory({int days = 90}) async => const [];
+
+  @override
+  Future<void> saveMood(int index) async {}
 }

@@ -180,6 +180,11 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
   /// arrive, or when the app is built without one: then Home orders them
   /// itself.
   List<Recommendation>? _suggested;
+
+  /// Bumped for every suggestions request, and by a check-in, so an answer
+  /// that arrives after a newer request (one asked before an awful check-in,
+  /// say) is dropped instead of replacing the newer list.
+  int _suggestionsGen = 0;
   List<_QuickItem> _quick = _quickItems;
 
   /// When Home last fetched what it shows. Home stays alive under the
@@ -344,8 +349,10 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
   Future<void> _loadSuggestions() async {
     final client = _recommendations;
     if (!client.enabled) return;
+    final gen = ++_suggestionsGen;
     try {
       final picks = await client.fetch(await RecommendationRequest.current());
+      if (gen != _suggestionsGen) return;
       if (mounted && picks != null) setState(() => _suggested = picks);
     } catch (e) {
       debugPrint('Suggestions stay on-device: $e');
@@ -426,12 +433,19 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
 
   Future<void> _selectMood(int index) async {
     final firstTime = _todaysMood == null;
+    final before = (_mood, _moodDay, _week, _rhythm);
+    // Whatever was asked for before this check-in is out of date now.
+    _suggestionsGen++;
     setState(() {
       _mood = index;
       _moodDay = clock.now();
       _week = _withToday(index);
       // A check-in counts: today's sun lights as it's made.
       _rhythm = _rhythm?.withToday();
+      // After an awful or low check-in, the Worker's list from before it
+      // may hold deep work: Home's own gentle order shows until the new
+      // answer is in.
+      if (index <= 1) _suggested = null;
     });
     // An "Awful" day is the one moment the app knows someone is
     // struggling. Offer the door straight away — before the save, which
@@ -452,18 +466,27 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
         unawaited(_nudgeAfterCheckins());
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              errorMessage(
-                e,
-                context.l10n.homeMoodSaveFailed,
-              ),
+      if (!mounted) return;
+      // Not saved, so it mustn't look saved: back to what Home showed
+      // before — unless another pick has been made since.
+      if (_mood == index) {
+        setState(() {
+          _mood = before.$1;
+          _moodDay = before.$2;
+          _week = before.$3;
+          _rhythm = before.$4;
+        });
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            errorMessage(
+              e,
+              context.l10n.homeMoodSaveFailed,
             ),
           ),
-        );
-      }
+        ),
+      );
     }
   }
 
@@ -1385,9 +1408,13 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
     final today = dailyPick(now: now, premium: premium);
     final dayPart = DayPart.of(now);
     final goals = userGoals();
+    // After an awful or low check-in, nothing deep in the strip, whoever
+    // ordered it — the same rule as the check-in's own suggestion.
+    final hard = (_todaysMood ?? 2) <= 1;
+    final exclude = {?today?.id, if (hard) ...deepContent};
     final fromWorker = itemsForRecommendations(
       _suggested,
-      exclude: {?today?.id},
+      exclude: exclude,
     );
     final forNow =
         fromWorker ??
@@ -1396,7 +1423,7 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
           count: 5,
           now: now,
           premium: premium,
-          exclude: {?today?.id},
+          exclude: exclude,
           goals: goals,
           kindBoost: _kindBoost,
         );

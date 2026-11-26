@@ -19,6 +19,24 @@ class MoodEntry {
       );
 }
 
+/// How many days in a row up to [now] have a check-in, among [dates]
+/// (local calendar dates). Today not being logged yet doesn't break
+/// yesterday's run.
+int checkInStreak(Iterable<DateTime> dates, DateTime now) {
+  final checked = {
+    for (final d in dates) DateTime(d.year, d.month, d.day),
+  };
+  var streak = 0;
+  for (var back = 0;; back++) {
+    final day = DateTime(now.year, now.month, now.day - back);
+    if (!checked.contains(day)) {
+      if (back == 0) continue;
+      return streak;
+    }
+    streak++;
+  }
+}
+
 /// Saves and restores the daily mood check-in, one row per user per day
 /// in the `mood_entries` table.
 class MoodRepository {
@@ -63,6 +81,42 @@ class MoodRepository {
         .gte('entry_date', dateKey(since))
         .order('entry_date', ascending: false);
     return [for (final row in rows) MoodEntry.fromMap(row)];
+  }
+
+  /// The dates of every check-in from the last [days] days, newest first:
+  /// lighter than [fetchHistory], for counting a long streak.
+  Future<List<DateTime>> fetchCheckInDates({required int days}) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) return const [];
+    final since = addCalendarDays(DateTime.now(), -(days - 1));
+    final rows = await _client
+        .from('mood_entries')
+        .select('entry_date')
+        .eq('user_id', userId)
+        .gte('entry_date', dateKey(since))
+        .order('entry_date', ascending: false);
+    return [for (final row in rows) DateTime.parse(row['entry_date'] as String)];
+  }
+
+  /// The run of days with a check-in up to today. [recent] is history
+  /// already fetched for the last [recentDays] days: when the run reaches
+  /// back to its start, older dates are fetched until the run ends inside
+  /// what was fetched. (History is fetched 90 days at a time, so streaks
+  /// used to stop at 90.)
+  Future<int> fetchStreak({
+    List<MoodEntry> recent = const [],
+    int recentDays = 90,
+    DateTime? now,
+  }) async {
+    final today = now ?? DateTime.now();
+    var streak = checkInStreak([for (final e in recent) e.date], today);
+    var days = recentDays;
+    // Ten years is plenty, and keeps a bad answer from looping forever.
+    while (streak >= days - 1 && days < 3660) {
+      days = days < 400 ? 400 : days * 2;
+      streak = checkInStreak(await fetchCheckInDates(days: days), today);
+    }
+    return streak;
   }
 
   /// Saves (or replaces) today's mood.

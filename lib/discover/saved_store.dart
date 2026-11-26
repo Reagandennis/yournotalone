@@ -128,6 +128,14 @@ class SavedStore extends ValueNotifier<Set<String>> {
     unawaited(sync());
   }
 
+  /// The account whose saves these are was deleted: nothing of theirs
+  /// stays in memory either (the keys are removed by LocalData.forget).
+  void forgetLocal() {
+    value = const {};
+    _pending = {};
+    _owner = null;
+  }
+
   bool isSaved(ContentItem item) => value.contains(item.id);
 
   Future<void> toggle(ContentItem item) async {

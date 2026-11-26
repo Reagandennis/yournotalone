@@ -61,8 +61,19 @@ class _MoodInsightsScreenState extends State<MoodInsightsScreen> {
           .catchError((_) => <PracticeSession>[]),
       (widget.feelings ?? FeelingStore.instance.recent)(),
     ]);
+    final moods = results[0] as List<MoodEntry>;
+    final repo = widget.moods ?? MoodRepository();
+    // History is 90 days; a streak reaching its start is counted further.
+    int? streak;
+    if (checkInStreak([for (final e in moods) e.date], DateTime.now()) >= 89) {
+      streak = await repo
+          .fetchStreak(recent: moods, recentDays: 90)
+          .then<int?>((s) => s)
+          .catchError((_) => null);
+    }
     return moodInsights(
-      moods: results[0] as List<MoodEntry>,
+      streak: streak,
+      moods: moods,
       sessions: results[1] as List<PracticeSession>,
       feelings: results[2] as List<FeelingRecord>,
       now: DateTime.now(),

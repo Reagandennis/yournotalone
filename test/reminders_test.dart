@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest_all.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/reminders/reminders_screen.dart';
@@ -58,5 +60,25 @@ void main() {
     await tester.tap(find.text('OK'));
     await tester.pumpAndSettle();
     expect(find.text('9:00 AM'), findsOneWidget);
+  });
+
+  test('the next reminder keeps its wall-clock time across a clock change',
+      () {
+    tzdata.initializeTimeZones();
+    final london = tz.getLocation('Europe/London');
+    // Clocks go forward overnight into Sunday 29 March 2026.
+    final saturdayEvening = tz.TZDateTime(london, 2026, 3, 28, 21);
+    final next = RemindersService.nextInstanceAfter(
+      saturdayEvening,
+      const TimeOfDay(hour: 9, minute: 0),
+    );
+    expect((next.year, next.month, next.day, next.hour, next.minute),
+        (2026, 3, 29, 9, 0));
+    // And back again in October.
+    final autumn = RemindersService.nextInstanceAfter(
+      tz.TZDateTime(london, 2026, 10, 24, 22),
+      const TimeOfDay(hour: 8, minute: 30),
+    );
+    expect((autumn.day, autumn.hour, autumn.minute), (25, 8, 30));
   });
 }

@@ -21,9 +21,21 @@ class _FakeJournal extends JournalRepository {
     created.add((title, content));
   }
 
+  /// Set to make updates find the entry deleted, or saved elsewhere.
+  var gone = false;
+  JournalEntry? newer;
+  final updates = <(String, String?)>[];
+
   @override
-  Future<void> update(String id, {String? title, required String content}) async {
+  Future<void> update(String id,
+      {String? title, required String content, String? baseVersion}) async {
     if (offline) throw Exception('offline');
+    if (gone) throw JournalEntryMissing(id);
+    if (newer case final current?
+        when baseVersion != current.baseVersion) {
+      throw JournalEntryConflict(current);
+    }
+    updates.add((content, baseVersion));
   }
 }
 
@@ -230,5 +242,116 @@ void main() {
     expect(find.text('Today was a lot'), findsNothing);
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getKeys().where((k) => k.startsWith('journal.draft')), isEmpty);
+  });
+
+  group('editing an entry saved or deleted elsewhere', () {
+    final entry = JournalEntry(
+      id: 'entry-1',
+      title: null,
+      content: 'Before',
+      createdAt: DateTime.utc(2026, 11, 1),
+      updatedAt: DateTime.utc(2026, 11, 1, 9),
+      version: '2026-11-01T09:00:00.000000+00:00',
+    );
+
+    Widget editing(_FakeJournal journal, {JournalEntry? opened}) => host(
+          () => JournalEditorScreen(
+            entry: opened ?? entry,
+            repository: journal,
+            drafts: draftsFor('amina'),
+          ),
+        );
+
+    testWidgets('a deleted entry keeps the words and can be saved as new',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final journal = _FakeJournal()..gone = true;
+      await tester.pumpWidget(editing(journal));
+      await open(tester);
+      await write(tester, 'After');
+      await tester.tap(find.text('Save entry'));
+      await tester.pumpAndSettle();
+
+      // Not reported as saved: still here, with a way to keep it.
+      expect(find.text('After'), findsOneWidget);
+      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tap(find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Save entry'),
+      ));
+      await tester.pumpAndSettle();
+      expect(journal.created.single.$2, 'After');
+      expect(find.text('Open'), findsOneWidget);
+    });
+
+    testWidgets('a save over a newer version asks; replacing saves on it',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final newer = JournalEntry(
+        id: entry.id,
+        title: null,
+        content: 'From the other phone',
+        createdAt: entry.createdAt,
+        updatedAt: DateTime.utc(2026, 11, 1, 10),
+        version: '2026-11-01T10:00:00.000000+00:00',
+      );
+      final journal = _FakeJournal()..newer = newer;
+      await tester.pumpWidget(editing(journal));
+      await open(tester);
+      await write(tester, 'Mine');
+      await tester.tap(find.text('Save entry'));
+      await tester.pumpAndSettle();
+      expect(journal.updates, isEmpty);
+      expect(find.byType(AlertDialog), findsOneWidget);
+
+      // "Save": mine replaces the newer version, knowingly.
+      await tester.tap(find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.text('Save'),
+      ));
+      await tester.pumpAndSettle();
+      expect(journal.updates.single, ('Mine', newer.baseVersion));
+      expect(find.text('Open'), findsOneWidget);
+    });
+
+    testWidgets('a draft older than the saved entry is not restored silently',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final drafts = draftsFor('amina');
+      await drafts.save(
+        entry.id,
+        JournalDraft(title: '', content: 'Old draft', base: entry.baseVersion),
+      );
+      // The entry was saved again on another phone since.
+      final saved = JournalEntry(
+        id: entry.id,
+        title: null,
+        content: 'Newer words',
+        createdAt: entry.createdAt,
+        updatedAt: DateTime.utc(2026, 11, 2),
+        version: '2026-11-02T00:00:00.000000+00:00',
+      );
+      await tester.pumpWidget(editing(_FakeJournal(), opened: saved));
+      await open(tester);
+      expect(find.text(draftOffer), findsOneWidget);
+
+      // Dismissed with back: nothing restored.
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.text('Newer words'), findsOneWidget);
+      expect(find.text('Old draft'), findsNothing);
+    });
+
+    testWidgets('a draft keeps the version it was written against',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final drafts = draftsFor('amina');
+      await tester.pumpWidget(editing(_FakeJournal()));
+      await open(tester);
+      await write(tester, 'Half done');
+      final kept = await drafts.load(entry.id);
+      expect(kept?.content, 'Half done');
+      expect(kept?.base, entry.baseVersion);
+    });
   });
 }

@@ -18,6 +18,34 @@ class _FakeMoodRepo extends MoodRepository {
   Future<List<MoodEntry>> fetchHistory({int days = 90}) async => entries;
 }
 
+/// Every day checked in for [run] days up to today; history is cut at
+/// what's asked for, as the database does.
+class _LongRunRepo extends MoodRepository {
+  _LongRunRepo(this.run);
+
+  final int run;
+  final asked = <int>[];
+
+  List<DateTime> _dates(int days) {
+    final now = DateTime.now();
+    return [
+      for (var back = 0; back < run && back < days; back++)
+        DateTime(now.year, now.month, now.day - back),
+    ];
+  }
+
+  @override
+  Future<List<MoodEntry>> fetchHistory({int days = 90}) async => [
+    for (final d in _dates(days)) MoodEntry(date: d, index: 3),
+  ];
+
+  @override
+  Future<List<DateTime>> fetchCheckInDates({required int days}) async {
+    asked.add(days);
+    return _dates(days);
+  }
+}
+
 class _FailingMoodRepo extends MoodRepository {
   @override
   Future<List<MoodEntry>> fetchHistory({int days = 90}) async =>
@@ -89,8 +117,7 @@ void main() {
     expect(find.text('Yesterday'), findsOneWidget);
   });
 
-  testWidgets('with no check-ins yet it says where to start',
-      (tester) async {
+  testWidgets('with no check-ins yet it says where to start', (tester) async {
     await tester.pumpWidget(
       wrap(MoodHistoryScreen(repository: _FakeMoodRepo(const []))),
     );
@@ -105,5 +132,27 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Couldn\'t load your check-ins.'), findsOneWidget);
     expect(find.text('Try again'), findsOneWidget);
+  });
+
+  test(
+    'a streak longer than the 90 days of history is counted in full',
+    () async {
+      final repo = _LongRunRepo(500);
+      final recent = await repo.fetchHistory();
+      expect(await repo.fetchStreak(recent: recent), 500);
+      expect(repo.asked, [400, 800]);
+
+      final short = _LongRunRepo(40);
+      expect(await short.fetchStreak(recent: await short.fetchHistory()), 40);
+      expect(short.asked, isEmpty, reason: 'nothing more to fetch');
+    },
+  );
+
+  testWidgets('history shows a streak past 90 days', (tester) async {
+    await tester.pumpWidget(
+      wrap(MoodHistoryScreen(repository: _LongRunRepo(130))),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('130'), findsOneWidget);
   });
 }

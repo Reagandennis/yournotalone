@@ -64,6 +64,12 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
 
   String? get _entryId => widget.entry?.id;
 
+  /// The version of the entry this editing is based on: a save only goes
+  /// through while the entry is still at it, so writing done here never
+  /// silently replaces a newer save from another device. Null for a new
+  /// entry.
+  late String? _base = widget.entry?.baseVersion;
+
   bool get _hasUnsavedWork =>
       _title.text.trim() != _savedTitle.trim() ||
       _content.text.trim() != _savedContent.trim();
@@ -112,7 +118,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     if (_hasUnsavedWork) {
       _drafts.save(
         _entryId,
-        JournalDraft(title: _title.text, content: _content.text),
+        JournalDraft(title: _title.text, content: _content.text, base: _base),
       );
     } else {
       _drafts.clear(_entryId);
@@ -126,8 +132,9 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     _drafts.clear(_entryId);
   }
 
-  /// Offers back writing left here unsaved last time. Only an explicit
-  /// Discard throws it away: closing the dialog any other way restores it.
+  /// Offers back writing left here unsaved last time. Only Carry on
+  /// restores it and only Discard throws it away; closing the dialog any
+  /// other way leaves the saved entry on screen.
   Future<void> _offerDraft() async {
     try {
       await _offerDraftIfAny();
@@ -145,11 +152,18 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       await _drafts.clear(_entryId);
       return;
     }
+    // A draft of an entry that has been saved again since (on another
+    // device) is older than what's saved: say so rather than restoring it.
+    final stale = widget.entry != null && _draftIsStale(draft, widget.entry!);
     final discard = await showDialog<bool>(
       context: context,
+      barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.journalDraftTitle),
-        content: Text(context.l10n.journalDraftBody),
+        // TODO(l10n): journalDraftStaleBody once it exists — see report.
+        content: Text(stale
+            ? context.l10n.journalDraftBody
+            : context.l10n.journalDraftBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -168,8 +182,21 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       await _drafts.clear(_entryId);
       return;
     }
+    // Dismissed without choosing (the back button): restore nothing.
+    if (discard == null) return;
+    // Carrying on with a stale draft is a choice made knowing a newer
+    // version exists, so the save is based on that newer version (the one
+    // this screen opened with); anything newer still is caught on saving.
     _title.text = draft.title;
     _content.text = draft.content;
+  }
+
+  /// Whether [entry] was saved after [draft] was started from it. A draft
+  /// from before the base was recorded can't tell, so it counts as stale.
+  static bool _draftIsStale(JournalDraft draft, JournalEntry entry) {
+    final base = draft.base == null ? null : DateTime.tryParse(draft.base!);
+    if (base == null) return true;
+    return entry.updatedAt.isAfter(base);
   }
 
   Future<void> _save() async {
@@ -186,10 +213,21 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
           widget.entry!.id,
           title: title.isEmpty ? null : title,
           content: _content.text.trim(),
+          baseVersion: _base,
         );
       }
       _forgetDraft();
       if (mounted) Navigator.of(context).pop(true);
+    } on JournalEntryMissing {
+      // Deleted elsewhere: nothing was saved, so the words stay here and
+      // on the phone, and can go into a new entry instead.
+      _keepDraft();
+      if (mounted) setState(() => _saving = false);
+      await _offerSaveAsNew();
+    } on JournalEntryConflict catch (conflict) {
+      _keepDraft();
+      if (mounted) setState(() => _saving = false);
+      await _resolveConflict(conflict.current);
     } catch (e) {
       // The words stay on screen and, as a draft, on the phone.
       _keepDraft();
@@ -203,6 +241,94 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
           ),
         );
       }
+    }
+  }
+
+  /// Saves what's on screen as a new entry — for when the entry it was
+  /// editing is gone. The old entry's draft goes once it's saved.
+  Future<void> _saveAsNew() async {
+    setState(() => _saving = true);
+    final title = _title.text.trim();
+    try {
+      await _repo.create(
+        title: title.isEmpty ? null : title,
+        content: _content.text.trim(),
+      );
+      _forgetDraft();
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      _keepDraft();
+      if (mounted) {
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              errorMessage(e, context.l10n.journalEditorSaveFailed),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
+  // TODO(l10n): the two dialogs below reuse existing strings until
+  // journalEntryGone* / journalEntryConflict* exist — see report.
+
+  Future<void> _offerSaveAsNew() async {
+    if (!mounted) return;
+    final saveAsNew = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.journalEditorSaveFailed),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(context.l10n.journalEditorSave),
+          ),
+        ],
+      ),
+    );
+    if (saveAsNew == true && mounted) await _saveAsNew();
+  }
+
+  /// The entry was saved elsewhere after this editing began. The person
+  /// chooses: replace that version with theirs, or keep both.
+  Future<void> _resolveConflict(JournalEntry current) async {
+    if (!mounted) return;
+    final choice = await showDialog<_ConflictChoice>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.journalEditorSaveFailed),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(context.l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.of(context).pop(_ConflictChoice.keepBoth),
+            child: Text(context.l10n.journalEditorSave),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.of(context).pop(_ConflictChoice.replace),
+            child: Text(context.l10n.commonSave),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || choice == null) return;
+    switch (choice) {
+      case _ConflictChoice.keepBoth:
+        await _saveAsNew();
+      case _ConflictChoice.replace:
+        _base = current.baseVersion;
+        _keepDraft();
+        await _save();
     }
   }
 
@@ -350,3 +476,5 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
     );
   }
 }
+
+enum _ConflictChoice { replace, keepBoth }

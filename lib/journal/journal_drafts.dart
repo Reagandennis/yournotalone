@@ -6,17 +6,29 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Journal writing that hasn't reached the account yet.
 class JournalDraft {
-  const JournalDraft({required this.title, required this.content});
+  const JournalDraft({required this.title, required this.content, this.base});
 
   final String title;
   final String content;
 
+  /// For a draft of an existing entry: that entry's `updated_at` when the
+  /// draft was started from it. If the entry has changed since (on another
+  /// device), the draft is older than what's saved and mustn't silently
+  /// replace it. Null for a new entry, and for drafts kept before this was
+  /// recorded.
+  final String? base;
+
   factory JournalDraft.fromJson(Map<String, dynamic> json) => JournalDraft(
         title: json['title'] as String? ?? '',
         content: json['content'] as String? ?? '',
+        base: json['base'] as String?,
       );
 
-  Map<String, dynamic> toJson() => {'title': title, 'content': content};
+  Map<String, dynamic> toJson() => {
+        'title': title,
+        'content': content,
+        if (base != null) 'base': base,
+      };
 }
 
 String? _signedInUserId() {
