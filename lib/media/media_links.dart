@@ -98,6 +98,14 @@ String? _accessToken() {
   }
 }
 
+String? _signedInUserId() {
+  try {
+    return Supabase.instance.client.auth.currentUser?.id;
+  } catch (_) {
+    return null; // Supabase not set up (tests, or a failed start).
+  }
+}
+
 /// Gets a link to a published file: straight to the CDN when it's free,
 /// signed by the Worker when it's premium.
 class MediaLinks {
@@ -106,8 +114,10 @@ class MediaLinks {
     this._apiUrl = mediaApiUrl,
     this._baseUrl = catalogBaseUrl,
     String? Function()? token,
+    String? Function()? userId,
     DateTime Function()? clock,
   }) : _token = token ?? _accessToken,
+       _userId = userId ?? _signedInUserId,
        _clock = clock ?? DateTime.now;
 
   static final instance = MediaLinks();
@@ -116,10 +126,16 @@ class MediaLinks {
   final String _apiUrl;
   final String _baseUrl;
   final String? Function() _token;
+  final String? Function() _userId;
   final DateTime Function() _clock;
 
-  /// Signed links still good for a while, by item, role and purpose.
+  /// Signed links still good for a while, by account, item, role and
+  /// purpose. A link is signed for one account's Premium: someone else
+  /// signing in on the phone mustn't be handed it.
   final _signed = <String, SignedMedia>{};
+
+  /// Forgets every signed link — for signing out.
+  void clear() => _signed.clear();
 
   /// A signed link is reused until this close to expiring.
   static const _margin = Duration(minutes: 5);
@@ -130,7 +146,8 @@ class MediaLinks {
     if (!entry.ref.premium) {
       return Uri.parse(_baseUrl).resolve(entry.ref.key);
     }
-    final key = '${entry.itemId}|${entry.role}|${purpose.name}';
+    final key =
+        '${_userId() ?? ''}|${entry.itemId}|${entry.role}|${purpose.name}';
     final cached = _signed[key];
     if (cached != null &&
         cached.expires != null &&

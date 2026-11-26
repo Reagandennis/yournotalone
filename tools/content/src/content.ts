@@ -1,8 +1,9 @@
 // Loads content/ and checks it: the schema of each file, then the rules
 // that span files (unique ids, course days that exist, prompts that line
 // up with their timings). See docs/backend-design.md §4 and §8.
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, relative, resolve } from 'node:path';
+import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
+import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { z } from 'zod';
 
@@ -67,6 +68,68 @@ export function load(root = repoRoot): Loaded {
     courses: yamlFiles(join(dir, 'courses')).map(read),
     backgrounds: yamlFiles(join(dir, 'backgrounds')).map(read),
   };
+}
+
+/// Where an item's audio (body.audio, body.narration) may live: the app's
+/// bundled assets, or the original recordings (Sounds/, kept in R2 and
+/// listed in content/masters.json).
+export const mediaRoots = ['assets/', 'Sounds/'] as const;
+
+/// Why [path] can't be an item's audio file, or null if it can: it must be
+/// relative to the repo, use `/`, have no `.`/`..`/empty segments, and sit
+/// under one of [mediaRoots] (directly, for the flat Sounds/ folder).
+export function mediaPathProblem(path: string): string | null {
+  if (path.includes('\\')) return 'must use / between folders';
+  if (path.includes('\0')) return "can't contain a NUL character";
+  if (isAbsolute(path) || /^[A-Za-z]:/.test(path)) return 'must be relative to the repo, not absolute';
+  const parts = path.split('/');
+  if (parts.some((p) => p === '..' || p === '.' || p === '')) {
+    return "can't contain '..', '.' or empty segments";
+  }
+  if (!mediaRoots.some((r) => path.startsWith(r))) return `must be under ${mediaRoots.join(' or ')}`;
+  if (path.startsWith('Sounds/') && parts.length !== 2) return 'must be a file directly in Sounds/';
+  return null;
+}
+
+/// The absolute path of an item's audio file, refusing anything
+/// [mediaPathProblem] refuses or that would resolve outside [root] —
+/// through a symlink too, since the file read is the link's target. A
+/// file that isn't there is left for the caller to report.
+export function mediaFile(path: string, root = repoRoot): string {
+  const problem = mediaPathProblem(path);
+  const abs = resolve(root, path);
+  // Where the file really is (itself when it isn't there or isn't linked).
+  const real = problem || !existsSync(abs) ? abs : realpathSync(abs);
+  const realRoot = existsSync(root) ? realpathSync(root) : resolve(root);
+  const outside = !abs.startsWith(resolve(root) + sep) ||
+    (real !== abs && !real.startsWith(realRoot + sep));
+  if (problem || outside) {
+    throw new Error(`audio path ${JSON.stringify(path)} ${problem ?? 'is outside the repo'}`);
+  }
+  return abs;
+}
+
+/// Whether the module at [url] (its import.meta.url) is the script node
+/// was started with. import.meta.main needs Node 24.2, and package.json
+/// allows any Node 24.
+export function isMain(url: string): boolean {
+  const script = process.argv[1];
+  if (!script) return false;
+  try {
+    return realpathSync(script) === realpathSync(fileURLToPath(url));
+  } catch {
+    return false;
+  }
+}
+
+/// Names in content/masters.json (the recordings kept in R2).
+function listedMasters(root: string): Set<string> {
+  try {
+    const list = JSON.parse(readFileSync(join(root, 'content', 'masters.json'), 'utf8')) as { name: string }[];
+    return new Set(list.map((m) => m.name));
+  } catch {
+    return new Set();
+  }
 }
 
 const statuses = ['draft', 'published', 'retired'] as const;
@@ -250,6 +313,23 @@ export function check(
   const courses: Course[] = [];
   const backgrounds: Background[] = [];
   const fail = (path: string, msg: string) => errors.push(`${path}: ${msg}`);
+  let masters: Set<string> | undefined;
+  /// Checks an item's audio path: where it may point, then that it's there.
+  const audioFile = (path: string, field: string, kind: string, file: string) => {
+    const problem = mediaPathProblem(file);
+    if (problem) return fail(path, `body.${field} ${JSON.stringify(file)} ${problem}`);
+    if (fileExists(file)) return;
+    masters ??= listedMasters(repoRoot);
+    if (file.startsWith('Sounds/') && masters.has(file.slice('Sounds/'.length))) {
+      fail(
+        path,
+        `${kind} file ${file} doesn't exist here; it's in content/masters.json, so fetch it with ` +
+          '`npm run masters -- download --used`',
+      );
+    } else {
+      fail(path, `${kind} file ${file} doesn't exist`);
+    }
+  };
 
   // A translation has the fields English has, lists of the same length,
   // so a screen never finds a paragraph or a day's note missing. Whether
@@ -383,13 +463,9 @@ export function check(
       if (at.some((x, i) => i > 0 && x <= at[i - 1])) {
         fail(path, 'body.promptAt must go up');
       }
-      if (body.narration && !fileExists(body.narration)) {
-        fail(path, `narration file ${body.narration} doesn't exist`);
-      }
+      if (body.narration) audioFile(path, 'narration', 'narration', body.narration);
     }
-    if (body.type === 'sound' && !fileExists(body.audio)) {
-      fail(path, `audio file ${body.audio} doesn't exist`);
-    }
+    if (body.type === 'sound') audioFile(path, 'audio', 'audio', body.audio);
     if (item.background !== undefined) {
       const bg = bgById.get(item.background);
       if (!bg) fail(path, `background "${item.background}" isn't in content/backgrounds`);

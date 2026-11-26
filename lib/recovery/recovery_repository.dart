@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:clock/clock.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../calendar_days.dart';
@@ -200,11 +201,38 @@ class RecoveryRepository {
       });
 
   /// Starts the count over, preserving the best streak so far.
-  Future<void> resetDayOne(RecoveryHabit habit) =>
-      _client.from('recovery_habits').update({
-        'day_one': _today(),
-        'best_streak_days': math.max(habit.bestStreakDays, habit.daysIn),
-      }).eq('id', habit.id);
+  ///
+  /// The phone's copy may be stale: another device may have reset the
+  /// count (a new day one, so this streak isn't the one that ended) or
+  /// recorded a better best. So the write only lands on the row as the
+  /// phone saw it, and never lowers the best on the server; otherwise the
+  /// row is read again and the reset worked out from that, once.
+  Future<void> resetDayOne(RecoveryHabit habit) => resetDayOneGuarded(
+    habit,
+    today: _today(),
+    update: (seen, values) async {
+      final rows = await _client
+          .from('recovery_habits')
+          .update(values)
+          .eq('id', habit.id)
+          .eq('day_one', seen.day)
+          .lte('best_streak_days', values['best_streak_days'] as int)
+          .select('id');
+      return rows.isNotEmpty;
+    },
+    reload: () async {
+      final row = await _client
+          .from('recovery_habits')
+          .select('day_one, best_streak_days')
+          .eq('id', habit.id)
+          .maybeSingle();
+      if (row == null) return null;
+      return (
+        day: (row['day_one'] as String).substring(0, 10),
+        best: (row['best_streak_days'] as num).toInt(),
+      );
+    },
+  );
 
   Future<void> deleteHabit(String id) =>
       _client.from('recovery_habits').delete().eq('id', id);
@@ -253,4 +281,56 @@ class RecoveryRepository {
         'trigger_kind': trigger,
         if (note != null && note.isNotEmpty) 'note': note,
       });
+}
+
+/// A habit's row as a reset saw it: its day one (YYYY-MM-DD) and best.
+typedef SeenHabitRow = ({String day, int best});
+
+/// [RecoveryRepository.resetDayOne] without the database: [update] writes
+/// the values only if the row still has the day one and at most the best
+/// it's given (true when it did); [reload] reads the row afresh (null once
+/// it's gone). The best kept is the larger of the row's best and the days
+/// of the streak that just ended, reset day counted as before.
+@visibleForTesting
+Future<void> resetDayOneGuarded(
+  RecoveryHabit habit, {
+  required String today,
+  required Future<bool> Function(SeenHabitRow seen, Map<String, Object> values)
+  update,
+  required Future<SeenHabitRow?> Function() reload,
+}) async {
+  Map<String, Object> valuesFor(SeenHabitRow seen) {
+    final streak = RecoveryHabit(
+      id: habit.id,
+      name: habit.name,
+      dayOne: DateTime.parse(seen.day),
+      bestStreakDays: seen.best,
+      pledgedToday: habit.pledgedToday,
+    ).daysIn;
+    return {'day_one': today, 'best_streak_days': math.max(seen.best, streak)};
+  }
+
+  final seen = (
+    day: habit.dayOne.toIso8601String().substring(0, 10),
+    best: habit.bestStreakDays,
+  );
+  if (await update(seen, valuesFor(seen))) return;
+  final fresh = await reload();
+  if (fresh == null) return;
+  // Already started over on [today] or later (another device, perhaps with
+  // its clock ahead): that day one stands, rather than an earlier one
+  // written over it.
+  if (fresh.day.compareTo(today) >= 0) return;
+  if (!await update(fresh, valuesFor(fresh))) {
+    throw const RecoveryResetConflict();
+  }
+}
+
+/// A reset that didn't land: the habit changed again on another device
+/// while it was being worked out. Nothing was written; try again.
+class RecoveryResetConflict implements Exception {
+  const RecoveryResetConflict();
+
+  @override
+  String toString() => 'RecoveryResetConflict';
 }

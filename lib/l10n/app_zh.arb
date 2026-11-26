@@ -1598,5 +1598,21 @@
   "therapyFlowNextMatch": "我们会为你匹配一位持证咨询师和一个时间，通常在一天之内，并发邮件告诉你。",
   "therapyFlowNextJoin": "到时间后，你就在 App 里加入私密的视频通话。",
   "therapyFlowPay": "支付 {price}",
-  "therapyFlowChargeNote": "Paystack 将按 {charge} 扣款。你的银行会进行换算，可能会收取少量手续费。"
+  "therapyFlowChargeNote": "Paystack 将按 {charge} 扣款。你的银行会进行换算，可能会收取少量手续费。",
+  "sessionErrorPaymentInProgress": "你上一笔付款仍在处理中。请不要重复付款——过一两分钟后点“查看付款”。",
+  "therapyPaymentCheckingTitle": "正在查看你的付款",
+  "therapyPaymentCheckingDetail": "如果你已在手机上确认付款（{methods}），可能需要几分钟才能到达我们这里。请不要重复付款——点“查看付款”查找它。",
+  "therapyDiscardPendingBody": "你几分钟前打开过付款页面。我们会先查看那笔付款是否成功——如果成功，你的申请会保留并发送。",
+  "therapyDiscardCheckFailed": "无法查看你的付款，所以申请已保留。请稍后再试。",
+  "therapyCancelSessionBodyNoCharge": "我们会通知你的治疗师。这次咨询没有收费，所以无需退款。你随时可以重新预约。",
+  "therapyCancelRequestBodyNoCharge": "我们还没有为你匹配治疗师。这次申请没有收费，所以无需退款。你随时可以重新预约。",
+  "sessionErrorTherapistInactive": "你的治疗师资料已暂停，所以现在无法加入咨询。请联系关怀团队。",
+  "journalDraftStaleBody": "这篇日记在这份草稿写好后被修改过——也许是在另一台设备上。继续使用草稿，保存时会替换较新的版本。",
+  "journalEntryGoneTitle": "这篇日记已被删除",
+  "journalEntryGoneBody": "它可能已在另一台设备上被删除。你写的内容还在——要保存为新日记吗？",
+  "journalEntrySaveAsNew": "保存为新日记",
+  "journalEntryConflictTitle": "这篇日记已在另一台设备上更改",
+  "journalEntryConflictBody": "用你的版本替换那个版本，或者把你的版本保存为新日记，两个都保留。",
+  "journalEntryReplace": "替换",
+  "journalEntryKeepBoth": "都保留"
 }

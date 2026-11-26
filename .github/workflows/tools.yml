@@ -1,0 +1,80 @@
+# Tests for the Node tools: tools/content (content checks, publishing,
+# masters) and edge (the Cloudflare Worker). No secrets and no R2: tests
+# that need the original recordings in Sounds/ (kept in R2, see
+# tools/content/README.md) skip themselves when they aren't there.
+#
+# Publishing is content.yml; this only tests.
+
+name: Tools
+
+on:
+  pull_request:
+    paths:
+      - "tools/content/**"
+      - "content/**"
+      - "edge/**"
+      - "lib/content/content_icons.dart"
+      - ".github/workflows/tools.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/content/**"
+      - "content/**"
+      - "edge/**"
+      - "lib/content/content_icons.dart"
+      - ".github/workflows/tools.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tools-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  content:
+    name: tools/content
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: tools/content
+    steps:
+      - uses: actions/checkout@v4
+
+      # package.json: "engines": {"node": ">=24"} (type stripping).
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: tools/content/package-lock.json
+
+      # The transcode tests run ffmpeg.
+      - name: Install ffmpeg
+        working-directory: .
+        run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+
+      - run: npm ci
+      - run: npm test
+
+  edge:
+    name: edge
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: edge
+    steps:
+      - uses: actions/checkout@v4
+
+      # edge/package.json names no engine; same Node as tools/content.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: edge/package-lock.json
+
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm test

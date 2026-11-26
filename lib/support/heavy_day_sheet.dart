@@ -100,8 +100,15 @@ class _HeavyDaySheet extends StatelessWidget {
     );
   }
 
+  // Rebuilt when where the phone is is found out after the sheet opened (or
+  // a country is chosen), so the numbers follow.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: CrisisCountrySetting.instance,
+    builder: (context, _) => _buildSheet(context),
+  );
+
+  Widget _buildSheet(BuildContext context) {
     final c = context.brand;
     final l10n = context.l10n;
     final region = defaultCrisisRegion();

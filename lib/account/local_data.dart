@@ -1,5 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../discover/saved_store.dart';
+import '../media/download_store.dart';
 
 /// What the app keeps on the phone about the person using it, kept apart
 /// for each account that signs in here.
@@ -104,19 +110,69 @@ class LocalData {
     prefs.remove(_ownerKey);
   }
 
-  /// [userId] deleted their account: nothing of theirs stays on the phone.
+  /// [userId] deleted their account: nothing of theirs stays on the phone
+  /// — including what other stores keep per account under their own keys:
+  /// journal drafts, practice sessions waiting to be sent, saved items, and
+  /// their downloads.
   void forget(String userId) {
     final prefs = _prefs;
     if (prefs == null) return;
     for (final key in prefs.getKeys().toList()) {
       if (key.startsWith('$_stashPrefix$userId.')) prefs.remove(key);
+      // JournalDrafts: journal.draft.<user>.<entry>.
+      if (key.startsWith('journal.draft.$userId.')) prefs.remove(key);
     }
+    _forgetPendingPractice(prefs, userId);
+    _forgetSaved(prefs, userId);
+    unawaited(
+      DownloadStore.instance.forgetUser(userId).catchError(
+        (Object e) => debugPrint('Couldn\'t remove downloads: $e'),
+      ),
+    );
     if (prefs.getString(_ownerKey) == userId) {
       for (final key in prefs.getKeys().toList()) {
         if (isPersonal(key)) prefs.remove(key);
       }
       prefs.remove(_ownerKey);
     }
+  }
+
+  /// PendingPracticeStore's queue holds every account's unsent sessions.
+  static const _pendingPracticeKey = 'practice_pending_sessions';
+
+  static void _forgetPendingPractice(SharedPreferences prefs, String userId) {
+    final raw = prefs.getStringList(_pendingPracticeKey);
+    if (raw == null) return;
+    final kept = [
+      for (final item in raw)
+        if (!_belongsTo(item, userId)) item,
+    ];
+    if (kept.length != raw.length) {
+      prefs.setStringList(_pendingPracticeKey, kept);
+    }
+  }
+
+  static bool _belongsTo(String item, String userId) {
+    try {
+      return (jsonDecode(item) as Map)['user_id'] == userId;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// SavedStore's hearts, if they're this account's (or from before saves
+  /// had an owner, while this account is the one signed in here).
+  void _forgetSaved(SharedPreferences prefs, String userId) {
+    final owner = prefs.getString('discover.saved.owner');
+    final theirs = owner == userId ||
+        (owner == null && prefs.getString(_ownerKey) == userId);
+    if (!theirs) return;
+    for (final key in prefs.getKeys().toList()) {
+      if (key == 'discover.saved' || key.startsWith('discover.saved.')) {
+        prefs.remove(key);
+      }
+    }
+    SavedStore.instance.forgetLocal();
   }
 
   bool _anyStash(SharedPreferences prefs) =>

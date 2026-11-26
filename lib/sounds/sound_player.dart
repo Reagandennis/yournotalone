@@ -5,6 +5,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart' as sfx;
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase;
 
 import '../content/content_catalog.dart';
 import '../discover/content_index.dart';
@@ -178,6 +179,21 @@ class SoundPlayer {
   /// from a two-second sample.
   DateTime? _startedAt;
 
+  /// Who was signed in when the current listen began.
+  String? _startedBy;
+
+  /// The account signed in now; overridable for tests.
+  @visibleForTesting
+  String? Function() userId = _signedInUserId;
+
+  static String? _signedInUserId() {
+    try {
+      return Supabase.instance.client.auth.currentUser?.id;
+    } catch (_) {
+      return null; // Supabase not set up (tests, or a failed start).
+    }
+  }
+
   /// Listening only counts once it has run this long.
   static const _minLoggedMinutes = 3.0;
 
@@ -216,17 +232,21 @@ class SoundPlayer {
   /// it doesn't cut off in someone's ear. Pass null to cancel.
   void setSleepTimer(Duration? duration) {
     _sleepTimerHandle?.cancel();
+    _sleepTimerHandle = null;
+    // Cancelled or changed during the fade: back to full volume, or the
+    // sound carries on at whatever the fade had got down to.
+    _endFade();
     if (duration == null) {
       _sleepAt = null;
       sleepTimer.value = null;
       return;
     }
-    _sleepAt = DateTime.now().add(duration);
+    _sleepAt = clock().add(duration);
     sleepTimer.value = duration;
     _sleepTimerHandle = Timer.periodic(const Duration(seconds: 1), (
       timer,
     ) async {
-      final left = _sleepAt?.difference(DateTime.now()) ?? Duration.zero;
+      final left = _sleepAt?.difference(clock()) ?? Duration.zero;
       if (left <= Duration.zero) {
         timer.cancel();
         await _fadeOutAndStop();
@@ -235,15 +255,26 @@ class SoundPlayer {
       sleepTimer.value = left;
       // Fade over the last 20 seconds.
       if (left.inSeconds <= 20) {
+        _fading = true;
         await _loop?.setVolume(_volume * (left.inSeconds / 20));
       }
     });
+  }
+
+  /// Whether the sleep timer has turned the sound down.
+  bool _fading = false;
+
+  void _endFade() {
+    if (!_fading) return;
+    _fading = false;
+    unawaited(_loop?.setVolume(_volume));
   }
 
   Future<void> _fadeOutAndStop() async {
     _sleepAt = null;
     sleepTimer.value = null;
     await stop();
+    _fading = false;
     await _loop?.setVolume(_volume);
   }
 
@@ -257,8 +288,13 @@ class SoundPlayer {
   void _logElapsed() {
     final started = _startedAt;
     final asset = nowPlaying.value;
+    final by = _startedBy;
     _startedAt = null;
+    _startedBy = null;
     if (started == null || asset == null) return;
+    // Listened to by someone who has since signed out (or been replaced
+    // by someone else signing in): it isn't the account here now's.
+    if (by != userId()) return;
     final minutes = clock().difference(started).inSeconds / 60;
     if (minutes < _minLoggedMinutes) return;
     final sound = _soundAt(asset);
@@ -310,6 +346,7 @@ class SoundPlayer {
     _ready = false;
     _underneath = underneath;
     _startedAt = clock();
+    _startedBy = userId();
     final engine = _loop;
     if (engine == null) {
       _publish();
@@ -324,10 +361,11 @@ class SoundPlayer {
       String? file;
       switch (origin) {
         case BundledAudio() || null:
-          break;
+          _holdLoop(null);
         case LocalAudio(file: final f, :final entry):
           file = f.path;
           _titles[asset] = entry.title;
+          _holdLoop(entry.ref.sha256);
         case RemoteAudio(:final entry):
           _titles[asset] = entry.title;
           preparing.value = asset;
@@ -339,6 +377,7 @@ class SoundPlayer {
           }
           // Another sound was chosen, or this one stopped, while it came.
           if (request != _request) return;
+          _holdLoop(entry.ref.sha256);
       }
       await engine.load(asset: file == null ? asset : null, file: file);
       await engine.setVolume(_volume);
@@ -353,6 +392,7 @@ class SoundPlayer {
       nowPlaying.value = null;
       paused.value = false;
       _ready = false;
+      _holdLoop(null);
       _publish();
       rethrow;
     }
@@ -382,6 +422,7 @@ class SoundPlayer {
     if (nowPlaying.value == null) return;
     paused.value = false;
     _startedAt = clock();
+    _startedBy = userId();
     _publish();
     if (_ready) await _loop?.play();
   }
@@ -398,6 +439,13 @@ class SoundPlayer {
     if (preparing.value != null) preparing.value = null;
     _publish();
     await _loop?.stop();
+    _holdLoop(null);
+    // Stopped during the sleep timer's fade: the next sound starts at full
+    // volume. After the stop, so the end of the fade doesn't blare.
+    if (_fading) {
+      _fading = false;
+      await _loop?.setVolume(_volume);
+    }
   }
 
   /// A meditation takes over the sound already playing: it carries on
@@ -415,7 +463,40 @@ class SoundPlayer {
     _ready = false;
     nowPlaying.value = null;
     paused.value = false;
+    _holdLoop(null);
     _publish();
+  }
+
+  // ── Downloaded files in use ──────────────────────────────────────────
+
+  /// The downloaded files (by sha256) the loop and the voice have open,
+  /// so removing their download doesn't delete them mid-play: the store
+  /// deletes them once they're let go.
+  String? _loopHeld;
+  String? _voiceHeld;
+
+  void _holdLoop(String? sha) {
+    final old = _loopHeld;
+    if (old == sha) return;
+    _loopHeld = sha;
+    if (sha != null) DownloadStore.instance.hold(sha);
+    if (old != null) unawaited(DownloadStore.instance.release(old));
+  }
+
+  void _holdVoice(String? sha) {
+    final old = _swapVoiceHold(sha);
+    if (old != null) unawaited(DownloadStore.instance.release(old));
+  }
+
+  /// Holds [sha] for the voice without letting the last one go: that is
+  /// returned (null if there's nothing to let go), for its caller to
+  /// release once the last narration has stopped playing from it.
+  String? _swapVoiceHold(String? sha) {
+    final old = _voiceHeld;
+    if (old == sha) return null;
+    _voiceHeld = sha;
+    if (sha != null) DownloadStore.instance.hold(sha);
+    return old;
   }
 
   Future<void> setVolume(double value) async {
@@ -506,9 +587,16 @@ class SoundPlayer {
     _voiceLoaded = null;
     final engine = _voice;
     if (engine == null) return;
+    // The last narration's file, let go only once the engine has stopped
+    // playing it (starting this one stops it): deleting it before then
+    // cuts it off.
+    String? previous;
     try {
       final origin = await resolve(asset);
       if (request != _voiceRequest) return;
+      previous = _swapVoiceHold(
+        origin is LocalAudio ? origin.entry.ref.sha256 : null,
+      );
       final sfx.Source source = switch (origin) {
         BundledAudio() ||
         null => sfx.AssetSource(asset.replaceFirst('assets/', '')),
@@ -530,6 +618,8 @@ class SoundPlayer {
       _voiceLoaded = asset;
     } catch (e) {
       debugPrint('Voice guide failed for $asset: $e');
+    } finally {
+      if (previous != null) unawaited(DownloadStore.instance.release(previous));
     }
   }
 
@@ -565,6 +655,7 @@ class SoundPlayer {
     } catch (e) {
       debugPrint('Voice guide stop failed: $e');
     }
+    _holdVoice(null);
   }
 }
 

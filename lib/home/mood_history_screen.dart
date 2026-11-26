@@ -30,6 +30,10 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
   List<MoodEntry>? _entries;
   bool _error = false;
 
+  /// The streak counted past the 90 days [_entries] covers; null until
+  /// (or unless) that's needed and fetched.
+  int? _longStreak;
+
   @override
   void initState() {
     super.initState();
@@ -40,32 +44,33 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
     setState(() {
       _entries = null;
       _error = false;
+      _longStreak = null;
     });
     try {
-      final entries = await _repo.fetchHistory();
-      if (mounted) setState(() => _entries = entries);
+      final entries = await _repo.fetchHistory(days: _historyDays);
+      if (!mounted) return;
+      setState(() => _entries = entries);
+      if (_streakFrom(entries) >= _historyDays - 1) {
+        // The run goes back past what was fetched: count the rest.
+        final streak = await _repo.fetchStreak(
+          recent: entries,
+          recentDays: _historyDays,
+        );
+        if (mounted) setState(() => _longStreak = streak);
+      }
     } catch (_) {
-      if (mounted) setState(() => _error = true);
+      if (mounted && _entries == null) setState(() => _error = true);
     }
   }
 
+  static const _historyDays = 90;
+
+  static int _streakFrom(List<MoodEntry> entries) =>
+      checkInStreak([for (final e in entries) e.date], DateTime.now());
+
   /// How many days in a row up to today have a check-in.
-  int _streak(Map<String, MoodEntry> byDate) {
-    final today = DateTime.now();
-    var days = 0;
-    for (var back = 0; back < 400; back++) {
-      final key = MoodRepository.dateKey(
-        DateTime(today.year, today.month, today.day - back),
-      );
-      if (!byDate.containsKey(key)) {
-        // Today not being logged yet shouldn't break yesterday's streak.
-        if (back == 0) continue;
-        break;
-      }
-      days++;
-    }
-    return days;
-  }
+  int _streak(List<MoodEntry> entries) =>
+      _longStreak ?? _streakFrom(entries);
 
   String _dateLabel(DateTime d) {
     final now = DateTime.now();
@@ -266,7 +271,7 @@ class _MoodHistoryScreenState extends State<MoodHistoryScreen> {
           child: Row(
             children: [
               _stat('${entries.length}', l10n.moodHistoryStatCheckIns),
-              _stat('${_streak(byDate)}', l10n.moodHistoryStatStreak),
+              _stat('${_streak(entries)}', l10n.moodHistoryStatStreak),
               _stat(average.toStringAsFixed(1), l10n.moodHistoryStatAverage),
               _stat(
                 moodLevels[common].name(l10n),

@@ -108,6 +108,10 @@ class SavedStore extends ValueNotifier<Set<String>> {
   bool _again = false;
   DateTime? _lastSync;
 
+  /// Bumped by [forgetLocal], so a sync under way for the forgotten account
+  /// doesn't bring its saves back when its answer comes.
+  int _generation = 0;
+
   Future<void>? _loading;
 
   /// Reads what's saved on the phone, once; every sync waits for it. A sync
@@ -126,6 +130,15 @@ class SavedStore extends ValueNotifier<Set<String>> {
       debugPrint('Saved items unavailable: $e');
     }
     unawaited(sync());
+  }
+
+  /// The account whose saves these are was deleted: nothing of theirs
+  /// stays in memory either (the keys are removed by LocalData.forget).
+  void forgetLocal() {
+    _generation++;
+    value = const {};
+    _pending = {};
+    _owner = null;
   }
 
   bool isSaved(ContentItem item) => value.contains(item.id);
@@ -172,6 +185,7 @@ class SavedStore extends ValueNotifier<Set<String>> {
     await load();
     final userId = _userId();
     if (userId == null) return;
+    final generation = _generation;
     try {
       if (_owner != userId) {
         if (_owner == null) {
@@ -198,16 +212,20 @@ class SavedStore extends ValueNotifier<Set<String>> {
         for (final MapEntry(:key, :value) in sending.entries)
           if (value == 'add' && !this.value.contains(key)) key,
       ]);
+      if (generation != _generation) return;
       await _remote.remove([
         for (final MapEntry(:key, :value) in sending.entries)
           if (value == 'remove') key,
       ]);
+      if (generation != _generation) return;
       // Only what was sent: a heart tapped mid-sync stays queued.
       sending.forEach((id, op) {
         if (_pending[id] == op) _pending.remove(id);
       });
 
       final server = await _remote.fetch();
+      // Forgotten meanwhile: that account's list isn't this phone's now.
+      if (generation != _generation) return;
       value = {
         for (final MapEntry(:key, :value) in _pending.entries)
           if (value == 'add') key,

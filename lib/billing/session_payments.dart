@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -9,7 +11,10 @@ enum SessionPaymentOutcome {
   /// The server has seen the payment; the session is paid.
   paid,
 
-  /// The person left the checkout without paying.
+  /// The person left the checkout before a payment was seen. That isn't
+  /// proof nothing will be paid: an M-Pesa prompt can be approved on the
+  /// phone minutes later. [SessionPayments.pending] remembers the checkout,
+  /// so the card offers "Check payment" rather than a second charge.
   cancelled,
 
   /// Kept for callers that still handle it: the payment may have gone
@@ -62,6 +67,82 @@ class InAppCheckoutBrowser implements CheckoutBrowser {
   }
 }
 
+/// Checkouts opened recently, kept on this device by request id so they
+/// survive the app being closed: for [window] after one is opened, the
+/// session card offers "Check payment" instead of "Pay", because a payment
+/// (an M-Pesa prompt above all) can still land after the page was closed,
+/// and paying again would charge twice.
+class PendingCheckouts {
+  PendingCheckouts({
+    DateTime Function()? clock,
+    this.window = const Duration(minutes: 10),
+  }) : _clock = clock ?? DateTime.now;
+
+  final DateTime Function() _clock;
+
+  /// How long after a checkout opened its payment is still waited for.
+  final Duration window;
+
+  static const _prefix = 'therapy.checkout_opened.';
+
+  DateTime now() => _clock();
+
+  /// Notes that a checkout for [requestId] was opened [at] (just now
+  /// unless given: the server says when one still in progress was opened).
+  /// Never fails.
+  Future<void> mark(String requestId, {DateTime? at}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setInt(
+        '$_prefix$requestId',
+        (at ?? _clock()).millisecondsSinceEpoch,
+      );
+    } catch (e) {
+      debugPrint('Couldn\'t note the checkout: $e');
+    }
+  }
+
+  /// Forgets [requestId]'s checkout: it was paid, or the server has looked
+  /// and found nothing. Never fails.
+  Future<void> clear(String requestId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('$_prefix$requestId');
+    } catch (e) {
+      debugPrint('Couldn\'t clear the checkout: $e');
+    }
+  }
+
+  /// Whether a checkout opened at [openedAt] is still within [window].
+  bool isFresh(DateTime openedAt) {
+    final age = _clock().difference(openedAt);
+    return age < window && !age.isNegative;
+  }
+
+  /// When each of [requestIds] had a checkout opened, for those still
+  /// within [window]. Older notes are dropped. Never fails: without
+  /// storage, nothing is pending.
+  Future<Map<String, DateTime>> openedAmong(Iterable<String> requestIds) async {
+    final found = <String, DateTime>{};
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      for (final id in requestIds) {
+        final ms = prefs.getInt('$_prefix$id');
+        if (ms == null) continue;
+        final at = DateTime.fromMillisecondsSinceEpoch(ms);
+        if (isFresh(at)) {
+          found[id] = at;
+        } else {
+          await prefs.remove('$_prefix$id');
+        }
+      }
+    } catch (e) {
+      debugPrint('Checkouts unavailable: $e');
+    }
+    return found;
+  }
+}
+
 /// Paying for a session through Paystack (card, M-Pesa, Apple Pay).
 ///
 /// The paystack-payment Edge Function opens the checkout and, afterwards,
@@ -73,10 +154,15 @@ class SessionPayments {
     CheckoutBrowser? browser,
     String? Function()? currentUserId,
     Future<void> Function(Duration)? wait,
+    PendingCheckouts? pending,
   })  : _repository = repository ?? TherapyRepository(),
         _browser = browser ?? InAppCheckoutBrowser(),
         _currentUserId = currentUserId ?? _supabaseUserId,
-        _wait = wait ?? _realWait;
+        _wait = wait ?? _realWait,
+        pending = pending ?? PendingCheckouts();
+
+  /// Checkouts opened in the last few minutes whose payment may yet land.
+  final PendingCheckouts pending;
 
   final TherapyRepository _repository;
   final CheckoutBrowser _browser;
@@ -105,9 +191,25 @@ class SessionPayments {
     // closed mid-way, or a second tap. Use it rather than charging again.
     if (await _confirm(request)) return SessionPaymentOutcome.paid;
 
-    final url = await _repository.startCheckout(request.id);
-    if (url == null) return SessionPaymentOutcome.paid;
+    final Uri? url;
+    try {
+      url = await _repository.startCheckout(request.id);
+    } on SessionAccessException catch (e) {
+      // The server won't open another checkout while the last one may
+      // still be paid (HTTP 409): wait for that one instead.
+      if (e.code == 'payment_in_progress') {
+        await pending.mark(request.id, at: e.openedAt);
+      }
+      rethrow;
+    }
+    if (url == null) {
+      await pending.clear(request.id);
+      return SessionPaymentOutcome.paid;
+    }
     if (!await _browser.open(url)) return SessionPaymentOutcome.unavailable;
+    // Noted before waiting, so a payment that lands after the app was
+    // closed mid-checkout isn't paid for again on the next start.
+    await pending.mark(request.id);
 
     final bool paid;
     try {
@@ -134,17 +236,26 @@ class SessionPayments {
   /// Whether a payment has reached [request] (attaching it if one has).
   /// For a last look before a draft is thrown away: an M-Pesa prompt can be
   /// approved minutes after the checkout page closed. Throws when it can't
-  /// tell (offline).
-  Future<bool> isPaid(TherapyRequest request) => _confirm(request);
+  /// tell (offline), and with `payment_in_progress` when nothing is paid yet
+  /// but a checkout may still be (the draft must stay for it).
+  Future<bool> isPaid(TherapyRequest request) =>
+      _confirm(request, inProgressThrows: true);
 
   /// True once the server has attached a payment to [request]; false when
-  /// it has none to attach. Anything else (offline, not configured) throws,
-  /// since opening a checkout would be pointless until it's sorted.
-  Future<bool> _confirm(TherapyRequest request) async {
+  /// it has none to attach, or none yet while a checkout may still be paid
+  /// (`payment_in_progress`: its note is kept, so "Pay" stays away). Anything
+  /// else (offline, not configured) throws, since opening a checkout would
+  /// be pointless until it's sorted.
+  Future<bool> _confirm(
+    TherapyRequest request, {
+    bool inProgressThrows = false,
+  }) async {
     try {
       await _repository.confirmPayment(request.id);
+      await pending.clear(request.id);
       return true;
     } on SessionAccessException catch (e) {
+      if (e.code == 'payment_in_progress' && !inProgressThrows) return false;
       if (e.code != 'no_payment_found') rethrow;
       return false;
     }

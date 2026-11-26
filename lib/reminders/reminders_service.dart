@@ -140,12 +140,19 @@ class RemindersService {
 
   // ── Scheduling ─────────────────────────────────────────────────
 
-  tz.TZDateTime _nextInstance(TimeOfDay time) {
-    final now = tz.TZDateTime.now(tz.local);
+  tz.TZDateTime _nextInstance(TimeOfDay time) =>
+      nextInstanceAfter(tz.TZDateTime.now(tz.local), time);
+
+  /// The next [time] on the wall clock after [now], in [now]'s zone.
+  @visibleForTesting
+  static tz.TZDateTime nextInstanceAfter(tz.TZDateTime now, TimeOfDay time) {
     var scheduled = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, time.hour, time.minute);
+        now.location, now.year, now.month, now.day, time.hour, time.minute);
     if (!scheduled.isAfter(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
+      // The same wall-clock time tomorrow. Adding 24 hours would land an
+      // hour off on the day the clocks change.
+      scheduled = tz.TZDateTime(now.location, now.year, now.month,
+          now.day + 1, time.hour, time.minute);
     }
     return scheduled;
   }

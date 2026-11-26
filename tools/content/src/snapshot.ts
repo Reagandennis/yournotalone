@@ -53,6 +53,8 @@ export function snapshot(
   version: number,
   media?: MediaMap,
   builtAt?: string,
+  /// What `format` says; [snapshotFormat] except in tests.
+  format = snapshotFormat,
 ) {
   const body = {
     items: items
@@ -71,12 +73,15 @@ export function snapshot(
       .map(({ status: _, ...b }) => ({ ...b, text: localisedText(b.text) })),
   };
   // With media, the hash covers it too, so a re-recorded file publishes a
-  // new version even when the YAML didn't change. Without it, the hash and
-  // output are exactly what they were before media existed.
-  const hashed = media === undefined ? body : { ...body, media };
+  // new version even when the YAML didn't change. The format is in it as
+  // well, so raising snapshotFormat alone publishes. (minApp lives in
+  // latest.json; the publisher compares it separately.)
+  const hashed = media === undefined
+    ? { format, ...body }
+    : { format, ...body, media };
   const hash = createHash('sha256').update(JSON.stringify(hashed)).digest('hex').slice(0, 16);
   const head = builtAt === undefined
-    ? { format: snapshotFormat, version, hash }
-    : { format: snapshotFormat, version, hash, builtAt };
+    ? { format, version, hash }
+    : { format, version, hash, builtAt };
   return media === undefined ? { ...head, ...body } : { ...head, ...body, media };
 }

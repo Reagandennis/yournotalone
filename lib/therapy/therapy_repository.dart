@@ -514,10 +514,24 @@ class SessionCredentials {
 /// Why joining a call or confirming a payment was refused, from the Edge
 /// Function's error code.
 class SessionAccessException implements Exception {
-  const SessionAccessException(this.code, {this.opensAt});
+  const SessionAccessException(
+    this.code, {
+    this.opensAt,
+    this.reference,
+    this.openedAt,
+  });
 
   final String code;
   final DateTime? opensAt;
+
+  /// When the checkout still in progress was opened, with
+  /// `payment_in_progress` (the server's clock), so the app waits for it
+  /// from then rather than from each time it hears about it.
+  final DateTime? openedAt;
+
+  /// The Paystack reference of the checkout still in progress, with
+  /// `payment_in_progress`.
+  final String? reference;
 
   String get message {
     final l10n = currentL10n();
@@ -532,6 +546,8 @@ class SessionAccessException implements Exception {
       'no_payment_found' => l10n.sessionErrorNoPaymentFound,
       'not_payable' => l10n.sessionErrorNotPayable,
       'checkout_failed' => l10n.sessionErrorCheckoutFailed,
+      'payment_in_progress' => l10n.sessionErrorPaymentInProgress,
+      'therapist_inactive' => l10n.sessionErrorTherapistInactive,
       'email_required' => l10n.sessionErrorEmailRequired,
       'not_configured' => l10n.sessionErrorNotConfigured,
       'invalid_token' || 'missing_token' => l10n.sessionErrorSignedOut,
@@ -558,6 +574,11 @@ String sessionOutcomeLabel(TherapyRequest request) {
 }
 
 /// Supabase-backed storage for a client's therapy sessions.
+/// The columns [TherapyRequest.fromRow] reads. Named rather than `*` so the
+/// database can keep therapist pay and payout columns from clients.
+const _requestColumns =
+    'id, topic, availability, note, status, is_free_session, scheduled_at, created_at, submitted_at, therapist_id, duration_minutes, price_cents, currency, charge_minor, charge_currency, payment_status, client_summary, completed_at, close_reason';
+
 class TherapyRepository {
   final _client = Supabase.instance.client;
 
@@ -570,7 +591,7 @@ class TherapyRepository {
   Future<List<TherapyRequest>> fetchRequests() async {
     final rows = await _client
         .from('therapy_requests')
-        .select()
+        .select(_requestColumns)
         .eq('user_id', _userId)
         .order('created_at', ascending: false);
     return [for (final row in rows) TherapyRequest.fromRow(row)];
@@ -591,7 +612,7 @@ class TherapyRepository {
           'availability': availability,
           if (note != null && note.isNotEmpty) 'note': note,
         })
-        .select()
+        .select(_requestColumns)
         .single();
     return TherapyRequest.fromRow(row);
   }
@@ -703,7 +724,10 @@ class TherapyRepository {
       fetchSessionCredentials(_client, requestId);
 
   /// Opens a Paystack checkout for this session and returns the page to
-  /// pay on, or null when the session turns out to be paid already.
+  /// pay on, or null when the server says the session is paid already.
+  /// Throws `payment_in_progress` while a recent checkout may still be paid
+  /// (HTTP 409), and `checkout_failed` for an answer with neither a page
+  /// nor `paid: true` — never taken as paid.
   Future<Uri?> startCheckout(String requestId) async {
     final data = await invokeSessionFunction(
       _client,
@@ -711,15 +735,34 @@ class TherapyRepository {
       requestId,
       extra: {'action': 'start'},
     );
-    final url = data['authorization_url'];
-    return url is String ? Uri.parse(url) : null;
+    return checkoutPageFrom(data);
   }
 
-  /// Asks the server to find the Paystack payment for this session.
+  /// Asks the server to find the Paystack payment for this session. Throws
+  /// `no_payment_found`, or `payment_in_progress` while a checkout may
+  /// still be paid.
   Future<void> confirmPayment(String requestId) async {
-    await invokeSessionFunction(_client, 'paystack-payment', requestId);
+    await invokeSessionFunction(
+      _client,
+      'paystack-payment',
+      requestId,
+      extra: {'report_in_progress': true},
+    );
     Sentry.metrics.count('therapy.payment_confirmed', 1);
   }
+}
+
+/// The page to pay on from the `start` answer, null for `paid: true`.
+/// Anything else is a checkout that failed to open.
+@visibleForTesting
+Uri? checkoutPageFrom(Map<String, dynamic> data) {
+  if (data['paid'] == true) return null;
+  final url = data['authorization_url'];
+  final page = url is String ? Uri.tryParse(url) : null;
+  if (page == null || !page.hasScheme || page.host.isEmpty) {
+    throw const SessionAccessException('checkout_failed');
+  }
+  return page;
 }
 
 /// Shared by clients and therapists: the server checks which one is asking.
@@ -756,6 +799,17 @@ Future<Map<String, dynamic>> invokeSessionFunction(
     final opensAt = details is Map && details['opens_at'] is String
         ? DateTime.parse(details['opens_at'] as String).toLocal()
         : null;
-    throw SessionAccessException(code ?? 'unavailable', opensAt: opensAt);
+    final reference = details is Map && details['reference'] is String
+        ? details['reference'] as String
+        : null;
+    final openedAt = details is Map && details['opened_at'] is String
+        ? DateTime.tryParse(details['opened_at'] as String)?.toLocal()
+        : null;
+    throw SessionAccessException(
+      code ?? 'unavailable',
+      opensAt: opensAt,
+      reference: reference,
+      openedAt: openedAt,
+    );
   }
 }

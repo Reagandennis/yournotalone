@@ -24,7 +24,10 @@ class CrisisScreen extends StatefulWidget {
 }
 
 class _CrisisScreenState extends State<CrisisScreen> {
-  late CrisisRegion _region = defaultCrisisRegion();
+  /// Worked out afresh on every build, which [build] runs again whenever
+  /// [CrisisCountrySetting] changes: a country chosen, or where the phone is
+  /// found out after the screen opened.
+  CrisisRegion get _region => defaultCrisisRegion();
 
   Future<void> _open(Uri uri) async {
     try {
@@ -96,7 +99,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
     );
     if (picked == null) return;
     await CrisisCountrySetting.instance.choose(picked.isEmpty ? null : picked);
-    if (mounted) setState(() => _region = defaultCrisisRegion());
+    // The ListenableBuilder in build follows the new choice.
   }
 
   Widget _emergencyCard() {
@@ -240,7 +243,12 @@ class _CrisisScreenState extends State<CrisisScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: CrisisCountrySetting.instance,
+    builder: (context, _) => _buildPage(context),
+  );
+
+  Widget _buildPage(BuildContext context) {
     final c = context.brand;
     final l10n = context.l10n;
     final showInternational = _region.code != internationalRegion.code;

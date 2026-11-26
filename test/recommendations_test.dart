@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:yournotalone/courses/course_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
+import 'package:yournotalone/discover/content_tags.dart';
 import 'package:yournotalone/discover/recommendations.dart';
 import 'package:yournotalone/l10n/app_localizations_de.dart';
 import 'package:yournotalone/l10n/app_localizations_en.dart';
@@ -149,6 +150,25 @@ void main() {
       await client.fetch(_request(courseId: 'sleep7', courseDay: 0));
       await client.fetch(_request(now: DateTime(2026, 11, 2, 22)));
       expect(worker.requests, hasLength(4));
+    });
+
+    test('after an awful or low check-in, deep work is left out whatever '
+        'the Worker sends', () async {
+      final deep = deepContent.first;
+      final worker = _Worker(ids: [deep, 'sound:Rainfall']);
+      final client = worker.connect();
+      final hard = await client.fetch(
+        _request(lastMood: 0, lastMoodAt: _evening),
+      );
+      expect(hard!.map((r) => r.id), ['sound:Rainfall']);
+      // From the cache too.
+      final again = await client.fetch(
+        _request(lastMood: 1, lastMoodAt: _evening),
+      );
+      expect(again!.map((r) => r.id), isNot(contains(deep)));
+      // An okay day is left as the Worker sent it.
+      final okay = await client.fetch(_request());
+      expect(okay!.map((r) => r.id), contains(deep));
     });
 
     test('an okay check-in alone does not', () async {

@@ -6242,4 +6242,64 @@ class AppLocalizationsDe extends AppLocalizations {
   String therapyFlowChargeNote(String charge) {
     return 'Paystack berechnet dafür $charge. Deine Bank rechnet es um und berechnet dafür eventuell eine kleine Gebühr.';
   }
+
+  @override
+  String get sessionErrorPaymentInProgress =>
+      'Deine letzte Zahlung wird noch bearbeitet. Bitte nicht noch einmal bezahlen — tippe in ein, zwei Minuten auf „Zahlung prüfen“.';
+
+  @override
+  String get therapyPaymentCheckingTitle => 'Wir prüfen deine Zahlung';
+
+  @override
+  String therapyPaymentCheckingDetail(String methods) {
+    return 'Wenn du die Zahlung auf deinem Handy bestätigt hast ($methods), kann es ein paar Minuten dauern, bis sie bei uns ankommt. Bitte nicht noch einmal bezahlen — tippe auf „Zahlung prüfen“, um nachzusehen.';
+  }
+
+  @override
+  String get therapyDiscardPendingBody =>
+      'Du hast die Zahlungsseite vor ein paar Minuten geöffnet. Wir prüfen zuerst, ob die Zahlung durchgegangen ist — wenn ja, bleibt deine Anfrage bestehen und wird gesendet.';
+
+  @override
+  String get therapyDiscardCheckFailed =>
+      'Wir konnten deine Zahlung nicht prüfen, deshalb bleibt die Anfrage bestehen. Versuch es gleich noch einmal.';
+
+  @override
+  String get therapyCancelSessionBodyNoCharge =>
+      'Wir sagen deiner Therapeutin oder deinem Therapeuten Bescheid. Für diese Sitzung wurde nichts berechnet, also gibt es nichts zu erstatten. Du kannst jederzeit neu buchen.';
+
+  @override
+  String get therapyCancelRequestBodyNoCharge =>
+      'Wir haben noch niemanden für dich gefunden. Für diese Anfrage wurde nichts berechnet, also gibt es nichts zu erstatten. Du kannst jederzeit neu buchen.';
+
+  @override
+  String get sessionErrorTherapistInactive =>
+      'Dein Therapeutenprofil ist pausiert, deshalb kannst du gerade keinen Sitzungen beitreten. Bitte wende dich an das Care-Team.';
+
+  @override
+  String get journalDraftStaleBody =>
+      'Dieser Eintrag wurde geändert, nachdem dieser Entwurf geschrieben wurde – vielleicht auf einem anderen Gerät. Wenn du mit dem Entwurf weitermachst, ersetzt er beim Speichern die neuere Version.';
+
+  @override
+  String get journalEntryGoneTitle => 'Dieser Eintrag wurde gelöscht';
+
+  @override
+  String get journalEntryGoneBody =>
+      'Vielleicht wurde er auf einem anderen Gerät gelöscht. Dein Text ist noch da – als neuen Eintrag speichern?';
+
+  @override
+  String get journalEntrySaveAsNew => 'Als neuen Eintrag speichern';
+
+  @override
+  String get journalEntryConflictTitle =>
+      'Dieser Eintrag wurde auf einem anderen Gerät geändert';
+
+  @override
+  String get journalEntryConflictBody =>
+      'Ersetze diese Version durch deine oder behalte beide, indem du deine als neuen Eintrag speicherst.';
+
+  @override
+  String get journalEntryReplace => 'Ersetzen';
+
+  @override
+  String get journalEntryKeepBoth => 'Beide behalten';
 }

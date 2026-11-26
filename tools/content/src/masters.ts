@@ -5,16 +5,19 @@
 // content/masters.json lists each one with its size and sha256, so the
 // folder can be put back on any machine and checked byte for byte.
 //
-//   upload    hashes Sounds/, uploads what R2 doesn't have, rewrites the list
+//   upload    hashes Sounds/, uploads each file R2 doesn't have or has a
+//             different copy of (compared by the sha256 stored with it), and
+//             merges them into the list; entries for files that aren't in
+//             Sounds/ on this machine are kept
 //   download  fetches every listed file into Sounds/ and checks its hash;
-//             with names after it, only those (the content workflow
-//             fetches just the recordings items point at)
+//             with names after it, only those; with --used, only the ones
+//             content/items points at (what the content workflow fetches)
 //   check     compares Sounds/ with the list, with no network
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { credentialsFromEnv, envs, s3Endpoint } from './config.ts';
-import { repoRoot } from './content.ts';
+import { isMain, type Loaded, load, repoRoot } from './content.ts';
 import { r2Store, type Store } from './store.ts';
 
 export const mastersDir = join(repoRoot, 'Sounds');
@@ -51,21 +54,53 @@ export function scan(dir = mastersDir): Master[] {
     });
 }
 
-/// Uploads each file R2 doesn't already have. Returns the new list.
+/// Uploads each file in [dir] that R2 doesn't have, or has different bytes
+/// for. Each object carries its sha256 as custom metadata (x-amz-meta-sha256),
+/// which is what's compared; an object without it (uploaded before that) is
+/// uploaded again, which adds it. Returns what's in [dir]: merge it into the
+/// list with [merge].
 export async function upload(store: Store, dir = mastersDir, log = console.log): Promise<Master[]> {
   const found = scan(dir);
   for (const m of found) {
-    if (await store.head(bucket, m.key)) {
+    const there = await store.stat(bucket, m.key);
+    const theirs = there?.metadata.sha256;
+    if (theirs === m.sha256) {
       log(`  have  ${m.key}`);
       continue;
     }
-    log(`  put   ${m.key} (${(m.bytes / 1e6).toFixed(1)} MB)`);
+    const why = !there ? 'new' : theirs ? `replaces ${theirs.slice(0, 12)}…` : 'no sha256 on the copy in R2';
+    log(`  put   ${m.key} (${(m.bytes / 1e6).toFixed(1)} MB; ${why})`);
     await store.put(bucket, m.key, readFileSync(join(dir, m.name)), {
       contentType: types[extname(m.name).toLowerCase()] ?? 'application/octet-stream',
       cacheControl: 'private, no-store',
+      metadata: { sha256: m.sha256 },
     });
   }
   return found;
+}
+
+/// [list] with [found] laid over it, by name: a file found locally replaces
+/// its entry, and entries for files that aren't here are kept (another
+/// machine may have uploaded them). Sorted by name.
+export function merge(list: Master[], found: Master[]): Master[] {
+  const byName = new Map(list.map((m) => [m.name, m]));
+  for (const m of found) byName.set(m.name, m);
+  return [...byName.values()].sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+}
+
+/// The names of the recordings in Sounds/ that content/items points at
+/// (body.audio and body.narration), read from the parsed YAML, so names
+/// with spaces come through whole.
+export function usedMasters(loaded: Pick<Loaded, 'items'> = load()): string[] {
+  const names = new Set<string>();
+  for (const [, data] of loaded.items) {
+    const body = (data as { body?: Record<string, unknown> } | null)?.body;
+    for (const field of ['audio', 'narration']) {
+      const path = body?.[field];
+      if (typeof path === 'string' && path.startsWith('Sounds/')) names.add(path.slice('Sounds/'.length));
+    }
+  }
+  return [...names].sort();
 }
 
 /// Fetches every listed file that's missing or different. Throws on a
@@ -97,7 +132,7 @@ export function differences(list: Master[], found: Master[]): string[] {
   return out;
 }
 
-if (import.meta.main) {
+if (isMain(import.meta.url)) {
   const cmd = process.argv[2];
   if (cmd === 'check') {
     const diff = differences(readManifest(), scan());
@@ -106,11 +141,18 @@ if (import.meta.main) {
   } else if (cmd === 'upload' || cmd === 'download') {
     const store = r2Store(s3Endpoint, credentialsFromEnv());
     if (cmd === 'upload') {
-      const list = await upload(store);
+      const found = await upload(store);
+      const list = merge(readManifest(), found);
       writeFileSync(manifestPath, `${JSON.stringify(list, null, 2)}\n`);
-      console.log(`${list.length} master(s) in R2; wrote content/masters.json.`);
+      console.log(`${found.length} master(s) here checked against R2; ${list.length} listed in content/masters.json.`);
     } else {
-      const names = new Set(process.argv.slice(3));
+      const args = process.argv.slice(3);
+      const used = args.includes('--used');
+      const names = new Set([...args.filter((a) => a !== '--used'), ...(used ? usedMasters() : [])]);
+      if (used && names.size === 0) {
+        console.log('No item uses a recording from Sounds/.');
+        process.exit(0);
+      }
       const list = readManifest();
       const unknown = [...names].filter((n) => !list.some((m) => m.name === n));
       if (unknown.length) {
@@ -121,7 +163,7 @@ if (import.meta.main) {
       console.log('Sounds/ matches content/masters.json.');
     }
   } else {
-    console.error('Usage: npm run masters -- upload|download [name…]|check');
+    console.error('Usage: npm run masters -- upload|download [--used] [name…]|check');
     process.exit(1);
   }
 }

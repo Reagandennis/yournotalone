@@ -23,6 +23,7 @@ import 'content/content_catalog.dart';
 import 'courses/course_progress.dart';
 import 'discover/saved_store.dart';
 import 'media/download_store.dart';
+import 'media/media_links.dart';
 import 'media/now_playing.dart';
 import 'brand.dart';
 import 'home/home_shell.dart';
@@ -32,6 +33,7 @@ import 'notifications/session_notifications.dart';
 import 'onboarding/onboarding_ui.dart';
 import 'practice/practice_repository.dart';
 import 'reminders/reminders_service.dart';
+import 'sounds/sound_player.dart';
 import 'splash_screen.dart';
 import 'supabase_config.dart';
 import 'support/crisis_resources.dart';
@@ -174,25 +176,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _authSub = Supabase.instance.client.auth.onAuthStateChange.listen(
       (state) {
         switch (state.event) {
-          // Practice finished offline, or as the app was killed, is written
-          // once there's a signed-in user to write it for.
           case AuthChangeEvent.initialSession || AuthChangeEvent.signedIn:
-            final userId = state.session?.user.id;
-            // Someone else on this phone: their own local things, not the
-            // last person's (see LocalData), and their own reminders.
-            if (userId != null && LocalData.instance.signedIn(userId)) {
-              CourseStore.instance.reset();
-              unawaited(
-                RemindersService.instance.cancelScheduled().then(
-                  (_) => RemindersService.instance.refreshScheduled(),
-                ),
-              );
-            }
-            unawaited(PracticeRepository().flushPending());
-            unawaited(SavedStore.instance.sync());
+            _signedIn(state.session?.user.id);
           // A password-recovery email deep-links back into the app and signs
           // the user in; from there they still need to choose the new password.
+          // It's a sign-in like any other first: on a shared phone it may be
+          // someone other than the last person, so their own things and
+          // reminders, not the last person's, before the new-password screen.
           case AuthChangeEvent.passwordRecovery:
+            _signedIn(state.session?.user.id);
             if (!NewPasswordScreen.isShowing) {
               appNavigatorKey.currentState?.push(
                 MaterialPageRoute(builder: (_) => const NewPasswordScreen()),
@@ -203,10 +195,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           // every screen reports it as a connection problem, and "Try again"
           // can never succeed. Send them somewhere they can actually recover.
           case AuthChangeEvent.signedOut:
+            // Whatever was playing stops too (already, from Settings).
+            unawaited(SoundPlayer.instance.stop().catchError((Object _) {}));
             unawaited(SessionNotifications.instance.stop());
             // Their things are set aside for when they're back, and their
             // reminders stop: the next person on this phone gets neither.
             LocalData.instance.signedOut();
+            // Signed media links were the last person's to use.
+            MediaLinks.instance.clear();
             CourseStore.instance.reset();
             unawaited(RemindersService.instance.cancelScheduled());
             _toLogin();
@@ -236,6 +232,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         }
       },
     );
+  }
+
+  /// [userId] has signed in (or come back, or followed a password-reset
+  /// link). Someone else on this phone gets their own local things, not
+  /// the last person's (see LocalData), and their own reminders.
+  void _signedIn(String? userId) {
+    if (userId != null && LocalData.instance.signedIn(userId)) {
+      CourseStore.instance.reset();
+      MediaLinks.instance.clear();
+      unawaited(
+        RemindersService.instance.cancelScheduled().then(
+          (_) => RemindersService.instance.refreshScheduled(),
+        ),
+      );
+      // Their own session reminders and news, not the last person's.
+      unawaited(SessionNotifications.instance.start());
+    }
+    // Practice finished offline, or as the app was killed, is written once
+    // there's a signed-in user to write it for.
+    unawaited(PracticeRepository().flushPending());
+    unawaited(SavedStore.instance.sync());
   }
 
   void _toLogin() {

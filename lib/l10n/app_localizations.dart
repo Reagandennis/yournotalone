@@ -9731,6 +9731,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paystack charges this as {charge}. Your bank converts it, and may add a small fee.'**
   String therapyFlowChargeNote(String charge);
+
+  /// Shown when someone taps Pay but the payment server says their last checkout for this therapy session may still be paid (e.g. an M-Pesa prompt not yet approved). They must not pay twice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your last payment is still being processed. Don\'t pay again — tap \"Check payment\" in a minute or two.'**
+  String get sessionErrorPaymentInProgress;
+
+  /// Heading of the payment box on a therapy session card in the minutes after the payment page was opened and closed: the payment may still arrive (e.g. an M-Pesa prompt approved late).
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for your payment'**
+  String get therapyPaymentCheckingTitle;
+
+  /// Under therapyPaymentCheckingTitle. Explains a payment approved on the phone can take a few minutes, and that they shouldn't pay twice. {methods} is therapyPaymentMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'If you approved the payment on your phone ({methods}), it can take a few minutes to reach us. Don\'t pay again — tap \"Check payment\" to look for it.'**
+  String therapyPaymentCheckingDetail(String methods);
+
+  /// Dialog body under therapyDiscardTitle when the payment page for this therapy request was opened in the last few minutes: we check for the payment before discarding.
+  ///
+  /// In en, this message translates to:
+  /// **'You opened the payment page a few minutes ago. We\'ll check whether that payment went through first — if it did, your request is kept and sent.'**
+  String get therapyDiscardPendingBody;
+
+  /// Snackbar: discarding a therapy request was stopped because we couldn't check whether a recent payment for it went through (e.g. offline).
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t check for your payment, so the request is kept. Try again in a moment.'**
+  String get therapyDiscardCheckFailed;
+
+  /// Dialog body: cancelling a booked therapy session that wasn't charged (the fee was waived or not required). Must not mention a refund.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll let your therapist know. Nothing was charged for this session, so there\'s nothing to refund. You can book again whenever you\'re ready.'**
+  String get therapyCancelSessionBodyNoCharge;
+
+  /// Dialog body: cancelling an unmatched therapy request that wasn't charged (the fee was waived or not required). Must not mention a refund.
+  ///
+  /// In en, this message translates to:
+  /// **'We haven\'t matched you yet. Nothing was charged for this request, so there\'s nothing to refund. You can book again whenever you\'re ready.'**
+  String get therapyCancelRequestBodyNoCharge;
+
+  /// Shown to a therapist who taps Join when the care team has paused their therapist profile, so they can't join sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Your therapist profile is paused, so you can\'t join sessions right now. Please contact the care team.'**
+  String get sessionErrorTherapistInactive;
+
+  /// Body of the dialog offering to carry on with an unsaved journal draft, when the saved entry was changed (e.g. on another device) after the draft was written.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry was changed after this draft was written — on another device, perhaps. Carrying on with the draft will replace the newer version when you save.'**
+  String get journalDraftStaleBody;
+
+  /// Dialog title when saving a journal entry that has been deleted (e.g. on another device).
+  ///
+  /// In en, this message translates to:
+  /// **'This entry was deleted'**
+  String get journalEntryGoneTitle;
+
+  /// Body under journalEntryGoneTitle: offers to save what they wrote as a new journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'It may have been deleted on another device. Your writing is still here — save it as a new entry?'**
+  String get journalEntryGoneBody;
+
+  /// Button under journalEntryGoneBody: save the text as a new journal entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as a new entry'**
+  String get journalEntrySaveAsNew;
+
+  /// Dialog title when saving a journal entry that was changed on another device since editing began.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry changed on another device'**
+  String get journalEntryConflictTitle;
+
+  /// Body under journalEntryConflictTitle, explaining the two buttons journalEntryReplace and journalEntryKeepBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace that version with yours, or keep both by saving yours as a new entry.'**
+  String get journalEntryConflictBody;
+
+  /// Button in the journal conflict dialog: overwrite the other version with this one.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get journalEntryReplace;
+
+  /// Button in the journal conflict dialog: save this version as a new entry, keeping the other.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep both'**
+  String get journalEntryKeepBoth;
 }
 
 class _AppLocalizationsDelegate

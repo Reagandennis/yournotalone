@@ -92,6 +92,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   }
 
   Future<void> _load() async {
+    if (!mounted) return;
     setState(() => _error = false);
     try {
       final habits = await _repo.fetchHabits();
@@ -252,6 +253,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
   Future<void> _pledge(RecoveryHabit habit) async {
     try {
       await _repo.pledgeToday(habit.id);
+      if (!mounted) return;
       _load();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -299,6 +301,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     if (confirmed != true) return;
     try {
       await _repo.resetDayOne(habit);
+      if (!mounted) return;
       _load();
     } catch (e) {
       if (mounted) {
@@ -333,6 +336,7 @@ class _RecoveryScreenState extends State<RecoveryScreen> {
     if (confirmed != true) return;
     try {
       await _repo.deleteHabit(habit.id);
+      if (!mounted) return;
       _load();
     } catch (e) {
       if (mounted) {

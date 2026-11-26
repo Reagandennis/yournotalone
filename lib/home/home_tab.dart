@@ -180,7 +180,22 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
   /// arrive, or when the app is built without one: then Home orders them
   /// itself.
   List<Recommendation>? _suggested;
+
+  /// Bumped for every suggestions request, and by a check-in, so an answer
+  /// that arrives after a newer request (one asked before an awful check-in,
+  /// say) is dropped instead of replacing the newer list.
+  int _suggestionsGen = 0;
   List<_QuickItem> _quick = _quickItems;
+
+  /// Bumped by every mood pick, so only a failed save of the latest pick
+  /// rolls Home back.
+  int _moodGen = 0;
+
+  /// Mood saves still on their way, and what Home showed as last saved
+  /// (before them, or after the latest one that went through): a failed
+  /// save rolls back to that, never to another pick still unsaved.
+  int _moodSaving = 0;
+  (int?, DateTime?, List<MoodEntry>?, Rhythm?)? _moodConfirmed;
 
   /// When Home last fetched what it shows. Home stays alive under the
   /// screens opened from it and behind the other tabs, so it fetches again
@@ -344,8 +359,10 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
   Future<void> _loadSuggestions() async {
     final client = _recommendations;
     if (!client.enabled) return;
+    final gen = ++_suggestionsGen;
     try {
       final picks = await client.fetch(await RecommendationRequest.current());
+      if (gen != _suggestionsGen) return;
       if (mounted && picks != null) setState(() => _suggested = picks);
     } catch (e) {
       debugPrint('Suggestions stay on-device: $e');
@@ -426,12 +443,21 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
 
   Future<void> _selectMood(int index) async {
     final firstTime = _todaysMood == null;
+    final gen = ++_moodGen;
+    if (_moodSaving == 0) _moodConfirmed = (_mood, _moodDay, _week, _rhythm);
+    _moodSaving++;
+    // Whatever was asked for before this check-in is out of date now.
+    _suggestionsGen++;
     setState(() {
       _mood = index;
       _moodDay = clock.now();
       _week = _withToday(index);
       // A check-in counts: today's sun lights as it's made.
       _rhythm = _rhythm?.withToday();
+      // After an awful or low check-in, the Worker's list from before it
+      // may hold deep work: Home's own gentle order shows until the new
+      // answer is in.
+      if (index <= 1) _suggested = null;
     });
     // An "Awful" day is the one moment the app knows someone is
     // struggling. Offer the door straight away — before the save, which
@@ -442,8 +468,14 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
     if (suggestions.enabled) {
       unawaited(suggestions.noteMood(index).then((_) => _loadSuggestions()));
     }
+    final after = (_mood, _moodDay, _week, _rhythm);
     try {
-      await _moodRepo.saveMood(index);
+      try {
+        await _moodRepo.saveMood(index);
+      } finally {
+        _moodSaving--;
+      }
+      _moodConfirmed = after;
       if (!mounted) return;
       if (index != 0 && firstTime) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -452,18 +484,28 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
         unawaited(_nudgeAfterCheckins());
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              errorMessage(
-                e,
-                context.l10n.homeMoodSaveFailed,
-              ),
+      if (!mounted) return;
+      // Not saved, so it mustn't look saved: back to what was last saved
+      // — unless another pick has been made since (its own save decides).
+      final saved = _moodConfirmed;
+      if (gen == _moodGen && saved != null) {
+        setState(() {
+          _mood = saved.$1;
+          _moodDay = saved.$2;
+          _week = saved.$3;
+          _rhythm = saved.$4;
+        });
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            errorMessage(
+              e,
+              context.l10n.homeMoodSaveFailed,
             ),
           ),
-        );
-      }
+        ),
+      );
     }
   }
 
@@ -1385,9 +1427,13 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
     final today = dailyPick(now: now, premium: premium);
     final dayPart = DayPart.of(now);
     final goals = userGoals();
+    // After an awful or low check-in, nothing deep in the strip, whoever
+    // ordered it — the same rule as the check-in's own suggestion.
+    final hard = (_todaysMood ?? 2) <= 1;
+    final exclude = {?today?.id, if (hard) ...deepContent};
     final fromWorker = itemsForRecommendations(
       _suggested,
-      exclude: {?today?.id},
+      exclude: exclude,
     );
     final forNow =
         fromWorker ??
@@ -1396,7 +1442,7 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
           count: 5,
           now: now,
           premium: premium,
-          exclude: {?today?.id},
+          exclude: exclude,
           goals: goals,
           kindBoost: _kindBoost,
         );

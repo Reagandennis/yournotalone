@@ -6237,4 +6237,64 @@ class AppLocalizationsEs extends AppLocalizations {
   String therapyFlowChargeNote(String charge) {
     return 'Paystack lo cobra como $charge. Tu banco hace la conversión y puede añadir una pequeña comisión.';
   }
+
+  @override
+  String get sessionErrorPaymentInProgress =>
+      'Tu último pago todavía se está procesando. No vuelvas a pagar: toca «Comprobar pago» en un minuto o dos.';
+
+  @override
+  String get therapyPaymentCheckingTitle => 'Estamos comprobando tu pago';
+
+  @override
+  String therapyPaymentCheckingDetail(String methods) {
+    return 'Si aprobaste el pago en tu teléfono ($methods), puede tardar unos minutos en llegarnos. No vuelvas a pagar: toca «Comprobar pago» para buscarlo.';
+  }
+
+  @override
+  String get therapyDiscardPendingBody =>
+      'Abriste la página de pago hace unos minutos. Primero comprobaremos si ese pago se hizo; si es así, tu solicitud se conserva y se envía.';
+
+  @override
+  String get therapyDiscardCheckFailed =>
+      'No pudimos comprobar tu pago, así que la solicitud se conserva. Inténtalo de nuevo en un momento.';
+
+  @override
+  String get therapyCancelSessionBodyNoCharge =>
+      'Avisaremos a tu terapeuta. No se cobró nada por esta sesión, así que no hay nada que reembolsar. Puedes reservar de nuevo cuando quieras.';
+
+  @override
+  String get therapyCancelRequestBodyNoCharge =>
+      'Todavía no te hemos asignado terapeuta. No se cobró nada por esta solicitud, así que no hay nada que reembolsar. Puedes reservar de nuevo cuando quieras.';
+
+  @override
+  String get sessionErrorTherapistInactive =>
+      'Tu perfil de terapeuta está en pausa, así que ahora no puedes unirte a sesiones. Ponte en contacto con el equipo de atención.';
+
+  @override
+  String get journalDraftStaleBody =>
+      'Esta entrada se modificó después de escribir este borrador, quizá en otro dispositivo. Si sigues con el borrador, reemplazará la versión más reciente al guardar.';
+
+  @override
+  String get journalEntryGoneTitle => 'Esta entrada se eliminó';
+
+  @override
+  String get journalEntryGoneBody =>
+      'Puede que se haya eliminado en otro dispositivo. Lo que escribiste sigue aquí. ¿Guardarlo como una entrada nueva?';
+
+  @override
+  String get journalEntrySaveAsNew => 'Guardar como entrada nueva';
+
+  @override
+  String get journalEntryConflictTitle =>
+      'Esta entrada cambió en otro dispositivo';
+
+  @override
+  String get journalEntryConflictBody =>
+      'Reemplaza esa versión por la tuya, o conserva las dos guardando la tuya como entrada nueva.';
+
+  @override
+  String get journalEntryReplace => 'Reemplazar';
+
+  @override
+  String get journalEntryKeepBoth => 'Conservar las dos';
 }

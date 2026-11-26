@@ -1598,5 +1598,21 @@
   "therapyFlowNextMatch": "Wir finden für dich eine zugelassene Therapeutin oder einen zugelassenen Therapeuten und einen Termin, meist innerhalb eines Tages, und schreiben dir eine E-Mail.",
   "therapyFlowNextJoin": "Zur vereinbarten Zeit trittst du hier in der App einem privaten Videoanruf bei.",
   "therapyFlowPay": "{price} bezahlen",
-  "therapyFlowChargeNote": "Paystack berechnet dafür {charge}. Deine Bank rechnet es um und berechnet dafür eventuell eine kleine Gebühr."
+  "therapyFlowChargeNote": "Paystack berechnet dafür {charge}. Deine Bank rechnet es um und berechnet dafür eventuell eine kleine Gebühr.",
+  "sessionErrorPaymentInProgress": "Deine letzte Zahlung wird noch bearbeitet. Bitte nicht noch einmal bezahlen — tippe in ein, zwei Minuten auf „Zahlung prüfen“.",
+  "therapyPaymentCheckingTitle": "Wir prüfen deine Zahlung",
+  "therapyPaymentCheckingDetail": "Wenn du die Zahlung auf deinem Handy bestätigt hast ({methods}), kann es ein paar Minuten dauern, bis sie bei uns ankommt. Bitte nicht noch einmal bezahlen — tippe auf „Zahlung prüfen“, um nachzusehen.",
+  "therapyDiscardPendingBody": "Du hast die Zahlungsseite vor ein paar Minuten geöffnet. Wir prüfen zuerst, ob die Zahlung durchgegangen ist — wenn ja, bleibt deine Anfrage bestehen und wird gesendet.",
+  "therapyDiscardCheckFailed": "Wir konnten deine Zahlung nicht prüfen, deshalb bleibt die Anfrage bestehen. Versuch es gleich noch einmal.",
+  "therapyCancelSessionBodyNoCharge": "Wir sagen deiner Therapeutin oder deinem Therapeuten Bescheid. Für diese Sitzung wurde nichts berechnet, also gibt es nichts zu erstatten. Du kannst jederzeit neu buchen.",
+  "therapyCancelRequestBodyNoCharge": "Wir haben noch niemanden für dich gefunden. Für diese Anfrage wurde nichts berechnet, also gibt es nichts zu erstatten. Du kannst jederzeit neu buchen.",
+  "sessionErrorTherapistInactive": "Dein Therapeutenprofil ist pausiert, deshalb kannst du gerade keinen Sitzungen beitreten. Bitte wende dich an das Care-Team.",
+  "journalDraftStaleBody": "Dieser Eintrag wurde geändert, nachdem dieser Entwurf geschrieben wurde – vielleicht auf einem anderen Gerät. Wenn du mit dem Entwurf weitermachst, ersetzt er beim Speichern die neuere Version.",
+  "journalEntryGoneTitle": "Dieser Eintrag wurde gelöscht",
+  "journalEntryGoneBody": "Vielleicht wurde er auf einem anderen Gerät gelöscht. Dein Text ist noch da – als neuen Eintrag speichern?",
+  "journalEntrySaveAsNew": "Als neuen Eintrag speichern",
+  "journalEntryConflictTitle": "Dieser Eintrag wurde auf einem anderen Gerät geändert",
+  "journalEntryConflictBody": "Ersetze diese Version durch deine oder behalte beide, indem du deine als neuen Eintrag speicherst.",
+  "journalEntryReplace": "Ersetzen",
+  "journalEntryKeepBoth": "Beide behalten"
 }

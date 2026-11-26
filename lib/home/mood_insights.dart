@@ -36,6 +36,7 @@ List<Insight> moodInsights({
   required List<FeelingRecord> feelings,
   required DateTime now,
   AppLocalizations? l10n,
+  int? streak,
 }) {
   final l = l10n ?? lookupAppLocalizations(const Locale('en'));
   final insights = <Insight>[];
@@ -45,24 +46,16 @@ List<Insight> moodInsights({
   final thisMonth = moods
       .where((e) => e.date.year == now.year && e.date.month == now.month)
       .length;
-  final checked = {for (final e in moods) DateUtils.dateOnly(e.date)};
-  var streak = 0;
-  for (var back = 0; back < 120; back++) {
-    final day = DateTime(today.year, today.month, today.day - back);
-    if (!checked.contains(day)) {
-      if (back == 0) continue; // today isn't over
-      break;
-    }
-    streak++;
-  }
+  // [streak] when the caller counted past what [moods] covers.
+  final run = streak ?? checkInStreak([for (final e in moods) e.date], today);
   if (thisMonth > 0) {
     insights.add(
       Insight(
         Icons.calendar_month_rounded,
         Pillars.blue,
         l.moodInsightCheckedInTitle(thisMonth),
-        streak > 1
-            ? l.moodInsightCheckedInStreak(streak)
+        run > 1
+            ? l.moodInsightCheckedInStreak(run)
             : l.moodInsightCheckedInFirst,
       ),
     );

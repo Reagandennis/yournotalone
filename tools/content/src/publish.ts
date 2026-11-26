@@ -8,7 +8,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { credentialsFromEnv, envNames, envs, type EnvName, minApp, s3Endpoint } from './config.ts';
-import { check, load, repoRoot } from './content.ts';
+import { check, load, mediaFile } from './content.ts';
 import { describe, execute, plan, uploads } from './publisher.ts';
 import { r2Store, type Store } from './store.ts';
 import { prepareFile } from './transcode.ts';
@@ -54,11 +54,11 @@ const p = await plan({
   minApp,
   store,
   prepare: (src) =>
-    prepareFile(join(repoRoot, src.path), src.role, {
+    prepareFile(mediaFile(src.path), src.role, {
       cacheDir,
       warn: (m) => console.warn(`warning: ${m}`),
     }),
-});
+}).catch((e: Error) => fail(e.message));
 console.log(describe(p, dryRun).join('\n'));
 
 if (dryRun) {
@@ -70,7 +70,12 @@ if (dryRun) {
     writeFileSync(file, o.body);
   }
   console.log(`Dry run: nothing uploaded. Would-be files are in ${relative(process.cwd(), out) || '.'}/`);
-} else if (!p.unchanged) {
+} else if (!p.unchanged || p.deletes.length) {
   const done = await execute(p, store!, console.log);
-  console.log(`Published v${p.version} to ${env.name}: ${done.length} object(s) uploaded.`);
+  const removed = p.deletes.length ? `; ${p.deletes.length} public copy(ies) of premium media deleted` : '';
+  console.log(
+    p.unchanged
+      ? `Catalogue unchanged at v${p.previous} on ${env.name}${removed}.`
+      : `Published v${p.version} to ${env.name}: ${done.length} object(s) uploaded${removed}.`,
+  );
 }

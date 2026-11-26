@@ -5843,6 +5843,61 @@ class AppLocalizationsZh extends AppLocalizations {
   String therapyFlowChargeNote(String charge) {
     return 'Paystack 将按 $charge 扣款。你的银行会进行换算，可能会收取少量手续费。';
   }
+
+  @override
+  String get sessionErrorPaymentInProgress =>
+      '你上一笔付款仍在处理中。请不要重复付款——过一两分钟后点“查看付款”。';
+
+  @override
+  String get therapyPaymentCheckingTitle => '正在查看你的付款';
+
+  @override
+  String therapyPaymentCheckingDetail(String methods) {
+    return '如果你已在手机上确认付款（$methods），可能需要几分钟才能到达我们这里。请不要重复付款——点“查看付款”查找它。';
+  }
+
+  @override
+  String get therapyDiscardPendingBody =>
+      '你几分钟前打开过付款页面。我们会先查看那笔付款是否成功——如果成功，你的申请会保留并发送。';
+
+  @override
+  String get therapyDiscardCheckFailed => '无法查看你的付款，所以申请已保留。请稍后再试。';
+
+  @override
+  String get therapyCancelSessionBodyNoCharge =>
+      '我们会通知你的治疗师。这次咨询没有收费，所以无需退款。你随时可以重新预约。';
+
+  @override
+  String get therapyCancelRequestBodyNoCharge =>
+      '我们还没有为你匹配治疗师。这次申请没有收费，所以无需退款。你随时可以重新预约。';
+
+  @override
+  String get sessionErrorTherapistInactive => '你的治疗师资料已暂停，所以现在无法加入咨询。请联系关怀团队。';
+
+  @override
+  String get journalDraftStaleBody =>
+      '这篇日记在这份草稿写好后被修改过——也许是在另一台设备上。继续使用草稿，保存时会替换较新的版本。';
+
+  @override
+  String get journalEntryGoneTitle => '这篇日记已被删除';
+
+  @override
+  String get journalEntryGoneBody => '它可能已在另一台设备上被删除。你写的内容还在——要保存为新日记吗？';
+
+  @override
+  String get journalEntrySaveAsNew => '保存为新日记';
+
+  @override
+  String get journalEntryConflictTitle => '这篇日记已在另一台设备上更改';
+
+  @override
+  String get journalEntryConflictBody => '用你的版本替换那个版本，或者把你的版本保存为新日记，两个都保留。';
+
+  @override
+  String get journalEntryReplace => '替换';
+
+  @override
+  String get journalEntryKeepBoth => '都保留';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

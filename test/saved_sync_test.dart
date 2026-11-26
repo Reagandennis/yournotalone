@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +12,10 @@ class _Account implements SavedItemsRemote {
   bool down = false;
   int calls = 0;
 
+  /// While set and not complete, [fetch] waits on it.
+  Completer<void>? gate;
+  final added = <String>[];
+
   void _check() {
     calls++;
     if (down) throw Exception('offline');
@@ -18,12 +24,15 @@ class _Account implements SavedItemsRemote {
   @override
   Future<List<String>> fetch() async {
     _check();
-    return [...saved];
+    final answer = [...saved];
+    if (gate case final g?) await g.future;
+    return answer;
   }
 
   @override
   Future<void> add(List<String> ids) async {
     _check();
+    added.addAll(ids);
     saved.insertAll(0, ids.where((id) => !saved.contains(id)));
   }
 
@@ -156,5 +165,29 @@ void main() {
     final calls = account.calls;
     await store.syncIfStale();
     expect(account.calls, calls);
+  });
+
+  test('a sync under way when the account is forgotten brings nothing back',
+      () async {
+    account.saved.add(box.id);
+    account.gate = Completer();
+    final store = phone();
+    await store.load(); // starts a sync that waits on the account
+    await pumpEventQueue();
+    // The account was deleted and signed out.
+    store.forgetLocal();
+    user = null;
+    account.gate!.complete();
+    await store.sync();
+    expect(store.value, isEmpty);
+
+    // The next account to sign in isn't handed the forgotten one's saves.
+    account.gate = null;
+    account.saved.clear();
+    account.added.clear();
+    user = 'user-b';
+    await store.sync();
+    expect(account.added, isNot(contains(box.id)));
+    expect(store.value, isEmpty);
   });
 }

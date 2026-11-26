@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:yournotalone/brand.dart';
 import 'package:yournotalone/discover/content_index.dart';
+import 'package:yournotalone/discover/content_tags.dart';
 import 'package:yournotalone/discover/content_widgets.dart';
 import 'package:yournotalone/discover/recommendations.dart';
 import 'package:yournotalone/home/home_tab.dart';
@@ -115,6 +116,46 @@ void main() {
     }
     // "For tonight" would only repeat the heading.
     expect(strip.reasons.containsKey('sound:Rainfall'), isFalse);
+  });
+
+  testWidgets('after a low check-in the strip holds no deep work', (
+    tester,
+  ) async {
+    final deep = [
+      for (final id in deepContent)
+        if (contentIndex.any((i) => i.id == id)) id,
+    ];
+    expect(deep, isNotEmpty);
+    final client = RecommendationsClient.forTest(
+      client: MockClient(
+        (_) async => http.Response(
+          jsonEncode({
+            'items': [
+              for (final id in [...deep, 'sound:Rainfall'])
+                {'id': id, 'reason': '', 'reasonKey': 'lead'},
+            ],
+            'rules': 'v1',
+          }),
+          200,
+          headers: {'content-type': 'application/json'},
+        ),
+      ),
+      baseUrl: 'https://api.test',
+      token: () async => 'jwt',
+    );
+    await _pumpHome(tester, client);
+    await tester.pumpAndSettle();
+    List<String> shown() =>
+        tester.widget<ContentStrip>(_strip()).items.map((i) => i.id).toList();
+    expect(shown().where(deep.contains), isNotEmpty);
+
+    await tester.tap(find.text('Low'));
+    await tester.pump();
+    // At once, before any answer: nothing deep.
+    expect(shown().where(deep.contains), isEmpty);
+    await tester.pumpAndSettle();
+    expect(shown().where(deep.contains), isEmpty);
+    expect(shown(), isNotEmpty);
   });
 
   testWidgets('the on-device order has no reasons', (tester) async {

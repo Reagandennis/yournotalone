@@ -36,6 +36,7 @@ import '../onboarding/paywall_screen.dart';
 import '../profile/edit_profile_screen.dart';
 import '../reminders/reminders_screen.dart';
 import '../reminders/reminders_service.dart';
+import '../sounds/sound_player.dart';
 import '../support/crisis_screen.dart';
 import '../support/faq_screen.dart';
 import 'home_ui.dart';
@@ -164,6 +165,9 @@ class _SettingsTabState extends State<SettingsTab> {
       ),
     );
     if (confirmed != true || !context.mounted) return;
+    // A sleep sound or meditation left playing would carry on, on the lock
+    // screen, for whoever signs in next on a shared phone.
+    await stopAudioForSignOut();
     // While still signed in, so the server forgets this phone too.
     await SessionNotifications.instance.stop();
     // Drop the remembered Google account too, so the next sign-in offers the
@@ -228,6 +232,10 @@ class _SettingsTabState extends State<SettingsTab> {
     // tools, their reminders, their trial reminder.
     if (userId != null) LocalData.instance.forget(userId);
     unawaited(RemindersService.instance.cancelScheduled());
+    // Their audio stops, and their session reminders and background checks
+    // go (the server has already dropped this phone with the account).
+    await stopAudioForSignOut();
+    await SessionNotifications.instance.stop();
 
     // The account is gone. Signing out now talks to a user that no longer
     // exists, so a failure here is expected and must not be reported as a
@@ -905,5 +913,19 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         ),
       ],
     );
+  }
+}
+
+/// Stops whatever is playing before someone signs out or deletes their
+/// account. Never fails: signing out mustn't hang on the audio.
+Future<void> stopAudioForSignOut() async {
+  // The loop and the meditation voice guide play on separate engines.
+  try {
+    await Future.wait([
+      SoundPlayer.instance.stop(),
+      SoundPlayer.instance.stopNarration(),
+    ]).timeout(const Duration(seconds: 3));
+  } catch (e) {
+    debugPrint('Couldn\'t stop audio: $e');
   }
 }

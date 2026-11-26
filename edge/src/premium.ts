@@ -8,17 +8,24 @@
 //      PRO_ENTITLEMENT_ID, or resolve the lookup key once via
 //      GET /projects/{p}/entitlements.
 //
-// The answer is cached for 5 min in caches.default (keyed by sha256 of the
-// user id; the body is just "true"/"false"), with a small in-isolate copy in
-// front of it. Any RevenueCat error or timeout means "not premium" and is
-// not cached.
+// A "premium" answer is cached for up to 5 min, and never past the
+// entitlement's own expires_at; a "not premium" answer only for 30 s, so a
+// purchase shows up almost at once. The answer lives in caches.default
+// (keyed by sha256 of the RevenueCat project, the environment and the user
+// id; the body is {premium, until}) with a small in-isolate copy in front of
+// it. A copy restored from caches.default keeps its original expiry rather
+// than starting a new 5 minutes. Any RevenueCat error or timeout means "not
+// premium" and is not cached.
 
 import type { AuthUser, Env } from './env';
 import { sha256Hex } from './http';
 import { logError } from './log';
 
 const REVENUECAT_API = 'https://api.revenuecat.com/v2';
-const TTL_SECONDS = 300;
+/** How long a "premium" answer is kept, at most (never past expires_at). */
+export const PREMIUM_TTL_SECONDS = 300;
+/** How long a "not premium" answer is kept, so a new purchase shows up quickly. */
+export const NOT_PREMIUM_TTL_SECONDS = 30;
 const RC_TIMEOUT_MS = 3_000;
 const MAX_PAGES = 5;
 const MEMO_MAX = 1_000;
@@ -42,13 +49,37 @@ export function resetPremiumState(): void {
 
 function cacheKey(hash: string): string {
   // Synthetic URL; never fetched. Only used as a Cache API key.
-  return `https://premium-cache.yournotalone.internal/v1/${hash}`;
+  return `https://premium-cache.yournotalone.internal/v2/${hash}`;
+}
+
+/** An answer and when it stops being good (ms since the epoch). */
+interface Answer {
+  premium: boolean;
+  until: number;
+}
+
+/**
+ * Staging and production can share caches.default (same zone), and could
+ * point at different RevenueCat projects, so the key covers both.
+ */
+function scope(env: Env): string {
+  return JSON.stringify([env.REVENUECAT_PROJECT_ID ?? '', env.PUBLIC_BASE_URL ?? '', env.KEY_PREFIX ?? '']);
+}
+
+function parseCached(text: string): Answer | null {
+  try {
+    const j = JSON.parse(text);
+    if (typeof j?.premium === 'boolean' && Number.isFinite(j?.until)) return { premium: j.premium, until: j.until };
+  } catch {
+    // Not ours, or from before the body carried its expiry: a miss.
+  }
+  return null;
 }
 
 export async function isPremium(user: AuthUser, env: Env): Promise<boolean> {
   if (user.premiumComp) return true;
 
-  const hash = await sha256Hex(user.id);
+  const hash = await sha256Hex(`${scope(env)}\n${user.id}`);
   const now = Date.now();
   const hit = memo.get(hash);
   if (hit && hit.until > now) return hit.premium;
@@ -58,40 +89,53 @@ export async function isPremium(user: AuthUser, env: Env): Promise<boolean> {
   try {
     const cached = await cache.match(key);
     if (cached) {
-      const premium = (await cached.text()) === 'true';
-      remember(hash, premium, now);
-      return premium;
+      const answer = parseCached(await cached.text());
+      // Against the clock now, not before the read: it can expire meanwhile.
+      if (answer && answer.until > Date.now()) {
+        remember(hash, answer);
+        return holds(answer);
+      }
     }
   } catch (error) {
     logError('premium_cache_read_failed', error);
   }
 
-  let premium: boolean;
+  let answer: Answer;
   try {
-    premium = await revenueCatHasPro(user.id, env);
+    const pro = await revenueCatHasPro(user.id, env);
+    answer = pro.premium
+      ? { premium: true, until: Math.min(now + PREMIUM_TTL_SECONDS * 1000, pro.expiresAt ?? Infinity) }
+      : { premium: false, until: now + NOT_PREMIUM_TTL_SECONDS * 1000 };
   } catch (error) {
     // Fail closed, and don't cache the failure.
     logError('revenuecat_check_failed', error);
     return false;
   }
 
-  remember(hash, premium, now);
+  const seconds = Math.floor((answer.until - Date.now()) / 1000);
+  if (seconds < 1) return holds(answer);
+  remember(hash, answer);
   try {
     await cache.put(
       key,
-      new Response(premium ? 'true' : 'false', {
-        headers: { 'Cache-Control': `max-age=${TTL_SECONDS}`, 'Content-Type': 'text/plain' },
+      new Response(JSON.stringify(answer), {
+        headers: { 'Cache-Control': `max-age=${seconds}`, 'Content-Type': 'application/json' },
       }),
     );
   } catch (error) {
     logError('premium_cache_write_failed', error);
   }
-  return premium;
+  return holds(answer);
 }
 
-function remember(hash: string, premium: boolean, now: number): void {
+/** Premium only while the answer's expiry is still ahead, checked as it's returned. */
+function holds(answer: Answer): boolean {
+  return answer.premium && answer.until > Date.now();
+}
+
+function remember(hash: string, answer: Answer): void {
   if (memo.size >= MEMO_MAX) memo.clear();
-  memo.set(hash, { premium, until: now + TTL_SECONDS * 1000 });
+  memo.set(hash, answer);
 }
 
 async function rcGet(path: string, env: Env): Promise<any> {
@@ -134,7 +178,14 @@ async function proEntitlementId(env: Env, project: string): Promise<string> {
   throw new Error(`RevenueCat entitlement "${lookupKey}" not found`);
 }
 
-async function revenueCatHasPro(userId: string, env: Env): Promise<boolean> {
+/**
+ * Whether the customer has the pro entitlement now, and until when (ms since
+ * the epoch; null for one that doesn't expire).
+ */
+async function revenueCatHasPro(
+  userId: string,
+  env: Env,
+): Promise<{ premium: boolean; expiresAt: number | null }> {
   if (!env.REVENUECAT_SECRET_KEY || !env.REVENUECAT_PROJECT_ID) {
     throw new Error('RevenueCat secrets are not set');
   }
@@ -147,19 +198,23 @@ async function revenueCatHasPro(userId: string, env: Env): Promise<boolean> {
     customer = await rcGet(`${project}/customers/${encodeURIComponent(userId)}`, env);
   } catch (error) {
     // A customer RevenueCat has never seen has no entitlements.
-    if (error instanceof RevenueCatError && error.status === 404) return false;
+    if (error instanceof RevenueCatError && error.status === 404) return { premium: false, expiresAt: null };
     throw error;
   }
 
   const now = Date.now();
   let list = customer?.active_entitlements;
+  // The latest expiry among matching entitlements; null once one never expires.
+  let best: { expiresAt: number | null } | null = null;
   for (let page = 0; list && page < MAX_PAGES; page++) {
     for (const e of list.items ?? []) {
       if (e?.entitlement_id !== entitlementId) continue;
-      if (e.expires_at == null || Number(e.expires_at) > now) return true;
+      if (e.expires_at == null) return { premium: true, expiresAt: null };
+      const at = Number(e.expires_at);
+      if (at > now && (best === null || (best.expiresAt !== null && at > best.expiresAt))) best = { expiresAt: at };
     }
     const next = nextPath(list.next_page);
     list = next ? await rcGet(next, env) : null;
   }
-  return false;
+  return best ? { premium: true, expiresAt: best.expiresAt } : { premium: false, expiresAt: null };
 }

@@ -19,11 +19,18 @@ then:
 
 ```
 (cd tools/content && npm run check)   # validate
-(cd tools/content && npm run build)   # content/ → assets/catalog/bundled.json
 ```
 
 and publish (`tools/content/README.md`) so installed apps get it without
-an update.
+an update. Don't commit an `assets/catalog/bundled.json` built on your
+machine: its media keys are hashes of your machine's encodes, which may not
+be what was uploaded. The content workflow rewrites it from what production
+serves after each production publish (`npm run bundle`).
+
+An item's audio (`body.audio`, `body.narration`) is a path relative to the
+repo under `assets/` (bundled with the app) or directly in `Sounds/` (the
+original recordings, kept in R2 and listed in `masters.json`); no `..` and
+no absolute paths.
 
 The Dart catalogues in `lib/` (`soundsCatalog`, `meditations`, …) are a
 frozen fallback, used only by tests built with
@@ -113,9 +120,15 @@ text:
    to the language and go through the content: titles in lists, lessons,
    meditations, journal prompt starters and course notes.
 2. Edit `text.<locale>` in the YAML directly. Keep the fields and the
-   number of lines; `npm run check` says if they drift.
-3. Flip `reviewed: false` to `true` for each item read, then
-   `npm run build` and commit `assets/catalog/bundled.json`.
+   number of lines; `npm run check` says if they drift. The build from
+   step 1 still shows the old wording: the app only has text that has been
+   published.
+3. To read an edit in the app before committing it, publish it to staging
+   and check it in a staging build (`tools/content/README.md`, "Workflow:
+   staging first"). Don't commit an `assets/catalog/bundled.json` built on
+   your machine: a local encode can name media that were never uploaded.
+4. Flip `reviewed: false` to `true` for each item read and commit the
+   YAML. The next production publish updates `assets/catalog/bundled.json`.
 
 ## Backgrounds
 
