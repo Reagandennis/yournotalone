@@ -3,10 +3,19 @@
 //   charge.success     marks the session paid, the same way paystack-payment
 //                      does, so a payment lands even if the app closed
 //                      before confirming it.
-//   refund.processed   puts the session back to unpaid through
-//                      record_therapy_refunds (migration 0012, worded for
-//                      Paystack in 0021), which emails the care team and
-//                      the client.
+//                      The card's country is kept with the checkout
+//                      (paystack_record_card_country, 0036).
+//   refund.processed   a full refund (data.amount, in the currency's minor
+//                      unit, at least the checkout's amount; a refund with
+//                      no amount is taken as full) marks the checkout
+//                      refunded_at and puts the session back to unpaid
+//                      through record_therapy_refunds (migration 0012,
+//                      worded for Paystack in 0021; 0036 sets refunded_at
+//                      too), which emails the care team and the client. A
+//                      partial refund is only logged: the session stays
+//                      paid. Either way the checkout is never attached to a
+//                      session again once it's marked refunded (see
+//                      ../_shared/paystack.ts).
 //
 // Every event is checked against the x-paystack-signature header (HMAC
 // SHA-512 of the raw body with the secret key), and a charge is verified
@@ -22,6 +31,7 @@ import {
   type Checkout,
   type Item,
   PAYSTACK_SECRET_KEY,
+  recordCardCountry,
   settleCheckout,
   verifyTransaction,
 } from '../_shared/paystack.ts';
@@ -100,6 +110,7 @@ Deno.serve(async (req: Request) => {
         const transaction = await verifyTransaction(checkout.reference);
         if (!transaction) return json({ ok: true, ignored: true });
         const result = await settleCheckout(admin, checkout, transaction);
+        if (result === 'paid') await recordCardCountry(admin, checkout.reference, transaction);
         return json({ ok: true, result });
       }
       case 'refund.processed': {
@@ -107,6 +118,25 @@ Deno.serve(async (req: Request) => {
           data.transaction_reference ?? data.transaction?.reference,
         );
         if (!checkout) return json({ ok: true, ignored: true });
+
+        // Paystack sends the refunded amount in the minor unit, like the
+        // checkout's own amount (sometimes as a string).
+        const raw = data.amount;
+        const refundedAmount = raw === undefined || raw === null || raw === ''
+          ? NaN
+          : Number(raw);
+        if (Number.isFinite(refundedAmount) && refundedAmount < checkout.amount) {
+          console.log('paystack-webhook: partial refund, session stays paid',
+            checkout.reference, refundedAmount, checkout.amount);
+          return json({ ok: true, partial: true });
+        }
+
+        const { error: markError } = await admin.from('paystack_checkouts')
+          .update({ refunded_at: new Date().toISOString() })
+          .eq('reference', checkout.reference)
+          .is('refunded_at', null);
+        if (markError) throw markError;
+        if (!checkout.user_id) return json({ ok: true, refunded: 0 });
         const { data: changed, error } = await admin.rpc('record_therapy_refunds', {
           p_user_id: checkout.user_id,
           p_refs: [`paystack:${checkout.reference}`],

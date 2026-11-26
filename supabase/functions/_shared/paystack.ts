@@ -3,7 +3,11 @@
 // A checkout is one Paystack transaction opened for one therapy session
 // (public.paystack_checkouts, migration 0021). It counts as paying for the
 // session only once Paystack itself says the transaction succeeded for the
-// amount and currency the checkout was opened with.
+// amount and currency the checkout was opened with, and only while the
+// money is still with us: a checkout Paystack has refunded (refunded_at,
+// migration 0036, or a session whose refunded_payment_ref names it) never
+// pays for anything again, even if Paystack's verify still says 'success'
+// (it does after a partial refund, and can for a while after a full one).
 
 import type { SupabaseClient } from 'jsr:@supabase/supabase-js@2';
 
@@ -52,10 +56,44 @@ export async function verifyTransaction(reference: string): Promise<Item | null>
 export type Checkout = {
   reference: string;
   request_id: string | null;
-  user_id: string;
+  // Null once the client's account is deleted (0035).
+  user_id: string | null;
   amount: number;
   currency: string;
+  created_at?: string;
+  refunded_at?: string | null;
 };
+
+/// Transaction statuses that mean the customer is still paying: an M-Pesa
+/// prompt waiting on their phone ('ongoing' — Paystack is waiting on the
+/// customer, e.g. a PIN, OTP or STK push), or a charge Paystack has taken
+/// but not finished ('pending', 'processing', 'queued'). Not 'abandoned'
+/// (opened, never paid on — safe to start again), 'failed', 'reversed' or
+/// 'success'.
+export const IN_PROGRESS_STATUSES = ['ongoing', 'pending', 'processing', 'queued'];
+
+/// Keeps the country of the card a checkout was paid with
+/// (paystack_checkouts.card_country, migration 0036), so a price picked for
+/// a country the client doesn't pay from can be spotted. Best-effort: a
+/// failure is logged and never undoes or fails the payment. Mobile money
+/// has no card country, so nothing is recorded for it.
+export async function recordCardCountry(
+  admin: SupabaseClient,
+  reference: string,
+  transaction: Item,
+): Promise<void> {
+  const country = transaction?.authorization?.country_code;
+  if (typeof country !== 'string' || !/^[A-Za-z]{2}$/.test(country)) return;
+  try {
+    const { error } = await admin.rpc('paystack_record_card_country', {
+      p_reference: reference,
+      p_card_country: country.toUpperCase(),
+    });
+    if (error) console.error('paystack: card country not recorded', reference, error);
+  } catch (error) {
+    console.error('paystack: card country not recorded', reference, error);
+  }
+}
 
 export type SettleResult = 'paid' | 'not_paid' | 'refund_needed';
 
@@ -63,9 +101,11 @@ export type SettleResult = 'paid' | 'not_paid' | 'refund_needed';
 ///
 /// `transaction` is Paystack's record (from verify, or a webhook whose
 /// signature has been checked). Returns `paid` when the session is now paid
-/// with this checkout, `not_paid` when the transaction hasn't succeeded, and
-/// `refund_needed` when it succeeded but the session can't take it — the
-/// care team has then been emailed to refund it.
+/// with this checkout, `not_paid` when the transaction hasn't succeeded or
+/// has been refunded (the checkout's refunded_at is set, or a session's
+/// refunded_payment_ref names it — both read fresh here, not taken from the
+/// caller), and `refund_needed` when it succeeded but the session can't
+/// take it — the care team has then been emailed to refund it.
 export async function settleCheckout(
   admin: SupabaseClient,
   checkout: Checkout,
@@ -82,6 +122,24 @@ export async function settleCheckout(
   }
 
   const ref = `paystack:${checkout.reference}`;
+
+  // Refunded already: the money went back, so it pays for nothing — and
+  // there's nothing for the care team to refund either.
+  const { data: current, error: currentError } = await admin
+    .from('paystack_checkouts')
+    .select('refunded_at')
+    .eq('reference', checkout.reference)
+    .maybeSingle();
+  if (currentError) throw currentError;
+  if (!current || current.refunded_at) return 'not_paid';
+  const { data: refunded, error: refundedError } = await admin
+    .from('therapy_requests')
+    .select('id')
+    .eq('refunded_payment_ref', ref)
+    .limit(1);
+  if (refundedError) throw refundedError;
+  if (refunded && refunded.length > 0) return 'not_paid';
+
   const paidAt = typeof transaction.paid_at === 'string'
     ? transaction.paid_at
     : new Date().toISOString();
@@ -91,10 +149,10 @@ export async function settleCheckout(
     .eq('reference', checkout.reference)
     .is('paid_at', null);
 
-  if (checkout.request_id) {
+  if (checkout.request_id && checkout.user_id) {
     const { data: updated, error } = await admin
       .from('therapy_requests')
-      .update({ payment_status: 'paid', payment_ref: ref, paid_at: new Date().toISOString() })
+      .update({ payment_status: 'paid', payment_ref: ref, paid_at: paidAt })
       .eq('id', checkout.request_id)
       .eq('user_id', checkout.user_id)
       .eq('payment_status', 'unpaid')

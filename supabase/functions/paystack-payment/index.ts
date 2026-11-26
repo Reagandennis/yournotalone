@@ -3,10 +3,27 @@
 // The app sends { request_id, action }:
 //   action "start"    opens a Paystack checkout for the session and returns
 //                     { authorization_url, reference } for the app to show,
-//                     or { paid: true } if it's already paid for.
+//                     or { paid: true } if it's already paid for. If the
+//                     newest checkout is under PAYMENT_IN_PROGRESS_MS old
+//                     and Paystack says the customer is still paying on it
+//                     (an M-Pesa prompt on their phone, a charge still
+//                     processing — IN_PROGRESS_STATUSES), or Paystack hasn't
+//                     heard of it yet, no second transaction is opened —
+//                     that is how a client got charged twice — and the
+//                     answer is 409 { error: 'payment_in_progress',
+//                     reference }: the app offers "Check payment" (a
+//                     confirm) instead. Paystack's verify doesn't give back
+//                     the authorization_url, so the old page can't be
+//                     reopened.
 //   no action         confirms: asks Paystack about this session's
 //                     checkouts and marks the session paid if one succeeded.
 //                     { paid: true }, or 402 no_payment_found.
+//
+// A 2xx always carries either paid: true or an authorization_url; a
+// checkout Paystack opened without a URL is 502 checkout_failed.
+// Checkouts that were refunded (refunded_at, migration 0036) or sent to the
+// care team for a refund are never looked at again, so a refunded
+// transaction can't pay for the session a second time.
 //
 // The app's word is never taken: only Paystack's record of a transaction,
 // for the amount the checkout was opened with, marks a session paid. Each
@@ -32,8 +49,11 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import {
   type Checkout,
+  IN_PROGRESS_STATUSES,
+  type Item,
   paystack,
   PAYSTACK_SECRET_KEY,
+  recordCardCountry,
   settleCheckout,
   verifyTransaction,
 } from '../_shared/paystack.ts';
@@ -44,6 +64,9 @@ const CALLBACK_URL = Deno.env.get('PAYSTACK_CALLBACK_URL');
 // Ksh 2,600, in cents, for sessions booked before 0031.
 const CHARGE_AMOUNT = Number(Deno.env.get('PAYSTACK_CHARGE_AMOUNT') ?? 260000);
 const CHARGE_CURRENCY = (Deno.env.get('PAYSTACK_CHARGE_CURRENCY') ?? 'KES').toUpperCase();
+// How long a checkout the customer may still be paying on blocks a new one.
+// An M-Pesa STK prompt times out well inside this.
+const PAYMENT_IN_PROGRESS_MS = 15 * 60 * 1000;
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -110,10 +133,11 @@ Deno.serve(async (req: Request) => {
   // first: one may have been paid while the app wasn't looking.
   const { data: checkouts, error: checkoutsError } = await admin
     .from('paystack_checkouts')
-    .select('reference, request_id, user_id, amount, currency')
+    .select('reference, request_id, user_id, amount, currency, created_at, refunded_at')
     .eq('request_id', session.id)
     .eq('user_id', user.id)
     .is('refund_requested_at', null)
+    .is('refunded_at', null)
     .order('created_at', { ascending: false })
     .limit(5);
   if (checkoutsError) {
@@ -121,12 +145,19 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'lookup_failed' }, 500);
   }
 
+  // The newest checkout, and what Paystack said about it (null: not found).
+  const newest = ((checkouts ?? []) as Checkout[])[0];
+  let newestTransaction: Item | null = null;
   try {
     for (const checkout of (checkouts ?? []) as Checkout[]) {
       const transaction = await verifyTransaction(checkout.reference);
+      if (checkout === newest) newestTransaction = transaction;
       if (!transaction) continue;
       const result = await settleCheckout(admin, checkout, transaction);
-      if (result === 'paid') return json({ paid: true });
+      if (result === 'paid') {
+        await recordCardCountry(admin, checkout.reference, transaction);
+        return json({ paid: true });
+      }
     }
   } catch (error) {
     console.error('paystack-payment: verification failed', error);
@@ -134,6 +165,19 @@ Deno.serve(async (req: Request) => {
   }
 
   if (action !== 'start') return json({ error: 'no_payment_found' }, 402);
+
+  // Don't open a second transaction while the customer may still be paying
+  // on the last one: they'd be charged twice.
+  if (newest) {
+    const age = Date.now() - Date.parse(newest.created_at ?? '');
+    const status = String(newestTransaction?.status ?? '').toLowerCase();
+    const inProgress = newestTransaction
+      ? IN_PROGRESS_STATUSES.includes(status)
+      : true; // Paystack has no record of it yet.
+    if (Number.isFinite(age) && age < PAYMENT_IN_PROGRESS_MS && inProgress) {
+      return json({ error: 'payment_in_progress', reference: newest.reference }, 409);
+    }
+  }
 
   if (!user.email) return json({ error: 'email_required' }, 400);
   if (!(Number(session.price_cents) > 0)) return json({ error: 'not_payable' }, 409);
@@ -180,6 +224,10 @@ Deno.serve(async (req: Request) => {
         },
       }),
     });
+    if (typeof data.authorization_url !== 'string' || data.authorization_url === '') {
+      console.error('paystack-payment: initialize gave no authorization_url', reference, data);
+      return json({ error: 'checkout_failed' }, 502);
+    }
     return json({ authorization_url: data.authorization_url, reference });
   } catch (error) {
     console.error('paystack-payment: initialize failed', error);

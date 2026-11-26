@@ -1,7 +1,10 @@
 // Issues a LiveKit access token for one therapy session.
 //
 // Only two people can get one: the client who booked the session and the
-// therapist it was assigned to. The session has to be confirmed, paid for
+// therapist it was assigned to — while that therapist's profile still
+// exists and is active (an admin pausing a profile, therapists.active, also
+// stops its calls; 403 therapist_inactive). Sign-in emails are compared
+// without regard to case. The session has to be confirmed, paid for
 // (or free), and close to its start time. Every check runs against the
 // database here, so the app can't talk its way into a call.
 //
@@ -121,12 +124,21 @@ Deno.serve(async (req: Request) => {
       .select('email')
       .eq('therapist_id', session.therapist_id)
       .maybeSingle();
-    if (account && account.email === user.email.toLowerCase()) {
-      const { data: therapist } = await admin
+    if (
+      account &&
+      String(account.email ?? '').trim().toLowerCase() === user.email.trim().toLowerCase()
+    ) {
+      const { data: therapist, error: therapistError } = await admin
         .from('therapists')
-        .select('full_name')
+        .select('full_name, active')
         .eq('id', session.therapist_id)
         .maybeSingle();
+      if (therapistError) {
+        console.error('session-token: therapist lookup failed', session.therapist_id, therapistError);
+        return json({ error: 'lookup_failed' }, 500);
+      }
+      if (!therapist) return json({ error: 'not_found' }, 404);
+      if (therapist.active === false) return json({ error: 'therapist_inactive' }, 403);
       role = 'therapist';
       identity = `therapist-${session.therapist_id}`;
       name = therapist?.full_name ?? 'Therapist';
