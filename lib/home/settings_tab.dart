@@ -25,6 +25,9 @@ import '../care/therapist_sessions_screen.dart';
 import '../content/content_catalog.dart';
 import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
+import '../engagement/engagement_service.dart';
+import '../health/health_screen.dart';
+import '../health/health_service.dart';
 import '../l10n/l10n.dart';
 import '../l10n/language_picker.dart';
 import '../legal/legal_content.dart';
@@ -236,6 +239,7 @@ class _SettingsTabState extends State<SettingsTab> {
     // go (the server has already dropped this phone with the account).
     await stopAudioForSignOut();
     await SessionNotifications.instance.stop();
+    unawaited(EngagementService.instance.signedOut());
 
     // The account is gone. Signing out now talks to a user that no longer
     // exists, so a failure here is expected and must not be reported as a
@@ -732,6 +736,18 @@ class _SettingsTabState extends State<SettingsTab> {
               onTap: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (_) => const RemindersScreen())),
+            ),
+            ListenableBuilder(
+              listenable: HealthService.instance,
+              builder: (context, _) => _row(
+                context,
+                Icons.favorite_border_rounded,
+                HealthService.platformName,
+                value: HealthService.instance.connected
+                    ? context.l10n.healthStatusConnected
+                    : context.l10n.healthStatusNotConnected,
+                onTap: () => Navigator.of(context).push(HealthScreen.route()),
+              ),
             ),
             _row(
               context,

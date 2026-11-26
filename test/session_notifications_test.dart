@@ -179,4 +179,112 @@ void main() {
       expect(sessionNotificationId('s1'), lessThan(1 << 31));
     });
   });
+
+  group('notes before and after a session', () {
+    // Local times: when the notes come depends on the phone's day.
+    final start = DateTime(2026, 9, 14, 11);
+    final key = sessionStartKey(start.toIso8601String());
+    final dayBefore = DateTime(2026, 9, 13, 20);
+    Map<String, dynamic> at(DateTime t, {String id = 's1', String role = 'client'}) =>
+        _session(id: id, role: role, at: t);
+
+    test('an hour before, and that evening', () {
+      final plan = planSessionCompanions([at(start)], {}, dayBefore, enabled: true);
+      expect(plan.schedule.map((n) => (n.prep, n.at)), [
+        (true, DateTime(2026, 9, 14, 10)),
+        (false, DateTime(2026, 9, 14, 18)),
+      ]);
+      expect(plan.remembered, {'s1': key});
+      expect(plan.cancel, isEmpty);
+    });
+
+    test('the note after comes later in the day, or the next morning', () {
+      expect(reflectionTime(DateTime(2026, 9, 14, 11), 50), DateTime(2026, 9, 14, 18));
+      expect(reflectionTime(DateTime(2026, 9, 14, 17), 50), DateTime(2026, 9, 14, 19, 20));
+      expect(reflectionTime(DateTime(2026, 9, 14, 20), 50), DateTime(2026, 9, 15, 9));
+      expect(reflectionTime(DateTime(2026, 9, 14, 23), 50), DateTime(2026, 9, 15, 9));
+    });
+
+    test('not for therapists, and none when the check-ins are off', () {
+      expect(
+        planSessionCompanions([at(start, role: 'therapist')], {}, dayBefore, enabled: true)
+            .schedule,
+        isEmpty,
+      );
+      final off = planSessionCompanions([at(start)], {'s1': key}, dayBefore, enabled: false);
+      expect(off.schedule, isEmpty);
+      expect(off.cancel, {'s1'});
+      expect(off.remembered, isEmpty);
+    });
+
+    test('booked with under an hour to go: only the note after', () {
+      final plan = planSessionCompanions(
+        [at(start)],
+        {},
+        start.subtract(const Duration(minutes: 30)),
+        enabled: true,
+      );
+      expect(plan.schedule.map((n) => n.prep), [false]);
+    });
+
+    test('already scheduled is left alone; moved is swapped', () {
+      expect(
+        planSessionCompanions([at(start)], {'s1': key}, dayBefore, enabled: true).schedule,
+        isEmpty,
+      );
+      final moved = planSessionCompanions(
+        [at(start.add(const Duration(days: 1)))],
+        {'s1': key},
+        dayBefore,
+        enabled: true,
+      );
+      expect(moved.cancel, {'s1'});
+      expect(moved.schedule.first.at, DateTime(2026, 9, 15, 10));
+    });
+
+    test('gone before it starts: cancelled; gone once begun: the note after stays', () {
+      final cancelled = planSessionCompanions([], {'s1': key}, dayBefore, enabled: true);
+      expect(cancelled.cancel, {'s1'});
+      expect(cancelled.remembered, isEmpty);
+      final begun = planSessionCompanions(
+        [],
+        {'s1': key},
+        start.add(const Duration(minutes: 20)),
+        enabled: true,
+      );
+      expect(begun.cancel, isEmpty);
+      expect(begun.remembered, {'s1': key});
+      // Long over: forgotten, nothing to cancel.
+      final over = planSessionCompanions(
+        [],
+        {'s1': key},
+        start.add(const Duration(days: 3)),
+        enabled: true,
+      );
+      expect(over.cancel, isEmpty);
+      expect(over.remembered, isEmpty);
+    });
+
+    test('their ids are their own and fit Android', () {
+      final ids = {
+        reminderNotificationId('s1'),
+        sessionNotificationId('s1'),
+        prepNotificationId('s1'),
+        reflectNotificationId('s1'),
+      };
+      expect(ids, hasLength(4));
+      expect(ids.every((id) => id < (1 << 31) - 1), isTrue);
+      // Clear of the trial reminder and the meditation end notice.
+      expect(prepNotificationId('s1'), greaterThanOrEqualTo(500000000));
+    });
+
+    test('the words say nothing about who or what', () {
+      final prep = describeSessionCompanion(prep: true);
+      final after = describeSessionCompanion(prep: false);
+      for (final t in [prep.title, prep.body, after.title, after.body]) {
+        expect(t, isNot(contains('Tess')));
+        expect(t, isNot(contains('Low mood')));
+      }
+    });
+  });
 }

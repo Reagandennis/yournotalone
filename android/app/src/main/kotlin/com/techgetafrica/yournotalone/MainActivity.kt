@@ -6,13 +6,15 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
-import com.ryanheise.audioservice.AudioServiceActivity
+import com.ryanheise.audioservice.AudioServiceFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
-// Extends AudioServiceActivity so a sound keeps playing with the screen
-// locked, and the lock-screen controls work.
-class MainActivity : AudioServiceActivity() {
+// Extends AudioServiceFragmentActivity so a sound keeps playing with the
+// screen locked and the lock-screen controls work, and so the Health Connect
+// permission dialog (the health plugin's registerForActivityResult, which
+// needs a FragmentActivity) can open at all.
+class MainActivity : AudioServiceFragmentActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         // One small channel: when notifications have been refused, the app

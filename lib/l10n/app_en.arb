@@ -302,7 +302,7 @@
   },
   "billingNoTrialOffer": "you can cancel any time",
   "@billingNoTrialOffer": {
-    "description": "Used instead of billingIntroOffer when this account has already had the free trial (Apple won't give it twice): a clause at the end of other sentences such as \"Unlock every session \u2014 and {introOffer}.\" Starts lower-case, no final full stop."
+    "description": "Used instead of billingIntroOffer when this account has already had the free trial (Apple won't give it twice): a clause at the end of other sentences such as \"Unlock every session — and {introOffer}.\" Starts lower-case, no final full stop."
   },
   "billingNoTrialOfferSentence": "Cancel any time from your store account.",
   "@billingNoTrialOfferSentence": {
@@ -8356,5 +8356,590 @@
   "journalEntryKeepBoth": "Keep both",
   "@journalEntryKeepBoth": {
     "description": "Button in the journal conflict dialog: save this version as a new entry, keeping the other."
+  },
+  "widgetThisWeek": "This week",
+  "@widgetThisWeek": {
+    "description": "Heading on the home-screen widget, over the week's seven dots of days shown up on."
+  },
+  "widgetDaysOfGoal": "{days} of {goal} days",
+  "@widgetDaysOfGoal": {
+    "description": "On the home-screen widget: days shown up on this week out of the weekly goal, e.g. \"2 of 3 days\". Short: the widget is small.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "goal": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetGoalMet": "Goal met this week",
+  "@widgetGoalMet": {
+    "description": "On the home-screen widget once the weekly goal is reached. Short."
+  },
+  "widgetCheckIn": "Check in",
+  "@widgetCheckIn": {
+    "description": "Button on the home-screen widget that opens the mood check-in. One or two words."
+  },
+  "widgetCheckedIn": "Checked in today",
+  "@widgetCheckedIn": {
+    "description": "On the home-screen widget in place of the check-in button once today's check-in is done."
+  },
+  "widgetForYou": "For you today",
+  "@widgetForYou": {
+    "description": "Small heading on the home-screen widget over today's suggested meditation, breathing or tool."
+  },
+  "widgetOpenForPick": "Open for today’s suggestion",
+  "@widgetOpenForPick": {
+    "description": "On the home-screen widget when there's no suggestion yet (the app hasn't been opened today)."
+  },
+  "widgetSleepLine": "{hours} h {minutes} min sleep",
+  "@widgetSleepLine": {
+    "description": "On the home-screen widget: last night's sleep from Apple Health or Health Connect, e.g. \"7 h 20 min sleep\". Shown only when the person has connected health data and left it on for the widget.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "nudgeChannelName": "Suggestions and check-ins",
+  "@nudgeChannelName": {
+    "description": "Android notification channel name (Settings → Notifications) for the app's own gentle nudges when someone has been away."
+  },
+  "nudgeChannelDescription": "A few gentle notes when you’ve been away. Never more than one a day.",
+  "@nudgeChannelDescription": {
+    "description": "Android notification channel description for the nudges channel."
+  },
+  "nudgeCourseTitle": "Day {day} of “{course}” is ready",
+  "@nudgeCourseTitle": {
+    "description": "Notification title: the next day of a 7-day course has opened. {course} is the course's name, e.g. \"7 days to better sleep\".",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "course": {
+        "type": "String"
+      }
+    }
+  },
+  "nudgeCourseBody": "A few minutes, whenever suits you today.",
+  "@nudgeCourseBody": {
+    "description": "Notification body under nudgeCourseTitle."
+  },
+  "nudgeSuggestionTitle": "A few minutes for you",
+  "@nudgeSuggestionTitle": {
+    "description": "Notification title for a suggested meditation, breathing exercise or tool in someone's first week."
+  },
+  "nudgeSuggestionBody": "Try “{title}” · {meta}",
+  "@nudgeSuggestionBody": {
+    "description": "Notification body naming the suggestion. {title} is its name, {meta} its kind and length, e.g. \"Breathing · 3 min\".",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "meta": {
+        "type": "String"
+      }
+    }
+  },
+  "nudgeGentleTitle": "How are you doing?",
+  "@nudgeGentleTitle": {
+    "description": "Notification title after a few days away. Warm, never guilt."
+  },
+  "nudgeGentleBody": "A ten-second check-in still counts.",
+  "@nudgeGentleBody": {
+    "description": "Notification body under nudgeGentleTitle."
+  },
+  "nudgeSavedTitle": "We kept your place",
+  "@nudgeSavedTitle": {
+    "description": "Notification title after about a week away."
+  },
+  "nudgeSavedCourseBody": "Day {day} of “{course}” is waiting whenever you are.",
+  "@nudgeSavedCourseBody": {
+    "description": "Notification body under nudgeSavedTitle when a course is part-done.",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "course": {
+        "type": "String"
+      }
+    }
+  },
+  "nudgeSavedNewBody": "New since you were here: “{title}”.",
+  "@nudgeSavedNewBody": {
+    "description": "Notification body under nudgeSavedTitle naming content added since their last visit.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "nudgeSavedBody": "Your journal, check-ins and progress are right where you left them.",
+  "@nudgeSavedBody": {
+    "description": "Notification body under nudgeSavedTitle when there's nothing more specific to say."
+  },
+  "nudgeStillHereTitle": "Still here for you",
+  "@nudgeStillHereTitle": {
+    "description": "Notification title after two weeks away."
+  },
+  "nudgeStillHereBody": "{count, plural, =0{Whenever you’re ready, a three-minute breathing exercise is a good place to start.} =1{You’ve shown up for yourself once already. Whenever you’re ready, one small step is enough.} other{You’ve shown up for yourself on {count} days. Whenever you’re ready, one small step is enough.}}",
+  "@nudgeStillHereBody": {
+    "description": "Notification body under nudgeStillHereTitle. {count} is the total number of days they've used the app. No guilt or loss language.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nudgeLastTitle": "Whenever you’re ready",
+  "@nudgeLastTitle": {
+    "description": "Title of the last nudge, after a month away. After it the app sends no more until they come back."
+  },
+  "nudgeLastBody": "This is our last note for now. Your space here stays open.",
+  "@nudgeLastBody": {
+    "description": "Body of the last nudge. Says honestly that the app will stop nudging."
+  },
+  "nudgeSupportTitle": "Thinking of you",
+  "@nudgeSupportTitle": {
+    "description": "Notification title sent instead of practice nudges when someone's recent check-ins were very low. Appears on the lock screen: nothing about moods."
+  },
+  "nudgeSupportBody": "If things feel heavy, people who can help are one tap away.",
+  "@nudgeSupportBody": {
+    "description": "Body under nudgeSupportTitle; tapping opens the support screen with helplines and therapy."
+  },
+  "remindersCheckinBodyCourse": "Then Day {day} of “{course}” is ready, if you have a few minutes.",
+  "@remindersCheckinBodyCourse": {
+    "description": "Morning check-in reminder body when a 7-day course has a day ready. {course} is the course name.",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "course": {
+        "type": "String"
+      }
+    }
+  },
+  "remindersCheckinBodyAlt": "One tap: how is today going?",
+  "@remindersCheckinBodyAlt": {
+    "description": "Another wording of the morning check-in reminder body, used on some days so it doesn't repeat."
+  },
+  "remindersCheckinBodyAlt2": "However today feels, it’s worth noticing.",
+  "@remindersCheckinBodyAlt2": {
+    "description": "Another wording of the morning check-in reminder body."
+  },
+  "remindersJournalBodyAlt": "What’s one thing from today you want to remember?",
+  "@remindersJournalBodyAlt": {
+    "description": "Another wording of the evening journal reminder body."
+  },
+  "remindersJournalBodyAlt2": "A few lines are plenty. No one else will read them.",
+  "@remindersJournalBodyAlt2": {
+    "description": "Another wording of the evening journal reminder body."
+  },
+  "remindersWindDownBodyAlt": "Screens down, lights low. Your plan takes it from here.",
+  "@remindersWindDownBodyAlt": {
+    "description": "Another wording of the wind-down reminder body."
+  },
+  "remindersWindDownBodyAlt2": "Give tomorrow a head start: begin winding down now.",
+  "@remindersWindDownBodyAlt2": {
+    "description": "Another wording of the wind-down reminder body."
+  },
+  "remindersPledgeBodyAlt": "Just for today. Tap to make your pledge.",
+  "@remindersPledgeBodyAlt": {
+    "description": "Another wording of the daily pledge reminder body (recovery)."
+  },
+  "remindersBackoffFootnote": "If you haven’t opened the app for a week, reminders come every other day, and pause after two weeks until you’re back.",
+  "@remindersBackoffFootnote": {
+    "description": "Footnote on the Reminders screen explaining how reminders back off."
+  },
+  "engagementSettingsHeading": "When you’ve been away",
+  "@engagementSettingsHeading": {
+    "description": "Section heading on the Reminders screen over the nudges and emails switches."
+  },
+  "engagementNudgesLabel": "Gentle check-ins",
+  "@engagementNudgesLabel": {
+    "description": "Switch label: the app's own nudges when someone hasn't opened it for a while."
+  },
+  "engagementNudgesDescription": "A few notes if you haven’t opened the app in a while, then they stop. Never more than one a day, apart from a note before and after a therapy session.",
+  "@engagementNudgesDescription": {
+    "description": "Under the Gentle check-ins switch."
+  },
+  "engagementEmailsLabel": "Emails when you’ve been away",
+  "@engagementEmailsLabel": {
+    "description": "Switch label: win-back emails."
+  },
+  "engagementEmailsDescription": "At most two, after 10 and 30 days away. Every one has a link to stop them.",
+  "@engagementEmailsDescription": {
+    "description": "Under the emails switch."
+  },
+  "engagementSaveFailed": "Couldn’t save that. Check your connection and try again.",
+  "@engagementSaveFailed": {
+    "description": "Snack bar when the emails switch couldn't be saved."
+  },
+  "nextStepShortSleep": "Last night was shorter than your usual.",
+  "@nextStepShortSleep": {
+    "description": "Why a suggestion was picked: last night's sleep (from Apple Health / Health Connect) was well under the person's own usual. Descriptive only, never a diagnosis."
+  },
+  "nextStepLateNight": "You went to bed later than usual.",
+  "@nextStepLateNight": {
+    "description": "Why a suggestion was picked: bedtime was much later than the person's usual."
+  },
+  "nextStepBodyUnderStrain": "Your heart readings are outside your usual range today.",
+  "@nextStepBodyUnderStrain": {
+    "description": "Why a suggestion was picked: heart rate variability lower or resting heart rate higher than the person's usual. Must stay factual: never say stressed, ill or anything medical."
+  },
+  "nextStepQuietDay": "Yesterday was quieter than usual.",
+  "@nextStepQuietDay": {
+    "description": "Why a suggestion was picked: far fewer steps than usual yesterday. No judgement."
+  },
+  "nextStepActiveDay": "Yesterday was a big day. Nice work.",
+  "@nextStepActiveDay": {
+    "description": "Why a suggestion was picked: far more steps than usual yesterday."
+  },
+  "nextStepRestedNight": "You slept well last night.",
+  "@nextStepRestedNight": {
+    "description": "Why a suggestion was picked: a good night's sleep against their usual."
+  },
+  "nextStepCourse": "Day {day} of “{course}”",
+  "@nextStepCourse": {
+    "description": "Why a suggestion was picked: it's today's day of their 7-day course.",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "course": {
+        "type": "String"
+      }
+    }
+  },
+  "nextStepGoals": "Picked for what you’re working on",
+  "@nextStepGoals": {
+    "description": "Why a suggestion was picked: it matches the goals they chose."
+  },
+  "nextStepTimeOfDay": "Picked for this time of day",
+  "@nextStepTimeOfDay": {
+    "description": "Why a suggestion was picked: it suits the time of day."
+  },
+  "healthConnectTitle": "Link {platform}",
+  "@healthConnectTitle": {
+    "description": "Title and button on the health screen. {platform} is \"Apple Health\" or \"Health Connect\" (product names, not translated). \"Link\", not \"Connect\": \"Connect Health Connect\" reads badly.",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthIntro": "Let your sleep and activity shape what the app suggests, and see how your days and your moods go together.",
+  "@healthIntro": {
+    "description": "Intro on the health screen before connecting."
+  },
+  "healthReadHeading": "What the app reads",
+  "@healthReadHeading": {
+    "description": "Heading on the health screen over the list of data types read."
+  },
+  "healthReadSleep": "Sleep",
+  "@healthReadSleep": {
+    "description": "Data type read from Apple Health / Health Connect."
+  },
+  "healthReadSleepDetail": "How long and when you slept, to suggest what fits the night you had.",
+  "@healthReadSleepDetail": {
+    "description": "Why sleep is read."
+  },
+  "healthReadSteps": "Steps",
+  "@healthReadSteps": {
+    "description": "Data type read."
+  },
+  "healthReadStepsDetail": "How active your days are, shown next to your moods.",
+  "@healthReadStepsDetail": {
+    "description": "Why steps are read."
+  },
+  "healthReadHeart": "Heart rate variability and resting heart rate",
+  "@healthReadHeart": {
+    "description": "Data types read."
+  },
+  "healthReadHeartDetail": "Only to notice when they’re off your own usual, so a calming exercise can come first.",
+  "@healthReadHeartDetail": {
+    "description": "Why heart data is read. Must not promise any medical insight."
+  },
+  "healthWriteHeading": "What the app saves",
+  "@healthWriteHeading": {
+    "description": "Heading over what's written to Apple Health / Health Connect."
+  },
+  "healthWriteMindful": "Mindful minutes",
+  "@healthWriteMindful": {
+    "description": "Data type written."
+  },
+  "healthWriteMindfulDetail": "Each meditation and breathing session you finish here.",
+  "@healthWriteMindfulDetail": {
+    "description": "What counts as mindful minutes."
+  },
+  "healthPrivacyTitle": "It stays on your phone",
+  "@healthPrivacyTitle": {
+    "description": "Heading of the privacy panel on the health screen."
+  },
+  "healthPrivacyBody": "Your health data is read on this phone only. It’s never sent to us or anyone else, never used for ads, and you can disconnect at any time.",
+  "@healthPrivacyBody": {
+    "description": "Privacy panel body. Must stay true: health data is never uploaded."
+  },
+  "healthNotMedical": "The app compares your data with your own usual, to suggest something helpful. It isn’t medical advice and can’t diagnose anything.",
+  "@healthNotMedical": {
+    "description": "Small print on the health screen."
+  },
+  "healthInstallButton": "Get Health Connect",
+  "@healthInstallButton": {
+    "description": "Button on Android 13 and lower when Health Connect must be installed from Google Play."
+  },
+  "healthInstallBody": "Health Connect needs installing or updating from Google Play first. Then come back here.",
+  "@healthInstallBody": {
+    "description": "Shown with healthInstallButton."
+  },
+  "healthUnavailable": "{platform} isn’t available on this device.",
+  "@healthUnavailable": {
+    "description": "Health screen when the platform can't be used here (iPad, unsupported phone).",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthConnectFailed": "Nothing was connected. You can try again, or allow access in {platform}.",
+  "@healthConnectFailed": {
+    "description": "Snack bar when the person declined or the permission sheet failed.",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthConnectedTitle": "Sleep, activity and you",
+  "@healthConnectedTitle": {
+    "description": "Title of the health screen once connected."
+  },
+  "healthLastNight": "Last night",
+  "@healthLastNight": {
+    "description": "Label over last night's sleep length."
+  },
+  "healthSleepValue": "{hours} h {minutes} min",
+  "@healthSleepValue": {
+    "description": "A sleep length, e.g. \"7 h 20 min\".",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "healthNoSleep": "No sleep recorded",
+  "@healthNoSleep": {
+    "description": "When there's no sleep data for last night."
+  },
+  "healthYesterday": "Yesterday",
+  "@healthYesterday": {
+    "description": "Label over yesterday's step count."
+  },
+  "healthStepsValue": "{steps} steps",
+  "@healthStepsValue": {
+    "description": "A step count; {steps} comes already formatted with thousands separators, e.g. \"8,214\".",
+    "placeholders": {
+      "steps": {
+        "type": "String"
+      }
+    }
+  },
+  "healthNoSteps": "No steps recorded",
+  "@healthNoSteps": {
+    "description": "When there's no step data for yesterday."
+  },
+  "healthWeekSleep": "Sleep, last 7 nights",
+  "@healthWeekSleep": {
+    "description": "Heading over a 7-bar chart of sleep."
+  },
+  "healthWeekSteps": "Steps, last 7 days",
+  "@healthWeekSteps": {
+    "description": "Heading over a 7-bar chart of steps."
+  },
+  "healthAverage": "Average {value}",
+  "@healthAverage": {
+    "description": "Under a chart. {value} is a formatted sleep length or step count.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "healthOpen": "Open",
+  "@healthOpen": {
+    "description": "Button opening the suggested item."
+  },
+  "healthMoodLinksHeading": "Your days and your moods",
+  "@healthMoodLinksHeading": {
+    "description": "Heading over the mood links (Premium)."
+  },
+  "moodLinkSleep": "After nights of 7 hours or more, your mood averaged {withValue} out of 5, against {withoutValue} after shorter nights.",
+  "@moodLinkSleep": {
+    "description": "A pattern in the person's own data. Values are formatted decimals like \"3.8\". A pattern, not a cause.",
+    "placeholders": {
+      "withValue": {
+        "type": "String"
+      },
+      "withoutValue": {
+        "type": "String"
+      }
+    }
+  },
+  "moodLinkMovement": "On your more active days, your mood averaged {withValue} out of 5, against {withoutValue} on quieter ones.",
+  "@moodLinkMovement": {
+    "description": "A pattern in the person's own data (steps above their usual vs below).",
+    "placeholders": {
+      "withValue": {
+        "type": "String"
+      },
+      "withoutValue": {
+        "type": "String"
+      }
+    }
+  },
+  "moodLinkPractice": "On days with a meditation or breathing session, your mood averaged {withValue} out of 5, against {withoutValue} on days without.",
+  "@moodLinkPractice": {
+    "description": "A pattern in the person's own data.",
+    "placeholders": {
+      "withValue": {
+        "type": "String"
+      },
+      "withoutValue": {
+        "type": "String"
+      }
+    }
+  },
+  "moodLinkFootnote": "A pattern in your own check-ins, not a cause. It changes as you go.",
+  "@moodLinkFootnote": {
+    "description": "Under the mood links."
+  },
+  "moodLinksNotYet": "After a couple of weeks of check-ins alongside your sleep and steps, patterns will show here.",
+  "@moodLinksNotYet": {
+    "description": "When there isn't enough data for mood links yet."
+  },
+  "moodLinksLocked": "See how your sleep, movement and practice go with your moods.",
+  "@moodLinksLocked": {
+    "description": "Teaser for the Premium mood links."
+  },
+  "healthWidgetSleep": "Show last night’s sleep on the home-screen widget",
+  "@healthWidgetSleep": {
+    "description": "Switch on the health screen. The widget can be seen by anyone holding the phone."
+  },
+  "healthMindfulOn": "Meditations and breathing sessions you finish are saved as mindful minutes.",
+  "@healthMindfulOn": {
+    "description": "Status line when mindful minutes are being written."
+  },
+  "healthMindfulUnavailable": "This phone’s Health Connect can’t save mindful minutes yet. A system update may add it.",
+  "@healthMindfulUnavailable": {
+    "description": "Android only, when Health Connect has no mindfulness sessions."
+  },
+  "healthDisconnect": "Disconnect",
+  "@healthDisconnect": {
+    "description": "Button on the health screen."
+  },
+  "healthDisconnectIos": "To remove the app’s access entirely, open Settings → Health → Data Access & Devices.",
+  "@healthDisconnectIos": {
+    "description": "iOS only, under Disconnect: HealthKit permissions can only be removed in the Settings app."
+  },
+  "healthDisconnected": "{platform} disconnected. Nothing more is read.",
+  "@healthDisconnected": {
+    "description": "Snack bar after disconnecting.",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthInviteTitle": "Suggestions that fit your day",
+  "@healthInviteTitle": {
+    "description": "Home card inviting people to connect health data."
+  },
+  "healthInviteBody": "Link {platform} so your sleep and activity shape what you see here.",
+  "@healthInviteBody": {
+    "description": "Body of the Home invite card.",
+    "placeholders": {
+      "platform": {
+        "type": "String"
+      }
+    }
+  },
+  "healthInviteConnect": "Link",
+  "@healthInviteConnect": {
+    "description": "Button on the Home invite card."
+  },
+  "healthInviteLater": "Not now",
+  "@healthInviteLater": {
+    "description": "Dismisses the Home invite card for a month."
+  },
+  "healthCardTitle": "Sleep and activity",
+  "@healthCardTitle": {
+    "description": "Title of the Home card once health data is connected."
+  },
+  "healthStatusConnected": "Connected",
+  "@healthStatusConnected": {
+    "description": "Settings row subtitle."
+  },
+  "healthStatusNotConnected": "Not connected",
+  "@healthStatusNotConnected": {
+    "description": "Settings row subtitle."
+  },
+  "contentNotForMe": "Not for me",
+  "@contentNotForMe": {
+    "description": "Button or menu item on a suggestion: hide it and suggest other things. Short."
+  },
+  "contentNotForMeSub": "Suggest other things instead for the next month",
+  "@contentNotForMeSub": {
+    "description": "Under 'Not for me' in the long-press menu of a suggestion."
+  },
+  "contentNotForMeDone": "Got it. You’ll see other suggestions.",
+  "@contentNotForMeDone": {
+    "description": "Snackbar after tapping 'Not for me' on a suggestion."
+  },
+  "contentNotForMeUndo": "Undo",
+  "@contentNotForMeUndo": {
+    "description": "Snackbar action that undoes 'Not for me'. Short."
+  },
+  "nextStepNight": "Something quiet for getting back to sleep. Nothing to read.",
+  "@nextStepNight": {
+    "description": "Why a suggestion was picked, shown between midnight and 5am: something calm for getting back to sleep, with nothing to read."
+  },
+  "nextStepHelpedBefore": "You felt better after this last time",
+  "@nextStepHelpedBefore": {
+    "description": "Why a suggestion was picked: last time they did it, they said they felt better afterwards."
+  },
+  "nightCardTitle": "Can’t sleep?",
+  "@nightCardTitle": {
+    "description": "Small label at the top of Home's card between midnight and 5am. Shown in capitals."
+  },
+  "notificationPrepTitle": "Your session is in an hour",
+  "@notificationPrepTitle": {
+    "description": "Notification an hour before a therapy session. Never names the therapist or the topic (it shows on the lock screen)."
+  },
+  "notificationPrepBody": "A minute now to note what you’d like to talk about, so nothing slips away when the call starts.",
+  "@notificationPrepBody": {
+    "description": "Body of the notification an hour before a therapy session; tapping opens a journal page to write in."
+  },
+  "notificationReflectTitle": "After your session",
+  "@notificationReflectTitle": {
+    "description": "Notification a little after a therapy session ends (or the next morning). Never names the therapist or the topic."
+  },
+  "notificationReflectBody": "A few lines on what stayed with you can help it stick.",
+  "@notificationReflectBody": {
+    "description": "Body of the notification after a therapy session; tapping opens a journal page to write in."
+  },
+  "homeAfterSessionJournalTitle": "After my session",
+  "@homeAfterSessionJournalTitle": {
+    "description": "Title given to the journal page opened from the after-session notification."
+  },
+  "homeAfterSessionJournalSeed": "What stayed with me from my session: ",
+  "@homeAfterSessionJournalSeed": {
+    "description": "Start of the text on the journal page opened after a therapy session; the person continues the sentence. Ends with a space."
   }
 }

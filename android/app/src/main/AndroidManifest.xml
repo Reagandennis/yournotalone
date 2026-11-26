@@ -32,6 +32,19 @@
          never runs in the foreground, so both go — otherwise Play asks for a
          foreground-service declaration for something the app never does. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SHORT_SERVICE" tools:node="remove" />
+    <!-- Health Connect, only once someone connects it (lib/health/). Each
+         line is declared in Play Console (App content → Health Connect) with
+         its reason; keep the two lists the same:
+           sleep, steps, HRV, resting heart rate — read, to suggest what
+             fits the night and the day, and show sleep and movement next
+             to moods. Read and kept on the phone only.
+           mindfulness — write, so meditations and breathing sessions finished
+             here count as mindful minutes. -->
+    <uses-permission android:name="android.permission.health.READ_SLEEP" />
+    <uses-permission android:name="android.permission.health.READ_STEPS" />
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE_VARIABILITY" />
+    <uses-permission android:name="android.permission.health.READ_RESTING_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.WRITE_MINDFULNESS" />
     <application
         android:label="yournotalone"
         android:allowBackup="false"
@@ -69,6 +82,51 @@
                 <data android:scheme="com.techgetafrica.yournotalone"/>
             </intent-filter>
         </activity>
+        <!-- What Health Connect shows when someone asks why the app wants
+             their data (its permission screen's privacy link, and Android
+             14+'s "App permissions" page): the privacy policy's health
+             section. Google reviews this before granting the permissions. -->
+        <activity
+            android:name=".HealthPermissionsRationaleActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+            </intent-filter>
+        </activity>
+        <activity-alias
+            android:name="ViewPermissionUsageActivity"
+            android:exported="true"
+            android:targetActivity=".HealthPermissionsRationaleActivity"
+            android:permission="android.permission.START_VIEW_PERMISSION_USAGE">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
+                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
+            </intent-filter>
+        </activity-alias>
+        <!-- The home-screen widgets (HomeWidgets.kt, lib/home_widgets/). -->
+        <receiver
+            android:name=".RhythmWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_rhythm_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_rhythm_info" />
+        </receiver>
+        <receiver
+            android:name=".TodayWidgetProvider"
+            android:exported="false"
+            android:label="@string/widget_today_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_today_info" />
+        </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -130,6 +188,11 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- Whether Health Connect is installed (Android 13 and lower). -->
+        <package android:name="com.google.android.apps.healthdata" />
+        <intent>
+            <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+        </intent>
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

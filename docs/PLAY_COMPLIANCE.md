@@ -49,6 +49,7 @@ analytics SDK in the build (verified: no Firebase/Crashlytics/Sentry/PostHog in
 | Personal info | Name | Yes | Optional | App functionality (greeting, profile) |
 | Personal info | Email address | Yes | Required | Account management, sign-in |
 | Photos | Profile photo | Yes | Optional | App functionality (avatar) |
+| App activity | App interactions — the days the app was opened | Yes | Required | App functionality, Analytics |
 | Health & fitness | **Health info** — mood check-ins, journal entries, recovery streaks, craving logs, therapy requests, the therapist's session note, session ratings and flags | Yes | Optional | App functionality |
 | Financial info | Purchase history — subscriptions and paid therapy sessions | Yes | Optional | App functionality (entitlement, session payment) — held by RevenueCat + the store |
 | App activity | Other user-generated content — session rating comments, the therapist's note to the client | Yes | Optional | App functionality |
@@ -79,6 +80,7 @@ Security practices to declare:
 | `RECORD_AUDIO` | Therapy video calls |
 | `MODIFY_AUDIO_SETTINGS`, `BLUETOOTH_CONNECT` | Routing call audio to the speaker or a headset |
 | `ACCESS_NETWORK_STATE`, `CHANGE_NETWORK_STATE` | Keeping a call connected across network changes |
+| `health.READ_SLEEP`, `READ_STEPS`, `READ_HEART_RATE_VARIABILITY`, `READ_RESTING_HEART_RATE`, `WRITE_MINDFULNESS` | Health Connect, once the person connects it — see "Health Connect" below |
 
 The camera is declared `required="false"`, so phones without one can still
 install the app and join a call on audio.
@@ -126,6 +128,56 @@ The app is a **mental-wellness / self-care** app, not a medical device.
 - Target age is 16+ (Privacy Policy §"Children"). Set the content rating
   questionnaire accordingly.
 
+## Health Connect (and Apple Health)
+
+The app can read and write Health Connect data (`lib/health/`).
+Health Connect permissions are restricted: Play reviews a declaration for
+them, under **App content → Health Connect**, before a release that requests
+them can go out. Declare exactly the permissions in `AndroidManifest.xml`, with
+these reasons (they're also what the in-app consent screen says):
+
+| Permission | Access | Why (for the declaration) |
+|---|---|---|
+| `READ_SLEEP` | Read | Suggest a wind-down or a calming exercise after a short or late night; show sleep next to the person's own mood check-ins |
+| `READ_STEPS` | Read | Show how active the person's days were next to their moods |
+| `READ_HEART_RATE_VARIABILITY` | Read | Notice when readings are off the person's own usual, so a calming exercise is suggested first. No diagnosis |
+| `READ_RESTING_HEART_RATE` | Read | As above |
+| `WRITE_MINDFULNESS` | Write | Save meditations and breathing sessions finished in the app as mindful minutes |
+
+Not requested, on purpose: history beyond 30 days, background reads, and
+`ACTIVITY_RECOGNITION` (Health Connect reads don't need it).
+
+- **On the phone only.** Health data is read and worked on on the device and
+  never sent to Supabase, Sentry or any other server, nor stored by the app
+  (see the comment on `HealthService`). Under Play's definition that is not
+  "collected", so the Data safety form doesn't list it; the declaration and the
+  privacy policy (section "Apple Health and Health Connect", anchor `#health`)
+  still describe it.
+- **Rationale screen.** `HealthPermissionsRationaleActivity` answers Health
+  Connect's privacy link and Android 14's permission-usage intent by opening
+  the policy at `#health`. That section must be live on the website before
+  the declaration is submitted.
+- **Limited use.** No advertising, no data mining, no sale, no transfer. Only
+  last night's sleep length can reach the home-screen widget, and only while
+  the person leaves that switch on.
+- **Apple.** App Store Review Guideline 5.1.3 says the same; in App Store
+  Connect, App Privacy, Health & Fitness stays "not collected" for the same
+  reason. The HealthKit capability is in `ios/Runner/Runner.entitlements`; the
+  App ID needs HealthKit (and the App Group for the widget) in the developer
+  portal, which automatic signing adds on the next archive.
+
+## Engagement: visits, nudges and emails
+
+- **Visits.** Each day the app is opened, one row (account, date) goes to
+  `app_presence_days` (migration 0036). Data safety: App activity → App
+  interactions, collected, not shared, purpose App functionality and Analytics.
+- **Nudges** are local notifications on their own channel ("Suggestions and
+  check-ins"), switchable in Settings → Reminders. No push service.
+- **Emails** after 10 and 30 days away, through Resend, with one-click
+  unsubscribe. One account in ten (the holdout group) gets no nudges or
+  emails, to measure the effect: `select * from
+  public.admin_engagement_retention();` in the SQL Editor.
+
 ## Content rating
 
 In the questionnaire, answer that **users can interact**: clients and therapists
@@ -160,8 +212,8 @@ a request (it stays a draft), then open it from Settings → Care team and use
 - [ ] A real changelog written for the build (not the
       "Bug fixes and performance improvements" placeholder)
 - [ ] `version:` bumped in `pubspec.yaml`
-- [ ] App content forms match the build: Data safety, Health apps, Foreground
-      service permissions, Content rating
+- [ ] App content forms match the build: Data safety, Health apps, Health
+      Connect, Foreground service permissions, Content rating
 - [ ] Hosted legal pages published (push `docs/`) — Play links to them
 - [ ] In-app product `therapy` active and priced
 - [ ] Play App Signing SHA-1 registered for Google sign-in

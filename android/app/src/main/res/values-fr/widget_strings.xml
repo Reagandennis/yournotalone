@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_rhythm_name">Cette semaine</string>
+    <string name="widget_rhythm_desc">Les jours où tu es venu·e cette semaine, et le point du jour.</string>
+    <string name="widget_today_name">Aujourd’hui</string>
+    <string name="widget_today_desc">Ta semaine, le point du jour et une suggestion pour aujourd’hui.</string>
+    <string name="widget_week">Cette semaine</string>
+    <string name="widget_days">2 sur 3 jours</string>
+    <string name="widget_check_in">Faire le point</string>
+    <string name="widget_for_you">Pour toi aujourd’hui</string>
+    <string name="widget_pick">Respiration carrée</string>
+    <string name="widget_pick_meta">Respiration · 4 min</string>
+    <string name="widget_open_app">Ouvre l’app pour la suggestion du jour</string>
+</resources>

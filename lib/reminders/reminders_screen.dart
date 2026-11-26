@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/auth_ui.dart';
 import '../brand.dart';
 import '../brand_layout.dart';
+import '../engagement/engagement_service.dart';
 import '../l10n/l10n.dart';
 import '../notifications/notification_permission.dart';
 import 'reminders_service.dart';
@@ -21,6 +22,11 @@ class _RemindersScreenState extends State<RemindersScreen> {
   final Map<ReminderKind, bool> _enabled = {};
   final Map<ReminderKind, TimeOfDay> _times = {};
   bool _loaded = false;
+  bool _nudges = true;
+
+  /// Null until read, and when it can't be (offline): the switch is then
+  /// left out rather than shown in a state that may be wrong.
+  bool? _emails;
 
   @override
   void initState() {
@@ -33,7 +39,82 @@ class _RemindersScreenState extends State<RemindersScreen> {
       _enabled[kind] = await _service.isEnabled(kind);
       _times[kind] = await _service.timeOf(kind);
     }
+    _nudges = await EngagementService.instance.nudgesEnabled();
     if (mounted) setState(() => _loaded = true);
+    final emails = await EngagementEmails.read();
+    if (mounted) setState(() => _emails = emails);
+  }
+
+  Future<void> _setNudges(bool on) async {
+    if (on) {
+      final granted = await NotificationPermission.instance
+          .ensure(context, reason: NotificationReasons.reminders);
+      if (!granted) return;
+    }
+    setState(() => _nudges = on);
+    await EngagementService.instance.setNudgesEnabled(on);
+  }
+
+  Future<void> _setEmails(bool on) async {
+    final before = _emails;
+    setState(() => _emails = on);
+    try {
+      await EngagementEmails.save(on);
+    } catch (e) {
+      debugPrint('Email preference not saved: ${e.runtimeType}');
+      if (!mounted) return;
+      setState(() => _emails = before);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.engagementSaveFailed)),
+      );
+    }
+  }
+
+  Widget _switchRow({
+    required String label,
+    required String description,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    final c = context.brand;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+      decoration: BoxDecoration(
+        color: c.card,
+        border: Border.all(color: c.border, width: 1.2),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: c.ink,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    color: c.textMuted,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(value: value, onChanged: onChanged),
+        ],
+      ),
+    );
   }
 
   Future<void> _toggle(ReminderKind kind, bool on) async {
@@ -219,11 +300,44 @@ class _RemindersScreenState extends State<RemindersScreen> {
                       ),
                     ),
                   )
-                else
+                else ...[
                   for (final kind in ReminderKind.values) _reminderCard(kind),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.l10n.engagementSettingsHeading,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: c.ink,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _switchRow(
+                    label: context.l10n.engagementNudgesLabel,
+                    description: context.l10n.engagementNudgesDescription,
+                    value: _nudges,
+                    onChanged: _setNudges,
+                  ),
+                  if (_emails case final emails?)
+                    _switchRow(
+                      label: context.l10n.engagementEmailsLabel,
+                      description: context.l10n.engagementEmailsDescription,
+                      value: emails,
+                      onChanged: _setEmails,
+                    ),
+                ],
                 const SizedBox(height: 8),
                 Text(
                   context.l10n.remindersFootnote,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: c.textMuted,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  context.l10n.remindersBackoffFootnote,
                   style: TextStyle(
                     fontSize: 12,
                     color: c.textMuted,

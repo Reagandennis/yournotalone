@@ -6297,4 +6297,426 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get journalEntryKeepBoth => 'Conservar las dos';
+
+  @override
+  String get widgetThisWeek => 'Esta semana';
+
+  @override
+  String widgetDaysOfGoal(int days, int goal) {
+    return '$days de $goal días';
+  }
+
+  @override
+  String get widgetGoalMet => 'Meta cumplida';
+
+  @override
+  String get widgetCheckIn => 'Registrar';
+
+  @override
+  String get widgetCheckedIn => 'Hecho hoy';
+
+  @override
+  String get widgetForYou => 'Para ti hoy';
+
+  @override
+  String get widgetOpenForPick => 'Abre la app para ver la sugerencia de hoy';
+
+  @override
+  String widgetSleepLine(int hours, int minutes) {
+    return '$hours h $minutes min de sueño';
+  }
+
+  @override
+  String get nudgeChannelName => 'Sugerencias y recordatorios suaves';
+
+  @override
+  String get nudgeChannelDescription =>
+      'Algunas notas suaves cuando llevas un tiempo sin entrar. Nunca más de una al día.';
+
+  @override
+  String nudgeCourseTitle(int day, String course) {
+    return 'El día $day de «$course» está listo';
+  }
+
+  @override
+  String get nudgeCourseBody => 'Unos minutos, cuando mejor te venga hoy.';
+
+  @override
+  String get nudgeSuggestionTitle => 'Unos minutos para ti';
+
+  @override
+  String nudgeSuggestionBody(String title, String meta) {
+    return 'Prueba «$title» · $meta';
+  }
+
+  @override
+  String get nudgeGentleTitle => '¿Cómo estás?';
+
+  @override
+  String get nudgeGentleBody => 'Un registro de diez segundos también cuenta.';
+
+  @override
+  String get nudgeSavedTitle => 'Te guardamos el sitio';
+
+  @override
+  String nudgeSavedCourseBody(int day, String course) {
+    return 'El día $day de «$course» te espera cuando quieras.';
+  }
+
+  @override
+  String nudgeSavedNewBody(String title) {
+    return 'Nuevo desde tu última visita: «$title».';
+  }
+
+  @override
+  String get nudgeSavedBody =>
+      'Tu diario, tus registros y tu progreso siguen donde los dejaste.';
+
+  @override
+  String get nudgeStillHereTitle => 'Seguimos aquí para ti';
+
+  @override
+  String nudgeStillHereBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Te has dedicado tiempo $count días. Cuando estés listo, un pequeño paso basta.',
+      one:
+          'Ya te has dedicado tiempo una vez. Cuando estés listo, un pequeño paso basta.',
+      zero:
+          'Cuando estés listo, tres minutos de respiración son un buen comienzo.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nudgeLastTitle => 'Cuando estés listo';
+
+  @override
+  String get nudgeLastBody =>
+      'Es nuestra última nota por ahora. Tu espacio aquí sigue abierto.';
+
+  @override
+  String get nudgeSupportTitle => 'Pensamos en ti';
+
+  @override
+  String get nudgeSupportBody =>
+      'Si todo pesa ahora, hay personas que pueden ayudarte a un toque.';
+
+  @override
+  String remindersCheckinBodyCourse(int day, String course) {
+    return 'Después, el día $day de «$course» está listo, si tienes unos minutos.';
+  }
+
+  @override
+  String get remindersCheckinBodyAlt => 'Un toque: ¿cómo va tu día?';
+
+  @override
+  String get remindersCheckinBodyAlt2 =>
+      'Sientas lo que sientas hoy, vale la pena notarlo.';
+
+  @override
+  String get remindersJournalBodyAlt => '¿Qué cosa de hoy quieres recordar?';
+
+  @override
+  String get remindersJournalBodyAlt2 =>
+      'Unas líneas bastan. Nadie más las leerá.';
+
+  @override
+  String get remindersWindDownBodyAlt =>
+      'Pantallas fuera, luces bajas. Tu plan se encarga del resto.';
+
+  @override
+  String get remindersWindDownBodyAlt2 =>
+      'Dale ventaja a mañana: empieza a relajarte ahora.';
+
+  @override
+  String get remindersPledgeBodyAlt =>
+      'Solo por hoy. Toca para hacer tu compromiso.';
+
+  @override
+  String get remindersBackoffFootnote =>
+      'Si no abres la app durante una semana, los recordatorios pasan a días alternos y se pausan a las dos semanas hasta que vuelvas.';
+
+  @override
+  String get engagementSettingsHeading => 'Cuando llevas tiempo sin entrar';
+
+  @override
+  String get engagementNudgesLabel => 'Mensajes suaves';
+
+  @override
+  String get engagementNudgesDescription =>
+      'Algunas notas si llevas tiempo sin abrir la app, y luego paran. Nunca más de una al día, salvo un aviso antes y después de una sesión de terapia.';
+
+  @override
+  String get engagementEmailsLabel => 'Correos cuando llevas tiempo sin entrar';
+
+  @override
+  String get engagementEmailsDescription =>
+      'Como mucho dos, a los 10 y 30 días sin entrar. Todos incluyen un enlace para dejar de recibirlos.';
+
+  @override
+  String get engagementSaveFailed =>
+      'No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get nextStepShortSleep => 'Anoche dormiste menos de lo habitual.';
+
+  @override
+  String get nextStepLateNight => 'Te acostaste más tarde de lo habitual.';
+
+  @override
+  String get nextStepBodyUnderStrain =>
+      'Tus datos cardíacos están fuera de tu rango habitual hoy.';
+
+  @override
+  String get nextStepQuietDay => 'Ayer fue más tranquilo de lo habitual.';
+
+  @override
+  String get nextStepActiveDay => 'Ayer fue un gran día. Bien hecho.';
+
+  @override
+  String get nextStepRestedNight => 'Anoche dormiste bien.';
+
+  @override
+  String nextStepCourse(int day, String course) {
+    return 'Día $day de «$course»';
+  }
+
+  @override
+  String get nextStepGoals => 'Elegido para lo que estás trabajando';
+
+  @override
+  String get nextStepTimeOfDay => 'Elegido para este momento del día';
+
+  @override
+  String healthConnectTitle(String platform) {
+    return 'Vincular $platform';
+  }
+
+  @override
+  String get healthIntro =>
+      'Deja que tu sueño y tu actividad guíen lo que la app te sugiere, y descubre cómo se relacionan tus días y tu estado de ánimo.';
+
+  @override
+  String get healthReadHeading => 'Lo que la app lee';
+
+  @override
+  String get healthReadSleep => 'Sueño';
+
+  @override
+  String get healthReadSleepDetail =>
+      'Cuánto y cuándo dormiste, para sugerirte lo que encaja con tu noche.';
+
+  @override
+  String get healthReadSteps => 'Pasos';
+
+  @override
+  String get healthReadStepsDetail =>
+      'Lo activos que son tus días, junto a tu estado de ánimo.';
+
+  @override
+  String get healthReadHeart =>
+      'Variabilidad de la frecuencia cardíaca y frecuencia en reposo';
+
+  @override
+  String get healthReadHeartDetail =>
+      'Solo para notar cuándo se salen de lo habitual para ti, y así sugerirte primero un ejercicio para calmarte.';
+
+  @override
+  String get healthWriteHeading => 'Lo que la app guarda';
+
+  @override
+  String get healthWriteMindful => 'Minutos de atención plena';
+
+  @override
+  String get healthWriteMindfulDetail =>
+      'Cada meditación y ejercicio de respiración que completes aquí.';
+
+  @override
+  String get healthPrivacyTitle => 'Se queda en tu teléfono';
+
+  @override
+  String get healthPrivacyBody =>
+      'Tus datos de salud se leen solo en este teléfono. Nunca se nos envían ni a nadie más, nunca se usan para publicidad y puedes desconectarte cuando quieras.';
+
+  @override
+  String get healthNotMedical =>
+      'La app compara tus datos con lo habitual para ti, para sugerirte algo útil. No es consejo médico y no puede diagnosticar nada.';
+
+  @override
+  String get healthInstallButton => 'Instalar Health Connect';
+
+  @override
+  String get healthInstallBody =>
+      'Primero hay que instalar o actualizar Health Connect desde Google Play. Luego vuelve aquí.';
+
+  @override
+  String healthUnavailable(String platform) {
+    return '$platform no está disponible en este dispositivo.';
+  }
+
+  @override
+  String healthConnectFailed(String platform) {
+    return 'No se conectó nada. Puedes intentarlo de nuevo o permitir el acceso en $platform.';
+  }
+
+  @override
+  String get healthConnectedTitle => 'Sueño, actividad y tú';
+
+  @override
+  String get healthLastNight => 'Anoche';
+
+  @override
+  String healthSleepValue(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get healthNoSleep => 'Sin sueño registrado';
+
+  @override
+  String get healthYesterday => 'Ayer';
+
+  @override
+  String healthStepsValue(String steps) {
+    return '$steps pasos';
+  }
+
+  @override
+  String get healthNoSteps => 'Sin pasos registrados';
+
+  @override
+  String get healthWeekSleep => 'Sueño, últimas 7 noches';
+
+  @override
+  String get healthWeekSteps => 'Pasos, últimos 7 días';
+
+  @override
+  String healthAverage(String value) {
+    return 'Promedio $value';
+  }
+
+  @override
+  String get healthOpen => 'Abrir';
+
+  @override
+  String get healthMoodLinksHeading => 'Tus días y tu estado de ánimo';
+
+  @override
+  String moodLinkSleep(String withValue, String withoutValue) {
+    return 'Tras noches de 7 horas o más, tu ánimo promedió $withValue de 5, frente a $withoutValue tras noches más cortas.';
+  }
+
+  @override
+  String moodLinkMovement(String withValue, String withoutValue) {
+    return 'En tus días más activos, tu ánimo promedió $withValue de 5, frente a $withoutValue en los más tranquilos.';
+  }
+
+  @override
+  String moodLinkPractice(String withValue, String withoutValue) {
+    return 'Los días con una meditación o ejercicio de respiración, tu ánimo promedió $withValue de 5, frente a $withoutValue los días sin.';
+  }
+
+  @override
+  String get moodLinkFootnote =>
+      'Un patrón en tus propios registros, no una causa. Cambia con el tiempo.';
+
+  @override
+  String get moodLinksNotYet =>
+      'Tras un par de semanas de registros junto a tu sueño y tus pasos, aquí aparecerán patrones.';
+
+  @override
+  String get moodLinksLocked =>
+      'Descubre cómo se relacionan tu sueño, tu movimiento y tu práctica con tu ánimo.';
+
+  @override
+  String get healthWidgetSleep =>
+      'Mostrar el sueño de anoche en el widget de la pantalla de inicio';
+
+  @override
+  String get healthMindfulOn =>
+      'Las meditaciones y ejercicios de respiración que completas se guardan como minutos de atención plena.';
+
+  @override
+  String get healthMindfulUnavailable =>
+      'El Health Connect de este teléfono aún no puede guardar minutos de atención plena. Una actualización del sistema podría añadirlo.';
+
+  @override
+  String get healthDisconnect => 'Desconectar';
+
+  @override
+  String get healthDisconnectIos =>
+      'Para retirar del todo el acceso de la app, abre Ajustes → Salud → Acceso a datos y dispositivos.';
+
+  @override
+  String healthDisconnected(String platform) {
+    return '$platform desconectado. Ya no se lee nada.';
+  }
+
+  @override
+  String get healthInviteTitle => 'Sugerencias que encajan con tu día';
+
+  @override
+  String healthInviteBody(String platform) {
+    return 'Vincula $platform para que tu sueño y tu actividad guíen lo que ves aquí.';
+  }
+
+  @override
+  String get healthInviteConnect => 'Vincular';
+
+  @override
+  String get healthInviteLater => 'Ahora no';
+
+  @override
+  String get healthCardTitle => 'Sueño y actividad';
+
+  @override
+  String get healthStatusConnected => 'Conectado';
+
+  @override
+  String get healthStatusNotConnected => 'No conectado';
+
+  @override
+  String get contentNotForMe => 'No es para mí';
+
+  @override
+  String get contentNotForMeSub => 'Sugerirme otras cosas durante un mes';
+
+  @override
+  String get contentNotForMeDone => 'Entendido. Verás otras sugerencias.';
+
+  @override
+  String get contentNotForMeUndo => 'Deshacer';
+
+  @override
+  String get nextStepNight =>
+      'Algo tranquilo para volver a dormir. Nada que leer.';
+
+  @override
+  String get nextStepHelpedBefore => 'La última vez te sentiste mejor después';
+
+  @override
+  String get nightCardTitle => '¿No puedes dormir?';
+
+  @override
+  String get notificationPrepTitle => 'Tu sesión empieza en una hora';
+
+  @override
+  String get notificationPrepBody =>
+      'Un minuto para anotar de qué quieres hablar, para que nada se te escape cuando empiece la llamada.';
+
+  @override
+  String get notificationReflectTitle => 'Después de tu sesión';
+
+  @override
+  String get notificationReflectBody =>
+      'Unas líneas sobre lo que te quedó pueden ayudarte a no olvidarlo.';
+
+  @override
+  String get homeAfterSessionJournalTitle => 'Después de mi sesión';
+
+  @override
+  String get homeAfterSessionJournalSeed => 'Lo que me quedó de mi sesión: ';
 }

@@ -1,0 +1,13 @@
+/* The widget gallery's name and description, and the sample words of
+   its preview. A placed widget shows the app's own words, written in the
+   app's language (lib/home_widgets/home_widget_sync.dart). */
+
+"widget_name" = "Deine Woche";
+"widget_desc" = "An wie vielen Tagen du diese Woche da warst, dein heutiges Einchecken und ein Vorschlag für heute.";
+"widget_week" = "Diese Woche";
+"widget_days" = "2 von 3 Tagen";
+"widget_check_in" = "Einchecken";
+"widget_for_you" = "Für dich heute";
+"widget_pick" = "Box-Atmung";
+"widget_pick_meta" = "Atmung · 4 Min.";
+"widget_open_app" = "Öffne die App für den Vorschlag des Tages";

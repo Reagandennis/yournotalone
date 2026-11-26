@@ -12,6 +12,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:workmanager/workmanager.dart';
 
+import '../engagement/engagement.dart';
+import '../engagement/engagement_service.dart';
 import '../l10n/l10n.dart';
 import '../reminders/reminders_service.dart';
 import '../supabase_config.dart';
@@ -30,6 +32,17 @@ const _keyPref = 'session_notifications_key';
 const _userPref = 'session_notifications_user';
 const _afterPref = 'session_notifications_after';
 const _scheduledPref = 'session_notifications_scheduled';
+const _companionsPref = 'session_notifications_companions';
+
+/// Tapping the note before a session opens a journal page for what to
+/// bring to it; the one after, a page for what stayed with them.
+const sessionPrepPayload = 'session_prep';
+const sessionReflectPayload = 'session_reflect';
+
+/// How long before a client's session the note to gather their thoughts
+/// comes: long enough to write something, after the 10-minute reminder
+/// would be too late.
+const sessionPrepLead = Duration(hours: 1);
 
 NotificationDetails _details() {
   final l10n = currentL10n();
@@ -70,6 +83,116 @@ int reminderNotificationId(String sessionId) =>
 /// The latest news about a session replaces the previous news about it.
 int sessionNotificationId(String sessionId) =>
     200000000 + _stableHash(sessionId) % 100000000;
+
+/// The note before a session, a separate notification from the reminder.
+int prepNotificationId(String sessionId) =>
+    500000000 + _stableHash(sessionId) % 100000000;
+
+/// The note after a session.
+int reflectNotificationId(String sessionId) =>
+    600000000 + _stableHash(sessionId) % 100000000;
+
+/// When the note after a session comes: in the evening of the day it
+/// ended, or an hour and a half after it ended if that's later; the next
+/// morning when that would be after half past nine at night.
+DateTime reflectionTime(DateTime start, int minutes) {
+  final end = start.add(Duration(minutes: minutes));
+  final soon = end.add(const Duration(minutes: 90));
+  final evening = DateTime(end.year, end.month, end.day, 18);
+  final at = soon.isBefore(evening) ? evening : soon;
+  if (at.isAfter(DateTime(end.year, end.month, end.day, 21, 30))) {
+    return DateTime(end.year, end.month, end.day + 1, 9);
+  }
+  return at;
+}
+
+/// One note to schedule around a session.
+typedef SessionCompanion = ({String sessionId, bool prep, DateTime at});
+
+/// The notes before and after each of a client's sessions, kept in step
+/// with the sessions as [planSessionReminders] keeps the reminders.
+///
+/// [scheduled] maps session id → start key for notes already scheduled.
+/// A session that drops out of [upcoming] before it starts was cancelled
+/// (its notes go); one that drops out after starting has simply begun, so
+/// the note after it stays. News of a cancelled or missed session cancels
+/// both separately (see the sync).
+({
+  List<SessionCompanion> schedule,
+  Set<String> cancel,
+  Map<String, String> remembered,
+}) planSessionCompanions(
+  List<Map<String, dynamic>> upcoming,
+  Map<String, String> scheduled,
+  DateTime now, {
+  required bool enabled,
+}) {
+  if (!enabled) {
+    return (schedule: const [], cancel: scheduled.keys.toSet(), remembered: const {});
+  }
+  final schedule = <SessionCompanion>[];
+  final cancel = <String>{};
+  final remembered = <String, String>{};
+  final seen = <String>{};
+  for (final session in upcoming) {
+    // Therapists don't need either.
+    if (session['role'] != 'client') continue;
+    final id = session['request_id'] as String;
+    final key = sessionStartKey(session['scheduled_at']);
+    seen.add(id);
+    remembered[id] = key;
+    if (scheduled[id] == key) continue;
+    if (scheduled.containsKey(id)) cancel.add(id);
+    final start = DateTime.parse(key).toLocal();
+    final prepAt = start.subtract(sessionPrepLead);
+    if (prepAt.isAfter(now)) {
+      schedule.add((sessionId: id, prep: true, at: prepAt));
+    }
+    final minutes = (session['duration_minutes'] as num?)?.toInt() ?? 50;
+    final reflectAt = reflectionTime(start, minutes);
+    if (reflectAt.isAfter(now)) {
+      schedule.add((sessionId: id, prep: false, at: reflectAt));
+    }
+  }
+  for (final e in scheduled.entries) {
+    if (seen.contains(e.key)) continue;
+    final start = DateTime.parse(e.value);
+    if (start.isAfter(now)) {
+      cancel.add(e.key);
+    } else if (now.difference(start) < const Duration(days: 2)) {
+      // Under way or over: the note after it is still to come.
+      remembered[e.key] = e.value;
+    }
+  }
+  return (schedule: schedule, cancel: cancel, remembered: remembered);
+}
+
+/// The words of a note before ([prep]) or after a session. Nothing about
+/// who it's with or what it's about: it's on the lock screen.
+({String title, String body}) describeSessionCompanion({required bool prep}) {
+  final l10n = currentL10n();
+  return prep
+      ? (title: l10n.notificationPrepTitle, body: l10n.notificationPrepBody)
+      : (title: l10n.notificationReflectTitle, body: l10n.notificationReflectBody);
+}
+
+/// The notes before and after a session are suggestions, so they use the
+/// gentle check-ins' channel, not the sessions' urgent one.
+NotificationDetails _companionDetails() {
+  final l10n = currentL10n();
+  return NotificationDetails(
+    android: AndroidNotificationDetails(
+      'engagement_nudges',
+      l10n.nudgeChannelName,
+      channelDescription: l10n.nudgeChannelDescription,
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
+      visibility: NotificationVisibility.private,
+    ),
+    iOS: const DarwinNotificationDetails(),
+    macOS: const DarwinNotificationDetails(),
+  );
+}
 
 /// A notification's words, written on the phone so times are in its own
 /// time zone. [data] is what `session_notification_data()` queues.
@@ -386,10 +509,19 @@ class SessionNotifications {
       for (final id in (await _scheduled()).keys) {
         await _plugin.cancel(id: reminderNotificationId(id));
       }
+      for (final id in (await _companions()).keys) {
+        await _cancelCompanions(id);
+      }
     } catch (e) {
       debugPrint('Couldn\'t clear session reminders: $e');
     }
-    for (final pref in [_keyPref, _userPref, _afterPref, _scheduledPref]) {
+    for (final pref in [
+      _keyPref,
+      _userPref,
+      _afterPref,
+      _scheduledPref,
+      _companionsPref,
+    ]) {
       await _prefs.remove(pref);
     }
   }
@@ -398,6 +530,56 @@ class SessionNotifications {
     final stored = await _prefs.getString(_scheduledPref);
     if (stored == null) return {};
     return Map<String, String>.from(jsonDecode(stored) as Map);
+  }
+
+  Future<Map<String, String>> _companions() async {
+    final stored = await _prefs.getString(_companionsPref);
+    if (stored == null) return {};
+    return Map<String, String>.from(jsonDecode(stored) as Map);
+  }
+
+  Future<void> _cancelCompanions(String sessionId) async {
+    await _plugin.cancel(id: prepNotificationId(sessionId));
+    await _plugin.cancel(id: reflectNotificationId(sessionId));
+  }
+
+  /// The notes before and after sessions go with the gentle check-ins:
+  /// off when those are, and not for the comparison group that keeps the
+  /// app as it was (lib/engagement/engagement.dart).
+  Future<bool> _companionsWanted() async {
+    final user = await _prefs.getString(_userPref);
+    if (user == null || isEngagementHoldout(user)) return false;
+    return EngagementService.instance.nudgesEnabled();
+  }
+
+  Future<Map<String, String>> _syncCompanions(
+    List<Map<String, dynamic>> upcoming,
+    DateTime now,
+  ) async {
+    final plan = planSessionCompanions(
+      upcoming,
+      await _companions(),
+      now,
+      enabled: await _companionsWanted(),
+    );
+    for (final id in plan.cancel) {
+      await _cancelCompanions(id);
+    }
+    for (final note in plan.schedule) {
+      final text = describeSessionCompanion(prep: note.prep);
+      await _plugin.zonedSchedule(
+        id: note.prep
+            ? prepNotificationId(note.sessionId)
+            : reflectNotificationId(note.sessionId),
+        scheduledDate: tz.TZDateTime.from(note.at, tz.local),
+        notificationDetails: _companionDetails(),
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        title: text.title,
+        body: text.body,
+        payload: note.prep ? sessionPrepPayload : sessionReflectPayload,
+      );
+    }
+    return plan.remembered;
   }
 
   Future<bool> _sync() async {
@@ -450,6 +632,7 @@ class SessionNotifications {
       );
     }
     await _prefs.setString(_scheduledPref, jsonEncode(plan.remembered));
+    final companions = await _syncCompanions(upcoming, now);
 
     // News since the last check. Each item is passed over once tried,
     // shown or not: one that can't be read or shown is skipped, rather than
@@ -458,15 +641,27 @@ class SessionNotifications {
     var last = after;
     for (final raw in result['notifications'] as List? ?? const []) {
       try {
-        final id = ((raw as Map)['id'] as num?)?.toInt();
+        final notification = Map<String, dynamic>.from(raw as Map);
+        final id = (notification['id'] as num?)?.toInt();
         if (id != null && id > last) last = id;
-        await _showNews(Map<String, dynamic>.from(raw), plan.remembered, now);
+        // No "after your session" for one that didn't happen.
+        final kind = notification['kind'];
+        final data = notification['data'];
+        if ((kind == 'session_cancelled' || kind == 'session_missed') &&
+            data is Map) {
+          final sessionId = data['request_id'];
+          if (sessionId is String && companions.remove(sessionId) != null) {
+            await _cancelCompanions(sessionId);
+          }
+        }
+        await _showNews(notification, plan.remembered, now);
       } catch (e) {
         debugPrint('Skipped a session notification: $e');
       }
       await _prefs.setInt(_afterPref, last);
     }
     await _prefs.setInt(_afterPref, last);
+    await _prefs.setString(_companionsPref, jsonEncode(companions));
     return result['active'] == true;
   }
 

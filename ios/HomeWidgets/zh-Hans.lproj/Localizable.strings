@@ -1,0 +1,13 @@
+/* The widget gallery's name and description, and the sample words of
+   its preview. A placed widget shows the app's own words, written in the
+   app's language (lib/home_widgets/home_widget_sync.dart). */
+
+"widget_name" = "你的一周";
+"widget_desc" = "本周你来了几天、今天的签到和今日推荐。";
+"widget_week" = "本周";
+"widget_days" = "2/3 天";
+"widget_check_in" = "签到";
+"widget_for_you" = "今日推荐";
+"widget_pick" = "方块呼吸";
+"widget_pick_meta" = "呼吸 · 4 分钟";
+"widget_open_app" = "打开应用查看今日推荐";

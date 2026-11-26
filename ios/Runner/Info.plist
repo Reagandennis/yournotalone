@@ -37,6 +37,18 @@
 				<string>com.techgetafrica.yournotalone</string>
 			</array>
 		</dict>
+		<!-- Taps on the home-screen and lock-screen widgets
+		     (lib/home_widgets/). -->
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>CFBundleURLName</key>
+			<string>widget</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>yournotalone-widget</string>
+			</array>
+		</dict>
 		<!-- Reversed iOS OAuth client ID: how Google Sign-In hands the result
 		     back to the app. Must mirror _iosClientId in lib/auth/google_auth.dart. -->
 		<dict>
@@ -56,6 +68,10 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Your sleep, steps, heart rate variability and resting heart rate shape the suggestions you get and appear next to your moods. They stay on this iPhone.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Meditations and breathing sessions you finish are saved to Apple Health as mindful minutes.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a profile photo, and let your therapist see you during video sessions.</string>
 	<key>NSMicrophoneUsageDescription</key>

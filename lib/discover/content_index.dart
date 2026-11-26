@@ -35,6 +35,7 @@ import '../stress/stress_content.dart';
 import '../toolkit/toolkit_content.dart';
 import '../toolkit/toolkit_lesson_screen.dart';
 import 'content_tags.dart';
+import 'taste_store.dart';
 import 'usage_store.dart';
 
 /// What someone might come to the app for. The order is the order of the
@@ -545,6 +546,9 @@ int _stableHash(String s) {
 /// something they can actually open; Premium items fill any gap. Ties are
 /// shuffled by the date, so suggestions change from day to day but not
 /// between visits on the same day.
+///
+/// [taste] (by default what's on this phone, [TasteStore]) leaves out what
+/// they said is not for them and leans towards what they felt better after.
 List<ContentItem> recommend({
   Set<Need> needs = const {},
   DayPart? dayPart,
@@ -555,8 +559,11 @@ List<ContentItem> recommend({
   List<ContentItem>? from,
   Set<Need> goals = const {},
   Map<ContentKind, double> kindBoost = const {},
+  Taste? taste,
 }) {
   final day = dayNumber(now);
+  // What they felt better after, and what they've turned down.
+  final liked = taste ?? TasteStore.instance.current;
   // What makes an item eligible: the needs asked for, or the time of day.
   int match(ContentItem item) =>
       item.needs.intersection(needs).length * 2 +
@@ -566,10 +573,14 @@ List<ContentItem> recommend({
   double score(ContentItem item) =>
       match(item) +
       item.needs.intersection(goals).length +
-      (kindBoost[item.kind] ?? 0) * 2;
+      (kindBoost[item.kind] ?? 0) * 2 +
+      liked.boost(item);
   final scored = [
     for (final item in from ?? contentIndex)
-      if (!exclude.contains(item.id) && match(item) > 0) (item, score(item)),
+      if (!exclude.contains(item.id) &&
+          !liked.dismissed.contains(item.id) &&
+          match(item) > 0)
+        (item, score(item)),
   ];
   scored.sort((a, b) {
     if (!premium && a.$1.premium != b.$1.premium) {

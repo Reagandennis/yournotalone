@@ -6226,4 +6226,428 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get journalEntryKeepBoth => 'Keep both';
+
+  @override
+  String get widgetThisWeek => 'This week';
+
+  @override
+  String widgetDaysOfGoal(int days, int goal) {
+    return '$days of $goal days';
+  }
+
+  @override
+  String get widgetGoalMet => 'Goal met this week';
+
+  @override
+  String get widgetCheckIn => 'Check in';
+
+  @override
+  String get widgetCheckedIn => 'Checked in today';
+
+  @override
+  String get widgetForYou => 'For you today';
+
+  @override
+  String get widgetOpenForPick => 'Open for today’s suggestion';
+
+  @override
+  String widgetSleepLine(int hours, int minutes) {
+    return '$hours h $minutes min sleep';
+  }
+
+  @override
+  String get nudgeChannelName => 'Suggestions and check-ins';
+
+  @override
+  String get nudgeChannelDescription =>
+      'A few gentle notes when you’ve been away. Never more than one a day.';
+
+  @override
+  String nudgeCourseTitle(int day, String course) {
+    return 'Day $day of “$course” is ready';
+  }
+
+  @override
+  String get nudgeCourseBody => 'A few minutes, whenever suits you today.';
+
+  @override
+  String get nudgeSuggestionTitle => 'A few minutes for you';
+
+  @override
+  String nudgeSuggestionBody(String title, String meta) {
+    return 'Try “$title” · $meta';
+  }
+
+  @override
+  String get nudgeGentleTitle => 'How are you doing?';
+
+  @override
+  String get nudgeGentleBody => 'A ten-second check-in still counts.';
+
+  @override
+  String get nudgeSavedTitle => 'We kept your place';
+
+  @override
+  String nudgeSavedCourseBody(int day, String course) {
+    return 'Day $day of “$course” is waiting whenever you are.';
+  }
+
+  @override
+  String nudgeSavedNewBody(String title) {
+    return 'New since you were here: “$title”.';
+  }
+
+  @override
+  String get nudgeSavedBody =>
+      'Your journal, check-ins and progress are right where you left them.';
+
+  @override
+  String get nudgeStillHereTitle => 'Still here for you';
+
+  @override
+  String nudgeStillHereBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'You’ve shown up for yourself on $count days. Whenever you’re ready, one small step is enough.',
+      one:
+          'You’ve shown up for yourself once already. Whenever you’re ready, one small step is enough.',
+      zero:
+          'Whenever you’re ready, a three-minute breathing exercise is a good place to start.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nudgeLastTitle => 'Whenever you’re ready';
+
+  @override
+  String get nudgeLastBody =>
+      'This is our last note for now. Your space here stays open.';
+
+  @override
+  String get nudgeSupportTitle => 'Thinking of you';
+
+  @override
+  String get nudgeSupportBody =>
+      'If things feel heavy, people who can help are one tap away.';
+
+  @override
+  String remindersCheckinBodyCourse(int day, String course) {
+    return 'Then Day $day of “$course” is ready, if you have a few minutes.';
+  }
+
+  @override
+  String get remindersCheckinBodyAlt => 'One tap: how is today going?';
+
+  @override
+  String get remindersCheckinBodyAlt2 =>
+      'However today feels, it’s worth noticing.';
+
+  @override
+  String get remindersJournalBodyAlt =>
+      'What’s one thing from today you want to remember?';
+
+  @override
+  String get remindersJournalBodyAlt2 =>
+      'A few lines are plenty. No one else will read them.';
+
+  @override
+  String get remindersWindDownBodyAlt =>
+      'Screens down, lights low. Your plan takes it from here.';
+
+  @override
+  String get remindersWindDownBodyAlt2 =>
+      'Give tomorrow a head start: begin winding down now.';
+
+  @override
+  String get remindersPledgeBodyAlt =>
+      'Just for today. Tap to make your pledge.';
+
+  @override
+  String get remindersBackoffFootnote =>
+      'If you haven’t opened the app for a week, reminders come every other day, and pause after two weeks until you’re back.';
+
+  @override
+  String get engagementSettingsHeading => 'When you’ve been away';
+
+  @override
+  String get engagementNudgesLabel => 'Gentle check-ins';
+
+  @override
+  String get engagementNudgesDescription =>
+      'A few notes if you haven’t opened the app in a while, then they stop. Never more than one a day, apart from a note before and after a therapy session.';
+
+  @override
+  String get engagementEmailsLabel => 'Emails when you’ve been away';
+
+  @override
+  String get engagementEmailsDescription =>
+      'At most two, after 10 and 30 days away. Every one has a link to stop them.';
+
+  @override
+  String get engagementSaveFailed =>
+      'Couldn’t save that. Check your connection and try again.';
+
+  @override
+  String get nextStepShortSleep => 'Last night was shorter than your usual.';
+
+  @override
+  String get nextStepLateNight => 'You went to bed later than usual.';
+
+  @override
+  String get nextStepBodyUnderStrain =>
+      'Your heart readings are outside your usual range today.';
+
+  @override
+  String get nextStepQuietDay => 'Yesterday was quieter than usual.';
+
+  @override
+  String get nextStepActiveDay => 'Yesterday was a big day. Nice work.';
+
+  @override
+  String get nextStepRestedNight => 'You slept well last night.';
+
+  @override
+  String nextStepCourse(int day, String course) {
+    return 'Day $day of “$course”';
+  }
+
+  @override
+  String get nextStepGoals => 'Picked for what you’re working on';
+
+  @override
+  String get nextStepTimeOfDay => 'Picked for this time of day';
+
+  @override
+  String healthConnectTitle(String platform) {
+    return 'Link $platform';
+  }
+
+  @override
+  String get healthIntro =>
+      'Let your sleep and activity shape what the app suggests, and see how your days and your moods go together.';
+
+  @override
+  String get healthReadHeading => 'What the app reads';
+
+  @override
+  String get healthReadSleep => 'Sleep';
+
+  @override
+  String get healthReadSleepDetail =>
+      'How long and when you slept, to suggest what fits the night you had.';
+
+  @override
+  String get healthReadSteps => 'Steps';
+
+  @override
+  String get healthReadStepsDetail =>
+      'How active your days are, shown next to your moods.';
+
+  @override
+  String get healthReadHeart => 'Heart rate variability and resting heart rate';
+
+  @override
+  String get healthReadHeartDetail =>
+      'Only to notice when they’re off your own usual, so a calming exercise can come first.';
+
+  @override
+  String get healthWriteHeading => 'What the app saves';
+
+  @override
+  String get healthWriteMindful => 'Mindful minutes';
+
+  @override
+  String get healthWriteMindfulDetail =>
+      'Each meditation and breathing session you finish here.';
+
+  @override
+  String get healthPrivacyTitle => 'It stays on your phone';
+
+  @override
+  String get healthPrivacyBody =>
+      'Your health data is read on this phone only. It’s never sent to us or anyone else, never used for ads, and you can disconnect at any time.';
+
+  @override
+  String get healthNotMedical =>
+      'The app compares your data with your own usual, to suggest something helpful. It isn’t medical advice and can’t diagnose anything.';
+
+  @override
+  String get healthInstallButton => 'Get Health Connect';
+
+  @override
+  String get healthInstallBody =>
+      'Health Connect needs installing or updating from Google Play first. Then come back here.';
+
+  @override
+  String healthUnavailable(String platform) {
+    return '$platform isn’t available on this device.';
+  }
+
+  @override
+  String healthConnectFailed(String platform) {
+    return 'Nothing was connected. You can try again, or allow access in $platform.';
+  }
+
+  @override
+  String get healthConnectedTitle => 'Sleep, activity and you';
+
+  @override
+  String get healthLastNight => 'Last night';
+
+  @override
+  String healthSleepValue(int hours, int minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String get healthNoSleep => 'No sleep recorded';
+
+  @override
+  String get healthYesterday => 'Yesterday';
+
+  @override
+  String healthStepsValue(String steps) {
+    return '$steps steps';
+  }
+
+  @override
+  String get healthNoSteps => 'No steps recorded';
+
+  @override
+  String get healthWeekSleep => 'Sleep, last 7 nights';
+
+  @override
+  String get healthWeekSteps => 'Steps, last 7 days';
+
+  @override
+  String healthAverage(String value) {
+    return 'Average $value';
+  }
+
+  @override
+  String get healthOpen => 'Open';
+
+  @override
+  String get healthMoodLinksHeading => 'Your days and your moods';
+
+  @override
+  String moodLinkSleep(String withValue, String withoutValue) {
+    return 'After nights of 7 hours or more, your mood averaged $withValue out of 5, against $withoutValue after shorter nights.';
+  }
+
+  @override
+  String moodLinkMovement(String withValue, String withoutValue) {
+    return 'On your more active days, your mood averaged $withValue out of 5, against $withoutValue on quieter ones.';
+  }
+
+  @override
+  String moodLinkPractice(String withValue, String withoutValue) {
+    return 'On days with a meditation or breathing session, your mood averaged $withValue out of 5, against $withoutValue on days without.';
+  }
+
+  @override
+  String get moodLinkFootnote =>
+      'A pattern in your own check-ins, not a cause. It changes as you go.';
+
+  @override
+  String get moodLinksNotYet =>
+      'After a couple of weeks of check-ins alongside your sleep and steps, patterns will show here.';
+
+  @override
+  String get moodLinksLocked =>
+      'See how your sleep, movement and practice go with your moods.';
+
+  @override
+  String get healthWidgetSleep =>
+      'Show last night’s sleep on the home-screen widget';
+
+  @override
+  String get healthMindfulOn =>
+      'Meditations and breathing sessions you finish are saved as mindful minutes.';
+
+  @override
+  String get healthMindfulUnavailable =>
+      'This phone’s Health Connect can’t save mindful minutes yet. A system update may add it.';
+
+  @override
+  String get healthDisconnect => 'Disconnect';
+
+  @override
+  String get healthDisconnectIos =>
+      'To remove the app’s access entirely, open Settings → Health → Data Access & Devices.';
+
+  @override
+  String healthDisconnected(String platform) {
+    return '$platform disconnected. Nothing more is read.';
+  }
+
+  @override
+  String get healthInviteTitle => 'Suggestions that fit your day';
+
+  @override
+  String healthInviteBody(String platform) {
+    return 'Link $platform so your sleep and activity shape what you see here.';
+  }
+
+  @override
+  String get healthInviteConnect => 'Link';
+
+  @override
+  String get healthInviteLater => 'Not now';
+
+  @override
+  String get healthCardTitle => 'Sleep and activity';
+
+  @override
+  String get healthStatusConnected => 'Connected';
+
+  @override
+  String get healthStatusNotConnected => 'Not connected';
+
+  @override
+  String get contentNotForMe => 'Not for me';
+
+  @override
+  String get contentNotForMeSub =>
+      'Suggest other things instead for the next month';
+
+  @override
+  String get contentNotForMeDone => 'Got it. You’ll see other suggestions.';
+
+  @override
+  String get contentNotForMeUndo => 'Undo';
+
+  @override
+  String get nextStepNight =>
+      'Something quiet for getting back to sleep. Nothing to read.';
+
+  @override
+  String get nextStepHelpedBefore => 'You felt better after this last time';
+
+  @override
+  String get nightCardTitle => 'Can’t sleep?';
+
+  @override
+  String get notificationPrepTitle => 'Your session is in an hour';
+
+  @override
+  String get notificationPrepBody =>
+      'A minute now to note what you’d like to talk about, so nothing slips away when the call starts.';
+
+  @override
+  String get notificationReflectTitle => 'After your session';
+
+  @override
+  String get notificationReflectBody =>
+      'A few lines on what stayed with you can help it stick.';
+
+  @override
+  String get homeAfterSessionJournalTitle => 'After my session';
+
+  @override
+  String get homeAfterSessionJournalSeed =>
+      'What stayed with me from my session: ';
 }

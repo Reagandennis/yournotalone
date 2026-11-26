@@ -1,6 +1,7 @@
 // The network hooks are private fields set from named parameters, which
 // Dart can't express as initializing formals.
 // ignore_for_file: prefer_initializing_formals
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -9,6 +10,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../brand.dart';
 import '../calendar_days.dart';
+import '../engagement/engagement_service.dart';
+import '../health/health_service.dart';
 import '../l10n/l10n.dart';
 import 'pending_practice.dart';
 
@@ -189,6 +192,9 @@ class PracticeRepository {
   }) async {
     final userId = _userId;
     if (userId == null || minutes <= 0) return;
+    // Mindful minutes in Apple Health / Health Connect, if connected. Not
+    // waited for, and independent of the history row.
+    unawaited(HealthService.instance.recordMindful(kind, minutes));
     try {
       await _pending.add(PendingPracticeSession(
         id: _uuidV4(),
@@ -203,6 +209,8 @@ class PracticeRepository {
       debugPrint('Could not queue practice session: $error');
     }
     await flushPending();
+    // Today counts now: the widget and tomorrow's nudges catch up.
+    unawaited(EngagementService.instance.noteActivity());
   }
 
   bool _flushing = false;
