@@ -484,11 +484,19 @@ class SoundPlayer {
   }
 
   void _holdVoice(String? sha) {
+    final old = _swapVoiceHold(sha);
+    if (old != null) unawaited(DownloadStore.instance.release(old));
+  }
+
+  /// Holds [sha] for the voice without letting the last one go: that is
+  /// returned (null if there's nothing to let go), for its caller to
+  /// release once the last narration has stopped playing from it.
+  String? _swapVoiceHold(String? sha) {
     final old = _voiceHeld;
-    if (old == sha) return;
+    if (old == sha) return null;
     _voiceHeld = sha;
     if (sha != null) DownloadStore.instance.hold(sha);
-    if (old != null) unawaited(DownloadStore.instance.release(old));
+    return old;
   }
 
   Future<void> setVolume(double value) async {
@@ -579,10 +587,16 @@ class SoundPlayer {
     _voiceLoaded = null;
     final engine = _voice;
     if (engine == null) return;
+    // The last narration's file, let go only once the engine has stopped
+    // playing it (starting this one stops it): deleting it before then
+    // cuts it off.
+    String? previous;
     try {
       final origin = await resolve(asset);
       if (request != _voiceRequest) return;
-      _holdVoice(origin is LocalAudio ? origin.entry.ref.sha256 : null);
+      previous = _swapVoiceHold(
+        origin is LocalAudio ? origin.entry.ref.sha256 : null,
+      );
       final sfx.Source source = switch (origin) {
         BundledAudio() ||
         null => sfx.AssetSource(asset.replaceFirst('assets/', '')),
@@ -604,6 +618,8 @@ class SoundPlayer {
       _voiceLoaded = asset;
     } catch (e) {
       debugPrint('Voice guide failed for $asset: $e');
+    } finally {
+      if (previous != null) unawaited(DownloadStore.instance.release(previous));
     }
   }
 

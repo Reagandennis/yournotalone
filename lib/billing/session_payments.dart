@@ -87,14 +87,15 @@ class PendingCheckouts {
 
   DateTime now() => _clock();
 
-  /// Notes that a checkout for [requestId] was opened (or the server says
-  /// one is still in progress) just now. Never fails.
-  Future<void> mark(String requestId) async {
+  /// Notes that a checkout for [requestId] was opened [at] (just now
+  /// unless given: the server says when one still in progress was opened).
+  /// Never fails.
+  Future<void> mark(String requestId, {DateTime? at}) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setInt(
         '$_prefix$requestId',
-        _clock().millisecondsSinceEpoch,
+        (at ?? _clock()).millisecondsSinceEpoch,
       );
     } catch (e) {
       debugPrint('Couldn\'t note the checkout: $e');
@@ -196,7 +197,9 @@ class SessionPayments {
     } on SessionAccessException catch (e) {
       // The server won't open another checkout while the last one may
       // still be paid (HTTP 409): wait for that one instead.
-      if (e.code == 'payment_in_progress') await pending.mark(request.id);
+      if (e.code == 'payment_in_progress') {
+        await pending.mark(request.id, at: e.openedAt);
+      }
       rethrow;
     }
     if (url == null) {
@@ -233,18 +236,26 @@ class SessionPayments {
   /// Whether a payment has reached [request] (attaching it if one has).
   /// For a last look before a draft is thrown away: an M-Pesa prompt can be
   /// approved minutes after the checkout page closed. Throws when it can't
-  /// tell (offline).
-  Future<bool> isPaid(TherapyRequest request) => _confirm(request);
+  /// tell (offline), and with `payment_in_progress` when nothing is paid yet
+  /// but a checkout may still be (the draft must stay for it).
+  Future<bool> isPaid(TherapyRequest request) =>
+      _confirm(request, inProgressThrows: true);
 
   /// True once the server has attached a payment to [request]; false when
-  /// it has none to attach. Anything else (offline, not configured) throws,
-  /// since opening a checkout would be pointless until it's sorted.
-  Future<bool> _confirm(TherapyRequest request) async {
+  /// it has none to attach, or none yet while a checkout may still be paid
+  /// (`payment_in_progress`: its note is kept, so "Pay" stays away). Anything
+  /// else (offline, not configured) throws, since opening a checkout would
+  /// be pointless until it's sorted.
+  Future<bool> _confirm(
+    TherapyRequest request, {
+    bool inProgressThrows = false,
+  }) async {
     try {
       await _repository.confirmPayment(request.id);
       await pending.clear(request.id);
       return true;
     } on SessionAccessException catch (e) {
+      if (e.code == 'payment_in_progress' && !inProgressThrows) return false;
       if (e.code != 'no_payment_found') rethrow;
       return false;
     }

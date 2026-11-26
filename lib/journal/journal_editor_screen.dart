@@ -59,6 +59,11 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
   /// Set once a draft left from last time has been offered back, so
   /// nothing overwrites it before the person has chosen.
   bool _draftOffered = false;
+
+  /// Set when that draft was put aside without choosing (Back): it stays
+  /// on the phone until restored or discarded, even while the editor shows
+  /// only what's saved.
+  bool _draftSetAside = false;
   Timer? _draftTimer;
   late final AppLifecycleListener _lifecycle;
 
@@ -120,7 +125,7 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
         _entryId,
         JournalDraft(title: _title.text, content: _content.text, base: _base),
       );
-    } else {
+    } else if (!_draftSetAside) {
       _drafts.clear(_entryId);
     }
   }
@@ -182,7 +187,10 @@ class _JournalEditorScreenState extends State<JournalEditorScreen> {
       return;
     }
     // Dismissed without choosing (the back button): restore nothing.
-    if (discard == null) return;
+    if (discard == null) {
+      _draftSetAside = true;
+      return;
+    }
     // Carrying on with a stale draft is a choice made knowing a newer
     // version exists, so the save is based on that newer version (the one
     // this screen opened with); anything newer still is caught on saving.

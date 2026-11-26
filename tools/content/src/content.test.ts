@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import { check, load, mediaFile, mediaPathProblem } from './content.ts';
 import { inRepoOrMasters } from './testing.ts';
@@ -244,6 +247,23 @@ test('audio paths stay inside the repo, under assets/ or Sounds/', () => {
   assert.equal(mediaPathProblem('assets/sounds/rainfall.m4a'), null);
   assert.equal(mediaPathProblem('Sounds/brown noise.wav'), null);
   assert.match(mediaFile('Sounds/brown noise.wav'), /\/Sounds\/brown noise\.wav$/);
+});
+
+test('an audio path that links outside the repo is refused', () => {
+  const root = mkdtempSync(join(tmpdir(), 'content-root-'));
+  const elsewhere = mkdtempSync(join(tmpdir(), 'content-elsewhere-'));
+  try {
+    writeFileSync(join(elsewhere, 'secret.wav'), 'not audio');
+    mkdirSync(join(root, 'Sounds'));
+    symlinkSync(join(elsewhere, 'secret.wav'), join(root, 'Sounds', 'take.wav'));
+    writeFileSync(join(root, 'Sounds', 'real.wav'), 'audio');
+    assert.throws(() => mediaFile('Sounds/take.wav', root), /outside the repo/);
+    assert.equal(mediaFile('Sounds/real.wav', root), join(root, 'Sounds', 'real.wav'));
+    assert.equal(mediaFile('Sounds/missing.wav', root), join(root, 'Sounds', 'missing.wav'));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+    rmSync(elsewhere, { recursive: true, force: true });
+  }
 });
 
 test('a recording that is only in R2 says how to fetch it', () => {

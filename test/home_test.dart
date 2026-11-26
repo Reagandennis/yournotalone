@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,8 +40,18 @@ class _Moods extends MoodRepository {
   bool saveFails = false;
   final saved = <int>[];
 
+  /// While set, each save waits until its completer is completed (with an
+  /// error to fail it).
+  bool hold = false;
+  final held = <Completer<void>>[];
+
   @override
   Future<void> saveMood(int index) async {
+    if (hold) {
+      final wait = Completer<void>();
+      held.add(wait);
+      await wait.future;
+    }
     if (saveFails) throw Exception('offline');
     saved.add(index);
     today = index;
@@ -194,6 +206,76 @@ void main() {
     await tester.pumpAndSettle();
     expect(moods.saved, [4]);
     expect(face('Awful').dimmed, isTrue);
+  });
+
+  testWidgets('two picks whose saves fail in turn leave nothing lit', (
+    tester,
+  ) async {
+    final moods = _Moods()..hold = true;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(body: HomeTab(practice: _NoPractice(), mood: moods)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    MoodFace face(String label) => tester.widget<MoodFace>(
+          find
+              .descendant(
+                of: find.byType(HomeTab),
+                matching: find.byWidgetPredicate(
+                  (w) => w is MoodFace && w.level.label == label,
+                ),
+              )
+              .first,
+        );
+
+    await tester.tap(find.text('Great'));
+    await tester.pump();
+    await tester.tap(find.text('Good'));
+    await tester.pump();
+    expect(moods.held, hasLength(2));
+    moods.held[0].completeError(Exception('offline'));
+    await tester.pump();
+    moods.held[1].completeError(Exception('offline'));
+    await tester.pumpAndSettle();
+    // Neither was saved, so neither stays lit.
+    expect(face('Great').dimmed, isFalse);
+    expect(face('Good').dimmed, isFalse);
+    expect(face('Awful').dimmed, isFalse);
+  });
+
+  testWidgets('an older failed save does not undo a newer one that went '
+      'through', (tester) async {
+    final moods = _Moods()..hold = true;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: Scaffold(body: HomeTab(practice: _NoPractice(), mood: moods)),
+      ),
+    );
+    await tester.pumpAndSettle();
+    MoodFace face(String label) => tester.widget<MoodFace>(
+          find
+              .descendant(
+                of: find.byType(HomeTab),
+                matching: find.byWidgetPredicate(
+                  (w) => w is MoodFace && w.level.label == label,
+                ),
+              )
+              .first,
+        );
+
+    await tester.tap(find.text('Low'));
+    await tester.pump();
+    await tester.tap(find.text('Low'));
+    await tester.pump();
+    moods.held[1].complete();
+    await tester.pump();
+    moods.held[0].completeError(Exception('offline'));
+    await tester.pumpAndSettle();
+    expect(face('Low').dimmed, isFalse);
+    expect(face('Great').dimmed, isTrue);
   });
 
   group('Home catches up', () {

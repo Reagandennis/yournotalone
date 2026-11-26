@@ -17,7 +17,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { extname, join } from 'node:path';
 import { credentialsFromEnv, envs, s3Endpoint } from './config.ts';
-import { type Loaded, load, repoRoot } from './content.ts';
+import { isMain, type Loaded, load, repoRoot } from './content.ts';
 import { r2Store, type Store } from './store.ts';
 
 export const mastersDir = join(repoRoot, 'Sounds');
@@ -132,7 +132,7 @@ export function differences(list: Master[], found: Master[]): string[] {
   return out;
 }
 
-if (import.meta.main) {
+if (isMain(import.meta.url)) {
   const cmd = process.argv[2];
   if (cmd === 'check') {
     const diff = differences(readManifest(), scan());

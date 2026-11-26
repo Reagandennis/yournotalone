@@ -346,6 +346,27 @@ void main() {
       expect(find.text('Old draft'), findsNothing);
     });
 
+    testWidgets('a draft put aside survives a save that fails offline',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final drafts = draftsFor('amina');
+      await drafts.save(
+        entry.id,
+        JournalDraft(title: '', content: 'Kept', base: entry.baseVersion),
+      );
+      final journal = _FakeJournal()..offline = true;
+      await tester.pumpWidget(editing(journal));
+      await open(tester);
+      expect(find.text(draftOffer), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      // Saving what's on screen (the saved entry) fails offline.
+      await tester.tap(find.text('Save entry'));
+      await tester.pumpAndSettle();
+      expect((await drafts.load(entry.id))?.content, 'Kept');
+    });
+
     testWidgets('a draft keeps the version it was written against',
         (tester) async {
       SharedPreferences.setMockInitialValues({});

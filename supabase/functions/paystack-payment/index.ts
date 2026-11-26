@@ -11,16 +11,22 @@
 //                     heard of it yet, no second transaction is opened —
 //                     that is how a client got charged twice — and the
 //                     answer is 409 { error: 'payment_in_progress',
-//                     reference }: the app offers "Check payment" (a
-//                     confirm) instead. Paystack's verify doesn't give back
+//                     reference, opened_at }: the app offers "Check
+//                     payment" (a confirm) instead. Every recent checkout
+//                     counts, not only the newest, and a start that races
+//                     another one gets the other's reference
+//                     (paystack_open_checkout, migration 0038). Paystack's verify doesn't give back
 //                     the authorization_url, so the old page can't be
 //                     reopened.
 //   no action         confirms: asks Paystack about this session's
 //                     checkouts and marks the session paid if one succeeded.
-//                     { paid: true }, or 402 no_payment_found.
+//                     { paid: true }; with report_in_progress: true, 409
+//                     payment_in_progress (as above) while one may still
+//                     be paid; else 402 no_payment_found.
 //
-// A 2xx always carries either paid: true or an authorization_url; a
-// checkout Paystack opened without a URL is 502 checkout_failed.
+// A 2xx always carries either paid: true or an https authorization_url; a
+// checkout Paystack opened without one is 502 checkout_failed. A checkout
+// Paystack refused to open is removed, so it doesn't block the next start.
 // Checkouts that were refunded (refunded_at, migration 0036) or sent to the
 // care team for a refund are never looked at again, so a refunded
 // transaction can't pay for the session a second time.
@@ -52,6 +58,7 @@ import {
   IN_PROGRESS_STATUSES,
   type Item,
   paystack,
+  PaystackError,
   PAYSTACK_SECRET_KEY,
   recordCardCountry,
   settleCheckout,
@@ -98,10 +105,14 @@ Deno.serve(async (req: Request) => {
 
   let requestId = '';
   let action = 'confirm';
+  // Apps that know a confirm can answer payment_in_progress say so; older
+  // ones get 402 no_payment_found as before.
+  let reportInProgress = false;
   try {
     const body = await req.json();
     requestId = typeof body?.request_id === 'string' ? body.request_id : '';
     if (body?.action === 'start') action = 'start';
+    reportInProgress = body?.report_in_progress === true;
   } catch {
     // Falls through to the check below.
   }
@@ -145,13 +156,14 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'lookup_failed' }, 500);
   }
 
-  // The newest checkout, and what Paystack said about it (null: not found).
-  const newest = ((checkouts ?? []) as Checkout[])[0];
-  let newestTransaction: Item | null = null;
+  // What Paystack said about each checkout (null: it has no record).
+  const opened = (checkouts ?? []) as Checkout[];
+  const newest = opened[0];
+  const transactions = new Map<string, Item | null>();
   try {
-    for (const checkout of (checkouts ?? []) as Checkout[]) {
+    for (const checkout of opened) {
       const transaction = await verifyTransaction(checkout.reference);
-      if (checkout === newest) newestTransaction = transaction;
+      transactions.set(checkout.reference, transaction);
       if (!transaction) continue;
       const result = await settleCheckout(admin, checkout, transaction);
       if (result === 'paid') {
@@ -164,20 +176,23 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'verification_failed' }, 502);
   }
 
-  if (action !== 'start') return json({ error: 'no_payment_found' }, 402);
-
   // Don't open a second transaction while the customer may still be paying
-  // on the last one: they'd be charged twice.
-  if (newest) {
-    const age = Date.now() - Date.parse(newest.created_at ?? '');
-    const status = String(newestTransaction?.status ?? '').toLowerCase();
-    const inProgress = newestTransaction
-      ? IN_PROGRESS_STATUSES.includes(status)
-      : true; // Paystack has no record of it yet.
-    if (Number.isFinite(age) && age < PAYMENT_IN_PROGRESS_MS && inProgress) {
-      return json({ error: 'payment_in_progress', reference: newest.reference }, 409);
-    }
+  // on any earlier one — they'd be charged twice — and don't tell a confirm
+  // there's nothing to find while one may still be paid (the app keeps the
+  // draft and "Check payment" for it).
+  const live = opened.find((checkout) => {
+    const age = Date.now() - Date.parse(checkout.created_at ?? '');
+    if (!(Number.isFinite(age) && age < PAYMENT_IN_PROGRESS_MS)) return false;
+    const transaction = transactions.get(checkout.reference);
+    // No record at Paystack: the newest may still be being opened.
+    if (!transaction) return checkout === newest;
+    return IN_PROGRESS_STATUSES.includes(String(transaction.status ?? '').toLowerCase());
+  });
+  if (live && (action === 'start' || reportInProgress)) {
+    return inProgress(live.reference, live.created_at);
   }
+
+  if (action !== 'start') return json({ error: 'no_payment_found' }, 402);
 
   if (!user.email) return json({ error: 'email_required' }, 400);
   if (!(Number(session.price_cents) > 0)) return json({ error: 'not_payable' }, 409);
@@ -188,18 +203,22 @@ Deno.serve(async (req: Request) => {
     return json({ error: 'not_configured' }, 503);
   }
 
+  // Recorded only if no other start recorded one since this one looked
+  // (migration 0038), so two starts at once can't open two checkouts.
   const reference = `therapy-${session.id.slice(0, 8)}-${crypto.randomUUID()}`;
-  const { error: insertError } = await admin.from('paystack_checkouts').insert({
-    reference,
-    request_id: session.id,
-    user_id: user.id,
-    amount,
-    currency,
+  const { data: other, error: insertError } = await admin.rpc('paystack_open_checkout', {
+    p_reference: reference,
+    p_request_id: session.id,
+    p_user_id: user.id,
+    p_amount: amount,
+    p_currency: currency,
+    p_seen: opened.map((c) => c.reference),
   });
   if (insertError) {
     console.error('paystack-payment: checkout insert failed', insertError);
     return json({ error: 'update_failed' }, 500);
   }
+  if (typeof other === 'string' && other !== '') return inProgress(other, new Date().toISOString());
 
   try {
     const data = await paystack('/transaction/initialize', {
@@ -224,13 +243,46 @@ Deno.serve(async (req: Request) => {
         },
       }),
     });
-    if (typeof data.authorization_url !== 'string' || data.authorization_url === '') {
+    const page = checkoutPage(data.authorization_url);
+    if (!page) {
+      // Paystack may have opened the transaction, so the row stays: a later
+      // charge.success needs it to find the session.
       console.error('paystack-payment: initialize gave no authorization_url', reference, data);
       return json({ error: 'checkout_failed' }, 502);
     }
-    return json({ authorization_url: data.authorization_url, reference });
+    return json({ authorization_url: page, reference });
   } catch (error) {
     console.error('paystack-payment: initialize failed', error);
+    // Paystack answered and refused (4xx, or status false): no transaction
+    // exists, so the row goes and doesn't hold up the next start as "in
+    // progress". A network failure or a 5xx may have opened one: it stays.
+    if (error instanceof PaystackError && error.status < 500) {
+      const { error: deleteError } = await admin.from('paystack_checkouts')
+        .delete()
+        .eq('reference', reference);
+      if (deleteError) console.error('paystack-payment: checkout not removed', reference, deleteError);
+    }
     return json({ error: 'checkout_failed' }, 502);
   }
 });
+
+/// 409: a checkout opened at [openedAt] may still be paid. The app waits
+/// for it from then, offering "Check payment" instead of "Pay".
+function inProgress(reference: string, openedAt: string | undefined): Response {
+  return json({
+    error: 'payment_in_progress',
+    reference,
+    ...(openedAt ? { opened_at: openedAt } : {}),
+  }, 409);
+}
+
+/// The checkout page Paystack gave, if it's a usable https URL.
+function checkoutPage(raw: unknown): string | null {
+  if (typeof raw !== 'string' || raw.trim() === '') return null;
+  try {
+    const url = new URL(raw.trim());
+    return url.protocol === 'https:' && url.hostname !== '' ? url.toString() : null;
+  } catch {
+    return null;
+  }
+}

@@ -189,6 +189,10 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
   final _removals = <String, int>{};
   int _removedAll = 0;
 
+  /// Bumped for an account each time [forgetUser] runs for it, so a fetch
+  /// it started before then doesn't bring its download back.
+  final _forgets = <String, int>{};
+
   /// Downloads wait for Wi-Fi unless this is off. On by default.
   final wifiOnly = ValueNotifier<bool>(true);
 
@@ -199,8 +203,9 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
   final _queue = <String>[];
   Map<String, Map<String, dynamic>> _done = {};
 
-  /// Items whose last attempt failed, until they're tried again.
-  final _failed = <String>{};
+  /// Items whose last attempt failed, until they're tried again, with who
+  /// asked for them (null: anyone's, as for the queue).
+  final _failed = <String, Set<String>?>{};
 
   /// The item downloading now, and how far it's got.
   String? _current;
@@ -232,7 +237,8 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
         ..addAll(_decodeOwners(prefs.getString(_queueOwnersKey)));
       _lastUser = _userId();
       _claimUnowned();
-      final outOfDate = <String>[];
+      // Who had each out-of-date download, so its replacement is theirs.
+      final outOfDate = <String, Set<String>?>{};
       for (final MapEntry(key: id, value: saved) in {..._done}.entries) {
         // A catalogue update re-recorded or re-encoded the item: its audio
         // has a new sha256, and the player looks files up by that, so this
@@ -242,7 +248,7 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
         if (now.isNotEmpty &&
             !setEquals(_filesOf(saved), {for (final e in now) e.ref.sha256})) {
           _done.remove(id);
-          outOfDate.add(id);
+          outOfDate[id] = _ownersOf(saved);
           continue;
         }
         for (final sha in _filesOf(saved)) {
@@ -257,8 +263,10 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
       // Wi-Fi only on), and premium audio is only fetched for someone who
       // can still open it. An item that isn't fetched again shows as not
       // downloaded.
-      for (final id in outOfDate) {
-        if (!_queue.contains(id) && _mayFetch(id)) _queue.add(id);
+      for (final MapEntry(key: id, value: owners) in outOfDate.entries) {
+        if (_queue.contains(id) || !_mayFetch(id)) continue;
+        _queue.add(id);
+        if (owners != null) _queueOwners[id] = owners;
       }
       // The old files go, with anything else nothing uses, so the storage
       // total is what's on the phone.
@@ -400,6 +408,10 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
   /// apart from files someone else here downloaded too.
   Future<void> forgetUser(String userId) async {
     await load();
+    _forgets[userId] = (_forgets[userId] ?? 0) + 1;
+    _failed.removeWhere(
+      (_, owners) => owners != null && owners.remove(userId) && owners.isEmpty,
+    );
     final gone = <String>{
       for (final id in {..._queue, ..._done.keys})
         if (_ownedBy(id, userId) && _dropOwner(id, userId)) id,
@@ -527,12 +539,18 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
     final id = entry.itemId;
     final removals = _removals[id] ?? 0;
     final removedAll = _removedAll;
+    // The account that asked, not whoever is signed in once it's here.
+    final owner = _userId();
+    final forgets = _forgets[owner] ?? 0;
     final file = await _fetchFile(entry, wifiOnly: false);
     if (file == null) throw const MediaUnavailable('download failed');
-    // Removed while it came: it plays this once, but isn't kept.
-    final wanted = (_removals[id] ?? 0) == removals && removedAll == _removedAll;
+    // Removed while it came, or its account deleted: it plays this once,
+    // but isn't kept.
+    final wanted = (_removals[id] ?? 0) == removals &&
+        removedAll == _removedAll &&
+        (_forgets[owner] ?? 0) == forgets;
     if (wanted) {
-      await _markIfComplete(id, owner: _userId());
+      await _markIfComplete(id, owner: owner);
     } else {
       _deferred.add(entry.ref.sha256);
     }
@@ -564,7 +582,8 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
       // Removed while it was downloading: nothing more to do.
       if (!_queue.contains(id)) continue;
       _queue.remove(id);
-      if (!ok) _failed.add(id);
+      final owners = _queueOwners.remove(id);
+      if (!ok) _failed[id] = owners;
       _publish();
       await _persist();
     }
@@ -838,8 +857,10 @@ class DownloadStore extends ValueNotifier<Map<String, DownloadState>> {
             bytes: _bytesOf(id),
             title: _titleOf(id),
           ),
-      for (final id in _failed)
-        if (!_done.containsKey(id) && !_queue.contains(id))
+      for (final MapEntry(key: id, value: owners) in _failed.entries)
+        if (!_done.containsKey(id) &&
+            !_queue.contains(id) &&
+            (owners == null || owners.contains(_userId())))
           id: DownloadState(
             DownloadStatus.failed,
             bytes: _bytesOf(id),

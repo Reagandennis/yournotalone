@@ -83,19 +83,30 @@ class MoodRepository {
     return [for (final row in rows) MoodEntry.fromMap(row)];
   }
 
+  /// Rows asked for at a time: the API answers at most 1,000 per request
+  /// (Supabase's default), so a longer list is fetched page by page.
+  static const _page = 1000;
+
   /// The dates of every check-in from the last [days] days, newest first:
   /// lighter than [fetchHistory], for counting a long streak.
   Future<List<DateTime>> fetchCheckInDates({required int days}) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) return const [];
     final since = addCalendarDays(DateTime.now(), -(days - 1));
-    final rows = await _client
-        .from('mood_entries')
-        .select('entry_date')
-        .eq('user_id', userId)
-        .gte('entry_date', dateKey(since))
-        .order('entry_date', ascending: false);
-    return [for (final row in rows) DateTime.parse(row['entry_date'] as String)];
+    final dates = <DateTime>[];
+    while (true) {
+      final rows = await _client
+          .from('mood_entries')
+          .select('entry_date')
+          .eq('user_id', userId)
+          .gte('entry_date', dateKey(since))
+          .order('entry_date', ascending: false)
+          .range(dates.length, dates.length + _page - 1);
+      dates.addAll([
+        for (final row in rows) DateTime.parse(row['entry_date'] as String),
+      ]);
+      if (rows.length < _page) return dates;
+    }
   }
 
   /// The run of days with a check-in up to today. [recent] is history

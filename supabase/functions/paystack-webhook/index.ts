@@ -6,16 +6,17 @@
 //                      The card's country is kept with the checkout
 //                      (paystack_record_card_country, 0036).
 //   refund.processed   a full refund (data.amount, in the currency's minor
-//                      unit, at least the checkout's amount; a refund with
-//                      no amount is taken as full) marks the checkout
-//                      refunded_at and puts the session back to unpaid
-//                      through record_therapy_refunds (migration 0012,
-//                      worded for Paystack in 0021; 0036 sets refunded_at
-//                      too), which emails the care team and the client. A
-//                      partial refund is only logged: the session stays
-//                      paid. Either way the checkout is never attached to a
-//                      session again once it's marked refunded (see
-//                      ../_shared/paystack.ts).
+//                      unit, at least the checkout's amount — or partial
+//                      refunds Paystack lists as processed that add up to
+//                      it; a refund with no amount is taken as full) marks
+//                      the checkout refunded_at and puts the session back
+//                      to unpaid through record_therapy_refunds (migration
+//                      0012, worded for Paystack in 0021; 0036 sets
+//                      refunded_at too), which emails the care team and the
+//                      client. A refund short of the full amount is only
+//                      logged: the session stays paid. Either way the
+//                      checkout is never attached to a session again once
+//                      it's marked refunded (see ../_shared/paystack.ts).
 //
 // Every event is checked against the x-paystack-signature header (HMAC
 // SHA-512 of the raw body with the secret key), and a charge is verified
@@ -32,6 +33,7 @@ import {
   type Item,
   PAYSTACK_SECRET_KEY,
   recordCardCountry,
+  refundedSoFar,
   settleCheckout,
   verifyTransaction,
 } from '../_shared/paystack.ts';
@@ -126,9 +128,20 @@ Deno.serve(async (req: Request) => {
           ? NaN
           : Number(raw);
         if (Number.isFinite(refundedAmount) && refundedAmount < checkout.amount) {
-          console.log('paystack-webhook: partial refund, session stays paid',
-            checkout.reference, refundedAmount, checkout.amount);
-          return json({ ok: true, partial: true });
+          // A transaction can be refunded in parts. Paystack's own list of
+          // its processed refunds is added up, so each counts once however
+          // often its webhook comes, and the one that reaches the full
+          // amount refunds the checkout.
+          const transaction = await verifyTransaction(checkout.reference);
+          const total = Math.max(
+            refundedAmount,
+            await refundedSoFar(transaction?.id ?? data.transaction?.id),
+          );
+          if (total < checkout.amount) {
+            console.log('paystack-webhook: partial refund, session stays paid',
+              checkout.reference, total, checkout.amount);
+            return json({ ok: true, partial: true });
+          }
         }
 
         const { error: markError } = await admin.from('paystack_checkouts')

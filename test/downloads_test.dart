@@ -669,6 +669,80 @@ void main() {
       await signIn('amina');
       expect(store.value, isEmpty);
     });
+
+    test('a failed download is shown only to whoever asked for it', () async {
+      transfer.server.remove('/${rain.ref.key}');
+      final store = shared();
+      await store.load();
+      await store.download(rain.itemId);
+      await store.idle();
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.failed);
+
+      await signIn('bo');
+      expect(store.value, isEmpty);
+      await signIn('amina');
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.failed);
+    });
+
+    test('a loop fetched to play is kept for whoever asked, not the next '
+        'person', () async {
+      final store = shared();
+      await store.load();
+      transfer.hold = Completer();
+      final playing = store.fetchNow(rain);
+      await pumpEventQueue();
+      await signIn('bo');
+      transfer.hold!.complete();
+      await playing;
+      expect(store.value, isEmpty);
+      await signIn('amina');
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+    });
+
+    test('a loop still coming when its account is deleted is not kept',
+        () async {
+      final store = shared();
+      await store.load();
+      transfer.hold = Completer();
+      final playing = store.fetchNow(rain);
+      await pumpEventQueue();
+      await signIn(null);
+      await store.forgetUser('amina');
+      transfer.hold!.complete();
+      await playing;
+      expect(store.downloaded, isEmpty);
+      await signIn('bo');
+      expect(store.value, isEmpty);
+    });
+
+    test('new audio from a catalogue update stays its owner\'s', () async {
+      final newRainBytes = utf8.encode('rain on a tin roof, re-recorded');
+      final newRain = _entry('sound:Rainfall', newRainBytes);
+      transfer.server['/${newRain.ref.key}'] = newRainBytes;
+      final before = shared();
+      await before.load();
+      await before.download(rain.itemId);
+      await before.idle();
+      before.dispose();
+
+      // Bo opens the app after the update.
+      signedIn = 'bo';
+      network.set([ConnectivityResult.mobile]);
+      final store = phone(
+        items: {...catalog, rain.itemId: [newRain]},
+        user: () => signedIn,
+        userChanges: auth.stream,
+      );
+      await store.load();
+      await store.idle();
+      expect(store.value, isEmpty, reason: 'Amina\'s queued replacement');
+      network.set([ConnectivityResult.wifi]);
+      await soon(() => fileOf(newRain).existsSync());
+      await store.idle();
+      expect(store.value, isEmpty);
+      await signIn('amina');
+      expect(store.stateOf(rain.itemId).status, DownloadStatus.done);
+    });
   });
 
   test('removing a download that is playing deletes it once let go',

@@ -91,7 +91,7 @@ class PurchasesService {
       await Purchases.configure(configuration);
       _configured = true;
       Purchases.addCustomerInfoUpdateListener(
-        (info) => unawaited(_onCustomerInfoForAccount(info)),
+        (info) => unawaited(_onCustomerInfoForAccount(info, _account)),
       );
       // Attach the identity listener before anything that needs the network:
       // with no cached customer info and no connection, getCustomerInfo
@@ -102,7 +102,7 @@ class PurchasesService {
       return;
     }
     try {
-      await _onCustomerInfoForAccount(await Purchases.getCustomerInfo());
+      await _fetchForAccount();
     } catch (e) {
       // Offline with nothing cached; the update listener fills this in
       // once RevenueCat is reachable.
@@ -156,12 +156,29 @@ class PurchasesService {
     unawaited(TrialReminder.sync(null));
   }
 
+  static String? get _account => Supabase.instance.client.auth.currentUser?.id;
+
+  /// Asks RevenueCat for the customer's info, for the account signed in as
+  /// it's asked.
+  Future<void> _fetchForAccount() async {
+    final requestedFor = _account;
+    await _onCustomerInfoForAccount(
+      await Purchases.getCustomerInfo(),
+      requestedFor,
+    );
+  }
+
   /// Applies [info] only while RevenueCat's customer is the signed-in
-  /// account (or an anonymous one, signed out). When the switch to a new
-  /// account failed (offline at sign-in on a shared phone), RevenueCat is
-  /// still the last person's customer, and their Premium must not carry
-  /// over to whoever is signed in now.
-  Future<void> _onCustomerInfoForAccount(CustomerInfo info) async {
+  /// account (or an anonymous one, signed out), and that is still the
+  /// account [requestedFor] that was signed in when it was asked for. When
+  /// the switch to a new account failed (offline at sign-in on a shared
+  /// phone), RevenueCat is still the last person's customer, and their
+  /// Premium must not carry over to whoever is signed in now; nor must an
+  /// answer that arrives after someone else has signed in.
+  Future<void> _onCustomerInfoForAccount(
+    CustomerInfo info,
+    String? requestedFor,
+  ) async {
     final String appUserId;
     try {
       appUserId = await Purchases.appUserID;
@@ -169,8 +186,9 @@ class PurchasesService {
       debugPrint('RevenueCat customer unknown: $e');
       return;
     }
-    final account = Supabase.instance.client.auth.currentUser?.id;
-    if (!customerMatchesAccount(appUserId: appUserId, accountId: account)) {
+    final account = _account;
+    if (account != requestedFor ||
+        !customerMatchesAccount(appUserId: appUserId, accountId: account)) {
       debugPrint('RevenueCat answer for another account, ignored');
       return;
     }
@@ -217,7 +235,7 @@ class PurchasesService {
     }
     if (refresh && _configured) {
       try {
-        await _onCustomerInfoForAccount(await Purchases.getCustomerInfo());
+        await _fetchForAccount();
       } catch (e) {
         debugPrint('RevenueCat customer info unavailable: $e');
       }
@@ -272,9 +290,9 @@ class PurchasesService {
   Future<bool> refreshEntitlement() async {
     if (!_configured) return isPro.value;
     try {
-      final userId = Supabase.instance.client.auth.currentUser?.id;
+      final userId = _account;
       if (userId != null) await ensureIdentity(userId);
-      await _onCustomerInfoForAccount(await Purchases.getCustomerInfo());
+      await _fetchForAccount();
     } catch (e) {
       debugPrint('RevenueCat entitlement refresh failed: $e');
     }
@@ -332,8 +350,9 @@ class PurchasesService {
 
   /// Re-syncs previous purchases (required by App Store rules).
   Future<bool> restore() async {
+    final requestedFor = _account;
     final info = await Purchases.restorePurchases();
-    await _onCustomerInfoForAccount(info);
+    await _onCustomerInfoForAccount(info, requestedFor);
     return isPro.value;
   }
 

@@ -304,7 +304,9 @@ test('audio that was free and turns premium loses its public copy', async () => 
   assert.equal(store.objects.has(publicKey), false, 'public copy deleted');
   assert.ok(store.objects.has(`yournotalone/staging/private/media/${ref1.sha256}.m4a`));
   // Deleted only after latest.json points at the premium copy, and logged.
-  assert.equal(store.calls.findIndex((c) => c.op === 'delete') > store.calls.findIndex((c) => c.key.endsWith(latestKey)), true);
+  const latestPut = store.calls.findIndex((c) => c.op === 'put' && c.key.endsWith(latestKey));
+  assert.ok(latestPut >= 0, 'latest.json written');
+  assert.ok(store.calls.findIndex((c) => c.op === 'delete') > latestPut);
   assert.ok(log.some((l) => /delete .*public copy of premium sound:Rainfall audio/.test(l)));
   // Nothing premium was ever put under the public prefix.
   assert.equal(store.puts().some((c) => c.key === `staging/media/${ref1.sha256}.m4a`), false);

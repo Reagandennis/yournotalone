@@ -103,9 +103,10 @@ export type SettleResult = 'paid' | 'not_paid' | 'refund_needed';
 /// signature has been checked). Returns `paid` when the session is now paid
 /// with this checkout, `not_paid` when the transaction hasn't succeeded or
 /// has been refunded (the checkout's refunded_at is set, or a session's
-/// refunded_payment_ref names it — both read fresh here, not taken from the
-/// caller), and `refund_needed` when it succeeded but the session can't
-/// take it — the care team has then been emailed to refund it.
+/// refunded_payment_ref names it — both read fresh, under the checkout's
+/// lock, by paystack_settle_checkout), and `refund_needed` when it
+/// succeeded but the session can't take it — the care team has then been
+/// emailed to refund it.
 export async function settleCheckout(
   admin: SupabaseClient,
   checkout: Checkout,
@@ -121,56 +122,22 @@ export async function settleCheckout(
     return 'not_paid';
   }
 
-  const ref = `paystack:${checkout.reference}`;
-
-  // Refunded already: the money went back, so it pays for nothing — and
-  // there's nothing for the care team to refund either.
-  const { data: current, error: currentError } = await admin
-    .from('paystack_checkouts')
-    .select('refunded_at')
-    .eq('reference', checkout.reference)
-    .maybeSingle();
-  if (currentError) throw currentError;
-  if (!current || current.refunded_at) return 'not_paid';
-  const { data: refunded, error: refundedError } = await admin
-    .from('therapy_requests')
-    .select('id')
-    .eq('refunded_payment_ref', ref)
-    .limit(1);
-  if (refundedError) throw refundedError;
-  if (refunded && refunded.length > 0) return 'not_paid';
-
   const paidAt = typeof transaction.paid_at === 'string'
     ? transaction.paid_at
     : new Date().toISOString();
 
-  await admin.from('paystack_checkouts')
-    .update({ paid_at: paidAt })
-    .eq('reference', checkout.reference)
-    .is('paid_at', null);
-
-  if (checkout.request_id && checkout.user_id) {
-    const { data: updated, error } = await admin
-      .from('therapy_requests')
-      .update({ payment_status: 'paid', payment_ref: ref, paid_at: paidAt })
-      .eq('id', checkout.request_id)
-      .eq('user_id', checkout.user_id)
-      .eq('payment_status', 'unpaid')
-      .in('status', ['awaiting_payment', 'pending', 'confirmed'])
-      .select('id');
-    // 23505: payment_ref is unique, so this checkout already paid for it.
-    if (error && error.code !== '23505') throw error;
-    if (updated && updated.length > 0) return 'paid';
-
-    const { data: session, error: lookupError } = await admin
-      .from('therapy_requests')
-      .select('payment_ref')
-      .eq('id', checkout.request_id)
-      .maybeSingle();
-    if (lookupError) throw lookupError;
-    // Already attached (the webhook and the app raced each other).
-    if (session?.payment_ref === ref) return 'paid';
-  }
+  // Refunded already (the checkout's refunded_at, or a session's
+  // refunded_payment_ref): the money went back, so it pays for nothing —
+  // and there's nothing for the care team to refund either. Checked and
+  // attached in one transaction, under a lock on the checkout row that a
+  // refund takes too (migration 0038), so a refund can't land between the
+  // check and the attach.
+  const { data: settled, error: settleError } = await admin.rpc('paystack_settle_checkout', {
+    p_reference: checkout.reference,
+    p_paid_at: paidAt,
+  });
+  if (settleError) throw settleError;
+  if (settled === 'paid' || settled === 'not_paid') return settled;
 
   // The session was cancelled, or was already paid some other way: the
   // money isn't paying for anything.
@@ -179,4 +146,18 @@ export async function settleCheckout(
   });
   if (notifyError) console.error('paystack: refund-needed email failed', notifyError);
   return 'refund_needed';
+}
+
+/// What Paystack has refunded on a transaction so far, in its minor unit:
+/// the processed refunds Paystack lists for it, each counted once however
+/// often its webhook comes. Throws when Paystack can't be asked.
+export async function refundedSoFar(transactionId: unknown): Promise<number> {
+  if (transactionId === undefined || transactionId === null || transactionId === '') return 0;
+  const refunds = await paystack(
+    `/refund?transaction=${encodeURIComponent(String(transactionId))}&perPage=100`,
+  );
+  const list: Item[] = Array.isArray(refunds) ? refunds : [];
+  return list
+    .filter((r) => String(r?.status ?? '').toLowerCase() === 'processed')
+    .reduce((sum, r) => sum + (Number(r?.amount) || 0), 0);
 }

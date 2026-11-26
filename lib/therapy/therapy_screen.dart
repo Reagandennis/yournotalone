@@ -109,18 +109,28 @@ class _TherapyScreenState extends State<TherapyScreen> {
     return at != null && _payments.pending.isFresh(at);
   }
 
+  /// Bumped by every mark or clear (before and after it's written), so a
+  /// refresh that read the pending checkouts before one doesn't put the
+  /// older list back.
+  int _awaitingChanges = 0;
+
   /// Treats [requestId] as paid for but unconfirmed, here and on disk.
-  Future<void> _markAwaiting(String requestId) async {
-    await _payments.pending.mark(requestId);
+  /// [at] is when the server says the checkout was opened, if it said.
+  Future<void> _markAwaiting(String requestId, {DateTime? at}) async {
+    _awaitingChanges++;
+    await _payments.pending.mark(requestId, at: at);
+    _awaitingChanges++;
     if (!mounted) return;
     setState(() => _awaitingVerification = {
       ..._awaitingVerification,
-      requestId: _payments.pending.now(),
+      requestId: at ?? _payments.pending.now(),
     });
   }
 
   Future<void> _clearAwaiting(String requestId) async {
+    _awaitingChanges++;
     await _payments.pending.clear(requestId);
+    _awaitingChanges++;
     if (!mounted) return;
     setState(() => _awaitingVerification = {
       for (final e in _awaitingVerification.entries)
@@ -182,11 +192,18 @@ class _TherapyScreenState extends State<TherapyScreen> {
           ? await _repo.fetchMyRatings()
           : const <String, int>{};
       final notificationsOn = await _notifications.isEnabled();
-      final awaiting = await _payments.pending.openedAmong([
-        for (final r in requests)
-          if (r.needsPayment) r.id,
-      ]);
       final price = await quote;
+      // Read last, and again if a checkout was marked or cleared while it
+      // was read, so this refresh never brings back an older list.
+      Map<String, DateTime> awaiting;
+      int changes;
+      do {
+        changes = _awaitingChanges;
+        awaiting = await _payments.pending.openedAmong([
+          for (final r in requests)
+            if (r.needsPayment) r.id,
+        ]);
+      } while (changes != _awaitingChanges);
       if (!mounted) return;
       setState(() {
         _setQuote(price);
@@ -403,7 +420,14 @@ class _TherapyScreenState extends State<TherapyScreen> {
         final bool paid;
         try {
           paid = await _payments.isPaid(request);
-        } catch (_) {
+        } catch (e) {
+          if (e is SessionAccessException && e.code == 'payment_in_progress') {
+            // Nothing paid yet, but a checkout still may be: the draft
+            // stays for it.
+            await _markAwaiting(request.id, at: e.openedAt);
+            if (mounted) _say(e.message);
+            return;
+          }
           // Can't tell. Within a checkout's window a payment may be on its
           // way, so the draft stays rather than a payment landing on a
           // discarded request; otherwise there's nothing to lose.
@@ -484,8 +508,8 @@ class _TherapyScreenState extends State<TherapyScreen> {
       if (!mounted) return null;
       if (e is SessionAccessException && e.code == 'payment_in_progress') {
         // The server won't open a second checkout while the last one may
-        // still be paid: wait for that one.
-        await _markAwaiting(request.id);
+        // still be paid: wait for that one, from when it was opened.
+        await _markAwaiting(request.id, at: e.openedAt);
         if (!mounted) return null;
         _say(e.message);
         return null;
@@ -524,8 +548,12 @@ class _TherapyScreenState extends State<TherapyScreen> {
       await _load(quiet: true);
     } on SessionAccessException catch (e) {
       // The server has looked and there's nothing to attach, so paying is
-      // back on the table.
+      // back on the table — unless a checkout may still be paid, which
+      // keeps "Check payment" up.
       if (e.code == 'no_payment_found') await _clearAwaiting(request.id);
+      if (e.code == 'payment_in_progress') {
+        await _markAwaiting(request.id, at: e.openedAt);
+      }
       if (mounted) _say(e.message);
     } catch (e) {
       if (mounted) {

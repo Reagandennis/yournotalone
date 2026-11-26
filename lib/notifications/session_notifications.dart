@@ -414,6 +414,11 @@ class SessionNotifications {
       return false;
     }
     await LocalNotifications.ensureInitialized();
+    final stored = await _scheduled();
+    final pending = await _pendingIds(stored);
+    // Read after the pending lookup: a reminder that fires during it is no
+    // longer pending, and must count as due, not as dropped (scheduling it
+    // again, now in the past, would fail the whole sync).
     final now = DateTime.now();
 
     // Reminders for what's coming up, scheduled on the phone itself.
@@ -423,7 +428,7 @@ class SessionNotifications {
     ];
     final plan = planSessionReminders(
       upcoming,
-      await _stillScheduled(await _scheduled(), now),
+      pending == null ? stored : keepStillScheduled(stored, pending, now),
       now,
     );
     for (final id in plan.cancel) {
@@ -492,25 +497,22 @@ class SessionNotifications {
     );
   }
 
-  /// The reminders in [stored] the phone still has, so one the system
-  /// dropped (an update, a reboot on some phones, "clear all", the app
-  /// force-stopped) is scheduled again rather than taken as done.
-  Future<Map<String, String>> _stillScheduled(
-    Map<String, String> stored,
-    DateTime now,
-  ) async {
-    if (stored.isEmpty) return stored;
-    final Set<int> pending;
+  /// The notification ids the phone still has pending, so a reminder in
+  /// [stored] the system dropped (an update, a reboot on some phones,
+  /// "clear all", the app force-stopped) is scheduled again rather than
+  /// taken as done (see [keepStillScheduled]). Null when there's nothing
+  /// stored, or the phone can't say: then [stored] is kept as it is.
+  Future<Set<int>?> _pendingIds(Map<String, String> stored) async {
+    if (stored.isEmpty) return null;
     try {
-      pending = {
+      return {
         for (final request in await _plugin.pendingNotificationRequests())
           request.id,
       };
     } catch (e) {
       debugPrint('Pending notifications unavailable: $e');
-      return stored;
+      return null;
     }
-    return keepStillScheduled(stored, pending, now);
   }
 
   /// `device_session_sync` over plain HTTP: the key is the credential.

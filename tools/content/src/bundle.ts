@@ -17,7 +17,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { credentialsFromEnv, envNames, envs, type EnvName, s3Endpoint } from './config.ts';
-import { repoRoot } from './content.ts';
+import { isMain, repoRoot } from './content.ts';
 import { latestKey, readLatest } from './publisher.ts';
 import { r2Store, type Store } from './store.ts';
 
@@ -49,7 +49,7 @@ async function fetchJson(url: string): Promise<unknown> {
   return res.json();
 }
 
-if (import.meta.main) {
+if (isMain(import.meta.url)) {
   const { values } = parseArgs({ options: { env: { type: 'string', default: 'production' } } });
   const name = values.env as EnvName;
   if (!envNames.includes(name)) {

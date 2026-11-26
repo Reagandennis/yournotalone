@@ -185,12 +185,20 @@ Deno.serve(async (req: Request) => {
   // window to someone tapping Join, so this is the server's best view of
   // attendance; close_out_elapsed_sessions (0016) decides from it what an
   // unfinished session becomes.
+  // Only for the booking checked above: if the session was moved or given
+  // to someone else meanwhile (which clears the joins, 0036), this matches
+  // nothing rather than counting a join for the new booking.
   const joinedColumn = role === 'client' ? 'client_joined_at' : 'therapist_joined_at';
-  const { error: joinError } = await admin
+  let joinUpdate = admin
     .from('therapy_requests')
     .update({ [joinedColumn]: new Date(now).toISOString() })
     .eq('id', session.id)
+    .eq('scheduled_at', session.scheduled_at)
     .is(joinedColumn, null);
+  joinUpdate = session.therapist_id
+    ? joinUpdate.eq('therapist_id', session.therapist_id)
+    : joinUpdate.is('therapist_id', null);
+  const { error: joinError } = await joinUpdate;
   if (joinError) console.error('session-token: recording join failed', session.id, joinError);
 
   return json({

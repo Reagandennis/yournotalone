@@ -514,10 +514,20 @@ class SessionCredentials {
 /// Why joining a call or confirming a payment was refused, from the Edge
 /// Function's error code.
 class SessionAccessException implements Exception {
-  const SessionAccessException(this.code, {this.opensAt, this.reference});
+  const SessionAccessException(
+    this.code, {
+    this.opensAt,
+    this.reference,
+    this.openedAt,
+  });
 
   final String code;
   final DateTime? opensAt;
+
+  /// When the checkout still in progress was opened, with
+  /// `payment_in_progress` (the server's clock), so the app waits for it
+  /// from then rather than from each time it hears about it.
+  final DateTime? openedAt;
 
   /// The Paystack reference of the checkout still in progress, with
   /// `payment_in_progress`.
@@ -728,9 +738,16 @@ class TherapyRepository {
     return checkoutPageFrom(data);
   }
 
-  /// Asks the server to find the Paystack payment for this session.
+  /// Asks the server to find the Paystack payment for this session. Throws
+  /// `no_payment_found`, or `payment_in_progress` while a checkout may
+  /// still be paid.
   Future<void> confirmPayment(String requestId) async {
-    await invokeSessionFunction(_client, 'paystack-payment', requestId);
+    await invokeSessionFunction(
+      _client,
+      'paystack-payment',
+      requestId,
+      extra: {'report_in_progress': true},
+    );
     Sentry.metrics.count('therapy.payment_confirmed', 1);
   }
 }
@@ -785,10 +802,14 @@ Future<Map<String, dynamic>> invokeSessionFunction(
     final reference = details is Map && details['reference'] is String
         ? details['reference'] as String
         : null;
+    final openedAt = details is Map && details['opened_at'] is String
+        ? DateTime.tryParse(details['opened_at'] as String)?.toLocal()
+        : null;
     throw SessionAccessException(
       code ?? 'unavailable',
       opensAt: opensAt,
       reference: reference,
+      openedAt: openedAt,
     );
   }
 }

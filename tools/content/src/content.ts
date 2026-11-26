@@ -1,8 +1,9 @@
 // Loads content/ and checks it: the schema of each file, then the rules
 // that span files (unique ids, course days that exist, prompts that line
 // up with their timings). See docs/backend-design.md §4 and §8.
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 import { z } from 'zod';
 
@@ -91,14 +92,34 @@ export function mediaPathProblem(path: string): string | null {
 }
 
 /// The absolute path of an item's audio file, refusing anything
-/// [mediaPathProblem] refuses or that would resolve outside [root].
+/// [mediaPathProblem] refuses or that would resolve outside [root] —
+/// through a symlink too, since the file read is the link's target. A
+/// file that isn't there is left for the caller to report.
 export function mediaFile(path: string, root = repoRoot): string {
   const problem = mediaPathProblem(path);
   const abs = resolve(root, path);
-  if (problem || !abs.startsWith(resolve(root) + sep)) {
+  // Where the file really is (itself when it isn't there or isn't linked).
+  const real = problem || !existsSync(abs) ? abs : realpathSync(abs);
+  const realRoot = existsSync(root) ? realpathSync(root) : resolve(root);
+  const outside = !abs.startsWith(resolve(root) + sep) ||
+    (real !== abs && !real.startsWith(realRoot + sep));
+  if (problem || outside) {
     throw new Error(`audio path ${JSON.stringify(path)} ${problem ?? 'is outside the repo'}`);
   }
   return abs;
+}
+
+/// Whether the module at [url] (its import.meta.url) is the script node
+/// was started with. import.meta.main needs Node 24.2, and package.json
+/// allows any Node 24.
+export function isMain(url: string): boolean {
+  const script = process.argv[1];
+  if (!script) return false;
+  try {
+    return realpathSync(script) === realpathSync(fileURLToPath(url));
+  } catch {
+    return false;
+  }
 }
 
 /// Names in content/masters.json (the recordings kept in R2).

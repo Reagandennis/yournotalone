@@ -86,4 +86,31 @@ void main() {
     );
     expect(reloads, 1);
   });
+
+  test('a reset that is refused again is reported, not taken as done',
+      () async {
+    final row = _Row('2026-11-01', 1);
+    await expectLater(
+      withClock(
+        Clock.fixed(today),
+        () => resetDayOneGuarded(
+          _habit('2026-10-01', 1),
+          today: '2026-11-26',
+          // Another device changes the row every time.
+          update: (_, _) async => false,
+          reload: row.reload,
+        ),
+      ),
+      throwsA(isA<RecoveryResetConflict>()),
+    );
+  });
+
+  test('a later day one from another device is not moved earlier', () async {
+    // Another phone, its date a day ahead, reset the count on the 27th.
+    final row = _Row('2026-11-27', 30);
+    await reset(row, _habit('2026-11-01', 5));
+    expect(row.day, '2026-11-27');
+    expect(row.best, 30);
+    expect(row.writes, isEmpty);
+  });
 }

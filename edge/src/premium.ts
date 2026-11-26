@@ -90,9 +90,10 @@ export async function isPremium(user: AuthUser, env: Env): Promise<boolean> {
     const cached = await cache.match(key);
     if (cached) {
       const answer = parseCached(await cached.text());
-      if (answer && answer.until > now) {
+      // Against the clock now, not before the read: it can expire meanwhile.
+      if (answer && answer.until > Date.now()) {
         remember(hash, answer);
-        return answer.premium;
+        return holds(answer);
       }
     }
   } catch (error) {
@@ -111,8 +112,8 @@ export async function isPremium(user: AuthUser, env: Env): Promise<boolean> {
     return false;
   }
 
-  const seconds = Math.floor((answer.until - now) / 1000);
-  if (seconds < 1) return answer.premium;
+  const seconds = Math.floor((answer.until - Date.now()) / 1000);
+  if (seconds < 1) return holds(answer);
   remember(hash, answer);
   try {
     await cache.put(
@@ -124,7 +125,12 @@ export async function isPremium(user: AuthUser, env: Env): Promise<boolean> {
   } catch (error) {
     logError('premium_cache_write_failed', error);
   }
-  return answer.premium;
+  return holds(answer);
+}
+
+/** Premium only while the answer's expiry is still ahead, checked as it's returned. */
+function holds(answer: Answer): boolean {
+  return answer.premium && answer.until > Date.now();
 }
 
 function remember(hash: string, answer: Answer): void {

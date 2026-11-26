@@ -187,6 +187,16 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
   int _suggestionsGen = 0;
   List<_QuickItem> _quick = _quickItems;
 
+  /// Bumped by every mood pick, so only a failed save of the latest pick
+  /// rolls Home back.
+  int _moodGen = 0;
+
+  /// Mood saves still on their way, and what Home showed as last saved
+  /// (before them, or after the latest one that went through): a failed
+  /// save rolls back to that, never to another pick still unsaved.
+  int _moodSaving = 0;
+  (int?, DateTime?, List<MoodEntry>?, Rhythm?)? _moodConfirmed;
+
   /// When Home last fetched what it shows. Home stays alive under the
   /// screens opened from it and behind the other tabs, so it fetches again
   /// when it's back in view; this keeps that from happening over and over.
@@ -433,7 +443,9 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
 
   Future<void> _selectMood(int index) async {
     final firstTime = _todaysMood == null;
-    final before = (_mood, _moodDay, _week, _rhythm);
+    final gen = ++_moodGen;
+    if (_moodSaving == 0) _moodConfirmed = (_mood, _moodDay, _week, _rhythm);
+    _moodSaving++;
     // Whatever was asked for before this check-in is out of date now.
     _suggestionsGen++;
     setState(() {
@@ -456,8 +468,14 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
     if (suggestions.enabled) {
       unawaited(suggestions.noteMood(index).then((_) => _loadSuggestions()));
     }
+    final after = (_mood, _moodDay, _week, _rhythm);
     try {
-      await _moodRepo.saveMood(index);
+      try {
+        await _moodRepo.saveMood(index);
+      } finally {
+        _moodSaving--;
+      }
+      _moodConfirmed = after;
       if (!mounted) return;
       if (index != 0 && firstTime) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -467,14 +485,15 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
       }
     } catch (e) {
       if (!mounted) return;
-      // Not saved, so it mustn't look saved: back to what Home showed
-      // before — unless another pick has been made since.
-      if (_mood == index) {
+      // Not saved, so it mustn't look saved: back to what was last saved
+      // — unless another pick has been made since (its own save decides).
+      final saved = _moodConfirmed;
+      if (gen == _moodGen && saved != null) {
         setState(() {
-          _mood = before.$1;
-          _moodDay = before.$2;
-          _week = before.$3;
-          _rhythm = before.$4;
+          _mood = saved.$1;
+          _moodDay = saved.$2;
+          _week = saved.$3;
+          _rhythm = saved.$4;
         });
       }
       ScaffoldMessenger.of(context).showSnackBar(

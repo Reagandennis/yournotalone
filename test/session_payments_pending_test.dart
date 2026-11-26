@@ -85,6 +85,19 @@ class _Server extends TherapyRepository {
   Future<void> cancelRequest(String id) async => cancelled.add(id);
 }
 
+/// Says a checkout opened at [opened] is still being paid.
+class _OpenedServer extends _Server {
+  _OpenedServer(super.request, this.opened);
+
+  final DateTime opened;
+
+  @override
+  Future<Uri?> startCheckout(String requestId) async {
+    checkouts++;
+    throw SessionAccessException('payment_in_progress', openedAt: opened);
+  }
+}
+
 class _Browser implements CheckoutBrowser {
   var opens = 0;
 
@@ -231,6 +244,17 @@ void main() {
       );
       expect((await pending.openedAmong(['r1'])).keys, ['r1']);
     });
+
+    test('a checkout in progress is waited for from when it opened', () async {
+      final pending = PendingCheckouts(clock: () => _now);
+      final opened = _now.subtract(const Duration(minutes: 9));
+      final server = _OpenedServer(_request(), opened);
+      await expectLater(
+        payments(server, pending: pending).pay(_request()),
+        throwsA(isA<SessionAccessException>()),
+      );
+      expect(await pending.openedAmong(['r1']), {'r1': opened});
+    });
   });
 
   group('the session card', () {
@@ -301,6 +325,34 @@ void main() {
       expect(server.confirms, 1);
       expect(server.cancelled, isEmpty);
       expect(find.textContaining('the request is kept'), findsOneWidget);
+    });
+
+    testWidgets('a check while a checkout is still being paid keeps '
+        '"Check payment"', (tester) async {
+      final server = _Server(_request());
+      final p = payments(server);
+      await p.pending.mark('r1');
+      await pumpScreen(tester, server, p);
+      server.confirmError = 'payment_in_progress';
+      await tester.tap(_button('Check payment'));
+      await _settle(tester);
+      expect(_button('Check payment'), findsOneWidget);
+      expect(_button('Pay \$20'), findsNothing);
+      expect((await p.pending.openedAmong(['r1'])).keys, ['r1']);
+    });
+
+    testWidgets('discarding a draft while its checkout is still being paid '
+        'keeps it, even after the window', (tester) async {
+      final draft = _request(status: 'awaiting_payment');
+      final server = _Server(draft, confirmError: 'payment_in_progress');
+      await pumpScreen(tester, server, payments(server));
+      await tester.tap(find.text('Discard').last);
+      await _settle(tester);
+      await tester.tap(find.text('Discard').last);
+      await _settle(tester);
+      expect(server.confirms, 1);
+      expect(server.cancelled, isEmpty);
+      expect(find.textContaining('still being processed'), findsOneWidget);
     });
 
     testWidgets('discarding a draft whose payment turned up keeps it', (

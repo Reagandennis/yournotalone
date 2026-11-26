@@ -120,8 +120,14 @@ text:
    to the language and go through the content: titles in lists, lessons,
    meditations, journal prompt starters and course notes.
 2. Edit `text.<locale>` in the YAML directly. Keep the fields and the
-   number of lines; `npm run check` says if they drift.
-3. Flip `reviewed: false` to `true` for each item read and commit the
+   number of lines; `npm run check` says if they drift. The build from
+   step 1 still shows the old wording: the app only has text that has been
+   published.
+3. To read an edit in the app before committing it, publish it to staging
+   and check it in a staging build (`tools/content/README.md`, "Workflow:
+   staging first"). Don't commit an `assets/catalog/bundled.json` built on
+   your machine: a local encode can name media that were never uploaded.
+4. Flip `reviewed: false` to `true` for each item read and commit the
    YAML. The next production publish updates `assets/catalog/bundled.json`.
 
 ## Backgrounds

@@ -919,8 +919,12 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
 /// Stops whatever is playing before someone signs out or deletes their
 /// account. Never fails: signing out mustn't hang on the audio.
 Future<void> stopAudioForSignOut() async {
+  // The loop and the meditation voice guide play on separate engines.
   try {
-    await SoundPlayer.instance.stop().timeout(const Duration(seconds: 3));
+    await Future.wait([
+      SoundPlayer.instance.stop(),
+      SoundPlayer.instance.stopNarration(),
+    ]).timeout(const Duration(seconds: 3));
   } catch (e) {
     debugPrint('Couldn\'t stop audio: $e');
   }

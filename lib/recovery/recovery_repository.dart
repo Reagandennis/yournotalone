@@ -317,5 +317,20 @@ Future<void> resetDayOneGuarded(
   if (await update(seen, valuesFor(seen))) return;
   final fresh = await reload();
   if (fresh == null) return;
-  await update(fresh, valuesFor(fresh));
+  // Already started over on [today] or later (another device, perhaps with
+  // its clock ahead): that day one stands, rather than an earlier one
+  // written over it.
+  if (fresh.day.compareTo(today) >= 0) return;
+  if (!await update(fresh, valuesFor(fresh))) {
+    throw const RecoveryResetConflict();
+  }
+}
+
+/// A reset that didn't land: the habit changed again on another device
+/// while it was being worked out. Nothing was written; try again.
+class RecoveryResetConflict implements Exception {
+  const RecoveryResetConflict();
+
+  @override
+  String toString() => 'RecoveryResetConflict';
 }

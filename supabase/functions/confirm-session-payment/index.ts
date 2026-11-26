@@ -161,10 +161,24 @@ Deno.serve(async (req: Request) => {
     console.error('confirm-session-payment: used lookup failed', usedError);
     return json({ error: 'lookup_failed' }, 500);
   }
+  // Every purchase a session has ever held (migration 0038): one set back to
+  // unpaid twice by an admin is no longer on the session itself.
+  const { data: heldRows, error: heldError } = await admin
+    .from('therapy_used_purchases')
+    .select('ref')
+    .eq('user_id', user.id)
+    .like('ref', 'revenuecat:%');
+  if (heldError) {
+    console.error('confirm-session-payment: used lookup failed', heldError);
+    return json({ error: 'lookup_failed' }, 500);
+  }
   // A purchase an admin set back to unpaid (0036) moves to refunded_payment_ref
   // but still belongs to that session, so it counts as used too.
   const used = new Set(
-    (usedRows ?? []).flatMap((row) => [row.payment_ref, row.refunded_payment_ref]).filter(Boolean),
+    [
+      ...(usedRows ?? []).flatMap((row) => [row.payment_ref, row.refunded_payment_ref]),
+      ...(heldRows ?? []).map((row) => row.ref),
+    ].filter(Boolean),
   );
 
   // Oldest unused purchase first, so a payment that never got attached to
