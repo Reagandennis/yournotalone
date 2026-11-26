@@ -18,7 +18,11 @@ import '../discover/content_widgets.dart';
 import '../discover/goals.dart';
 import '../discover/recommendations.dart';
 import '../discover/saved_store.dart';
+import '../discover/taste_store.dart';
 import '../discover/usage_store.dart';
+import '../engagement/engagement_service.dart';
+import '../engagement/night_card.dart';
+import '../health/health_card.dart';
 import '../journal/journal_screen.dart';
 import '../journal/new_entry.dart';
 import '../meditation/meditations_screen.dart';
@@ -198,6 +202,8 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
     super.initState();
     _lifecycle = AppLifecycleListener(onResume: _refresh);
     widget.reselected?.addListener(_refresh);
+    // "Not for me" and close-out answers change what's suggested.
+    TasteStore.instance.addListener(_tasteChanged);
     _load();
     (widget.therapyPrice ??
             () async => loadTherapyPriceQuote(TherapyRepository()))()
@@ -235,6 +241,7 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
   void dispose() {
     appRouteObserver.unsubscribe(this);
     widget.reselected?.removeListener(_refresh);
+    TasteStore.instance.removeListener(_tasteChanged);
     _lifecycle.dispose();
     super.dispose();
   }
@@ -337,6 +344,10 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
       if (r.reasonKey != 'dayPart' && r.reasonKey != 'fallback')
         r.id: ?r.reasonText(l10n),
   };
+
+  void _tasteChanged() {
+    if (mounted) setState(() {});
+  }
 
   RecommendationsClient get _recommendations =>
       widget.recommendations ?? RecommendationsClient.instance;
@@ -444,6 +455,7 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
     }
     try {
       await _moodRepo.saveMood(index);
+      unawaited(EngagementService.instance.noteActivity());
       if (!mounted) return;
       if (index != 0 && firstTime) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -654,20 +666,25 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
           ),
         ),
         const SizedBox(height: 8),
-        ContentRow(item: picks.first, source: 'home:mood'),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () => Navigator.of(
-              context,
-            ).push(ContentListScreen.route(ContentListScreen.forNeed(need))),
-            child: Text(
-              context.l10n.homeMoreForNeed(
-                context.l10n.midSentence(need.label(context.l10n)),
+        ContentRow(item: picks.first, source: 'home:mood', suggested: true),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            NotForMeButton(item: picks.first, source: 'home:mood'),
+            Flexible(
+              child: TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  ContentListScreen.route(ContentListScreen.forNeed(need)),
+                ),
+                child: Text(
+                  context.l10n.homeMoreForNeed(
+                    context.l10n.midSentence(need.label(context.l10n)),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                ),
               ),
-              style: const TextStyle(fontSize: 13),
             ),
-          ),
+          ],
         ),
       ],
     );
@@ -1265,7 +1282,11 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
                   ),
                 ),
                 const SizedBox(height: 8),
-                ContentRow(item: practise.first, source: 'home:after_session'),
+                ContentRow(
+                  item: practise.first,
+                  source: 'home:after_session',
+                  suggested: true,
+                ),
               ],
             ],
           ),
@@ -1381,13 +1402,15 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
 
   Widget _page(BuildContext context, bool premium) {
     final c = context.brand;
-    final now = DateTime.now();
+    final now = clock.now();
     final today = dailyPick(now: now, premium: premium);
     final dayPart = DayPart.of(now);
     final goals = userGoals();
+    final night = dayPart == DayPart.night;
     final fromWorker = itemsForRecommendations(
       _suggested,
-      exclude: {?today?.id},
+      // The server doesn't know what they turned down here.
+      exclude: {?today?.id, ...TasteStore.instance.current.dismissed},
     );
     final forNow =
         fromWorker ??
@@ -1458,7 +1481,14 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
         ];
         final todayBlock = <Widget>[
           const SizedBox(height: 20),
-          if (today != null) _todayCard(today),
+          // In the middle of the night, one quiet thing instead of the
+          // day's data and reading.
+          if (night)
+            NightCard(now: now, premium: premium)
+          else ...[
+            const HealthCard(),
+            if (today != null) _todayCard(today),
+          ],
           if (course != null) ...[
             const SizedBox(height: 12),
             CourseCard(course: course, suggested: active == null),
@@ -1472,6 +1502,7 @@ class _HomeTabState extends State<HomeTab> with RouteAware {
             ContentStrip(
               items: forNow,
               source: 'home:${dayPart.name}',
+              suggested: true,
               // Only the Worker says why; the on-device order doesn't.
               reasons: fromWorker == null ? const {} : _reasons(context.l10n),
             ),

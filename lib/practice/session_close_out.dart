@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../billing/nudges.dart';
 import '../billing/pricing_copy.dart';
 import '../brand.dart';
+import '../discover/taste_store.dart';
 import '../home/home_ui.dart';
 import '../journal/new_entry.dart';
 import '../l10n/l10n.dart';
@@ -87,6 +88,8 @@ class _SessionCloseOutState extends State<SessionCloseOut> {
       slug: widget.slug ?? widget.title,
       feeling: feeling,
     );
+    // Suggestions lean on the answer from now on.
+    if (widget.feelings == null) unawaited(TasteStore.instance.load());
   }
 
   Widget _choice(Feeling feeling, IconData icon) {

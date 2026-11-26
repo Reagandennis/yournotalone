@@ -14,7 +14,7 @@ const legalEntityAddress = '179 Runda Drive, Nairobi, Kenya';
 const legalContactEmail = 'reaganprezzo@gmail.com';
 const legalGoverningCountry = 'Kenya';
 
-const legalLastUpdated = '19 November 2026';
+const legalLastUpdated = '25 November 2026';
 
 class LegalDoc {
   const LegalDoc({
@@ -90,6 +90,12 @@ final privacyPolicy = LegalDoc(
           'mobile-money or card payment itself; we keep the payment\'s '
           'reference, amount and date as a purchase record. We never see or '
           'store your card or mobile-money details.\n\n'
+          'App activity — the days you open the app. We use them to tell how '
+          'long you\'ve been away, to send at most two emails when you have '
+          'been (see "Emails when you\'ve been away" below), and, without '
+          'names, to see whether the app helps people keep coming back.\n\n'
+          'Apple Health and Health Connect — only if you connect them, and '
+          'never sent to us: see the section on them below.\n\n'
           'Technical data — the minimum needed to run a secure service, '
           'such as authentication tokens and server logs, and a random key '
           'for this installation that lets it collect notifications about '
@@ -113,6 +119,44 @@ final privacyPolicy = LegalDoc(
           'Your journal is private to you. Our team does not read your '
           'entries; access is restricted by row-level security so that only '
           'your signed-in account can retrieve them.',
+    ),
+    LegalSection(
+      'Apple Health and Health Connect',
+      'If you connect Apple Health (iPhone) or Health Connect (Android), '
+          'the app reads your sleep (how long and when), your steps, your '
+          'heart rate variability and your resting heart rate, and saves the '
+          'meditations and breathing sessions you finish as mindful '
+          'minutes. You choose this in the app, after it tells you what is '
+          'read and why, and then again in your phone\'s own permission '
+          'screen. You can allow some types and not others.\n\n'
+          'Why: to suggest what fits the night and the day you\'ve had — a '
+          'wind-down after a short night, a calming exercise when your heart '
+          'readings are off your usual — and to show you how your sleep, '
+          'movement and practice go with your moods. The app compares your '
+          'data only with your own usual. It does not diagnose anything and '
+          'is not a medical device.\n\n'
+          'It stays on your phone. This data is read and worked on on your '
+          'device only. It is never sent to us, to our service providers or '
+          'to anyone else, never stored in the app\'s own storage, never '
+          'used for advertising, marketing or data mining, and never sold. '
+          'If you add our home-screen widget, it can show last night\'s sleep '
+          'length on your home screen; you can turn that off.\n\n'
+          'Legal basis: your explicit consent (Art. 9(2)(a) GDPR). You can '
+          'withdraw it at any time with Disconnect in the app (Settings → '
+          'Apple Health / Health Connect), and in Health Connect or in '
+          'Settings → Health → Data Access & Devices on iPhone.',
+    ),
+    LegalSection(
+      'Emails when you\'ve been away',
+      'If you haven\'t used the app for 10 days we may send you one email, '
+          'and one more after 30 days, and then no more until you\'re back. '
+          'They say that your things are still there and where to find '
+          'support. Legal basis: our legitimate interest in helping people '
+          'who signed up get the use of the app (Art. 6(1)(f) GDPR). Every '
+          'one has a link that stops them at once, and you can turn them off '
+          'in the app under Settings → Reminders. One account in ten gets '
+          'none of these emails or the app\'s own nudges, so we can measure '
+          'whether they help.',
     ),
     LegalSection(
       'Why we process your data (legal bases)',

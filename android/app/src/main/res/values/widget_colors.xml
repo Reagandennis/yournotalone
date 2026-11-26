@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The home-screen widgets' colours, from lib/brand.dart: paper and ink by
+     day, the logo navy at night (values-night). -->
+<resources>
+    <color name="widget_background">#FFFFFF</color>
+    <color name="widget_ink">#1A2238</color>
+    <color name="widget_muted">#5E6576</color>
+    <color name="widget_accent">#3764CD</color>
+    <color name="widget_on_accent">#FFFFFF</color>
+    <color name="widget_dot_off">#E6E1D9</color>
+    <color name="widget_divider">#E6E1D9</color>
+    <color name="widget_pillar_red">#E12D23</color>
+    <color name="widget_pillar_blue">#3764CD</color>
+    <color name="widget_pillar_black">#1A2238</color>
+    <color name="widget_pillar_yellow">#FAB414</color>
+</resources>

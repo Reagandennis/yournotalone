@@ -5843,6 +5843,396 @@ class AppLocalizationsZh extends AppLocalizations {
   String therapyFlowChargeNote(String charge) {
     return 'Paystack 将按 $charge 扣款。你的银行会进行换算，可能会收取少量手续费。';
   }
+
+  @override
+  String get widgetThisWeek => '本周';
+
+  @override
+  String widgetDaysOfGoal(int days, int goal) {
+    return '$days/$goal 天';
+  }
+
+  @override
+  String get widgetGoalMet => '本周目标已达成';
+
+  @override
+  String get widgetCheckIn => '签到';
+
+  @override
+  String get widgetCheckedIn => '今天已签到';
+
+  @override
+  String get widgetForYou => '今日推荐';
+
+  @override
+  String get widgetOpenForPick => '打开应用查看今日推荐';
+
+  @override
+  String widgetSleepLine(int hours, int minutes) {
+    return '睡眠 $hours 小时 $minutes 分钟';
+  }
+
+  @override
+  String get nudgeChannelName => '建议与问候';
+
+  @override
+  String get nudgeChannelDescription => '当你一段时间没来时，发几条温和的提醒。每天最多一条。';
+
+  @override
+  String nudgeCourseTitle(int day, String course) {
+    return '“$course”第 $day 天已就绪';
+  }
+
+  @override
+  String get nudgeCourseBody => '几分钟就好，今天什么时候方便都行。';
+
+  @override
+  String get nudgeSuggestionTitle => '留几分钟给自己';
+
+  @override
+  String nudgeSuggestionBody(String title, String meta) {
+    return '试试“$title” · $meta';
+  }
+
+  @override
+  String get nudgeGentleTitle => '最近还好吗？';
+
+  @override
+  String get nudgeGentleBody => '花十秒签到一下，也算数。';
+
+  @override
+  String get nudgeSavedTitle => '我们为你保留了进度';
+
+  @override
+  String nudgeSavedCourseBody(int day, String course) {
+    return '“$course”第 $day 天随时等你。';
+  }
+
+  @override
+  String nudgeSavedNewBody(String title) {
+    return '你上次来之后的新内容：“$title”。';
+  }
+
+  @override
+  String get nudgeSavedBody => '你的日记、签到和进度都还在原处。';
+
+  @override
+  String get nudgeStillHereTitle => '我们一直都在';
+
+  @override
+  String nudgeStillHereBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '你已经有 $count 天为自己留出时间。准备好了的话，一小步就够了。',
+      zero: '准备好了的话，三分钟呼吸练习是个好开始。',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nudgeLastTitle => '等你准备好';
+
+  @override
+  String get nudgeLastBody => '这是我们暂时的最后一条消息。你的空间一直为你保留。';
+
+  @override
+  String get nudgeSupportTitle => '我们惦记着你';
+
+  @override
+  String get nudgeSupportBody => '如果感到沉重，能帮助你的人就在一触之间。';
+
+  @override
+  String remindersCheckinBodyCourse(int day, String course) {
+    return '有空的话，“$course”第 $day 天也已就绪。';
+  }
+
+  @override
+  String get remindersCheckinBodyAlt => '点一下：今天过得怎么样？';
+
+  @override
+  String get remindersCheckinBodyAlt2 => '无论今天感觉如何，都值得留意一下。';
+
+  @override
+  String get remindersJournalBodyAlt => '今天有什么想记住的事吗？';
+
+  @override
+  String get remindersJournalBodyAlt2 => '写几行就够了，没有别人会看到。';
+
+  @override
+  String get remindersWindDownBodyAlt => '放下屏幕，调暗灯光，接下来交给你的计划。';
+
+  @override
+  String get remindersWindDownBodyAlt2 => '为明天开个好头：现在开始放松吧。';
+
+  @override
+  String get remindersPledgeBodyAlt => '只为今天。点此许下你的承诺。';
+
+  @override
+  String get remindersBackoffFootnote => '如果一周没有打开应用，提醒会改为隔天一次，两周后暂停，直到你回来。';
+
+  @override
+  String get engagementSettingsHeading => '当你一段时间没来时';
+
+  @override
+  String get engagementNudgesLabel => '温和问候';
+
+  @override
+  String get engagementNudgesDescription =>
+      '如果你一段时间没打开应用，会收到几条提醒，之后就停止。每天最多一条，咨询前后的提醒除外。';
+
+  @override
+  String get engagementEmailsLabel => '久未登录时的邮件';
+
+  @override
+  String get engagementEmailsDescription => '最多两封，分别在离开 10 天和 30 天后。每封都附有退订链接。';
+
+  @override
+  String get engagementSaveFailed => '保存失败，请检查网络后重试。';
+
+  @override
+  String get nextStepShortSleep => '昨晚的睡眠比你平时短。';
+
+  @override
+  String get nextStepLateNight => '你比平时睡得晚。';
+
+  @override
+  String get nextStepBodyUnderStrain => '你今天的心率数据不在平时的范围内。';
+
+  @override
+  String get nextStepQuietDay => '昨天比平时安静一些。';
+
+  @override
+  String get nextStepActiveDay => '昨天活动量很大，真棒。';
+
+  @override
+  String get nextStepRestedNight => '你昨晚睡得不错。';
+
+  @override
+  String nextStepCourse(int day, String course) {
+    return '“$course”第 $day 天';
+  }
+
+  @override
+  String get nextStepGoals => '根据你的目标挑选';
+
+  @override
+  String get nextStepTimeOfDay => '适合此时此刻';
+
+  @override
+  String healthConnectTitle(String platform) {
+    return '关联 $platform';
+  }
+
+  @override
+  String get healthIntro => '让你的睡眠和活动来决定应用的推荐，并看看你的日常与心情之间的关系。';
+
+  @override
+  String get healthReadHeading => '应用读取的内容';
+
+  @override
+  String get healthReadSleep => '睡眠';
+
+  @override
+  String get healthReadSleepDetail => '你睡了多久、何时入睡，用来推荐适合你这一夜的内容。';
+
+  @override
+  String get healthReadSteps => '步数';
+
+  @override
+  String get healthReadStepsDetail => '你每天的活跃程度，显示在你的心情旁边。';
+
+  @override
+  String get healthReadHeart => '心率变异性和静息心率';
+
+  @override
+  String get healthReadHeartDetail => '仅用于发现它们何时偏离你平时的水平，以便优先推荐放松练习。';
+
+  @override
+  String get healthWriteHeading => '应用保存的内容';
+
+  @override
+  String get healthWriteMindful => '正念分钟数';
+
+  @override
+  String get healthWriteMindfulDetail => '你在这里完成的每次冥想和呼吸练习。';
+
+  @override
+  String get healthPrivacyTitle => '数据只留在你的手机上';
+
+  @override
+  String get healthPrivacyBody =>
+      '你的健康数据只在这部手机上读取，绝不会发送给我们或任何人，绝不会用于广告，你可以随时断开连接。';
+
+  @override
+  String get healthNotMedical =>
+      '应用会将你的数据与你自己平时的水平比较，以推荐有帮助的内容。这不是医疗建议，也无法做出任何诊断。';
+
+  @override
+  String get healthInstallButton => '获取 Health Connect';
+
+  @override
+  String get healthInstallBody =>
+      '需要先从 Google Play 安装或更新 Health Connect，然后再回到这里。';
+
+  @override
+  String healthUnavailable(String platform) {
+    return '此设备无法使用 $platform。';
+  }
+
+  @override
+  String healthConnectFailed(String platform) {
+    return '未连接任何数据。你可以重试，或在 $platform 中允许访问。';
+  }
+
+  @override
+  String get healthConnectedTitle => '睡眠、活动与你';
+
+  @override
+  String get healthLastNight => '昨晚';
+
+  @override
+  String healthSleepValue(int hours, int minutes) {
+    return '$hours 小时 $minutes 分钟';
+  }
+
+  @override
+  String get healthNoSleep => '无睡眠记录';
+
+  @override
+  String get healthYesterday => '昨天';
+
+  @override
+  String healthStepsValue(String steps) {
+    return '$steps 步';
+  }
+
+  @override
+  String get healthNoSteps => '无步数记录';
+
+  @override
+  String get healthWeekSleep => '最近 7 晚的睡眠';
+
+  @override
+  String get healthWeekSteps => '最近 7 天的步数';
+
+  @override
+  String healthAverage(String value) {
+    return '平均 $value';
+  }
+
+  @override
+  String get healthOpen => '打开';
+
+  @override
+  String get healthMoodLinksHeading => '你的日常与心情';
+
+  @override
+  String moodLinkSleep(String withValue, String withoutValue) {
+    return '睡满 7 小时及以上的夜晚之后，你的心情平均为 $withValue/5；睡得更少时为 $withoutValue/5。';
+  }
+
+  @override
+  String moodLinkMovement(String withValue, String withoutValue) {
+    return '在你更活跃的日子里，心情平均为 $withValue/5；较安静的日子为 $withoutValue/5。';
+  }
+
+  @override
+  String moodLinkPractice(String withValue, String withoutValue) {
+    return '在做过冥想或呼吸练习的日子里，心情平均为 $withValue/5；没有练习的日子为 $withoutValue/5。';
+  }
+
+  @override
+  String get moodLinkFootnote => '这是你自己签到中的规律，而非因果关系，会随时间变化。';
+
+  @override
+  String get moodLinksNotYet => '在签到并同步睡眠和步数几周后，规律就会显示在这里。';
+
+  @override
+  String get moodLinksLocked => '看看你的睡眠、运动和练习如何与心情相关。';
+
+  @override
+  String get healthWidgetSleep => '在主屏幕小组件上显示昨晚的睡眠';
+
+  @override
+  String get healthMindfulOn => '你完成的冥想和呼吸练习会保存为正念分钟数。';
+
+  @override
+  String get healthMindfulUnavailable =>
+      '此手机的 Health Connect 暂时无法保存正念分钟数，系统更新后可能支持。';
+
+  @override
+  String get healthDisconnect => '断开连接';
+
+  @override
+  String get healthDisconnectIos => '如需完全移除应用的访问权限，请前往“设置”→“健康”→“数据访问与设备”。';
+
+  @override
+  String healthDisconnected(String platform) {
+    return '已断开 $platform，不再读取任何数据。';
+  }
+
+  @override
+  String get healthInviteTitle => '契合你一天的推荐';
+
+  @override
+  String healthInviteBody(String platform) {
+    return '关联 $platform，让你的睡眠和活动决定这里显示的内容。';
+  }
+
+  @override
+  String get healthInviteConnect => '关联';
+
+  @override
+  String get healthInviteLater => '以后再说';
+
+  @override
+  String get healthCardTitle => '睡眠与活动';
+
+  @override
+  String get healthStatusConnected => '已连接';
+
+  @override
+  String get healthStatusNotConnected => '未连接';
+
+  @override
+  String get contentNotForMe => '不适合我';
+
+  @override
+  String get contentNotForMeSub => '接下来一个月推荐别的内容';
+
+  @override
+  String get contentNotForMeDone => '好的，之后会推荐别的内容。';
+
+  @override
+  String get contentNotForMeUndo => '撤销';
+
+  @override
+  String get nextStepNight => '安静的内容，帮你重新入睡。不用读任何东西。';
+
+  @override
+  String get nextStepHelpedBefore => '上次做完后你感觉好些了';
+
+  @override
+  String get nightCardTitle => '睡不着？';
+
+  @override
+  String get notificationPrepTitle => '你的咨询一小时后开始';
+
+  @override
+  String get notificationPrepBody => '花一分钟写下你想聊的内容，通话开始时就不会忘。';
+
+  @override
+  String get notificationReflectTitle => '咨询之后';
+
+  @override
+  String get notificationReflectBody => '写几句让你印象深的内容，能帮你记住它。';
+
+  @override
+  String get homeAfterSessionJournalTitle => '咨询之后';
+
+  @override
+  String get homeAfterSessionJournalSeed => '这次咨询让我印象深的是：';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).

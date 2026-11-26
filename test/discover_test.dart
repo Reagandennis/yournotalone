@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import 'package:yournotalone/content/content_catalog.dart';
 import 'package:yournotalone/discover/content_index.dart';
 import 'package:yournotalone/discover/content_tags.dart';
 import 'package:yournotalone/discover/usage_store.dart';
+import 'package:yournotalone/engagement/next_step.dart';
 import 'package:yournotalone/home/home_shell.dart';
 import 'package:yournotalone/home/home_tab.dart';
 import 'package:yournotalone/practice/practice_repository.dart';
@@ -252,10 +254,28 @@ void main() {
     });
 
     testWidgets('shows today\'s prompt or read', (tester) async {
-      await tester.pumpWidget(home());
-      await tester.pumpAndSettle();
-      final pick = dailyPick(now: DateTime.now(), premium: false);
-      expect(find.text(pick!.title), findsWidgets);
+      final midday = DateTime(2026, 11, 25, 12);
+      await withClock(Clock.fixed(midday), () async {
+        await tester.pumpWidget(home());
+        await tester.pumpAndSettle();
+        final pick = dailyPick(now: midday, premium: false);
+        expect(find.text(pick!.title), findsWidgets);
+      });
+    });
+
+    testWidgets('in the middle of the night, one quiet thing instead', (
+      tester,
+    ) async {
+      final threeAm = DateTime(2026, 11, 25, 3);
+      await withClock(Clock.fixed(threeAm), () async {
+        await tester.pumpWidget(home());
+        await tester.pumpAndSettle();
+        expect(find.text('CAN’T SLEEP?'), findsOneWidget);
+        final step = chooseNextStep(now: threeAm, premium: false)!;
+        expect(find.text(step.item.title), findsWidgets);
+        final read = dailyPick(now: threeAm, premium: false)!;
+        expect(find.text(read.title), findsNothing);
+      });
     });
 
     testWidgets('builds without today\'s card when there is nothing to pick', (

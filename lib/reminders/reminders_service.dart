@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../brand.dart';
+import '../courses/course_progress.dart';
+import '../engagement/engagement.dart';
+import '../engagement/nudge_plan.dart';
 import '../l10n/l10n.dart';
 import '../notifications/local_notifications.dart';
 
@@ -140,48 +144,56 @@ class RemindersService {
 
   // ── Scheduling ─────────────────────────────────────────────────
 
-  tz.TZDateTime _nextInstance(TimeOfDay time) {
-    final now = tz.TZDateTime.now(tz.local);
-    var scheduled = tz.TZDateTime(
-        tz.local, now.year, now.month, now.day, time.hour, time.minute);
-    if (!scheduled.isAfter(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
-    }
-    return scheduled;
-  }
+  /// The words a reminder can carry, rotated day by day.
+  List<String> _bodies(ReminderKind kind, AppLocalizations l10n) =>
+      switch (kind) {
+        ReminderKind.checkin => [
+          l10n.remindersCheckinBody,
+          l10n.remindersCheckinBodyAlt,
+          l10n.remindersCheckinBodyAlt2,
+        ],
+        ReminderKind.pledge => [
+          l10n.remindersPledgeBody,
+          l10n.remindersPledgeBodyAlt,
+        ],
+        ReminderKind.journal => [
+          l10n.remindersJournalBody,
+          l10n.remindersJournalBodyAlt,
+          l10n.remindersJournalBodyAlt2,
+        ],
+        ReminderKind.windDown => [
+          l10n.remindersWindDownBody,
+          l10n.remindersWindDownBodyAlt,
+          l10n.remindersWindDownBodyAlt2,
+        ],
+      };
+
+  NotificationDetails _details(AppLocalizations l10n) => NotificationDetails(
+    android: AndroidNotificationDetails(
+      'daily_reminders',
+      l10n.remindersChannelName,
+      channelDescription: l10n.remindersChannelDescription,
+      importance: Importance.defaultImportance,
+      priority: Priority.defaultPriority,
+    ),
+    iOS: const DarwinNotificationDetails(),
+    macOS: const DarwinNotificationDetails(),
+  );
 
   Future<void> enable(ReminderKind kind, TimeOfDay time) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_key(kind, 'enabled'), true);
     await prefs.setInt(_key(kind, 'hour'), time.hour);
     await prefs.setInt(_key(kind, 'minute'), time.minute);
-    if (_silent) return;
-    await _init();
-    // Written now, in the app's language at the time; turning a reminder
-    // off and on again rewrites it.
-    final l10n = currentL10n();
-    await _plugin.zonedSchedule(
-      id: kind.id,
-      title: kind.notificationTitle(l10n),
-      body: kind.notificationBody(l10n),
-      scheduledDate: _nextInstance(time),
-      notificationDetails: NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_reminders',
-          l10n.remindersChannelName,
-          channelDescription: l10n.remindersChannelDescription,
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
-        ),
-        iOS: const DarwinNotificationDetails(),
-        macOS: const DarwinNotificationDetails(),
-      ),
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time, // repeat daily
-      // Tapping it opens what it's about (see openReminderTarget).
-      payload: '$reminderPayloadPrefix${kind.name}',
-    );
+    await refreshScheduled();
   }
+
+  /// Every id a reminder of [kind] can be scheduled under: the repeating
+  /// one from before the window, and each day of the window.
+  Iterable<int> _ids(ReminderKind kind) => [
+    kind.id,
+    for (final offset in reminderOffsets) reminderWindowId(kind.id, offset),
+  ];
 
   /// Takes every daily reminder off the phone without changing what's
   /// saved: on sign-out and account deletion, so nobody else is reminded of
@@ -192,30 +204,115 @@ class RemindersService {
     try {
       await _init();
       for (final kind in ReminderKind.values) {
-        await _plugin.cancel(id: kind.id);
+        for (final id in _ids(kind)) {
+          await _plugin.cancel(id: id);
+        }
       }
     } catch (e) {
       debugPrint('Couldn\'t cancel reminders: $e');
     }
   }
 
-  /// Schedules every enabled reminder again, so ones set up before
-  /// reminders carried a payload open the right screen too. Never throws.
+  /// Puts every enabled reminder on the phone's schedule again, from now.
+  /// Called whenever the app opens, so the two-week window (see
+  /// [planReminders]) starts over for anyone still using the app and runs
+  /// out for anyone who has stopped. Never throws.
+  ///
+  /// The holdout group (see [isEngagementHoldout]) keeps the reminders as
+  /// they were before: one notification repeating every day.
   Future<void> refreshScheduled() async {
-    for (final kind in ReminderKind.values) {
-      try {
-        if (await isEnabled(kind)) await enable(kind, await timeOf(kind));
-      } catch (e) {
-        debugPrint('Couldn\'t refresh the ${kind.name} reminder: $e');
+    if (_silent) return;
+    try {
+      await _init();
+      // Written now, in the app's language at the time.
+      final l10n = currentL10n();
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+      final holdout = userId != null && isEngagementHoldout(userId);
+      final settings = <ReminderSetting>[];
+      for (final kind in ReminderKind.values) {
+        for (final id in _ids(kind)) {
+          await _plugin.cancel(id: id);
+        }
+        if (!await isEnabled(kind)) continue;
+        final time = await timeOf(kind);
+        if (holdout) {
+          await _scheduleRepeating(kind, time, l10n);
+          continue;
+        }
+        settings.add(
+          ReminderSetting(
+            kindName: kind.name,
+            kindId: kind.id,
+            hour: time.hour,
+            minute: time.minute,
+            title: kind.notificationTitle(l10n),
+            bodies: _bodies(kind, l10n),
+            firstBody: kind == ReminderKind.checkin
+                ? _courseLine(l10n)
+                : null,
+            // Tapping it opens what it's about (see openReminderTarget).
+            payload: '$reminderPayloadPrefix${kind.name}',
+          ),
+        );
       }
+      for (final n in planReminders(now: DateTime.now(), reminders: settings)) {
+        await _plugin.zonedSchedule(
+          id: n.id,
+          title: n.title,
+          body: n.body,
+          scheduledDate: tz.TZDateTime.from(n.at, tz.local),
+          notificationDetails: _details(l10n),
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          payload: n.payload,
+        );
+      }
+    } catch (e) {
+      debugPrint('Couldn\'t refresh reminders: $e');
     }
   }
+
+  /// "Then Day 3 of “7 days to better sleep” is ready", when a course has a
+  /// day open.
+  String? _courseLine(AppLocalizations l10n) {
+    final course = CourseStore.instance.active;
+    if (course == null) return null;
+    final next = CourseStore.instance.of(course).nextDay(course);
+    if (next == null) return null;
+    return l10n.remindersCheckinBodyCourse(next + 1, course.title);
+  }
+
+  tz.TZDateTime _nextInstance(TimeOfDay time) {
+    final now = tz.TZDateTime.now(tz.local);
+    var scheduled = tz.TZDateTime(
+        tz.local, now.year, now.month, now.day, time.hour, time.minute);
+    if (!scheduled.isAfter(now)) {
+      scheduled = scheduled.add(const Duration(days: 1));
+    }
+    return scheduled;
+  }
+
+  Future<void> _scheduleRepeating(
+    ReminderKind kind,
+    TimeOfDay time,
+    AppLocalizations l10n,
+  ) => _plugin.zonedSchedule(
+    id: kind.id,
+    title: kind.notificationTitle(l10n),
+    body: kind.notificationBody(l10n),
+    scheduledDate: _nextInstance(time),
+    notificationDetails: _details(l10n),
+    androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+    matchDateTimeComponents: DateTimeComponents.time, // repeat daily
+    payload: '$reminderPayloadPrefix${kind.name}',
+  );
 
   Future<void> disable(ReminderKind kind) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_key(kind, 'enabled'), false);
     if (_silent) return;
     await _init();
-    await _plugin.cancel(id: kind.id);
+    for (final id in _ids(kind)) {
+      await _plugin.cancel(id: id);
+    }
   }
 }

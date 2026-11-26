@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Signed out, or not set up yet: nothing about anyone, just a way in. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_signed_out"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="4dp"
+        android:orientation="horizontal">
+        <ImageView android:layout_width="14dp" android:layout_height="4dp" android:importantForAccessibility="no" android:src="@drawable/widget_pillar_red" />
+        <ImageView android:layout_width="14dp" android:layout_height="4dp" android:layout_marginStart="3dp" android:importantForAccessibility="no" android:src="@drawable/widget_pillar_blue" />
+        <ImageView android:layout_width="14dp" android:layout_height="4dp" android:layout_marginStart="3dp" android:importantForAccessibility="no" android:src="@drawable/widget_pillar_black" />
+        <ImageView android:layout_width="14dp" android:layout_height="4dp" android:layout_marginStart="3dp" android:importantForAccessibility="no" android:src="@drawable/widget_pillar_yellow" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/widget_signed_out_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxLines="3"
+        android:ellipsize="end"
+        android:text="@string/widget_open_app"
+        android:textColor="@color/widget_ink"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+</LinearLayout>

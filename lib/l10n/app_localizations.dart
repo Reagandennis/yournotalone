@@ -9731,6 +9731,684 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Paystack charges this as {charge}. Your bank converts it, and may add a small fee.'**
   String therapyFlowChargeNote(String charge);
+
+  /// Heading on the home-screen widget, over the week's seven dots of days shown up on.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get widgetThisWeek;
+
+  /// On the home-screen widget: days shown up on this week out of the weekly goal, e.g. "2 of 3 days". Short: the widget is small.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} of {goal} days'**
+  String widgetDaysOfGoal(int days, int goal);
+
+  /// On the home-screen widget once the weekly goal is reached. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal met this week'**
+  String get widgetGoalMet;
+
+  /// Button on the home-screen widget that opens the mood check-in. One or two words.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in'**
+  String get widgetCheckIn;
+
+  /// On the home-screen widget in place of the check-in button once today's check-in is done.
+  ///
+  /// In en, this message translates to:
+  /// **'Checked in today'**
+  String get widgetCheckedIn;
+
+  /// Small heading on the home-screen widget over today's suggested meditation, breathing or tool.
+  ///
+  /// In en, this message translates to:
+  /// **'For you today'**
+  String get widgetForYou;
+
+  /// On the home-screen widget when there's no suggestion yet (the app hasn't been opened today).
+  ///
+  /// In en, this message translates to:
+  /// **'Open for today’s suggestion'**
+  String get widgetOpenForPick;
+
+  /// On the home-screen widget: last night's sleep from Apple Health or Health Connect, e.g. "7 h 20 min sleep". Shown only when the person has connected health data and left it on for the widget.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min sleep'**
+  String widgetSleepLine(int hours, int minutes);
+
+  /// Android notification channel name (Settings → Notifications) for the app's own gentle nudges when someone has been away.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions and check-ins'**
+  String get nudgeChannelName;
+
+  /// Android notification channel description for the nudges channel.
+  ///
+  /// In en, this message translates to:
+  /// **'A few gentle notes when you’ve been away. Never more than one a day.'**
+  String get nudgeChannelDescription;
+
+  /// Notification title: the next day of a 7-day course has opened. {course} is the course's name, e.g. "7 days to better sleep".
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of “{course}” is ready'**
+  String nudgeCourseTitle(int day, String course);
+
+  /// Notification body under nudgeCourseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A few minutes, whenever suits you today.'**
+  String get nudgeCourseBody;
+
+  /// Notification title for a suggested meditation, breathing exercise or tool in someone's first week.
+  ///
+  /// In en, this message translates to:
+  /// **'A few minutes for you'**
+  String get nudgeSuggestionTitle;
+
+  /// Notification body naming the suggestion. {title} is its name, {meta} its kind and length, e.g. "Breathing · 3 min".
+  ///
+  /// In en, this message translates to:
+  /// **'Try “{title}” · {meta}'**
+  String nudgeSuggestionBody(String title, String meta);
+
+  /// Notification title after a few days away. Warm, never guilt.
+  ///
+  /// In en, this message translates to:
+  /// **'How are you doing?'**
+  String get nudgeGentleTitle;
+
+  /// Notification body under nudgeGentleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A ten-second check-in still counts.'**
+  String get nudgeGentleBody;
+
+  /// Notification title after about a week away.
+  ///
+  /// In en, this message translates to:
+  /// **'We kept your place'**
+  String get nudgeSavedTitle;
+
+  /// Notification body under nudgeSavedTitle when a course is part-done.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of “{course}” is waiting whenever you are.'**
+  String nudgeSavedCourseBody(int day, String course);
+
+  /// Notification body under nudgeSavedTitle naming content added since their last visit.
+  ///
+  /// In en, this message translates to:
+  /// **'New since you were here: “{title}”.'**
+  String nudgeSavedNewBody(String title);
+
+  /// Notification body under nudgeSavedTitle when there's nothing more specific to say.
+  ///
+  /// In en, this message translates to:
+  /// **'Your journal, check-ins and progress are right where you left them.'**
+  String get nudgeSavedBody;
+
+  /// Notification title after two weeks away.
+  ///
+  /// In en, this message translates to:
+  /// **'Still here for you'**
+  String get nudgeStillHereTitle;
+
+  /// Notification body under nudgeStillHereTitle. {count} is the total number of days they've used the app. No guilt or loss language.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Whenever you’re ready, a three-minute breathing exercise is a good place to start.} =1{You’ve shown up for yourself once already. Whenever you’re ready, one small step is enough.} other{You’ve shown up for yourself on {count} days. Whenever you’re ready, one small step is enough.}}'**
+  String nudgeStillHereBody(int count);
+
+  /// Title of the last nudge, after a month away. After it the app sends no more until they come back.
+  ///
+  /// In en, this message translates to:
+  /// **'Whenever you’re ready'**
+  String get nudgeLastTitle;
+
+  /// Body of the last nudge. Says honestly that the app will stop nudging.
+  ///
+  /// In en, this message translates to:
+  /// **'This is our last note for now. Your space here stays open.'**
+  String get nudgeLastBody;
+
+  /// Notification title sent instead of practice nudges when someone's recent check-ins were very low. Appears on the lock screen: nothing about moods.
+  ///
+  /// In en, this message translates to:
+  /// **'Thinking of you'**
+  String get nudgeSupportTitle;
+
+  /// Body under nudgeSupportTitle; tapping opens the support screen with helplines and therapy.
+  ///
+  /// In en, this message translates to:
+  /// **'If things feel heavy, people who can help are one tap away.'**
+  String get nudgeSupportBody;
+
+  /// Morning check-in reminder body when a 7-day course has a day ready. {course} is the course name.
+  ///
+  /// In en, this message translates to:
+  /// **'Then Day {day} of “{course}” is ready, if you have a few minutes.'**
+  String remindersCheckinBodyCourse(int day, String course);
+
+  /// Another wording of the morning check-in reminder body, used on some days so it doesn't repeat.
+  ///
+  /// In en, this message translates to:
+  /// **'One tap: how is today going?'**
+  String get remindersCheckinBodyAlt;
+
+  /// Another wording of the morning check-in reminder body.
+  ///
+  /// In en, this message translates to:
+  /// **'However today feels, it’s worth noticing.'**
+  String get remindersCheckinBodyAlt2;
+
+  /// Another wording of the evening journal reminder body.
+  ///
+  /// In en, this message translates to:
+  /// **'What’s one thing from today you want to remember?'**
+  String get remindersJournalBodyAlt;
+
+  /// Another wording of the evening journal reminder body.
+  ///
+  /// In en, this message translates to:
+  /// **'A few lines are plenty. No one else will read them.'**
+  String get remindersJournalBodyAlt2;
+
+  /// Another wording of the wind-down reminder body.
+  ///
+  /// In en, this message translates to:
+  /// **'Screens down, lights low. Your plan takes it from here.'**
+  String get remindersWindDownBodyAlt;
+
+  /// Another wording of the wind-down reminder body.
+  ///
+  /// In en, this message translates to:
+  /// **'Give tomorrow a head start: begin winding down now.'**
+  String get remindersWindDownBodyAlt2;
+
+  /// Another wording of the daily pledge reminder body (recovery).
+  ///
+  /// In en, this message translates to:
+  /// **'Just for today. Tap to make your pledge.'**
+  String get remindersPledgeBodyAlt;
+
+  /// Footnote on the Reminders screen explaining how reminders back off.
+  ///
+  /// In en, this message translates to:
+  /// **'If you haven’t opened the app for a week, reminders come every other day, and pause after two weeks until you’re back.'**
+  String get remindersBackoffFootnote;
+
+  /// Section heading on the Reminders screen over the nudges and emails switches.
+  ///
+  /// In en, this message translates to:
+  /// **'When you’ve been away'**
+  String get engagementSettingsHeading;
+
+  /// Switch label: the app's own nudges when someone hasn't opened it for a while.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle check-ins'**
+  String get engagementNudgesLabel;
+
+  /// Under the Gentle check-ins switch.
+  ///
+  /// In en, this message translates to:
+  /// **'A few notes if you haven’t opened the app in a while, then they stop. Never more than one a day, apart from a note before and after a therapy session.'**
+  String get engagementNudgesDescription;
+
+  /// Switch label: win-back emails.
+  ///
+  /// In en, this message translates to:
+  /// **'Emails when you’ve been away'**
+  String get engagementEmailsLabel;
+
+  /// Under the emails switch.
+  ///
+  /// In en, this message translates to:
+  /// **'At most two, after 10 and 30 days away. Every one has a link to stop them.'**
+  String get engagementEmailsDescription;
+
+  /// Snack bar when the emails switch couldn't be saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn’t save that. Check your connection and try again.'**
+  String get engagementSaveFailed;
+
+  /// Why a suggestion was picked: last night's sleep (from Apple Health / Health Connect) was well under the person's own usual. Descriptive only, never a diagnosis.
+  ///
+  /// In en, this message translates to:
+  /// **'Last night was shorter than your usual.'**
+  String get nextStepShortSleep;
+
+  /// Why a suggestion was picked: bedtime was much later than the person's usual.
+  ///
+  /// In en, this message translates to:
+  /// **'You went to bed later than usual.'**
+  String get nextStepLateNight;
+
+  /// Why a suggestion was picked: heart rate variability lower or resting heart rate higher than the person's usual. Must stay factual: never say stressed, ill or anything medical.
+  ///
+  /// In en, this message translates to:
+  /// **'Your heart readings are outside your usual range today.'**
+  String get nextStepBodyUnderStrain;
+
+  /// Why a suggestion was picked: far fewer steps than usual yesterday. No judgement.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday was quieter than usual.'**
+  String get nextStepQuietDay;
+
+  /// Why a suggestion was picked: far more steps than usual yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday was a big day. Nice work.'**
+  String get nextStepActiveDay;
+
+  /// Why a suggestion was picked: a good night's sleep against their usual.
+  ///
+  /// In en, this message translates to:
+  /// **'You slept well last night.'**
+  String get nextStepRestedNight;
+
+  /// Why a suggestion was picked: it's today's day of their 7-day course.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of “{course}”'**
+  String nextStepCourse(int day, String course);
+
+  /// Why a suggestion was picked: it matches the goals they chose.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked for what you’re working on'**
+  String get nextStepGoals;
+
+  /// Why a suggestion was picked: it suits the time of day.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked for this time of day'**
+  String get nextStepTimeOfDay;
+
+  /// Title and button on the health screen. {platform} is "Apple Health" or "Health Connect" (product names, not translated). "Link", not "Connect": "Connect Health Connect" reads badly.
+  ///
+  /// In en, this message translates to:
+  /// **'Link {platform}'**
+  String healthConnectTitle(String platform);
+
+  /// Intro on the health screen before connecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Let your sleep and activity shape what the app suggests, and see how your days and your moods go together.'**
+  String get healthIntro;
+
+  /// Heading on the health screen over the list of data types read.
+  ///
+  /// In en, this message translates to:
+  /// **'What the app reads'**
+  String get healthReadHeading;
+
+  /// Data type read from Apple Health / Health Connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep'**
+  String get healthReadSleep;
+
+  /// Why sleep is read.
+  ///
+  /// In en, this message translates to:
+  /// **'How long and when you slept, to suggest what fits the night you had.'**
+  String get healthReadSleepDetail;
+
+  /// Data type read.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get healthReadSteps;
+
+  /// Why steps are read.
+  ///
+  /// In en, this message translates to:
+  /// **'How active your days are, shown next to your moods.'**
+  String get healthReadStepsDetail;
+
+  /// Data types read.
+  ///
+  /// In en, this message translates to:
+  /// **'Heart rate variability and resting heart rate'**
+  String get healthReadHeart;
+
+  /// Why heart data is read. Must not promise any medical insight.
+  ///
+  /// In en, this message translates to:
+  /// **'Only to notice when they’re off your own usual, so a calming exercise can come first.'**
+  String get healthReadHeartDetail;
+
+  /// Heading over what's written to Apple Health / Health Connect.
+  ///
+  /// In en, this message translates to:
+  /// **'What the app saves'**
+  String get healthWriteHeading;
+
+  /// Data type written.
+  ///
+  /// In en, this message translates to:
+  /// **'Mindful minutes'**
+  String get healthWriteMindful;
+
+  /// What counts as mindful minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Each meditation and breathing session you finish here.'**
+  String get healthWriteMindfulDetail;
+
+  /// Heading of the privacy panel on the health screen.
+  ///
+  /// In en, this message translates to:
+  /// **'It stays on your phone'**
+  String get healthPrivacyTitle;
+
+  /// Privacy panel body. Must stay true: health data is never uploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Your health data is read on this phone only. It’s never sent to us or anyone else, never used for ads, and you can disconnect at any time.'**
+  String get healthPrivacyBody;
+
+  /// Small print on the health screen.
+  ///
+  /// In en, this message translates to:
+  /// **'The app compares your data with your own usual, to suggest something helpful. It isn’t medical advice and can’t diagnose anything.'**
+  String get healthNotMedical;
+
+  /// Button on Android 13 and lower when Health Connect must be installed from Google Play.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Health Connect'**
+  String get healthInstallButton;
+
+  /// Shown with healthInstallButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Connect needs installing or updating from Google Play first. Then come back here.'**
+  String get healthInstallBody;
+
+  /// Health screen when the platform can't be used here (iPad, unsupported phone).
+  ///
+  /// In en, this message translates to:
+  /// **'{platform} isn’t available on this device.'**
+  String healthUnavailable(String platform);
+
+  /// Snack bar when the person declined or the permission sheet failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was connected. You can try again, or allow access in {platform}.'**
+  String healthConnectFailed(String platform);
+
+  /// Title of the health screen once connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep, activity and you'**
+  String get healthConnectedTitle;
+
+  /// Label over last night's sleep length.
+  ///
+  /// In en, this message translates to:
+  /// **'Last night'**
+  String get healthLastNight;
+
+  /// A sleep length, e.g. "7 h 20 min".
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String healthSleepValue(int hours, int minutes);
+
+  /// When there's no sleep data for last night.
+  ///
+  /// In en, this message translates to:
+  /// **'No sleep recorded'**
+  String get healthNoSleep;
+
+  /// Label over yesterday's step count.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get healthYesterday;
+
+  /// A step count; {steps} comes already formatted with thousands separators, e.g. "8,214".
+  ///
+  /// In en, this message translates to:
+  /// **'{steps} steps'**
+  String healthStepsValue(String steps);
+
+  /// When there's no step data for yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'No steps recorded'**
+  String get healthNoSteps;
+
+  /// Heading over a 7-bar chart of sleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep, last 7 nights'**
+  String get healthWeekSleep;
+
+  /// Heading over a 7-bar chart of steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps, last 7 days'**
+  String get healthWeekSteps;
+
+  /// Under a chart. {value} is a formatted sleep length or step count.
+  ///
+  /// In en, this message translates to:
+  /// **'Average {value}'**
+  String healthAverage(String value);
+
+  /// Button opening the suggested item.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get healthOpen;
+
+  /// Heading over the mood links (Premium).
+  ///
+  /// In en, this message translates to:
+  /// **'Your days and your moods'**
+  String get healthMoodLinksHeading;
+
+  /// A pattern in the person's own data. Values are formatted decimals like "3.8". A pattern, not a cause.
+  ///
+  /// In en, this message translates to:
+  /// **'After nights of 7 hours or more, your mood averaged {withValue} out of 5, against {withoutValue} after shorter nights.'**
+  String moodLinkSleep(String withValue, String withoutValue);
+
+  /// A pattern in the person's own data (steps above their usual vs below).
+  ///
+  /// In en, this message translates to:
+  /// **'On your more active days, your mood averaged {withValue} out of 5, against {withoutValue} on quieter ones.'**
+  String moodLinkMovement(String withValue, String withoutValue);
+
+  /// A pattern in the person's own data.
+  ///
+  /// In en, this message translates to:
+  /// **'On days with a meditation or breathing session, your mood averaged {withValue} out of 5, against {withoutValue} on days without.'**
+  String moodLinkPractice(String withValue, String withoutValue);
+
+  /// Under the mood links.
+  ///
+  /// In en, this message translates to:
+  /// **'A pattern in your own check-ins, not a cause. It changes as you go.'**
+  String get moodLinkFootnote;
+
+  /// When there isn't enough data for mood links yet.
+  ///
+  /// In en, this message translates to:
+  /// **'After a couple of weeks of check-ins alongside your sleep and steps, patterns will show here.'**
+  String get moodLinksNotYet;
+
+  /// Teaser for the Premium mood links.
+  ///
+  /// In en, this message translates to:
+  /// **'See how your sleep, movement and practice go with your moods.'**
+  String get moodLinksLocked;
+
+  /// Switch on the health screen. The widget can be seen by anyone holding the phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Show last night’s sleep on the home-screen widget'**
+  String get healthWidgetSleep;
+
+  /// Status line when mindful minutes are being written.
+  ///
+  /// In en, this message translates to:
+  /// **'Meditations and breathing sessions you finish are saved as mindful minutes.'**
+  String get healthMindfulOn;
+
+  /// Android only, when Health Connect has no mindfulness sessions.
+  ///
+  /// In en, this message translates to:
+  /// **'This phone’s Health Connect can’t save mindful minutes yet. A system update may add it.'**
+  String get healthMindfulUnavailable;
+
+  /// Button on the health screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get healthDisconnect;
+
+  /// iOS only, under Disconnect: HealthKit permissions can only be removed in the Settings app.
+  ///
+  /// In en, this message translates to:
+  /// **'To remove the app’s access entirely, open Settings → Health → Data Access & Devices.'**
+  String get healthDisconnectIos;
+
+  /// Snack bar after disconnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'{platform} disconnected. Nothing more is read.'**
+  String healthDisconnected(String platform);
+
+  /// Home card inviting people to connect health data.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions that fit your day'**
+  String get healthInviteTitle;
+
+  /// Body of the Home invite card.
+  ///
+  /// In en, this message translates to:
+  /// **'Link {platform} so your sleep and activity shape what you see here.'**
+  String healthInviteBody(String platform);
+
+  /// Button on the Home invite card.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get healthInviteConnect;
+
+  /// Dismisses the Home invite card for a month.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get healthInviteLater;
+
+  /// Title of the Home card once health data is connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep and activity'**
+  String get healthCardTitle;
+
+  /// Settings row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get healthStatusConnected;
+
+  /// Settings row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get healthStatusNotConnected;
+
+  /// Button or menu item on a suggestion: hide it and suggest other things. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Not for me'**
+  String get contentNotForMe;
+
+  /// Under 'Not for me' in the long-press menu of a suggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest other things instead for the next month'**
+  String get contentNotForMeSub;
+
+  /// Snackbar after tapping 'Not for me' on a suggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it. You’ll see other suggestions.'**
+  String get contentNotForMeDone;
+
+  /// Snackbar action that undoes 'Not for me'. Short.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get contentNotForMeUndo;
+
+  /// Why a suggestion was picked, shown between midnight and 5am: something calm for getting back to sleep, with nothing to read.
+  ///
+  /// In en, this message translates to:
+  /// **'Something quiet for getting back to sleep. Nothing to read.'**
+  String get nextStepNight;
+
+  /// Why a suggestion was picked: last time they did it, they said they felt better afterwards.
+  ///
+  /// In en, this message translates to:
+  /// **'You felt better after this last time'**
+  String get nextStepHelpedBefore;
+
+  /// Small label at the top of Home's card between midnight and 5am. Shown in capitals.
+  ///
+  /// In en, this message translates to:
+  /// **'Can’t sleep?'**
+  String get nightCardTitle;
+
+  /// Notification an hour before a therapy session. Never names the therapist or the topic (it shows on the lock screen).
+  ///
+  /// In en, this message translates to:
+  /// **'Your session is in an hour'**
+  String get notificationPrepTitle;
+
+  /// Body of the notification an hour before a therapy session; tapping opens a journal page to write in.
+  ///
+  /// In en, this message translates to:
+  /// **'A minute now to note what you’d like to talk about, so nothing slips away when the call starts.'**
+  String get notificationPrepBody;
+
+  /// Notification a little after a therapy session ends (or the next morning). Never names the therapist or the topic.
+  ///
+  /// In en, this message translates to:
+  /// **'After your session'**
+  String get notificationReflectTitle;
+
+  /// Body of the notification after a therapy session; tapping opens a journal page to write in.
+  ///
+  /// In en, this message translates to:
+  /// **'A few lines on what stayed with you can help it stick.'**
+  String get notificationReflectBody;
+
+  /// Title given to the journal page opened from the after-session notification.
+  ///
+  /// In en, this message translates to:
+  /// **'After my session'**
+  String get homeAfterSessionJournalTitle;
+
+  /// Start of the text on the journal page opened after a therapy session; the person continues the sentence. Ends with a space.
+  ///
+  /// In en, this message translates to:
+  /// **'What stayed with me from my session: '**
+  String get homeAfterSessionJournalSeed;
 }
 
 class _AppLocalizationsDelegate

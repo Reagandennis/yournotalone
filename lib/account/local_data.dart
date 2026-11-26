@@ -34,6 +34,7 @@ class LocalData {
     'discover.last_mood',
     'discover.opens',
     'discover.recommendations',
+    'discover.not_for_me',
     'courses.progress',
     'goals',
     'rhythm_goal',
@@ -42,6 +43,11 @@ class LocalData {
     'mood.logged',
     'journal.entry_created',
     'reminder.opened',
+    // Recent open hours and nudge state (lib/engagement), and whether this
+    // person connected Apple Health / Health Connect (lib/health). The
+    // health data itself is never stored.
+    'engagement.',
+    'health.',
   ];
 
   static bool isPersonal(String key) =>

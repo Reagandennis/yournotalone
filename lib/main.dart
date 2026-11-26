@@ -22,6 +22,7 @@ import 'billing/purchases_service.dart';
 import 'content/content_catalog.dart';
 import 'courses/course_progress.dart';
 import 'discover/saved_store.dart';
+import 'engagement/engagement_service.dart';
 import 'media/download_store.dart';
 import 'media/now_playing.dart';
 import 'brand.dart';
@@ -182,6 +183,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             // last person's (see LocalData), and their own reminders.
             if (userId != null && LocalData.instance.signedIn(userId)) {
               CourseStore.instance.reset();
+              unawaited(EngagementService.instance.signedOut());
               unawaited(
                 RemindersService.instance.cancelScheduled().then(
                   (_) => RemindersService.instance.refreshScheduled(),
@@ -209,6 +211,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             LocalData.instance.signedOut();
             CourseStore.instance.reset();
             unawaited(RemindersService.instance.cancelScheduled());
+            unawaited(EngagementService.instance.signedOut());
             _toLogin();
           default:
             break;

@@ -69,6 +69,8 @@ dependencies:
   connectivity_plus: ^7.3.1
   path_provider: ^2.1.5
   battery_plus: ^7.1.2
+  health: ^14.0.0
+  home_widget: ^0.10.0
 
 dev_dependencies:
   sentry_dart_plugin: ^3.4.0

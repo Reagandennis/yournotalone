@@ -17,7 +17,8 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.techgetafrica.yournotalone"
-    compileSdk = flutter.compileSdkVersion
+    // 37 for the health plugin (Health Connect's newer record types).
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -31,7 +32,8 @@ android {
         applicationId = "com.techgetafrica.yournotalone"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // Health Connect needs Android 8 (API 26) or later.
+        minSdk = 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

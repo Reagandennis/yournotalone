@@ -7,6 +7,85 @@ import '../home/home_ui.dart';
 import '../l10n/l10n.dart';
 import 'content_index.dart';
 import 'saved_store.dart';
+import 'taste_store.dart';
+
+/// Takes [item] out of suggestions for a month, with an undo.
+Future<void> notForMe(
+  BuildContext context,
+  ContentItem item, {
+  required String source,
+}) async {
+  final messenger = ScaffoldMessenger.maybeOf(context);
+  final l10n = context.l10n;
+  await TasteStore.instance.notForMe(item, source: source);
+  messenger
+    ?..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(l10n.contentNotForMeDone),
+        action: SnackBarAction(
+          label: l10n.contentNotForMeUndo,
+          onPressed: () => TasteStore.instance.undo(item),
+        ),
+      ),
+    );
+}
+
+/// What a long press on a suggestion offers.
+Future<void> _offerNotForMe(
+  BuildContext context,
+  ContentItem item,
+  String source,
+) => showModalBottomSheet<void>(
+  context: context,
+  showDragHandle: true,
+  builder: (sheet) => SafeArea(
+    child: Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+            child: Text(
+              item.title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.do_not_disturb_on_outlined),
+            title: Text(sheet.l10n.contentNotForMe),
+            subtitle: Text(sheet.l10n.contentNotForMeSub),
+            onTap: () {
+              Navigator.of(sheet).pop();
+              notForMe(context, item, source: source);
+            },
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
+/// A quiet "Not for me" beside a single suggestion.
+class NotForMeButton extends StatelessWidget {
+  const NotForMeButton({super.key, required this.item, required this.source});
+
+  final ContentItem item;
+  final String source;
+
+  @override
+  Widget build(BuildContext context) => TextButton(
+    style: TextButton.styleFrom(
+      foregroundColor: context.brand.textMuted,
+      visualDensity: VisualDensity.compact,
+      textStyle: const TextStyle(fontSize: 13),
+    ),
+    onPressed: () => notForMe(context, item, source: source),
+    child: Text(context.l10n.contentNotForMe),
+  );
+}
 
 /// Small "New" badge for content that shipped in the last few weeks.
 class NewChip extends StatelessWidget {
@@ -66,10 +145,19 @@ class SaveButton extends StatelessWidget {
 /// One item as a full-width row: icon, title with its badges, and the
 /// meta line. Tapping opens it through [openContent].
 class ContentRow extends StatelessWidget {
-  const ContentRow({super.key, required this.item, required this.source});
+  const ContentRow({
+    super.key,
+    required this.item,
+    required this.source,
+    this.suggested = false,
+  });
 
   final ContentItem item;
   final String source;
+
+  /// Picked by the app rather than browsed to: a long press offers
+  /// "Not for me".
+  final bool suggested;
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +174,9 @@ class ContentRow extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: () => openContent(context, item, source: source),
+          onLongPress: suggested
+              ? () => _offerNotForMe(context, item, source)
+              : null,
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: Row(
@@ -160,11 +251,15 @@ class ContentCard extends StatelessWidget {
     required this.source,
     this.width = 168,
     this.reason,
+    this.suggested = false,
   });
 
   final ContentItem item;
   final String source;
   final double width;
+
+  /// See [ContentRow.suggested].
+  final bool suggested;
 
   /// Why it's suggested, in a quiet line under the meta; none if null.
   final String? reason;
@@ -181,6 +276,9 @@ class ContentCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
           onTap: () => openContent(context, item, source: source),
+          onLongPress: suggested
+              ? () => _offerNotForMe(context, item, source)
+              : null,
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: Column(
@@ -273,10 +371,14 @@ class ContentStrip extends StatelessWidget {
     required this.items,
     required this.source,
     this.reasons = const {},
+    this.suggested = false,
   });
 
   final List<ContentItem> items;
   final String source;
+
+  /// See [ContentRow.suggested].
+  final bool suggested;
 
   /// Item id → why it's suggested. The strip grows by two short lines
   /// when there are any.
@@ -297,6 +399,7 @@ class ContentStrip extends StatelessWidget {
           item: items[i],
           source: source,
           reason: reasons[items[i].id],
+          suggested: suggested,
         ),
       ),
     );

@@ -9,7 +9,10 @@ import '../care/therapist_sessions_screen.dart';
 import '../courses/course_progress.dart';
 import '../discover/content_index.dart';
 import '../discover/saved_store.dart';
+import '../engagement/engagement_service.dart';
+import '../home_widgets/home_widget_sync.dart';
 import '../journal/journal_hub_screen.dart';
+import '../journal/new_entry.dart';
 import '../l10n/l10n.dart';
 import '../therapy/therapy_repository.dart';
 import '../media/lapsed_downloads.dart';
@@ -34,6 +37,30 @@ void openSessionScreen(String payload) {
   final navigator = appNavigatorKey.currentState;
   if (navigator == null ||
       Supabase.instance.client.auth.currentUser == null) {
+    return;
+  }
+  if (isNudgePayload(payload)) {
+    if (appRoutes.isOpen(CallScreen.routeName)) return;
+    EngagementService.instance.openNudge(navigator, payload);
+    return;
+  }
+  if (payload == sessionPrepPayload || payload == sessionReflectPayload) {
+    if (appRoutes.isOpen(CallScreen.routeName)) return;
+    final prep = payload == sessionPrepPayload;
+    Sentry.metrics.count('session_note.opened', 1, attributes: {
+      'kind': SentryAttribute.string(prep ? 'prep' : 'reflect'),
+    });
+    final l10n = currentL10n();
+    navigator.popUntil((route) => route.isFirst);
+    openNewJournalEntry(
+      navigator.context,
+      title: prep
+          ? l10n.homeBeforeSessionJournalTitle
+          : l10n.homeAfterSessionJournalTitle,
+      content: prep
+          ? l10n.homeBeforeSessionJournalSeed
+          : l10n.homeAfterSessionJournalSeed,
+    );
     return;
   }
   if (payload.startsWith(reminderPayloadPrefix)) {
@@ -124,8 +151,17 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     // People who signed up before the app asked, or who skipped the step:
     // the system prompt once, then never again from here.
     NotificationPermission.instance.promptIfNeverAsked();
-    // Reminders set before they carried a payload learn where to lead.
-    RemindersService.instance.refreshScheduled();
+    // The engagement engine: notes the visit, schedules the next nudges,
+    // starts the reminders' two-week window again and brings the
+    // home-screen widget up to date (see EngagementService).
+    EngagementService.instance.appOpened();
+    // A tap on the home-screen widget, now or the one that opened the app.
+    HomeWidgetSync.instance.listen((uri) {
+      final navigator = appNavigatorKey.currentState;
+      if (navigator != null && !appRoutes.isOpen(CallScreen.routeName)) {
+        openFromHomeWidget(navigator, uri);
+      }
+    });
     SavedStore.instance.load();
     CourseStore.instance.load();
     homeTabRequest.addListener(_onTabRequest);
@@ -162,6 +198,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       SessionNotifications.instance.start();
       _askAboutDownloads();
+      EngagementService.instance.appOpened();
     }
   }
 

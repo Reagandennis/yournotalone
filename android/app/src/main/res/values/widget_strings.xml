@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The widgets' names and descriptions in the widget picker, and the
+     sample words of their gallery preview. What a placed widget shows is
+     written by the app, in the app's language (lib/home_widgets/). -->
+<resources>
+    <string name="widget_rhythm_name">This week</string>
+    <string name="widget_rhythm_desc">How many days you\'ve shown up this week, and today\'s check-in.</string>
+    <string name="widget_today_name">Today</string>
+    <string name="widget_today_desc">Your week, today\'s check-in and a suggestion for today.</string>
+    <string name="widget_week">This week</string>
+    <string name="widget_days">2 of 3 days</string>
+    <string name="widget_check_in">Check in</string>
+    <string name="widget_for_you">For you today</string>
+    <string name="widget_pick">Box breathing</string>
+    <string name="widget_pick_meta">Breathing · 4 min</string>
+    <string name="widget_open_app">Open for today’s suggestion</string>
+</resources>

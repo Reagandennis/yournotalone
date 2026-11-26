@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_rhythm_name">Diese Woche</string>
+    <string name="widget_rhythm_desc">An wie vielen Tagen du diese Woche da warst, und dein heutiges Einchecken.</string>
+    <string name="widget_today_name">Heute</string>
+    <string name="widget_today_desc">Deine Woche, dein heutiges Einchecken und ein Vorschlag für heute.</string>
+    <string name="widget_week">Diese Woche</string>
+    <string name="widget_days">2 von 3 Tagen</string>
+    <string name="widget_check_in">Einchecken</string>
+    <string name="widget_for_you">Für dich heute</string>
+    <string name="widget_pick">Box-Atmung</string>
+    <string name="widget_pick_meta">Atmung · 4 Min.</string>
+    <string name="widget_open_app">Öffne die App für den Vorschlag des Tages</string>
+</resources>
