@@ -8,6 +8,8 @@
 -- or cancelled. Paid sessions also move unpaid → paid (or waived).
 
 -- ── 1. Inbox: open requests, oldest first ──────────────────────────
+-- A session whose client deleted their account shows with no email
+-- (0035 keeps the session without the person).
 select
   r.created_at,
   u.email,
@@ -22,7 +24,7 @@ select
   r.payment_status,
   r.id
 from public.therapy_requests r
-join auth.users u on u.id = r.user_id
+left join auth.users u on u.id = r.user_id
 left join public.therapists t on t.id = r.therapist_id
 where r.status in ('pending', 'confirmed')
 order by r.created_at;

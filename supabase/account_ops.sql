@@ -65,7 +65,8 @@
 -- order by r.requested_at;
 
 -- ── 3. Delete an account by hand ─────────────────────────────────
--- Needs migration 0006. Check what would go first:
+-- Needs migrations 0006 and 0035. Does what the delete-account Edge
+-- Function does, in the same order. Check what would go first:
 --
 -- select
 --   (select count(*) from public.journal_entries  where user_id = '<user id>') as journal_entries,
@@ -75,12 +76,30 @@
 --   (select count(*) from public.recovery_pledges where user_id = '<user id>') as pledges,
 --   (select count(*) from public.craving_logs     where user_id = '<user id>') as craving_logs,
 --   (select count(*) from public.therapy_requests where user_id = '<user id>') as therapy_requests,
+--   (select count(*) from public.therapy_requests where user_id = '<user id>'
+--      and status in ('awaiting_payment', 'pending', 'confirmed'))           as sessions_to_cancel,
 --   (select count(*) from storage.objects
 --      where bucket_id = 'avatars'
 --        and (storage.foldername(name))[1] = '<user id>')                      as avatars;
 --
--- Then: avatar objects first, then the auth user. Everything else
--- cascades from auth.users. Run all three together.
+-- Then, run all four together:
+--  1. Sessions still to come are cancelled while the client's details
+--     still exist for the emails: the therapist hears, and a paid one
+--     reaches the care team for its refund.
+--  2. Avatar objects (storage isn't covered by the cascade). If they ever
+--     applied to be a therapist, also remove their therapist-photos/self/
+--     <user id>/ photo and, unless they were approved, their
+--     therapist-kyc/<user id>/ documents, as the Edge Function does.
+--  3. The deletion request is closed.
+--  4. The auth user. That cascades through journal_entries, mood_entries,
+--     practice_sessions, recovery_habits, recovery_pledges, craving_logs,
+--     deletion_requests and apple_refresh_tokens. Sessions and Paystack
+--     checkouts are kept, without the person (user_id becomes null and
+--     what they wrote is cleared, 0035): what a therapist is owed and the
+--     purchase records stay. A Sign in with Apple user isn't revoked with
+--     Apple this way; the Edge Function does that.
+--
+-- select public.therapy_cancel_for_deletion('<user id>');
 --
 -- delete from storage.objects
 --  where bucket_id = 'avatars'

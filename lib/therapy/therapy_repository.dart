@@ -564,6 +564,11 @@ String sessionOutcomeLabel(TherapyRequest request) {
 }
 
 /// Supabase-backed storage for a client's therapy sessions.
+/// The columns [TherapyRequest.fromRow] reads. Named rather than `*` so the
+/// database can keep therapist pay and payout columns from clients.
+const _requestColumns =
+    'id, topic, availability, note, status, is_free_session, scheduled_at, created_at, submitted_at, therapist_id, duration_minutes, price_cents, currency, charge_minor, charge_currency, payment_status, client_summary, completed_at, close_reason';
+
 class TherapyRepository {
   final _client = Supabase.instance.client;
 
@@ -576,7 +581,7 @@ class TherapyRepository {
   Future<List<TherapyRequest>> fetchRequests() async {
     final rows = await _client
         .from('therapy_requests')
-        .select()
+        .select(_requestColumns)
         .eq('user_id', _userId)
         .order('created_at', ascending: false);
     return [for (final row in rows) TherapyRequest.fromRow(row)];
@@ -597,7 +602,7 @@ class TherapyRepository {
           'availability': availability,
           if (note != null && note.isNotEmpty) 'note': note,
         })
-        .select()
+        .select(_requestColumns)
         .single();
     return TherapyRequest.fromRow(row);
   }
