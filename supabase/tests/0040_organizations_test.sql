@@ -824,7 +824,8 @@ select tests.check(tests.meta('bob@acme.com') ->> 'premium_comp' = 'true', 'bill
 select public.org_billing_apply((tests.org('Acme')).id, 'cus_acme', 'sub_acme', 'canceled');
 select tests.check((tests.org('Acme')).status = 'active' and (tests.org('Acme')).stripe_subscription_id = 'sub_acme2',
   'billing: stale event for an old subscription ignored');
-select tests.check((public.org_billing_info((tests.org('Acme')).id) ->> 'owner_email') = 'alice@acme.com', 'billing: info has the owner email');
+select tests.check((public.org_billing_info((tests.org('Acme')).id) ->> 'owner_email') = 'alice@acme.com'
+  and public.org_billing_info((tests.org('Acme')).id) ->> 'plan' = 'self_serve', 'billing: info has the owner email and plan');
 
 -- With a subscription, seats change through Billing only.
 select tests.login('alice@acme.com');

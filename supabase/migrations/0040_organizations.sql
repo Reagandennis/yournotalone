@@ -1446,7 +1446,7 @@ $$;
 create or replace function public.org_billing_info(p_org uuid)
 returns jsonb
 language sql stable security definer set search_path = '' as $$
-  select jsonb_build_object('id', o.id, 'name', o.name, 'status', o.status, 'seats', o.seats,
+  select jsonb_build_object('id', o.id, 'name', o.name, 'plan', o.plan, 'status', o.status, 'seats', o.seats,
     'currency', o.currency, 'pepm_minor', o.pepm_minor, 'billing_interval', o.billing_interval,
     'annual_discount', o.annual_discount, 'trial_ends_at', o.trial_ends_at,
     'stripe_customer_id', o.stripe_customer_id, 'stripe_subscription_id', o.stripe_subscription_id,
