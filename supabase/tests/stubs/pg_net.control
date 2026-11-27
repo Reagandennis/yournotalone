@@ -1,0 +1,5 @@
+# Test stand-in for pg_net (supabase/tests). Records requests, sends nothing.
+comment = 'stub pg_net for supabase/tests'
+default_version = '1.0'
+relocatable = false
+superuser = true
